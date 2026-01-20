@@ -26,6 +26,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('development');
+    const [voteThreshold, setVoteThreshold] = useState('10');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -205,6 +206,26 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                         Category
                     </label>
                     <CategoryTags selected={category} onSelect={setCategory} />
+                </div>
+
+                {/* Vote Threshold */}
+                <div>
+                    <label htmlFor="threshold" className="block text-sm font-medium text-purple-200 mb-2">
+                        Minimum Vote Threshold
+                    </label>
+                    <input
+                        type="number"
+                        id="threshold"
+                        value={voteThreshold}
+                        onChange={(e) => setVoteThreshold(e.target.value)}
+                        min="1"
+                        placeholder="10"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                        disabled={isSubmitting}
+                    />
+                    <p className="text-xs text-purple-300 mt-1">
+                        Minimum total votes required for execution
+                    </p>
                 </div>
 
                 {/* Error Message */}
