@@ -7,6 +7,7 @@ import { openContractCall } from '@stacks/connect';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -318,9 +319,12 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             </div>
 
             <div className="space-y-4">
-                {proposals.map((proposal) => (
-                    <div
+                {proposals.map((proposal, index) => (
+                    <motion.div
                         key={proposal.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
                         className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-purple-400/30 hover:scale-105 hover:shadow-xl transition-transform duration-200"
                     >
                         {/* Header */}
@@ -375,7 +379,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                             votesAgainst={proposal.votesAgainst}
                             onExecuted={fetchProposals}
                         />
-                    </div>
+                    </motion.div>
                 ))}
             </div>
         </div>
