@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import CreateProposalForm from '@/components/CreateProposalForm';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -81,23 +82,8 @@ export default function Home() {
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
-          {/* Create Proposal Card */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-purple-400/50 transition-all duration-300">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg mb-4 flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-3">Create Proposal</h3>
-            <p className="text-purple-200 mb-6">
-              Submit your project idea and request funding. Requires 10 STX stake to prevent spam.
-            </p>
-            <button className="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!userData}
-            >
-              {userData ? 'Create Proposal' : 'Connect Wallet to Create'}
-            </button>
-          </div>
+          {/* Create Proposal Form */}
+          <CreateProposalForm userAddress={userData?.profile?.stxAddress?.mainnet} />
 
           {/* Active Proposals Card */}
           <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-blue-400/50 transition-all duration-300">
