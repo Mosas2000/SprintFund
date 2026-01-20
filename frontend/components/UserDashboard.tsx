@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { callReadOnlyFunction, cvToJSON } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
+import VoteDelegation from './VoteDelegation';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -177,6 +178,12 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                     <p className="text-purple-300 text-sm">No activity yet. Create a proposal or vote to get started!</p>
                 </div>
             )}
+
+            {/* Vote Delegation */}
+            <div className="mt-6 pt-6 border-t border-white/10">
+                <h4 className="text-white font-semibold mb-3">Vote Delegation</h4>
+                <VoteDelegation userAddress={userAddress} />
+            </div>
         </div>
     );
 }
