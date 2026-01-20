@@ -9,6 +9,7 @@ import {
     uintCV,
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
+import toast from 'react-hot-toast';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -74,6 +75,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                 postConditionMode: PostConditionMode.Deny,
                 onFinish: (data: any) => {
                     console.log('Transaction submitted:', data);
+                    toast.success('Proposal created successfully!');
                     setSuccess(`Proposal created successfully! Transaction ID: ${data.txId}`);
                     setTitle('');
                     setDescription('');
@@ -90,14 +92,18 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
         } catch (err: any) {
             console.error('Error creating proposal:', err);
 
+            let errorMessage = 'Failed to create proposal. Please try again.';
             if (err.message?.includes('insufficient')) {
-                setError('Insufficient STX balance. You need at least 10 STX staked to create a proposal.');
+                errorMessage = 'Insufficient STX balance. You need at least 10 STX staked.';
+                setError(errorMessage);
             } else if (err.message?.includes('stake')) {
-                setError('You must stake at least 10 STX before creating a proposal. Please stake first.');
+                errorMessage = 'You must stake at least 10 STX before creating a proposal.';
+                setError(errorMessage);
             } else {
-                setError(err.message || 'Failed to create proposal. Please try again.');
+                setError(err.message || errorMessage);
             }
 
+            toast.error(errorMessage);
             setIsSubmitting(false);
         }
     };
