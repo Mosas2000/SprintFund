@@ -1,36 +1,161 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SprintFund Frontend
 
-## Getting Started
+Modern Next.js frontend for the SprintFund DAO on Stacks blockchain.
 
-First, run the development server:
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Web3**: @stacks/connect, @stacks/transactions
+- **Network**: Stacks Mainnet
+
+## Features
+
+- ✅ Wallet connection (Hiro/Leather)
+- ✅ Create proposals with contract integration
+- ✅ Quadratic voting interface
+- ✅ Proposal execution for creators
+- ✅ User dashboard with personal stats
+- ✅ Platform statistics and leaderboards
+- ✅ Real-time data fetching from mainnet
+
+## Prerequisites
+
+- Node.js 18+ and npm
+- Hiro or Leather wallet browser extension
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install dependencies
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Run development server
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
-## Learn More
+## Build
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Create production build
+npm run build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Start production server
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+frontend/
+├── app/
+│   ├── layout.tsx          # Root layout with metadata
+│   ├── page.tsx            # Landing page
+│   ├── globals.css         # Global styles
+│   └── favicon.ico         # App icon
+├── components/
+│   ├── CreateProposalForm.tsx  # Proposal creation form
+│   ├── ProposalList.tsx        # List of all proposals
+│   ├── ExecuteProposal.tsx     # Execution button for creators
+│   ├── UserDashboard.tsx       # Personal stats dashboard
+│   └── Stats.tsx               # Platform analytics
+├── public/                 # Static assets
+├── package.json           # Dependencies
+└── tsconfig.json          # TypeScript config
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contract Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The frontend interacts with the deployed contract:
+
+**Contract**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core`
+
+### Read-Only Functions
+- `get-proposal-count()` - Fetch total proposals
+- `get-proposal(id)` - Fetch proposal details
+- `get-stake(address)` - Fetch user's stake
+
+### Write Functions
+- `create-proposal(amount, title, description)` - Create new proposal
+- `vote(proposal-id, support, weight)` - Vote on proposal
+- `execute-proposal(proposal-id)` - Execute approved proposal
+- `stake(amount)` - Stake STX
+- `withdraw-stake(amount)` - Withdraw stake
+
+## Key Components
+
+### CreateProposalForm
+- Form validation (title max 100, description max 500)
+- STX amount input with decimal support
+- Contract call using `openContractCall`
+- Success/error handling
+
+### ProposalList
+- Fetches all proposals from contract
+- Displays proposal details
+- Integrated voting interface
+- Execution button for creators
+
+### UserDashboard
+- Shows connected wallet address
+- Displays stake balance
+- Lists user's proposals
+- Tracks votes cast
+
+### Stats
+- Total proposals count
+- Active proposals count
+- Total STX distributed
+- Top proposers leaderboard
+
+## Deployment
+
+### Vercel (Recommended)
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+```
+
+### Other Platforms
+
+The app is a standard Next.js application and can be deployed to any platform that supports Next.js:
+- Netlify
+- Railway
+- AWS Amplify
+- Self-hosted
+
+## Troubleshooting
+
+### Wallet Connection Issues
+- Ensure Hiro or Leather wallet extension is installed
+- Check that you're on Stacks Mainnet
+- Try refreshing the page
+
+### Transaction Failures
+- Verify you have sufficient STX balance
+- Check that you've staked 10 STX before creating proposals
+- Ensure you haven't already voted on a proposal
+
+### Data Not Loading
+- Check browser console for errors
+- Verify contract address is correct
+- Try the "Refresh" button on proposal list
+
+## License
+
+MIT License - see [LICENSE](../LICENSE) for details.
+
+---
+
+**Built with ❤️ using Next.js and Stacks**
