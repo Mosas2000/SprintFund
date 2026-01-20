@@ -10,6 +10,7 @@ import {
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -109,7 +110,12 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
     };
 
     return (
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-8 border border-white/10">
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-8 border border-white/10"
+        >
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Create Proposal</h3>
 
             {/* Stake Requirement Notice */}
@@ -234,6 +240,6 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                     )}
                 </button>
             </form>
-        </div>
+        </motion.div>
     );
 }
