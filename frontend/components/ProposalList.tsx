@@ -8,6 +8,7 @@ import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import Comments from './Comments';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -379,6 +380,9 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                             votesAgainst={proposal.votesAgainst}
                             onExecuted={fetchProposals}
                         />
+
+                        {/* Comments Section */}
+                        <Comments proposalId={proposal.id} userAddress={userAddress} />
                     </motion.div>
                 ))}
             </div>
