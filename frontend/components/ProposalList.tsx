@@ -316,7 +316,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 {proposals.map((proposal) => (
                     <div
                         key={proposal.id}
-                        className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-purple-400/30 transition-all"
+                        className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-purple-400/30 hover:scale-105 hover:shadow-xl transition-transform duration-200"
                     >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
