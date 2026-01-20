@@ -5,6 +5,7 @@ import { AppConfig, UserSession, showConnect } from '@stacks/connect';
 import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
 import UserDashboard from '@/components/UserDashboard';
+import Stats from '@/components/Stats';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -84,6 +85,9 @@ export default function Home() {
 
         {/* User Dashboard */}
         <UserDashboard userAddress={userData?.profile?.stxAddress?.mainnet} />
+
+        {/* Platform Statistics */}
+        <Stats />
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
