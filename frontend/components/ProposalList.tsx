@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { callReadOnlyFunction, cvToJSON } from '@stacks/transactions';
+import { callReadOnlyFunction, cvToJSON, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
+import { openContractCall } from '@stacks/connect';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -105,6 +106,150 @@ export default function ProposalList() {
 
     const shortenAddress = (address: string) => {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    };
+
+    // Voting Interface Component
+    const VotingInterface = ({ proposalId, executed }: { proposalId: number; executed: boolean }) => {
+        const [voteWeight, setVoteWeight] = useState('');
+        const [isVoting, setIsVoting] = useState(false);
+        const [voteSuccess, setVoteSuccess] = useState('');
+        const [voteError, setVoteError] = useState('');
+
+        const calculateCost = (weight: number) => {
+            return weight * weight;
+        };
+
+        const handleVote = async (support: boolean) => {
+            setVoteError('');
+            setVoteSuccess('');
+
+            const weight = parseInt(voteWeight);
+            if (!weight || weight <= 0) {
+                setVoteError('Please enter a valid vote weight');
+                return;
+            }
+
+            setIsVoting(true);
+
+            try {
+                const functionArgs = [
+                    uintCV(proposalId),
+                    boolCV(support),
+                    uintCV(weight),
+                ];
+
+                const options = {
+                    network: NETWORK,
+                    anchorMode: AnchorMode.Any,
+                    contractAddress: CONTRACT_ADDRESS,
+                    contractName: CONTRACT_NAME,
+                    functionName: 'vote',
+                    functionArgs,
+                    postConditionMode: PostConditionMode.Deny,
+                    onFinish: (data: any) => {
+                        setVoteSuccess(`Vote submitted! Transaction ID: ${data.txId}`);
+                        setVoteWeight('');
+                        setIsVoting(false);
+                        // Refresh proposals after voting
+                        setTimeout(() => fetchProposals(), 3000);
+                    },
+                    onCancel: () => {
+                        setVoteError('Vote was cancelled');
+                        setIsVoting(false);
+                    },
+                };
+
+                await openContractCall(options);
+            } catch (err: any) {
+                console.error('Error voting:', err);
+                if (err.message?.includes('already voted')) {
+                    setVoteError('You have already voted on this proposal');
+                } else if (err.message?.includes('insufficient')) {
+                    setVoteError('Insufficient STX balance for this vote weight');
+                } else {
+                    setVoteError(err.message || 'Failed to submit vote. Please try again.');
+                }
+                setIsVoting(false);
+            }
+        };
+
+        if (executed) {
+            return null;
+        }
+
+        const weight = parseInt(voteWeight) || 0;
+        const cost = calculateCost(weight);
+
+        return (
+            <div className="mt-4 pt-4 border-t border-white/10">
+                <h5 className="text-white font-semibold mb-3 text-sm">Cast Your Vote</h5>
+
+                {/* Vote Weight Input */}
+                <div className="mb-3">
+                    <label className="block text-purple-200 text-xs mb-2">Vote Weight</label>
+                    <input
+                        type="number"
+                        value={voteWeight}
+                        onChange={(e) => setVoteWeight(e.target.value)}
+                        min="1"
+                        placeholder="10"
+                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                        disabled={isVoting}
+                    />
+                    {weight > 0 && (
+                        <p className="text-xs text-purple-300 mt-1">
+                            Cost: <span className="font-semibold">{cost} STX</span> for {weight} votes (quadratic)
+                        </p>
+                    )}
+                </div>
+
+                {/* Vote Buttons */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                    <button
+                        onClick={() => handleVote(true)}
+                        disabled={isVoting || !voteWeight}
+                        className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg font-semibold transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                        {isVoting ? (
+                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        ) : (
+                            'Vote YES'
+                        )}
+                    </button>
+                    <button
+                        onClick={() => handleVote(false)}
+                        disabled={isVoting || !voteWeight}
+                        className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg font-semibold transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                        {isVoting ? (
+                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        ) : (
+                            'Vote NO'
+                        )}
+                    </button>
+                </div>
+
+                {/* Success Message */}
+                {voteSuccess && (
+                    <div className="bg-green-500/20 border border-green-400/30 rounded-lg p-3 mb-2">
+                        <p className="text-green-200 text-xs break-all">{voteSuccess}</p>
+                    </div>
+                )}
+
+                {/* Error Message */}
+                {voteError && (
+                    <div className="bg-red-500/20 border border-red-400/30 rounded-lg p-3">
+                        <p className="text-red-200 text-xs">{voteError}</p>
+                    </div>
+                )}
+            </div>
+        );
     };
 
     if (loading) {
@@ -210,6 +355,9 @@ export default function ProposalList() {
                                 <span className="text-red-300 font-semibold">{proposal.votesAgainst}</span>
                             </div>
                         </div>
+
+                        {/* Voting Interface */}
+                        <VotingInterface proposalId={proposal.id} executed={proposal.executed} />
                     </div>
                 ))}
             </div>
