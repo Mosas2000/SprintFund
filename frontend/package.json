@@ -11,10 +11,12 @@
   "dependencies": {
     "@stacks/connect": "^8.2.4",
     "@stacks/transactions": "^7.3.1",
+    "framer-motion": "^12.27.5",
     "next": "16.1.4",
     "next-themes": "^0.4.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
