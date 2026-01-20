@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { callReadOnlyFunction, cvToJSON, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
+import ExecuteProposal from './ExecuteProposal';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -21,7 +22,7 @@ interface Proposal {
     createdAt: number;
 }
 
-export default function ProposalList() {
+export default function ProposalList({ userAddress }: { userAddress?: string }) {
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -358,6 +359,17 @@ export default function ProposalList() {
 
                         {/* Voting Interface */}
                         <VotingInterface proposalId={proposal.id} executed={proposal.executed} />
+
+                        {/* Execute Proposal */}
+                        <ExecuteProposal
+                            proposalId={proposal.id}
+                            proposer={proposal.proposer}
+                            userAddress={userAddress}
+                            executed={proposal.executed}
+                            votesFor={proposal.votesFor}
+                            votesAgainst={proposal.votesAgainst}
+                            onExecuted={fetchProposals}
+                        />
                     </div>
                 ))}
             </div>

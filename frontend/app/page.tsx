@@ -87,7 +87,7 @@ export default function Home() {
           <CreateProposalForm userAddress={userData?.profile?.stxAddress?.mainnet} />
 
           {/* Active Proposals List */}
-          <ProposalList />
+          <ProposalList userAddress={userData?.profile?.stxAddress?.mainnet} />
         </div>
 
         {/* Info Section */}
