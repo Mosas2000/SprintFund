@@ -8,6 +8,7 @@ import UserDashboard from '@/components/UserDashboard';
 import Stats from '@/components/Stats';
 import DarkModeToggle from '@/components/DarkModeToggle';
 import ToastProvider from '@/components/ToastProvider';
+import CopyButton from '@/components/CopyButton';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
