@@ -6,6 +6,7 @@ import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
 import UserDashboard from '@/components/UserDashboard';
 import Stats from '@/components/Stats';
+import DarkModeToggle from '@/components/DarkModeToggle';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -45,7 +46,8 @@ export default function Home() {
               <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-blue-400 rounded-lg"></div>
               <h1 className="text-2xl font-bold text-white">SprintFund</h1>
             </div>
-            <div>
+            <div className="flex items-center space-x-3">
+              <DarkModeToggle />
               {userData ? (
                 <button
                   onClick={disconnectWallet}
