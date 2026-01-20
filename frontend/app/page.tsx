@@ -7,6 +7,7 @@ import ProposalList from '@/components/ProposalList';
 import UserDashboard from '@/components/UserDashboard';
 import Stats from '@/components/Stats';
 import DarkModeToggle from '@/components/DarkModeToggle';
+import ToastProvider from '@/components/ToastProvider';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -38,6 +39,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900">
+      <ToastProvider />
       {/* Header */}
       <header className="border-b border-white/10 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
