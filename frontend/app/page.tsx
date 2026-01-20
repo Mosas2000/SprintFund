@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { AppConfig, UserSession, showConnect } from '@stacks/connect';
 import CreateProposalForm from '@/components/CreateProposalForm';
+import ProposalList from '@/components/ProposalList';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -85,21 +86,8 @@ export default function Home() {
           {/* Create Proposal Form */}
           <CreateProposalForm userAddress={userData?.profile?.stxAddress?.mainnet} />
 
-          {/* Active Proposals Card */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-blue-400/50 transition-all duration-300">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-lg mb-4 flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-3">Active Proposals</h3>
-            <p className="text-purple-200 mb-6">
-              Browse and vote on active proposals using quadratic voting. Your vote matters!
-            </p>
-            <button className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
-              View Proposals
-            </button>
-          </div>
+          {/* Active Proposals List */}
+          <ProposalList />
         </div>
 
         {/* Info Section */}
