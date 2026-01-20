@@ -11,6 +11,7 @@ import {
 import { StacksMainnet } from '@stacks/network';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import CategoryTags from './CategoryTags';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -24,6 +25,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
+    const [category, setCategory] = useState('development');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -195,6 +197,14 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                     <p className="text-xs text-purple-300 mt-1">
                         Recommended: 50-200 STX for micro-grants
                     </p>
+                </div>
+
+                {/* Category Selection */}
+                <div>
+                    <label className="block text-sm font-medium text-purple-200 mb-2">
+                        Category
+                    </label>
+                    <CategoryTags selected={category} onSelect={setCategory} />
                 </div>
 
                 {/* Error Message */}
