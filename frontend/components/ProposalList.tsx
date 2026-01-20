@@ -6,6 +6,7 @@ import { StacksMainnet } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
+import toast from 'react-hot-toast';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -149,6 +150,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                     functionArgs,
                     postConditionMode: PostConditionMode.Deny,
                     onFinish: (data: any) => {
+                        toast.success('Vote submitted successfully!');
                         setVoteSuccess(`Vote submitted! Transaction ID: ${data.txId}`);
                         setVoteWeight('');
                         setIsVoting(false);
@@ -164,13 +166,17 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 await openContractCall(options);
             } catch (err: any) {
                 console.error('Error voting:', err);
+                let errorMessage = 'Failed to submit vote. Please try again.';
                 if (err.message?.includes('already voted')) {
-                    setVoteError('You have already voted on this proposal');
+                    errorMessage = 'You have already voted on this proposal';
+                    setVoteError(errorMessage);
                 } else if (err.message?.includes('insufficient')) {
-                    setVoteError('Insufficient STX balance for this vote weight');
+                    errorMessage = 'Insufficient STX balance for this vote weight';
+                    setVoteError(errorMessage);
                 } else {
-                    setVoteError(err.message || 'Failed to submit vote. Please try again.');
+                    setVoteError(err.message || errorMessage);
                 }
+                toast.error(errorMessage);
                 setIsVoting(false);
             }
         };
