@@ -12,6 +12,7 @@ import Comments from './Comments';
 import FilterDropdown from './FilterDropdown';
 import SortDropdown from './SortDropdown';
 import SearchBar from './SearchBar';
+import CategoryBadge from './CategoryBadge';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -27,6 +28,7 @@ interface Proposal {
     votesAgainst: number;
     executed: boolean;
     createdAt: number;
+    category?: string;
 }
 
 export default function ProposalList({ userAddress }: { userAddress?: string }) {
@@ -408,6 +410,13 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                                     </div>
                                     <p className="text-purple-200 text-sm">{proposal.description}</p>
                                 </div>
+
+                                {/* Category Badge */}
+                                {proposal.category && (
+                                    <div className="ml-4" title={`Category: ${proposal.category}`}>
+                                        <CategoryBadge category={proposal.category} />
+                                    </div>
+                                )}
                             </div>
 
                             {/* Details */}
