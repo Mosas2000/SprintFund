@@ -9,6 +9,7 @@ import LoadingSkeleton from './LoadingSkeleton';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import Comments from './Comments';
+import FilterDropdown from './FilterDropdown';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -29,6 +30,7 @@ interface Proposal {
 export default function ProposalList({ userAddress }: { userAddress?: string }) {
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
     const [error, setError] = useState('');
 
     useEffect(() => {
