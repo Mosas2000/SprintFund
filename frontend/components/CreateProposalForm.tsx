@@ -117,7 +117,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-8 border border-white/10"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 border border-white/10"
         >
             <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Create Proposal</h3>
 
@@ -256,7 +256,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                 <button
                     type="submit"
                     disabled={isSubmitting || !userAddress}
-                    className="w-full px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    className="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                     {isSubmitting ? (
                         <>
