@@ -149,7 +149,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                         className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
                         disabled={isSubmitting}
                     />
-                    <p className="text-xs text-purple-300 mt-1">
+                    <p className={`text-xs mt-1 ${title.length === 0 ? 'text-purple-300' : title.length >= 90 ? 'text-red-400 font-semibold' : 'text-green-400'}`}>
                         {title.length}/100 characters
                     </p>
                 </div>
