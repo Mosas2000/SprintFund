@@ -309,20 +309,35 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
         );
     }
 
+    // Filter proposals based on selected filter
+    const filteredProposals = proposals.filter(proposal => {
+        if (filter === 'active') return !proposal.executed;
+        if (filter === 'executed') return proposal.executed;
+        return true; // 'all' shows everything
+    });
+
     return (
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-8 border border-white/10">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
-                <h3 className="text-xl sm:text-2xl font-bold text-white">Active Proposals</h3>
-                <button
-                    onClick={fetchProposals}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all text-sm"
-                >
-                    Refresh
-                </button>
+                <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white">Active Proposals</h3>
+                    <p className="text-purple-300 text-sm mt-1">
+                        Showing {filteredProposals.length} of {proposals.length} proposals
+                    </p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <FilterDropdown onFilterChange={setFilter} />
+                    <button
+                        onClick={fetchProposals}
+                        className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all text-sm"
+                    >
+                        Refresh
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-4">
-                {proposals.map((proposal, index) => (
+                {filteredProposals.map((proposal, index) => (
                     <motion.div
                         key={proposal.id}
                         initial={{ opacity: 0, y: 20 }}
