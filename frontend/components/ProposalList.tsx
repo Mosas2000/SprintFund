@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import Comments from './Comments';
 import FilterDropdown from './FilterDropdown';
 import SortDropdown from './SortDropdown';
+import SearchBar from './SearchBar';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -33,6 +34,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
     const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes'>('newest');
+    const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -318,8 +320,18 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
         return true; // 'all' shows everything
     });
 
+    // Search filter - search in title and description
+    const searchedProposals = filteredProposals.filter(proposal => {
+        if (!searchTerm.trim()) return true;
+        const search = searchTerm.toLowerCase();
+        return (
+            proposal.title.toLowerCase().includes(search) ||
+            proposal.description.toLowerCase().includes(search)
+        );
+    });
+
     // Sort proposals based on selected sort option
-    const sortedProposals = [...filteredProposals].sort((a, b) => {
+    const sortedProposals = [...searchedProposals].sort((a, b) => {
         switch (sortBy) {
             case 'newest':
                 return b.createdAt - a.createdAt;
@@ -340,6 +352,12 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
 
     return (
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-8 border border-white/10">
+            {/* Search Bar */}
+            <div className="mb-4">
+                <SearchBar onSearchChange={setSearchTerm} />
+            </div>
+
+            {/* Filter, Sort, and Refresh Controls */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
                 <div>
                     <h3 className="text-xl sm:text-2xl font-bold text-white">Active Proposals</h3>
@@ -360,71 +378,81 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             </div>
 
             <div className="space-y-4">
-                {sortedProposals.map((proposal, index) => (
-                    <motion.div
-                        key={proposal.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                        className="bg-white/5 border border-white/10 rounded-xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500 cursor-pointer"
-                    >
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                    <h4 className="text-lg font-bold text-white">{proposal.title}</h4>
-                                    {proposal.executed && (
-                                        <span className="px-2 py-1 bg-green-500/20 border border-green-400/30 rounded text-green-300 text-xs font-medium">
-                                            Executed
-                                        </span>
-                                    )}
+                {sortedProposals.length === 0 && searchTerm ? (
+                    <div className="text-center py-12">
+                        <svg className="w-16 h-16 text-purple-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <p className="text-purple-200 text-lg">No proposals found</p>
+                        <p className="text-purple-300 text-sm mt-2">Try adjusting your search term</p>
+                    </div>
+                ) : (
+                    sortedProposals.map((proposal, index) => (
+                        <motion.div
+                            key={proposal.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                            className="bg-white/5 border border-white/10 rounded-xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500 cursor-pointer"
+                        >
+                            {/* Header */}
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-2">
+                                        <h4 className="text-lg font-bold text-white">{proposal.title}</h4>
+                                        {proposal.executed && (
+                                            <span className="px-2 py-1 bg-green-500/20 border border-green-400/30 rounded text-green-300 text-xs font-medium">
+                                                Executed
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="text-purple-200 text-sm">{proposal.description}</p>
                                 </div>
-                                <p className="text-purple-200 text-sm">{proposal.description}</p>
                             </div>
-                        </div>
 
-                        {/* Details */}
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <p className="text-purple-300 text-xs mb-1">Requested Amount</p>
-                                <p className="text-white font-semibold">{formatSTX(proposal.amount)} STX</p>
+                            {/* Details */}
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <p className="text-purple-300 text-xs mb-1">Requested Amount</p>
+                                    <p className="text-white font-semibold">{formatSTX(proposal.amount)} STX</p>
+                                </div>
+                                <div>
+                                    <p className="text-purple-300 text-xs mb-1">Proposer</p>
+                                    <p className="text-white font-mono text-sm">{shortenAddress(proposal.proposer)}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-purple-300 text-xs mb-1">Proposer</p>
-                                <p className="text-white font-mono text-sm">{shortenAddress(proposal.proposer)}</p>
+
+                            {/* Voting Stats */}
+                            <div className="bg-white/5 rounded-lg p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-purple-200 text-sm">Votes For</span>
+                                    <span className="text-green-300 font-semibold">{proposal.votesFor}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-purple-200 text-sm">Votes Against</span>
+                                    <span className="text-red-300 font-semibold">{proposal.votesAgainst}</span>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Voting Stats */}
-                        <div className="bg-white/5 rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-purple-200 text-sm">Votes For</span>
-                                <span className="text-green-300 font-semibold">{proposal.votesFor}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-purple-200 text-sm">Votes Against</span>
-                                <span className="text-red-300 font-semibold">{proposal.votesAgainst}</span>
-                            </div>
-                        </div>
+                            {/* Voting Interface */}
+                            <VotingInterface proposalId={proposal.id} executed={proposal.executed} />
 
-                        {/* Voting Interface */}
-                        <VotingInterface proposalId={proposal.id} executed={proposal.executed} />
+                            {/* Execute Proposal */}
+                            <ExecuteProposal
+                                proposalId={proposal.id}
+                                proposer={proposal.proposer}
+                                userAddress={userAddress}
+                                executed={proposal.executed}
+                                votesFor={proposal.votesFor}
+                                votesAgainst={proposal.votesAgainst}
+                                onExecuted={fetchProposals}
+                            />
 
-                        {/* Execute Proposal */}
-                        <ExecuteProposal
-                            proposalId={proposal.id}
-                            proposer={proposal.proposer}
-                            userAddress={userAddress}
-                            executed={proposal.executed}
-                            votesFor={proposal.votesFor}
-                            votesAgainst={proposal.votesAgainst}
-                            onExecuted={fetchProposals}
-                        />
-
-                        {/* Comments Section */}
-                        <Comments proposalId={proposal.id} userAddress={userAddress} />
-                    </motion.div>
-                ))}
+                            {/* Comments Section */}
+                            <Comments proposalId={proposal.id} userAddress={userAddress} />
+                        </motion.div>
+                    ))
+                )}
             </div>
         </div>
     );
