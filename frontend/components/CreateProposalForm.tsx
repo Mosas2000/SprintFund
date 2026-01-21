@@ -29,6 +29,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
     const [voteThreshold, setVoteThreshold] = useState('10');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const [amountError, setAmountError] = useState('');
     const [success, setSuccess] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -184,20 +185,38 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                             type="number"
                             id="amount"
                             value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setAmount(val);
+                                const numVal = parseFloat(val);
+                                if (val && numVal < 1) {
+                                    setAmountError('Amount must be at least 1 STX');
+                                } else if (val && numVal > 200) {
+                                    setAmountError('Amount cannot exceed 200 STX');
+                                } else {
+                                    setAmountError('');
+                                }
+                            }}
                             step="0.000001"
-                            min="0"
+                            min="1"
+                            max="200"
                             placeholder="50"
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                            className={`w-full px-4 py-3 bg-white/10 border ${amountError ? 'border-red-500' : 'border-white/20'} rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent`}
                             disabled={isSubmitting}
                         />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-purple-300 text-sm">
                             STX
                         </span>
                     </div>
-                    <p className="text-xs text-purple-300 mt-1">
-                        Recommended: 50-200 STX for micro-grants
-                    </p>
+                    {amountError ? (
+                        <p className="text-xs text-red-400 font-semibold mt-1">
+                            {amountError}
+                        </p>
+                    ) : (
+                        <p className="text-xs text-purple-300 mt-1">
+                            Recommended: 50-200 STX for micro-grants
+                        </p>
+                    )}
                 </div>
 
                 {/* Category Selection */}
@@ -255,7 +274,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                 {/* Submit Button */}
                 <button
                     type="submit"
-                    disabled={isSubmitting || !userAddress}
+                    disabled={isSubmitting || !userAddress || !!amountError}
                     className="w-full sm:w-auto px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                     {isSubmitting ? (
