@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import Comments from './Comments';
 import FilterDropdown from './FilterDropdown';
+import SortDropdown from './SortDropdown';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -31,6 +32,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
+    const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes'>('newest');
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -316,17 +318,38 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
         return true; // 'all' shows everything
     });
 
+    // Sort proposals based on selected sort option
+    const sortedProposals = [...filteredProposals].sort((a, b) => {
+        switch (sortBy) {
+            case 'newest':
+                return b.createdAt - a.createdAt;
+            case 'oldest':
+                return a.createdAt - b.createdAt;
+            case 'highest':
+                return b.amount - a.amount;
+            case 'lowest':
+                return a.amount - b.amount;
+            case 'most-votes':
+                const totalVotesA = a.votesFor + a.votesAgainst;
+                const totalVotesB = b.votesFor + b.votesAgainst;
+                return totalVotesB - totalVotesA;
+            default:
+                return 0;
+        }
+    });
+
     return (
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-8 border border-white/10">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
                 <div>
                     <h3 className="text-xl sm:text-2xl font-bold text-white">Active Proposals</h3>
                     <p className="text-purple-300 text-sm mt-1">
-                        Showing {filteredProposals.length} of {proposals.length} proposals
+                        Showing {sortedProposals.length} of {proposals.length} proposals
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <FilterDropdown onFilterChange={setFilter} />
+                    <SortDropdown onSortChange={setSortBy} />
                     <button
                         onClick={fetchProposals}
                         className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all text-sm"
@@ -337,7 +360,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             </div>
 
             <div className="space-y-4">
-                {filteredProposals.map((proposal, index) => (
+                {sortedProposals.map((proposal, index) => (
                     <motion.div
                         key={proposal.id}
                         initial={{ opacity: 0, y: 20 }}
