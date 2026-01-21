@@ -326,7 +326,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
-                        className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-purple-400/30 hover:scale-105 hover:shadow-xl transition-transform duration-200"
+                        className="bg-white/5 border border-white/10 rounded-xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:border-blue-500 cursor-pointer"
                     >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
