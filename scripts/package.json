@@ -5,7 +5,8 @@
   "scripts": {
     "create-proposal": "node scripts/create-proposal.js",
     "stake": "node scripts/stake.js",
-    "deploy-logger": "node deploy-logger.js"
+    "deploy-logger": "node deploy-logger.js",
+    "call-logger": "node call-logger.js"
   },
   "dependencies": {
     "@stacks/network": "^6.13.0",
