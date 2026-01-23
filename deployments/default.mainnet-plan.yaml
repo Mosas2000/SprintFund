@@ -15,4 +15,11 @@ plan:
             path: contracts/sprintfund-core.clar
             anchor-block-only: true
             clarity-version: 3
+        - contract-publish:
+            contract-name: sprintfund-logger
+            expected-sender: SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T
+            cost: 6970
+            path: contracts/sprintfund-logger.clar
+            anchor-block-only: true
+            clarity-version: 3
       epoch: "3.2"

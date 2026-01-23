@@ -1,0 +1,9 @@
+# SprintFund Mainnet Transactions Log
+# Format: TX<number>: <transaction-id> - <description>
+# 
+# Example:
+# TX1: 0x1234567890abcdef... - Create Test Proposal
+#
+# Add your transaction IDs below:
+DEPLOY_LOGGER: 8c74a2612d50c29af8c6c4f7b79e92499eee4a7f00a8390a08092ae664606654 - Deploy Logger Contract
+CONTRACT: SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-logger
