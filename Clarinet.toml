@@ -9,6 +9,10 @@ cache_dir = "./.cache"
 path = "contracts/sprintfund-core.clar"
 epoch = "latest"
 
+[contracts.sprintfund-logger]
+path = "contracts/sprintfund-logger.clar"
+epoch = "latest"
+
 # [contracts.counter]
 # path = "contracts/counter.clar"
 # epoch = "latest"
