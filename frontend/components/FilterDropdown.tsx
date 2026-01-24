@@ -93,7 +93,7 @@ export default function FilterDropdown({ onFilterChange }: FilterDropdownProps) 
                                 key={filter.value}
                                 onClick={() => handleStatusSelect(filter.value)}
                                 className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${selectedStatus === filter.value
-                                        ? 'bg-blue-600 text-white font-semibold'
+                                        ? 'bg-orange-600 text-white font-semibold'
                                         : 'text-white hover:bg-white/10'
                                     }`}
                             >
@@ -112,7 +112,7 @@ export default function FilterDropdown({ onFilterChange }: FilterDropdownProps) 
                                 key={filter.value}
                                 onClick={() => handleCategorySelect(filter.value)}
                                 className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${selectedCategory === filter.value
-                                        ? 'bg-blue-600 text-white font-semibold'
+                                        ? 'bg-orange-600 text-white font-semibold'
                                         : 'text-white hover:bg-white/10'
                                     }`}
                             >

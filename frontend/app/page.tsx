@@ -64,7 +64,7 @@ export default function Home() {
                 ) : (
                   <button
                     onClick={connectWallet}
-                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-200"
+                    className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition-all duration-200"
                   >
                     Connect Wallet
                   </button>
@@ -109,7 +109,7 @@ export default function Home() {
             <h3 className="text-2xl font-bold text-white mb-6">How It Works</h3>
             <div className="grid md:grid-cols-3 gap-6">
               <div>
-                <div className="text-blue-400 font-bold text-lg mb-2">1. Stake</div>
+                <div className="text-orange-400 font-bold text-lg mb-2">1. Stake</div>
                 <p className="text-slate-300 text-sm">
                   Stake 10 STX to gain proposal creation rights and anti-spam protection.
                 </p>

@@ -44,7 +44,7 @@ export default function SprintFundHero() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20 md:py-32 text-center">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-slate-800 border border-slate-700">
-          <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+          <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
           <span className="text-sm font-medium text-slate-200">
             ⚡ Lightning-Fast Funding
           </span>
@@ -53,7 +53,7 @@ export default function SprintFundHero() {
         {/* Main Headline */}
         <h1 className="text-4xl md:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight">
           Fund ideas in{' '}
-          <span className="text-blue-400">
+          <span className="text-orange-400">
             24 hours
           </span>
         </h1>
@@ -73,7 +73,7 @@ export default function SprintFundHero() {
         <button
           onClick={scrollToProposalForm}
           aria-label="Create a new proposal"
-          className="group inline-flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200"
+          className="group inline-flex items-center gap-3 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-all duration-200"
         >
           <span>Create Proposal</span>
           <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -82,19 +82,19 @@ export default function SprintFundHero() {
         {/* Stats */}
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm md:text-base text-slate-300">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
             <span>1.2M STX Distributed</span>
           </div>
           <div className="hidden sm:block w-px h-4 bg-slate-700"></div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
             <span>147 Projects Funded</span>
           </div>
         </div>
 
         {/* Network Status Indicator */}
         <div className="mt-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700">
-          <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+          <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
           <span className="text-xs font-medium text-slate-300">Mainnet Live</span>
         </div>
       </div>
