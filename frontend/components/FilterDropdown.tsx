@@ -86,14 +86,14 @@ export default function FilterDropdown({ onFilterChange }: FilterDropdownProps) 
                     {/* Status Filter Section */}
                     <div className="border-b border-white/10">
                         <div className="px-4 py-2 bg-white/5">
-                            <p className="text-xs font-semibold text-purple-300 uppercase">Filter by Status</p>
+                            <p className="text-xs font-semibold text-slate-400 uppercase">Filter by Status</p>
                         </div>
                         {statusFilters.map((filter) => (
                             <button
                                 key={filter.value}
                                 onClick={() => handleStatusSelect(filter.value)}
                                 className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${selectedStatus === filter.value
-                                        ? 'bg-purple-500/20 text-purple-200 font-semibold'
+                                        ? 'bg-orange-600 text-white font-semibold'
                                         : 'text-white hover:bg-white/10'
                                     }`}
                             >
@@ -105,14 +105,14 @@ export default function FilterDropdown({ onFilterChange }: FilterDropdownProps) 
                     {/* Category Filter Section */}
                     <div>
                         <div className="px-4 py-2 bg-white/5">
-                            <p className="text-xs font-semibold text-purple-300 uppercase">Filter by Category</p>
+                            <p className="text-xs font-semibold text-slate-400 uppercase">Filter by Category</p>
                         </div>
                         {categoryFilters.map((filter) => (
                             <button
                                 key={filter.value}
                                 onClick={() => handleCategorySelect(filter.value)}
                                 className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${selectedCategory === filter.value
-                                        ? 'bg-purple-500/20 text-purple-200 font-semibold'
+                                        ? 'bg-orange-600 text-white font-semibold'
                                         : 'text-white hover:bg-white/10'
                                     }`}
                             >
