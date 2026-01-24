@@ -49,7 +49,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg"></div>
+                <div className="w-8 h-8 bg-orange-600 rounded-lg"></div>
                 <h1 className="text-2xl font-bold text-white">SprintFund</h1>
               </div>
               <div className="flex items-center space-x-3">
