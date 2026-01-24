@@ -58,7 +58,8 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const count = cvToValue(countResult) || 0;
+            const countValue = cvToValue(countResult);
+            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
 
             if (count === 0) {
                 setProposals([]);
@@ -85,18 +86,18 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
 
             const fetchedProposals: Proposal[] = proposalResults
                 .map((result, index) => {
-                    const proposal = cvToValue(result);
-                    if (proposal) {
+                    const proposalValue = cvToValue(result);
+                    if (proposalValue) {
                         return {
                             id: index,
-                            proposer: proposal.proposer,
-                            amount: parseInt(proposal.amount),
-                            title: proposal.title,
-                            description: proposal.description,
-                            votesFor: parseInt(proposal['votes-for']),
-                            votesAgainst: parseInt(proposal['votes-against']),
-                            executed: proposal.executed,
-                            createdAt: parseInt(proposal['created-at']),
+                            proposer: proposalValue.proposer?.value || proposalValue.proposer,
+                            amount: parseInt(proposalValue.amount?.value || proposalValue.amount),
+                            title: proposalValue.title?.value || proposalValue.title,
+                            description: proposalValue.description?.value || proposalValue.description,
+                            votesFor: parseInt(proposalValue['votes-for']?.value || proposalValue['votes-for']),
+                            votesAgainst: parseInt(proposalValue['votes-against']?.value || proposalValue['votes-against']),
+                            executed: proposalValue.executed?.value ?? proposalValue.executed,
+                            createdAt: parseInt(proposalValue['created-at']?.value || proposalValue['created-at']),
                         };
                     }
                     return null;

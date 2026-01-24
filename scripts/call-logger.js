@@ -56,4 +56,4 @@ async function runBatch(batchNum) {
   console.log(`✅ Batch ${batchNum} complete!\n`);
 }
 
-runBatch(1);
+runBatch(10);

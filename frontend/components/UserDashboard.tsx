@@ -41,9 +41,10 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const stake = cvToValue(stakeResult);
-            if (stake) {
-                setStakeBalance(parseInt(stake.amount));
+            const stakeValue = cvToValue(stakeResult);
+            if (stakeValue) {
+                const amount = stakeValue.amount?.value || stakeValue.amount;
+                setStakeBalance(parseInt(amount));
             }
 
             // Fetch proposal count to iterate through all proposals
@@ -56,7 +57,8 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const count = cvToValue(countResult) || 0;
+            const countValue = cvToValue(countResult);
+            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
 
             // Fetch all proposals and filter user's proposals
             const userProposalIds: number[] = [];
@@ -70,9 +72,12 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                     senderAddress: CONTRACT_ADDRESS,
                 });
 
-                const proposal = cvToValue(proposalResult);
-                if (proposal && proposal.proposer === userAddress) {
-                    userProposalIds.push(i);
+                const proposalValue = cvToValue(proposalResult);
+                if (proposalValue) {
+                    const proposer = proposalValue.proposer?.value || proposalValue.proposer;
+                    if (proposer === userAddress) {
+                        userProposalIds.push(i);
+                    }
                 }
             }
 

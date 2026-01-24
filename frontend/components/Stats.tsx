@@ -40,7 +40,8 @@ export default function Stats() {
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const count = cvToValue(countResult) || 0;
+            const countValue = cvToValue(countResult);
+            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
             setTotalProposals(count);
 
             // Fetch all proposals to calculate stats
@@ -59,13 +60,13 @@ export default function Stats() {
                     senderAddress: CONTRACT_ADDRESS,
                 });
 
-                const proposal = cvToValue(proposalResult);
-                if (proposal) {
+                const proposalValue = cvToValue(proposalResult);
+                if (proposalValue) {
                     const proposalData = {
                         id: i,
-                        proposer: proposal.proposer,
-                        amount: parseInt(proposal.amount),
-                        executed: proposal.executed,
+                        proposer: proposalValue.proposer?.value || proposalValue.proposer,
+                        amount: parseInt(proposalValue.amount?.value || proposalValue.amount),
+                        executed: proposalValue.executed?.value ?? proposalValue.executed,
                     };
 
                     proposals.push(proposalData);
