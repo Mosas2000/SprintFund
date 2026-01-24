@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import SprintFundHero from '@/components/ui/SprintFundHero';
 import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
 import UserDashboard from '@/components/UserDashboard';
@@ -73,15 +74,13 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Hero Section */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-6xl font-bold text-white mb-4">
-              Fund ideas in 24 hours
-            </h2>
-            <p className="text-xl text-purple-200 mb-8">
-              Lightning-fast micro-grants DAO on Stacks blockchain
-            </p>
+        {/* Hero Section with Dithering Animation */}
+        <SprintFundHero />
+
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Contract Address Display */}
+          <div className="text-center mb-12">
             <div className="inline-block bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
               <p className="text-sm text-purple-200 mb-1">Contract Address</p>
               <code className="text-white font-mono text-sm break-all">
@@ -97,7 +96,7 @@ export default function Home() {
           <Stats />
 
           {/* Features Grid */}
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div id="create-proposal" className="grid md:grid-cols-2 gap-8 mb-16">
             {/* Create Proposal Form */}
             <CreateProposalForm userAddress={userData?.profile?.stxAddress?.mainnet} />
 
