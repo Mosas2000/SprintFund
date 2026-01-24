@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { callReadOnlyFunction, cvToJSON, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
+import { STACKS_MAINNET } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
@@ -16,7 +16,7 @@ import CategoryBadge from './CategoryBadge';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
-const NETWORK = new StacksMainnet();
+const NETWORK = STACKS_MAINNET;
 
 interface Proposal {
     id: number;
@@ -49,7 +49,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             setError('');
 
             // First, get the proposal count
-            const countResult = await callReadOnlyFunction({
+            const countResult = await fetchCallReadOnlyFunction({
                 network: NETWORK,
                 contractAddress: CONTRACT_ADDRESS,
                 contractName: CONTRACT_NAME,
@@ -58,8 +58,8 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const countJson = cvToJSON(countResult);
-            const count = countJson.value?.value || 0;
+            const countValue = cvToValue(countResult);
+            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
 
             if (count === 0) {
                 setProposals([]);
@@ -71,7 +71,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             const proposalPromises = [];
             for (let i = 0; i < count; i++) {
                 proposalPromises.push(
-                    callReadOnlyFunction({
+                    fetchCallReadOnlyFunction({
                         network: NETWORK,
                         contractAddress: CONTRACT_ADDRESS,
                         contractName: CONTRACT_NAME,
@@ -86,18 +86,18 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
 
             const fetchedProposals: Proposal[] = proposalResults
                 .map((result, index) => {
-                    const json = cvToJSON(result);
-                    if (json.value) {
+                    const proposalValue = cvToValue(result);
+                    if (proposalValue) {
                         return {
                             id: index,
-                            proposer: json.value.proposer.value,
-                            amount: parseInt(json.value.amount.value),
-                            title: json.value.title.value,
-                            description: json.value.description.value,
-                            votesFor: parseInt(json.value['votes-for'].value),
-                            votesAgainst: parseInt(json.value['votes-against'].value),
-                            executed: json.value.executed.value,
-                            createdAt: parseInt(json.value['created-at'].value),
+                            proposer: proposalValue.proposer?.value || proposalValue.proposer,
+                            amount: parseInt(proposalValue.amount?.value || proposalValue.amount),
+                            title: proposalValue.title?.value || proposalValue.title,
+                            description: proposalValue.description?.value || proposalValue.description,
+                            votesFor: parseInt(proposalValue['votes-for']?.value || proposalValue['votes-for']),
+                            votesAgainst: parseInt(proposalValue['votes-against']?.value || proposalValue['votes-against']),
+                            executed: proposalValue.executed?.value ?? proposalValue.executed,
+                            createdAt: parseInt(proposalValue['created-at']?.value || proposalValue['created-at']),
                         };
                     }
                     return null;

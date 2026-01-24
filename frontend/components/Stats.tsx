@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { callReadOnlyFunction, cvToJSON } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { fetchCallReadOnlyFunction, cvToValue } from '@stacks/transactions';
+import { STACKS_MAINNET } from '@stacks/network';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
-const NETWORK = new StacksMainnet();
+const NETWORK = STACKS_MAINNET;
 
 interface Proposal {
     id: number;
@@ -31,7 +31,7 @@ export default function Stats() {
             setLoading(true);
 
             // Fetch total proposals
-            const countResult = await callReadOnlyFunction({
+            const countResult = await fetchCallReadOnlyFunction({
                 network: NETWORK,
                 contractAddress: CONTRACT_ADDRESS,
                 contractName: CONTRACT_NAME,
@@ -40,8 +40,8 @@ export default function Stats() {
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const countJson = cvToJSON(countResult);
-            const count = countJson.value?.value || 0;
+            const countValue = cvToValue(countResult);
+            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
             setTotalProposals(count);
 
             // Fetch all proposals to calculate stats
@@ -51,7 +51,7 @@ export default function Stats() {
             let active = 0;
 
             for (let i = 0; i < count; i++) {
-                const proposalResult = await callReadOnlyFunction({
+                const proposalResult = await fetchCallReadOnlyFunction({
                     network: NETWORK,
                     contractAddress: CONTRACT_ADDRESS,
                     contractName: CONTRACT_NAME,
@@ -60,23 +60,23 @@ export default function Stats() {
                     senderAddress: CONTRACT_ADDRESS,
                 });
 
-                const proposalJson = cvToJSON(proposalResult);
-                if (proposalJson.value) {
-                    const proposal = {
+                const proposalValue = cvToValue(proposalResult);
+                if (proposalValue) {
+                    const proposalData = {
                         id: i,
-                        proposer: proposalJson.value.proposer.value,
-                        amount: parseInt(proposalJson.value.amount.value),
-                        executed: proposalJson.value.executed.value,
+                        proposer: proposalValue.proposer?.value || proposalValue.proposer,
+                        amount: parseInt(proposalValue.amount?.value || proposalValue.amount),
+                        executed: proposalValue.executed?.value ?? proposalValue.executed,
                     };
 
-                    proposals.push(proposal);
+                    proposals.push(proposalData);
 
                     // Count proposers
-                    proposerCounts[proposal.proposer] = (proposerCounts[proposal.proposer] || 0) + 1;
+                    proposerCounts[proposalData.proposer] = (proposerCounts[proposalData.proposer] || 0) + 1;
 
                     // Calculate distributed STX
-                    if (proposal.executed) {
-                        distributed += proposal.amount;
+                    if (proposalData.executed) {
+                        distributed += proposalData.amount;
                     } else {
                         active++;
                     }

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { callReadOnlyFunction, cvToJSON } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { fetchCallReadOnlyFunction, cvToValue } from '@stacks/transactions';
+import { STACKS_MAINNET } from '@stacks/network';
 import VoteDelegation from './VoteDelegation';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
-const NETWORK = new StacksMainnet();
+const NETWORK = STACKS_MAINNET;
 
 interface UserDashboardProps {
     userAddress?: string;
@@ -32,7 +32,7 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
             setLoading(true);
 
             // Fetch stake balance
-            const stakeResult = await callReadOnlyFunction({
+            const stakeResult = await fetchCallReadOnlyFunction({
                 network: NETWORK,
                 contractAddress: CONTRACT_ADDRESS,
                 contractName: CONTRACT_NAME,
@@ -41,13 +41,14 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const stakeJson = cvToJSON(stakeResult);
-            if (stakeJson.value) {
-                setStakeBalance(parseInt(stakeJson.value.amount.value));
+            const stakeValue = cvToValue(stakeResult);
+            if (stakeValue) {
+                const amount = stakeValue.amount?.value || stakeValue.amount;
+                setStakeBalance(parseInt(amount));
             }
 
             // Fetch proposal count to iterate through all proposals
-            const countResult = await callReadOnlyFunction({
+            const countResult = await fetchCallReadOnlyFunction({
                 network: NETWORK,
                 contractAddress: CONTRACT_ADDRESS,
                 contractName: CONTRACT_NAME,
@@ -56,13 +57,13 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const countJson = cvToJSON(countResult);
-            const count = countJson.value?.value || 0;
+            const countValue = cvToValue(countResult);
+            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
 
             // Fetch all proposals and filter user's proposals
             const userProposalIds: number[] = [];
             for (let i = 0; i < count; i++) {
-                const proposalResult = await callReadOnlyFunction({
+                const proposalResult = await fetchCallReadOnlyFunction({
                     network: NETWORK,
                     contractAddress: CONTRACT_ADDRESS,
                     contractName: CONTRACT_NAME,
@@ -71,9 +72,12 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                     senderAddress: CONTRACT_ADDRESS,
                 });
 
-                const proposalJson = cvToJSON(proposalResult);
-                if (proposalJson.value && proposalJson.value.proposer.value === userAddress) {
-                    userProposalIds.push(i);
+                const proposalValue = cvToValue(proposalResult);
+                if (proposalValue) {
+                    const proposer = proposalValue.proposer?.value || proposalValue.proposer;
+                    if (proposer === userAddress) {
+                        userProposalIds.push(i);
+                    }
                 }
             }
 
