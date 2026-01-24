@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { callReadOnlyFunction, cvToJSON, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
+import { STACKS_MAINNET } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
@@ -16,7 +16,7 @@ import CategoryBadge from './CategoryBadge';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
-const NETWORK = new StacksMainnet();
+const NETWORK = STACKS_MAINNET;
 
 interface Proposal {
     id: number;
@@ -49,7 +49,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             setError('');
 
             // First, get the proposal count
-            const countResult = await callReadOnlyFunction({
+            const countResult = await fetchCallReadOnlyFunction({
                 network: NETWORK,
                 contractAddress: CONTRACT_ADDRESS,
                 contractName: CONTRACT_NAME,
@@ -58,8 +58,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 senderAddress: CONTRACT_ADDRESS,
             });
 
-            const countJson = cvToJSON(countResult);
-            const count = countJson.value?.value || 0;
+            const count = cvToValue(countResult) || 0;
 
             if (count === 0) {
                 setProposals([]);
@@ -71,7 +70,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             const proposalPromises = [];
             for (let i = 0; i < count; i++) {
                 proposalPromises.push(
-                    callReadOnlyFunction({
+                    fetchCallReadOnlyFunction({
                         network: NETWORK,
                         contractAddress: CONTRACT_ADDRESS,
                         contractName: CONTRACT_NAME,
@@ -86,18 +85,18 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
 
             const fetchedProposals: Proposal[] = proposalResults
                 .map((result, index) => {
-                    const json = cvToJSON(result);
-                    if (json.value) {
+                    const proposal = cvToValue(result);
+                    if (proposal) {
                         return {
                             id: index,
-                            proposer: json.value.proposer.value,
-                            amount: parseInt(json.value.amount.value),
-                            title: json.value.title.value,
-                            description: json.value.description.value,
-                            votesFor: parseInt(json.value['votes-for'].value),
-                            votesAgainst: parseInt(json.value['votes-against'].value),
-                            executed: json.value.executed.value,
-                            createdAt: parseInt(json.value['created-at'].value),
+                            proposer: proposal.proposer,
+                            amount: parseInt(proposal.amount),
+                            title: proposal.title,
+                            description: proposal.description,
+                            votesFor: parseInt(proposal['votes-for']),
+                            votesAgainst: parseInt(proposal['votes-against']),
+                            executed: proposal.executed,
+                            createdAt: parseInt(proposal['created-at']),
                         };
                     }
                     return null;

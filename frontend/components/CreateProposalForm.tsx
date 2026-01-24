@@ -8,14 +8,14 @@ import {
     stringUtf8CV,
     uintCV,
 } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { STACKS_MAINNET } from '@stacks/network';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import CategoryTags from './CategoryTags';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
-const NETWORK = new StacksMainnet();
+const NETWORK = STACKS_MAINNET;
 
 interface CreateProposalFormProps {
     userAddress?: string;
