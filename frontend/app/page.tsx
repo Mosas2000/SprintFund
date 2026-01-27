@@ -11,6 +11,7 @@ import DarkModeToggle from '@/components/DarkModeToggle';
 import ToastProvider from '@/components/ToastProvider';
 import CopyButton from '@/components/CopyButton';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import Navigation from '@/components/Navigation';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -48,9 +49,12 @@ export default function Home() {
         <header className="border-b border-slate-700 bg-slate-800/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-orange-600 rounded-lg"></div>
-                <h1 className="text-2xl font-bold text-white">SprintFund</h1>
+              <div className="flex items-center space-x-8">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-orange-600 rounded-lg"></div>
+                  <h1 className="text-2xl font-bold text-white">SprintFund</h1>
+                </div>
+                <Navigation />
               </div>
               <div className="flex items-center space-x-3">
                 <DarkModeToggle />
