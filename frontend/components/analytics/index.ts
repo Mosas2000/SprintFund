@@ -6,3 +6,8 @@ export { default as VoterNetworkGraph } from './VoterNetworkGraph';
 export { default as SuccessPredictor } from './SuccessPredictor';
 export { default as ProposalComparator } from './ProposalComparator';
 export { default as LiveAnalytics } from './LiveAnalytics';
+export { default as InsightsFeed } from './InsightsFeed';
+export { default as OptimizationPanel } from './OptimizationPanel';
+export { default as ProbabilityCalculator } from './ProbabilityCalculator';
+export { default as PerformanceTracker } from './PerformanceTracker';
+export { default as CommunityInsights } from './CommunityInsights';
