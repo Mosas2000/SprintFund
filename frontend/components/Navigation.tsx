@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { BarChart3, Home, Sparkles, LayoutGrid } from 'lucide-react';
+import { BarChart3, Home, Sparkles, LayoutGrid, Users, Shield } from 'lucide-react';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -12,7 +12,9 @@ export default function Navigation() {
     { href: '/', label: 'Launchpad', icon: Home },
     { href: '/analytics', label: 'Ecosystem', icon: BarChart3 },
     { href: '/proposals', label: 'Governance', icon: LayoutGrid },
+    { href: '/community', label: 'Directory', icon: Users },
     { href: '/profile', label: 'Identity', icon: Sparkles },
+    { href: '/api-docs', label: 'Protocol', icon: Shield },
   ];
 
   return (
@@ -26,8 +28,8 @@ export default function Navigation() {
             key={item.href}
             href={item.href}
             className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-300 group ${isActive
-                ? 'text-white'
-                : 'text-slate-400 hover:text-slate-100'
+              ? 'text-white'
+              : 'text-slate-400 hover:text-slate-100'
               }`}
           >
             {isActive && (

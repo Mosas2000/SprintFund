@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 import { Providers } from "@/components/Providers";
 import GlassBackground from "@/components/GlassBackground";
 import ToastProvider from "@/components/ToastProvider";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 export default function RootLayout({
   children,
@@ -35,6 +36,7 @@ export default function RootLayout({
       >
         <Providers>
           <ToastProvider />
+          <PWAInstallPrompt />
           <GlassBackground />
           <div className="relative z-0">
             {children}
