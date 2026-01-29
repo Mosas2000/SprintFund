@@ -80,11 +80,11 @@ export default function ProbabilityCalculator() {
             {/* Inputs */}
             <div className="space-y-8">
                 <div>
-                    <h2 className="text-2xl font-black mb-2">Success Calculator</h2>
-                    <p className="text-sm text-gray-500 font-medium">Adjust factors to simulate your proposal's success probability.</p>
+                    <h2 className="text-2xl font-black mb-2 uppercase tracking-tighter text-white">Success Simulator</h2>
+                    <p className="text-sm text-slate-500 font-medium uppercase tracking-tight">Fine-tune variables to manifest optimal consensus probability.</p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-8">
                     <FactorSlider
                         label="Proposal Amount (STX)"
                         value={factors.amount}
@@ -94,7 +94,7 @@ export default function ProbabilityCalculator() {
                         onChange={(v) => handleSliderChange('amount', v)}
                     />
                     <FactorSlider
-                        label="Category Baseline Success"
+                        label="Category Resonance"
                         value={factors.categorySuccess}
                         min={0}
                         max={100}
@@ -102,7 +102,7 @@ export default function ProbabilityCalculator() {
                         onChange={(v) => handleSliderChange('categorySuccess', v)}
                     />
                     <FactorSlider
-                        label="Description Quality"
+                        label="Structural Quality"
                         value={factors.descriptionScore}
                         min={1}
                         max={10}
@@ -110,7 +110,7 @@ export default function ProbabilityCalculator() {
                         onChange={(v) => handleSliderChange('descriptionScore', v)}
                     />
                     <FactorSlider
-                        label="Your Reputation"
+                        label="Advocate Reputation"
                         value={factors.reputation}
                         min={0}
                         max={10}
@@ -118,7 +118,7 @@ export default function ProbabilityCalculator() {
                         onChange={(v) => handleSliderChange('reputation', v)}
                     />
                     <FactorSlider
-                        label="Timing Sentiment"
+                        label="Market Sentiment"
                         value={factors.timing}
                         min={0}
                         max={100}
@@ -126,7 +126,7 @@ export default function ProbabilityCalculator() {
                         onChange={(v) => handleSliderChange('timing', v)}
                     />
                     <FactorSlider
-                        label="Market Competition"
+                        label="Competitive Density"
                         value={factors.competition}
                         min={0}
                         max={100}
@@ -137,43 +137,47 @@ export default function ProbabilityCalculator() {
             </div>
 
             {/* Results */}
-            <div className="flex flex-col justify-center items-center bg-gray-50 dark:bg-gray-900 rounded-[32px] p-12 border border-gray-100 dark:border-gray-800 shadow-inner">
-                <div className="text-center mb-12">
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 mb-4">Estimated Probability</div>
-                    <div className="text-8xl font-black text-gray-900 dark:text-white tabular-nums">
+            <div className="flex flex-col justify-center items-center bg-black/40 border border-white/5 rounded-[40px] p-12 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+                    <div className="w-32 h-32 rounded-full border-[20px] border-orange-500" />
+                </div>
+
+                <div className="text-center mb-12 relative z-10">
+                    <div className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500 mb-6">Manifestation Probability</div>
+                    <div className="text-8xl font-black text-white tabular-nums tracking-tighter mb-4">
                         {calculation.total}%
                     </div>
-                    <div className="text-gray-400 font-bold mt-2">
-                        Confidence Interval: {calculation.confidenceInterval[0]}% - {calculation.confidenceInterval[1]}%
+                    <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full">
+                        Confidence Interval: {calculation.confidenceInterval[0]}% — {calculation.confidenceInterval[1]}%
                     </div>
                 </div>
 
-                <div className="w-full space-y-4">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 px-1">Factor Breakdown</h4>
+                <div className="w-full space-y-6 relative z-10">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-8 px-1">Factor Influence Breakdown</h4>
                     {calculation.breakdown.map((item) => (
-                        <div key={item.name} className="flex items-center gap-4">
-                            <div className="w-24 text-xs font-bold text-gray-500">{item.name}</div>
-                            <div className="flex-1 bg-gray-200 dark:bg-gray-800 h-2 rounded-full overflow-hidden flex relative">
+                        <div key={item.name} className="flex items-center gap-6">
+                            <div className="w-20 text-[10px] font-black text-slate-500 uppercase tracking-tight">{item.name}</div>
+                            <div className="flex-1 bg-white/5 h-1.5 rounded-full overflow-hidden flex relative">
                                 <div
-                                    className={`h-full absolute transition-all duration-300 ${item.positive ? 'bg-green-500 left-1/2' : 'bg-red-500 right-1/2'}`}
-                                    style={{ width: `${Math.abs(parseFloat(item.value) * 2)}%` }}
+                                    className={`h-full absolute transition-all duration-500 ease-out ${item.positive ? 'bg-green-500 left-1/2' : 'bg-red-500 right-1/2'}`}
+                                    style={{ width: `${Math.min(50, Math.abs(parseFloat(item.value) * 1.5))}%` }}
                                 />
-                                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400/20" />
+                                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/10" />
                             </div>
-                            <div className={`w-12 text-xs font-black text-right ${item.positive ? 'text-green-600' : 'text-red-600'}`}>
+                            <div className={`w-14 text-[10px] font-black text-right tabular-nums ${item.positive ? 'text-green-500' : 'text-red-500'}`}>
                                 {item.positive ? '+' : ''}{item.value}%
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-12 p-6 bg-white dark:bg-gray-800 rounded-2xl w-full border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <h5 className="font-bold text-sm mb-2 flex items-center gap-2">
-                        <span>🔮</span> Scenario Prediction
+                <div className="mt-12 p-6 bg-orange-600/5 border border-orange-500/10 rounded-2xl w-full">
+                    <h5 className="font-black text-[10px] uppercase tracking-widest text-orange-500 mb-2 flex items-center gap-2">
+                        <span>🔮</span> Deep Scan Verdict
                     </h5>
-                    <p className="text-xs text-gray-500 leading-relaxed">
-                        Based on {factors.amount} STX request in a category with {factors.categorySuccess}% baseline, your most likely outcome is
-                        <span className="font-bold text-gray-900 dark:text-white ml-1">Early Funding within 48 hours.</span>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                        Algorithmic scan suggests that with a request of {factors.amount} STX, you should expect
+                        <span className="text-white ml-1">Consensus reached within 72 hours.</span>
                     </p>
                 </div>
             </div>
@@ -192,8 +196,8 @@ function FactorSlider({ label, value, min, max, unit, onChange }: {
     return (
         <div className="group">
             <div className="flex justify-between items-center mb-3">
-                <label className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition">{label}</label>
-                <div className="text-xs font-black text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md min-w-[3rem] text-center">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-white transition-colors">{label}</label>
+                <div className="text-[10px] font-black text-white bg-white/5 border border-white/5 px-3 py-1 rounded-lg tabular-nums">
                     {value}{unit}
                 </div>
             </div>
@@ -203,7 +207,7 @@ function FactorSlider({ label, value, min, max, unit, onChange }: {
                 max={max}
                 value={value}
                 onChange={(e) => onChange(parseInt(e.target.value))}
-                className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-600 hover:accent-orange-500 transition-all"
             />
         </div>
     );
