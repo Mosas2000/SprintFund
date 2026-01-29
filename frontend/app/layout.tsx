@@ -15,7 +15,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SprintFund - Fund ideas in 24 hours",
   description: "Lightning-fast micro-grants DAO on Stacks blockchain with quadratic voting",
+  manifest: "/manifest.json",
+  themeColor: "#EA580C",
 };
+
+import { Providers } from "@/components/Providers";
+import GlassBackground from "@/components/GlassBackground";
+import ToastProvider from "@/components/ToastProvider";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 export default function RootLayout({
   children,
@@ -23,11 +30,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-orange-500/30`}
       >
-        {children}
+        <Providers>
+          <ToastProvider />
+          <PWAInstallPrompt />
+          <GlassBackground />
+          <div className="relative z-0">
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );
