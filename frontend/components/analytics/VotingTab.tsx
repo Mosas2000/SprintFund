@@ -30,6 +30,7 @@ import {
     Globe
 } from 'lucide-react';
 import { VotingHeatmap, VoterNetworkGraph } from './index';
+import BulkVotingQueue from '../BulkVotingQueue';
 
 const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
@@ -240,8 +241,8 @@ export default function VotingTab() {
                                     </div>
                                     <div className="text-right hidden sm:block">
                                         <span className={`px-2 py-1 rounded text-[8px] font-black uppercase ${v.weight === 'High' ? 'bg-orange-500/10 text-orange-500' :
-                                                v.weight === 'Medium' ? 'bg-blue-500/10 text-blue-500' :
-                                                    'bg-slate-700/30 text-slate-500'
+                                            v.weight === 'Medium' ? 'bg-blue-500/10 text-blue-500' :
+                                                'bg-slate-700/30 text-slate-500'
                                             }`}>
                                             {v.weight} IMPACT
                                         </span>
@@ -254,6 +255,20 @@ export default function VotingTab() {
                         VIEW FULL NETWORK GRAPH
                     </button>
                 </div>
+            </div>
+
+            {/* Actionable Batch Tools */}
+            <div className="bg-slate-900 border border-slate-800 rounded-[48px] p-2">
+                <div className="p-8 pb-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-orange-600/20 flex items-center justify-center border border-orange-500/30">
+                        <Zap className="w-5 h-5 text-orange-500" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black uppercase tracking-tight">Vote Architect</h3>
+                        <p className="text-[10px] font-black text-slate-500 uppercase mt-1">Configure and manifest bulk quadratic voting loads</p>
+                    </div>
+                </div>
+                <BulkVotingQueue />
             </div>
 
             {/* Real-time Voting Feed */}
@@ -301,8 +316,8 @@ export default function VotingTab() {
 function StatsCard({ label, value, trend, trendUp, highlight }: any) {
     return (
         <div className={`p-6 rounded-3xl border transition-all ${highlight
-                ? 'bg-orange-600/10 border-orange-500/30'
-                : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+            ? 'bg-orange-600/10 border-orange-500/30'
+            : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
             }`}>
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{label}</p>
             <div className="flex items-baseline justify-between gap-2">

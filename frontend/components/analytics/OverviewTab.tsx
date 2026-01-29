@@ -17,8 +17,10 @@ import {
     LineChart,
     Line
 } from 'recharts';
-import { TrendingUp, ArrowUpRight, ArrowDownRight, Clock, Award, Activity, Sparkles } from 'lucide-react';
+import { TrendingUp, ArrowUpRight, ArrowDownRight, Clock, Award, Activity, Sparkles, Shield } from 'lucide-react';
 import { InsightsFeed } from './index';
+import TreasuryTransparency from '../TreasuryTransparency';
+import EcosystemBenchmarks from '../EcosystemBenchmarks';
 
 const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
@@ -190,42 +192,46 @@ export default function OverviewTab() {
                 </div>
             </div>
 
-            {/* Secondary Insights */}
+            {/* Industrial Data Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <TreasuryTransparency />
+                <EcosystemBenchmarks />
+            </div>
+
+            {/* Tertiary Insights & Health */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Top Proposers */}
-                <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 backdrop-blur-sm">
-                    <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-lg font-bold uppercase tracking-tight">Top Performance</h3>
-                        <Award className="w-5 h-5 text-orange-500" />
+                {/* DAO Health Index */}
+                <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 backdrop-blur-sm relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-5">
+                        <Shield className="w-24 h-24 text-green-500" />
                     </div>
-                    <div className="space-y-6">
-                        {[
-                            { name: 'mosas.btc', success: '94%', count: 12 },
-                            { name: 'alice.stx', success: '88%', count: 8 },
-                            { name: 'bob.btc', success: '85%', count: 15 },
-                            { name: 'charlie.stx', success: '82%', count: 9 },
-                            { name: 'dan.btc', success: '78%', count: 20 },
-                        ].map((user, i) => (
-                            <div key={user.name} className="flex items-center justify-between group">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-black text-slate-500 group-hover:border-orange-500 group-hover:text-orange-500 transition-all">
-                                        {i + 1}
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-bold group-hover:text-orange-500 transition-colors">{user.name}</p>
-                                        <p className="text-[10px] font-bold text-slate-500">{user.count} proposals executed</p>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-sm font-black text-green-500">{user.success}</p>
-                                    <p className="text-[10px] font-bold text-slate-500">SUCCESS</p>
-                                </div>
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-lg font-bold uppercase tracking-tight">Protocol Health</h3>
+                            <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
+                                <span className="text-[10px] font-black text-green-500 uppercase">A+ Rating</span>
                             </div>
-                        ))}
+                        </div>
+                        <div className="flex items-baseline gap-2 mb-8">
+                            <h4 className="text-4xl font-black text-white">94/100</h4>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">STABLE ECHELON</span>
+                        </div>
+                        <div className="space-y-4">
+                            {[
+                                { name: 'Participation', val: '92%', ok: true },
+                                { name: 'Capital Runway', val: '14mo', ok: true },
+                                { name: 'Growth Vel.', val: 'Strong', ok: true },
+                            ].map(m => (
+                                <div key={m.name} className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-500 uppercase">{m.name}</span>
+                                    <span className="text-xs font-black text-white">{m.val}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                {/* Recent Activity */}
+                {/* Recent Activity (Moved into its own component style) */}
                 <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 backdrop-blur-sm shadow-xl">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-lg font-bold uppercase tracking-tight">Live Activity</h3>
@@ -250,66 +256,25 @@ export default function OverviewTab() {
                             </div>
                         ))}
                     </div>
-                    <button className="w-full mt-8 py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl text-[10px] font-black tracking-widest uppercase transition-all">
-                        VIEW ALL ACTIVITY
-                    </button>
-                </div>
-
-                {/* Trending Topics */}
-                <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 backdrop-blur-sm overflow-hidden">
-                    <h3 className="text-lg font-bold uppercase tracking-tight mb-8">Trending Topics</h3>
-                    <div className="flex flex-wrap gap-3">
-                        {[
-                            { text: 'DeFi', size: 'text-2xl', count: '45' },
-                            { text: 'Stacks v2.1', size: 'text-lg', count: '32' },
-                            { text: 'Gaming', size: 'text-xl', count: '28' },
-                            { text: 'DAOs', size: 'text-sm', count: '15' },
-                            { text: 'Wallet', size: 'text-lg', count: '22' },
-                            { text: 'Infrastructure', size: 'text-2xl', count: '40' },
-                            { text: 'Education', size: 'text-md', count: '18' },
-                            { text: 'Research', size: 'text-sm', count: '12' },
-                            { text: 'Art', size: 'text-xl', count: '25' },
-                            { text: 'Mobile', size: 'text-md', count: '20' },
-                            { text: 'Liquidity', size: 'text-lg', count: '21' },
-                            { text: 'Bridges', size: 'text-sm', count: '9' },
-                        ].map((topic) => (
-                            <button
-                                key={topic.text}
-                                className={`${topic.size} font-black uppercase tracking-tight transition-all hover:scale-110 hover:text-orange-500 ${parseInt(topic.count) > 30 ? 'text-slate-100' :
-                                    parseInt(topic.count) > 20 ? 'text-slate-400' :
-                                        'text-slate-600'
-                                    }`}
-                            >
-                                {topic.text}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="mt-12 p-6 bg-orange-600/10 border border-orange-500/20 rounded-2xl relative overflow-hidden group">
-                        <div className="relative z-10">
-                            <h4 className="text-xs font-black text-orange-500 uppercase tracking-widest mb-2">Platform Insight</h4>
-                            <p className="text-xs font-bold text-slate-300 leading-relaxed italic">
-                                "Submissions related to 'Infrastructure' have higher success rates but require 12% more time for technical review."
-                            </p>
-                        </div>
-                        <TrendingUp className="absolute -bottom-4 -right-4 w-24 h-24 text-orange-500/10 group-hover:scale-110 transition-transform" />
-                    </div>
+                    <TrendingUp className="absolute -bottom-4 -right-4 w-24 h-24 text-orange-500/10 group-hover:scale-110 transition-transform" />
                 </div>
             </div>
-
-            {/* AI Insights Engine Row */}
-            <section className="bg-slate-900/30 border border-slate-800 rounded-[48px] p-2">
-                <div className="p-8 pb-0 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-orange-600/20 flex items-center justify-center border border-orange-500/30">
-                        <Sparkles className="w-5 h-5 text-orange-500" />
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-black uppercase tracking-tight">AI Insights Feed</h3>
-                        <p className="text-[10px] font-black text-slate-500 uppercase mt-1">Real-time analysis of platform dynamics and growth patterns</p>
-                    </div>
-                </div>
-                <InsightsFeed />
-            </section>
         </div>
+
+            {/* AI Insights Engine Row */ }
+    <section className="bg-slate-900/30 border border-slate-800 rounded-[48px] p-2">
+        <div className="p-8 pb-0 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-orange-600/20 flex items-center justify-center border border-orange-500/30">
+                <Sparkles className="w-5 h-5 text-orange-500" />
+            </div>
+            <div>
+                <h3 className="text-xl font-black uppercase tracking-tight">AI Insights Feed</h3>
+                <p className="text-[10px] font-black text-slate-500 uppercase mt-1">Real-time analysis of platform dynamics and growth patterns</p>
+            </div>
+        </div>
+        <InsightsFeed />
+    </section>
+        </div >
     );
 }
 

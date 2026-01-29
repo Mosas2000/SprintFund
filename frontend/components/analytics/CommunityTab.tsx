@@ -193,28 +193,85 @@ export default function CommunityTab() {
                     </div>
                 </div>
 
-                {/* Section 5: Platform Health Dashboard */}
+                {/* Section 5: Community Directory Preview */}
                 <div className="bg-slate-900/50 border border-slate-800 rounded-[32px] p-8">
                     <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-xl font-black uppercase tracking-tight">Platform Health</h3>
-                        <div className="px-3 py-1 bg-green-500/10 text-green-500 text-[10px] font-black rounded-full uppercase">Optimal</div>
+                        <h3 className="text-xl font-black uppercase tracking-tight">Ecosystem Directory</h3>
+                        <div className="px-3 py-1 bg-orange-600/10 text-orange-500 text-[10px] font-black rounded-full uppercase">12.4K Total</div>
                     </div>
 
-                    <div className="space-y-8">
-                        <HealthScore title="Growth Rate" score={85} status="OK" color="bg-green-500" />
-                        <HealthScore title="Voter Engagement" score={72} status="WARN" color="bg-yellow-500" />
-                        <HealthScore title="Retention Score" score={68} status="WARN" color="bg-orange-500" />
-                        <HealthScore title="Ecosystem Diversity" score={90} status="OK" color="bg-green-500" />
-                        <HealthScore title="Voter Satisfaction" score={78} status="OK" color="bg-blue-500" />
-
-                        <div className="pt-6 border-t border-slate-800">
-                            <div className="flex items-center gap-4 p-4 bg-slate-950/50 rounded-2xl border border-slate-800">
-                                <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center border border-slate-800">
-                                    <ShieldCheck className="w-6 h-6 text-green-500" />
+                    <div className="space-y-4">
+                        {[
+                            { name: 'Kanoa.stx', rep: 4.9, tags: ['Developer', 'Voter'], xp: '1.2k' },
+                            { name: 'Satoshi.btc', rep: 4.8, tags: ['Investor'], xp: '800' },
+                            { name: 'StacksGirl', rep: 5.0, tags: ['Community'], xp: '2.5k' },
+                            { name: 'Mosas.btc', rep: 4.7, tags: ['Governance'], xp: '1.1k' },
+                        ].map((m) => (
+                            <div key={m.name} className="flex items-center justify-between p-4 bg-slate-950/40 border border-slate-800/50 rounded-2xl hover:border-orange-500/30 transition-all group cursor-pointer">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-500 group-hover:text-orange-500 group-hover:bg-orange-600/10 transition-all">
+                                        {m.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">{m.name}</p>
+                                        <div className="flex gap-1.5 mt-0.5">
+                                            {m.tags.slice(0, 1).map(t => (
+                                                <span key={t} className="text-[7px] font-black text-slate-600 uppercase tracking-widest">{t}</span>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-300">Overall Health</p>
-                                    <p className="text-2xl font-black text-white">78.6 <span className="text-xs text-slate-500">/ 100</span></p>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-black text-orange-500">{m.rep}★</p>
+                                    <p className="text-[8px] font-bold text-slate-600">REP</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="pt-8 border-t border-slate-800 mt-8">
+                        <button className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase transition-all flex items-center justify-center gap-2">
+                            VIEW FULL DIRECTORY
+                            <ChevronRight className="w-3 h-3" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Platform Echelon Summary */}
+            <div className="bg-gradient-to-br from-slate-900 to-black border border-slate-800 rounded-[48px] p-12 overflow-hidden relative">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none" />
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
+                    <div>
+                        <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
+                            <div className="w-12 h-12 rounded-2xl bg-orange-600 flex items-center justify-center shadow-2xl shadow-orange-900/40">
+                                <ShieldCheck className="w-6 h-6 text-white" />
+                            </div>
+                            <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Sovereign <br /> Health Index</h3>
+                        </div>
+                        <p className="text-sm font-medium text-slate-500 uppercase tracking-tighter max-w-sm">
+                            Comprehensive vitality score based on participation, capital velocity, and network consensus.
+                        </p>
+                    </div>
+
+                    <div className="flex items-center gap-20">
+                        <div className="text-center">
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-4">Sentiment</p>
+                            <p className="text-4xl font-black text-white">4.8</p>
+                            <div className="flex gap-1 mt-2 justify-center">
+                                {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-2.5 h-2.5 text-orange-500 fill-orange-500" />)}
+                            </div>
+                        </div>
+                        <div className="h-20 w-[1px] bg-slate-800" />
+                        <div className="text-center">
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-4">Index Score</p>
+                            <div className="w-24 h-24 relative">
+                                <svg className="w-24 h-24 -rotate-90">
+                                    <circle cx="48" cy="48" r="42" fill="none" stroke="#1e293b" strokeWidth="6" />
+                                    <circle cx="48" cy="48" r="42" fill="none" stroke="#EA580C" strokeWidth="6" strokeDasharray="264" strokeDashoffset="40" strokeLinecap="round" />
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className="text-xl font-black text-white">84</span>
                                 </div>
                             </div>
                         </div>
