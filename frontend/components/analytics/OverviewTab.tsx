@@ -17,7 +17,8 @@ import {
     LineChart,
     Line
 } from 'recharts';
-import { TrendingUp, ArrowUpRight, ArrowDownRight, Clock, Award, Activity } from 'lucide-react';
+import { TrendingUp, ArrowUpRight, ArrowDownRight, Clock, Award, Activity, Sparkles } from 'lucide-react';
+import { InsightsFeed } from './index';
 
 const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
@@ -234,8 +235,8 @@ export default function OverviewTab() {
                         {recentActivity.map((item) => (
                             <div key={item.id} className="flex gap-4 group cursor-pointer">
                                 <div className={`mt-1 w-2 h-2 rounded-full shrink-0 ${item.type === 'funded' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' :
-                                        item.type === 'milestone' ? 'bg-orange-500 shadow-[0_0_8px_rgba(234,88,12,0.5)]' :
-                                            'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]'
+                                    item.type === 'milestone' ? 'bg-orange-500 shadow-[0_0_8px_rgba(234,88,12,0.5)]' :
+                                        'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]'
                                     }`} />
                                 <div className="flex-1">
                                     <div className="flex justify-between items-start mb-0.5">
@@ -275,8 +276,8 @@ export default function OverviewTab() {
                             <button
                                 key={topic.text}
                                 className={`${topic.size} font-black uppercase tracking-tight transition-all hover:scale-110 hover:text-orange-500 ${parseInt(topic.count) > 30 ? 'text-slate-100' :
-                                        parseInt(topic.count) > 20 ? 'text-slate-400' :
-                                            'text-slate-600'
+                                    parseInt(topic.count) > 20 ? 'text-slate-400' :
+                                        'text-slate-600'
                                     }`}
                             >
                                 {topic.text}
@@ -294,6 +295,20 @@ export default function OverviewTab() {
                     </div>
                 </div>
             </div>
+
+            {/* AI Insights Engine Row */}
+            <section className="bg-slate-900/30 border border-slate-800 rounded-[48px] p-2">
+                <div className="p-8 pb-0 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-orange-600/20 flex items-center justify-center border border-orange-500/30">
+                        <Sparkles className="w-5 h-5 text-orange-500" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black uppercase tracking-tight">AI Insights Feed</h3>
+                        <p className="text-[10px] font-black text-slate-500 uppercase mt-1">Real-time analysis of platform dynamics and growth patterns</p>
+                    </div>
+                </div>
+                <InsightsFeed />
+            </section>
         </div>
     );
 }

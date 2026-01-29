@@ -17,17 +17,25 @@ export const metadata: Metadata = {
   description: "Lightning-fast micro-grants DAO on Stacks blockchain with quadratic voting",
 };
 
+import { Providers } from "@/components/Providers";
+import GlassBackground from "@/components/GlassBackground";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-orange-500/30`}
       >
-        {children}
+        <Providers>
+          <GlassBackground />
+          <div className="relative z-0">
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );
