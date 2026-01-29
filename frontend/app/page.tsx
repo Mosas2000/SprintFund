@@ -7,10 +7,7 @@ import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
 import UserDashboard from '@/components/UserDashboard';
 import Stats from '@/components/Stats';
-import DarkModeToggle from '@/components/DarkModeToggle';
-import ToastProvider from '@/components/ToastProvider';
-import CopyButton from '@/components/CopyButton';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import Header from '@/components/Header';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -42,37 +39,8 @@ export default function Home() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-slate-900">
-        <ToastProvider />
-        {/* Header */}
-        <header className="border-b border-slate-700 bg-slate-800/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-orange-600 rounded-lg"></div>
-                <h1 className="text-2xl font-bold text-white">SprintFund</h1>
-              </div>
-              <div className="flex items-center space-x-3">
-                <DarkModeToggle />
-                {userData ? (
-                  <button
-                    onClick={disconnectWallet}
-                    className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-200 border border-slate-600"
-                  >
-                    Disconnect
-                  </button>
-                ) : (
-                  <button
-                    onClick={connectWallet}
-                    className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition-all duration-200"
-                  >
-                    Connect Wallet
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
+      <div className="min-h-screen bg-transparent">
+        <Header />
 
         {/* Hero Section with Dithering Animation */}
         <SprintFundHero />
