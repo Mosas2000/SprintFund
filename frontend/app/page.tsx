@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppConfig, UserSession, showConnect } from '@stacks/connect';
 import SprintFundHero from '@/components/ui/SprintFundHero';
 import CreateProposalForm from '@/components/CreateProposalForm';
@@ -16,6 +16,17 @@ const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-c
 
 export default function Home() {
   const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    if (userSession.isSignInPending()) {
+      userSession.handlePendingSignIn().then((data) => {
+        setUserData(data);
+      });
+    } else if (userSession.isUserSignedIn()) {
+      const data = userSession.loadUserData();
+      setUserData(data);
+    }
+  }, []);
 
   const connectWallet = () => {
     showConnect({
