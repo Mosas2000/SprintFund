@@ -3,6 +3,15 @@ const CONTRACT_ERRORS: Record<string, string> = {
     'u101': 'Proposal not found. It may have been removed or the ID is incorrect.',
     'u102': 'Insufficient stake. You need at least 10 STX staked to proceed.',
     'u103': 'This proposal has already been executed and cannot be modified.',
+    'u104': 'You have already voted on this proposal.',
+    'u105': 'The voting period for this proposal has ended.',
+    'u106': 'Cannot execute while the voting period is still active.',
+    'u107': 'The proposal has not reached the required quorum.',
+    'u108': 'The amount specified is below the allowed minimum.',
+    'u109': 'The amount specified exceeds the allowed maximum.',
+    'u110': 'Amount cannot be zero.',
+    'u111': 'Insufficient contract balance to complete this operation.',
+    'u112': 'This proposal has expired.',
 };
 
 const NETWORK_ERRORS: Record<string, string> = {

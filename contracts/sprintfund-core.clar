@@ -11,6 +11,15 @@
 (define-constant ERR-PROPOSAL-NOT-FOUND (err u101))
 (define-constant ERR-INSUFFICIENT-STAKE (err u102))
 (define-constant ERR-ALREADY-EXECUTED (err u103))
+(define-constant ERR-ALREADY-VOTED (err u104))
+(define-constant ERR-VOTING-PERIOD-ENDED (err u105))
+(define-constant ERR-VOTING-PERIOD-ACTIVE (err u106))
+(define-constant ERR-QUORUM-NOT-MET (err u107))
+(define-constant ERR-AMOUNT-TOO-LOW (err u108))
+(define-constant ERR-AMOUNT-TOO-HIGH (err u109))
+(define-constant ERR-ZERO-AMOUNT (err u110))
+(define-constant ERR-INSUFFICIENT-BALANCE (err u111))
+(define-constant ERR-PROPOSAL-EXPIRED (err u112))
 
 ;; ============================================
 ;; Data Variables
