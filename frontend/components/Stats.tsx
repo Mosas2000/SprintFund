@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { fetchCallReadOnlyFunction, cvToValue } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
+import { formatSTX } from '@/utils/formatSTX';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -100,9 +101,7 @@ export default function Stats() {
         }
     };
 
-    const formatSTX = (microStx: number) => {
-        return (microStx / 1000000).toFixed(2);
-    };
+    // Uses centralized formatSTX from utils/formatSTX
 
     const shortenAddress = (address: string) => {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
