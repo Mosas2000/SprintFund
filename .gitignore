@@ -11,4 +11,25 @@ coverage
 *.info
 costs-reports.json
 node_modules
+
+# Environment files
 .env
+.env.local
+.env.production
+.env.*.local
+scripts/.env
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Build outputs
+frontend/.next/
+frontend/out/
+dist/
+
+# IDE and editor files
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
