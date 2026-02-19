@@ -21,3 +21,14 @@ node_modules
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+# Build outputs
+frontend/.next/
+frontend/out/
+dist/
+
+# IDE and editor files
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
