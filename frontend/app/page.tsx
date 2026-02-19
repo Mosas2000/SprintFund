@@ -17,6 +17,13 @@ const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-c
 export default function Home() {
   const [userData, setUserData] = useState<any>(null);
 
+  useEffect(() => {
+    if (userSession.isUserSignedIn()) {
+      const data = userSession.loadUserData();
+      setUserData(data);
+    }
+  }, []);
+
   const connectWallet = () => {
     showConnect({
       appDetails: {
