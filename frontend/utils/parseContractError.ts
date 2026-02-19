@@ -1,33 +1,21 @@
 export function parseContractError(error: any): string {
-    const message = error.message || '';
+    const message = error.message || String(error) || '';
 
-    // Parse common Clarity errors
-    if (message.includes('err-insufficient-balance')) {
-        return 'Insufficient STX balance for this transaction.';
-    }
-
-    if (message.includes('err-not-authorized')) {
+    // Match the actual contract error codes (u100 - u103)
+    if (message.includes('u100')) {
         return 'You are not authorized to perform this action.';
     }
 
-    if (message.includes('err-already-voted')) {
-        return 'You have already voted on this proposal.';
+    if (message.includes('u101')) {
+        return 'Proposal not found. It may have been removed or the ID is incorrect.';
     }
 
-    if (message.includes('err-proposal-not-found')) {
-        return 'Proposal not found.';
+    if (message.includes('u102')) {
+        return 'Insufficient stake. You need at least 10 STX staked to proceed.';
     }
 
-    if (message.includes('err-proposal-executed')) {
-        return 'This proposal has already been executed.';
-    }
-
-    if (message.includes('err-insufficient-stake')) {
-        return 'Insufficient stake. You need at least 10 STX staked.';
-    }
-
-    if (message.includes('err-invalid-amount')) {
-        return 'Invalid amount specified.';
+    if (message.includes('u103')) {
+        return 'This proposal has already been executed and cannot be modified.';
     }
 
     // Return original message if no match
