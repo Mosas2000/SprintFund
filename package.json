@@ -11,7 +11,7 @@
     "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\""
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@hirosystems/clarinet-sdk": "^3.6.0",
     "@types/node": "^24.4.0",
