@@ -8,6 +8,7 @@ import {
     stringUtf8CV,
     uintCV,
 } from '@stacks/transactions';
+import { toMicroSTX } from '@/utils/formatSTX';
 import { STACKS_MAINNET } from '@stacks/network';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -63,8 +64,8 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
         setIsSubmitting(true);
 
         try {
-            // Convert STX to microSTX (1 STX = 1,000,000 microSTX)
-            const amountInMicroStx = Math.floor(parseFloat(amount) * 1000000);
+            // Convert STX to microSTX
+            const amountInMicroStx = toMicroSTX(parseFloat(amount));
 
             const functionArgs = [
                 uintCV(amountInMicroStx),
