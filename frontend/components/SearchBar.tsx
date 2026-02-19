@@ -9,6 +9,12 @@ interface SearchBarProps {
 export default function SearchBar({ onSearchChange }: SearchBarProps) {
     const [searchTerm, setSearchTerm] = useState('');
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const callbackRef = useRef(onSearchChange);
+
+    // Keep the ref in sync with the latest callback without triggering effects
+    useEffect(() => {
+        callbackRef.current = onSearchChange;
+    }, [onSearchChange]);
 
     // Debounce search - wait 300ms after user stops typing
     useEffect(() => {
@@ -17,7 +23,7 @@ export default function SearchBar({ onSearchChange }: SearchBarProps) {
         }
 
         debounceTimerRef.current = setTimeout(() => {
-            onSearchChange(searchTerm);
+            callbackRef.current(searchTerm);
         }, 300);
 
         return () => {
@@ -25,7 +31,7 @@ export default function SearchBar({ onSearchChange }: SearchBarProps) {
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [searchTerm, onSearchChange]);
+    }, [searchTerm]);
 
     const handleClear = () => {
         setSearchTerm('');
@@ -56,6 +62,7 @@ export default function SearchBar({ onSearchChange }: SearchBarProps) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search proposals by title or description..."
+                aria-label="Search proposals"
                 className="w-full pl-10 pr-10 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
             />
 
