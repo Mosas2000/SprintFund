@@ -17,6 +17,7 @@ node_modules
 .env.local
 .env.production
 .env.*.local
+scripts/.env
 
 # OS artifacts
 .DS_Store
