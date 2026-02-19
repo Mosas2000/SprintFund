@@ -18,6 +18,19 @@ export function parseContractError(error: any): string {
         return 'This proposal has already been executed and cannot be modified.';
     }
 
+    // Handle common Stacks network and transaction errors
+    if (message.includes('NotEnoughFunds') || message.includes('NotEnoughBalance')) {
+        return 'Insufficient STX balance to complete this transaction.';
+    }
+
+    if (message.includes('ConflictingNonceInMempool')) {
+        return 'A previous transaction is still pending. Please wait for it to confirm.';
+    }
+
+    if (message.includes('BadNonce')) {
+        return 'Transaction nonce mismatch. Please refresh the page and try again.';
+    }
+
     // Return original message if no match
     return message || 'Transaction failed. Please try again.';
 }
