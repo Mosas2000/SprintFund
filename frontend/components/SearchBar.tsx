@@ -62,6 +62,7 @@ export default function SearchBar({ onSearchChange }: SearchBarProps) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search proposals by title or description..."
+                aria-label="Search proposals"
                 className="w-full pl-10 pr-10 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
             />
 
