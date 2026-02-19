@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
+import { formatSTX } from '@/utils/formatSTX';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
 import toast from 'react-hot-toast';
@@ -113,9 +114,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
         }
     };
 
-    const formatSTX = (microStx: number) => {
-        return (microStx / 1000000).toFixed(6);
-    };
+    // Uses centralized formatSTX from utils/formatSTX
 
     const shortenAddress = (address: string) => {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;

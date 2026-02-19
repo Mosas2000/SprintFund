@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { fetchCallReadOnlyFunction, cvToValue } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
+import { formatSTX } from '@/utils/formatSTX';
 import VoteDelegation from './VoteDelegation';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
@@ -89,9 +90,7 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
         }
     };
 
-    const formatSTX = (microStx: number) => {
-        return (microStx / 1000000).toFixed(6);
-    };
+    // Uses centralized formatSTX from utils/formatSTX
 
     const shortenAddress = (address: string) => {
         return `${address.slice(0, 8)}...${address.slice(-6)}`;
