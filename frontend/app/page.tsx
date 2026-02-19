@@ -18,7 +18,11 @@ export default function Home() {
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
+    if (userSession.isSignInPending()) {
+      userSession.handlePendingSignIn().then((data) => {
+        setUserData(data);
+      });
+    } else if (userSession.isUserSignedIn()) {
       const data = userSession.loadUserData();
       setUserData(data);
     }
