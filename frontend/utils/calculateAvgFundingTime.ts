@@ -11,11 +11,16 @@ export function calculateAvgFundingTime(proposals: any[]): number {
 
     const totalHours = executedProposals.reduce((sum, proposal) => {
         const blockDifference = proposal.executionBlock - proposal.creationBlock;
+        if (blockDifference <= 0) return sum;
         const minutesElapsed = blockDifference * STACKS_BLOCK_TIME_MINUTES;
         return sum + minutesElapsed / 60;
     }, 0);
 
-    return totalHours / executedProposals.length;
+    const validCount = executedProposals.filter(
+        (p) => p.executionBlock - p.creationBlock > 0
+    ).length;
+
+    return validCount > 0 ? totalHours / validCount : 0;
 }
 
 export function formatFundingTime(hours: number): string {
