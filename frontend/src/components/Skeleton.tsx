@@ -5,7 +5,7 @@ interface SkeletonProps {
 }
 
 /**
- * Base skeleton primitive with a pulsing animation.
+ * Base skeleton primitive with a shimmer animation.
  * Used as a building block for page-specific skeleton layouts.
  *
  * Usage:
@@ -16,7 +16,7 @@ export function Skeleton({ className = '', width, height }: SkeletonProps) {
   return (
     <div
       aria-hidden="true"
-      className={`animate-pulse rounded-md bg-border ${className}`}
+      className={`skeleton-shimmer rounded-md ${className}`}
       style={{ width, height }}
     />
   );
