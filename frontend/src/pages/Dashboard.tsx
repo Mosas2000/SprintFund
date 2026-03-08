@@ -6,11 +6,14 @@ import { callStake, callWithdrawStake } from '../lib/stacks';
 import { getStxBalance } from '../lib/api';
 import { formatStx, stxToMicro, MIN_STAKE_STX } from '../config';
 import { explorerAddressUrl, truncateAddress } from '../lib/api';
+import { useToast } from '../hooks/useToast';
+import { pollTxStatus } from '../lib/pollTxStatus';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import type { Proposal } from '../types';
 
 export function DashboardPage() {
   const { connected, address, connect } = useWalletStore();
+  const toast = useToast();
 
   const [stakeAmount, setStakeAmount] = useState(0);
   const [stxBalance, setStxBalance] = useState(0);
@@ -38,6 +41,7 @@ export function DashboardPage() {
       setTotalProposals(count);
     } catch (err) {
       console.error('Dashboard fetch error:', err);
+      toast.error('Failed to load dashboard', 'Could not fetch on-chain data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -50,31 +54,47 @@ export function DashboardPage() {
 
   const handleStake = () => {
     const stx = parseFloat(stakeInput);
-    if (isNaN(stx) || stx <= 0) return;
-    setTxStatus('Opening wallet…');
+    if (isNaN(stx) || stx <= 0) {
+      toast.error('Invalid amount', 'Enter a valid STX amount to stake.');
+      return;
+    }
+    toast.info('Opening wallet', 'Confirm the transaction in your wallet.');
     callStake(stxToMicro(stx), {
       onFinish: (txId) => {
-        setTxStatus(`Staked! TX: ${txId.slice(0, 12)}…`);
+        const toastId = toast.tx(`Pending: Stake ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
+        pollTxStatus(toastId, txId);
         setStakeInput('');
+        setTxStatus(null);
       },
-      onCancel: () => setTxStatus(null),
+      onCancel: () => {
+        toast.warning('Transaction cancelled', 'Stake was not submitted.');
+        setTxStatus(null);
+      },
     });
   };
 
   const handleWithdraw = () => {
     const stx = parseFloat(withdrawInput);
-    if (isNaN(stx) || stx <= 0) return;
-    setTxStatus('Opening wallet…');
+    if (isNaN(stx) || stx <= 0) {
+      toast.error('Invalid amount', 'Enter a valid STX amount to withdraw.');
+      return;
+    }
+    toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
     callWithdrawStake(stxToMicro(stx), {
       onFinish: (txId) => {
-        setTxStatus(`Withdrawn! TX: ${txId.slice(0, 12)}…`);
+        const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
+        pollTxStatus(toastId, txId);
         setWithdrawInput('');
+        setTxStatus(null);
       },
-      onCancel: () => setTxStatus(null),
+      onCancel: () => {
+        toast.warning('Transaction cancelled', 'Withdrawal was not submitted.');
+        setTxStatus(null);
+      },
     });
   };
 
-  /* ── Not connected ─────────────────── */
+  /* -- Not connected ----------------------------- */
   if (!connected) {
     return (
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-20 text-center">
@@ -96,7 +116,7 @@ export function DashboardPage() {
     return <DashboardSkeleton />;
   }
 
-  /* ── Connected ─────────────────────── */
+  /* -- Connected --------------------------------- */
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -119,7 +139,7 @@ export function DashboardPage() {
         </Link>
       </div>
 
-      {/* ── Stats row ────────────────────── */}
+      {/* -- Stats row -------------------------------- */}
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard label="STX Balance" value={`${formatStx(stxBalance)} STX`} />
         <StatCard label="Your Stake" value={`${formatStx(stakeAmount)} STX`} />
@@ -127,14 +147,14 @@ export function DashboardPage() {
         <StatCard label="Total Proposals" value={String(totalProposals)} />
       </div>
 
-      {/* ── TX Status ────────────────────── */}
+      {/* -- TX Status -------------------------------- */}
       {txStatus && (
         <div className="mb-6 rounded-lg bg-green/5 border border-green/20 px-4 py-2.5 text-xs text-green">
           {txStatus}
         </div>
       )}
 
-      {/* ── Stake / Withdraw ─────────────── */}
+      {/* -- Stake / Withdraw -------------------------- */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {/* Stake */}
         <div className="rounded-xl border border-border bg-card p-5">
@@ -183,7 +203,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Your proposals ───────────────── */}
+      {/* -- Your proposals ----------------------------- */}
       <div>
         <h2 className="mb-4 text-lg font-semibold text-text">Your Proposals</h2>
         {proposals.length === 0 ? (
@@ -201,7 +221,7 @@ export function DashboardPage() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-text truncate">{p.title}</p>
                   <p className="text-xs text-muted">
-                    {formatStx(p.amount)} STX · {p.votesFor} for / {p.votesAgainst} against
+                    {formatStx(p.amount)} STX  {p.votesFor} for / {p.votesAgainst} against
                   </p>
                 </div>
                 <span
@@ -220,7 +240,7 @@ export function DashboardPage() {
   );
 }
 
-/* ── Stat card helper ───────────────── */
+/* -- Stat card helper ----------------------------- */
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
