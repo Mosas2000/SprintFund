@@ -4,6 +4,7 @@ import { useWalletStore } from '../store/wallet';
 import { getProposal, getStake, callVote, callExecuteProposal } from '../lib/stacks';
 import { formatStx } from '../config';
 import { explorerTxUrl, truncateAddress, explorerAddressUrl } from '../lib/api';
+import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import type { Proposal } from '../types';
 
 export function ProposalDetailPage() {
@@ -58,11 +59,7 @@ export function ProposalDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-green border-t-transparent" />
-      </div>
-    );
+    return <ProposalDetailSkeleton />;
   }
 
   if (!proposal) {
