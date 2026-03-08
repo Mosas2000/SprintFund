@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllProposals } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
+import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
 type Filter = 'all' | 'active' | 'executed';
@@ -68,12 +69,7 @@ export function ProposalsPage() {
       </div>
 
       {/* Loading */}
-      {loading && (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-green border-t-transparent" />
-          <p className="text-xs text-muted">Loading proposals from chain…</p>
-        </div>
-      )}
+      {loading && <ProposalListSkeleton />}
 
       {/* Error */}
       {error && (
