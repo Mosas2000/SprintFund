@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getAllProposals } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
 import { useToast } from '../hooks/useToast';
+import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
 export function ProposalsPage() {
@@ -63,10 +64,7 @@ export function ProposalsPage() {
 
       {/* Content */}
       {loading ? (
-        <div className="py-20 text-center">
-          <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-green border-t-transparent" />
-          <p className="mt-3 text-sm text-muted">Loading proposals from chain…</p>
-        </div>
+        <ProposalListSkeleton />
       ) : error ? (
         <div className="rounded-xl border border-red/20 bg-red/5 p-6 text-center">
           <p className="text-sm text-red">{error}</p>

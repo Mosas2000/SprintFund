@@ -29,7 +29,7 @@ export function CreateProposalPage() {
     if (isNaN(stx) || stx <= 0) return setError('Enter a valid STX amount');
 
     toast.info('Opening wallet', 'Confirm the proposal submission in your wallet.');
-    setTxStatus('Opening wallet…');
+    setTxStatus('Opening wallet...');
     try {
       await callCreateProposal(stxToMicro(stx), title.trim(), description.trim(), {
         onFinish: (txId) => {
@@ -101,7 +101,7 @@ export function CreateProposalPage() {
             onChange={(e) => setDescription(e.target.value)}
             maxLength={500}
             rows={5}
-            placeholder="Describe what you'll build, who benefits, and your delivery timeline…"
+            placeholder="Describe what you'll build, who benefits, and your delivery timeline..."
             className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none focus:border-green/40 transition-colors resize-none"
           />
         </div>
@@ -120,7 +120,7 @@ export function CreateProposalPage() {
             placeholder="50"
             className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none focus:border-green/40 transition-colors"
           />
-          <p className="mt-1 text-xs text-muted">Recommended: 50–200 STX for micro-grants</p>
+          <p className="mt-1 text-xs text-muted">Recommended: 50-200 STX for micro-grants</p>
         </div>
 
         {/* Error */}

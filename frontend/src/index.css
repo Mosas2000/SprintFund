@@ -17,7 +17,7 @@
   --font-family-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
 }
 
-/* ── Base ─────────────────────────────────────── */
+/* -- Base ---------------------------------------- */
 
 html {
   background: var(--color-dark);
@@ -32,7 +32,7 @@ body {
   min-height: 100vh;
 }
 
-/* ── Scrollbar ────────────────────────────────── */
+/* -- Scrollbar ----------------------------------- */
 
 ::-webkit-scrollbar {
   width: 6px;
@@ -45,14 +45,14 @@ body {
   border-radius: 3px;
 }
 
-/* ── Selection ────────────────────────────────── */
+/* -- Selection ----------------------------------- */
 
 ::selection {
   background: var(--color-green);
   color: var(--color-dark);
 }
 
-/* ── Toast animations ─────────────────────────── */
+/* -- Toast animations ---------------------------- */
 
 @keyframes toast-slide-in {
   from {
@@ -95,4 +95,43 @@ body {
 
 .toast-progress {
   animation: toast-progress-shrink linear forwards;
+}
+
+/* -- Skeleton shimmer ----------------------------- */
+
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    rgba(255, 255, 255, 0.04) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+    background: var(--color-border);
+  }
+}
+
+/* -- Screen reader only --------------------------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

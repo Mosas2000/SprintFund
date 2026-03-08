@@ -7,6 +7,7 @@ import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
 import { useWalletStore } from '../store/wallet';
 import { useToast } from '../hooks/useToast';
 import { pollTxStatus } from '../lib/pollTxStatus';
+import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import type { Proposal } from '../types';
 
 export function ProposalDetailPage() {
@@ -45,7 +46,7 @@ export function ProposalDetailPage() {
     }
     const direction = support ? 'For' : 'Against';
     toast.info('Opening wallet', `Confirm your ${direction} vote in your wallet.`);
-    setTxStatus('Opening wallet…');
+    setTxStatus('Opening wallet...');
     callVote(proposalId, support, weight, {
       onFinish: (txId) => {
         const toastId = toast.tx(`Pending: Vote ${direction} (weight ${weight})`, txId, 'Waiting for on-chain confirmation...');
@@ -61,7 +62,7 @@ export function ProposalDetailPage() {
 
   const handleExecute = () => {
     toast.info('Opening wallet', 'Confirm proposal execution in your wallet.');
-    setTxStatus('Opening wallet…');
+    setTxStatus('Opening wallet...');
     callExecuteProposal(proposalId, {
       onFinish: (txId) => {
         const toastId = toast.tx(`Pending: Execute proposal #${proposalId}`, txId, 'Waiting for on-chain confirmation...');
@@ -76,11 +77,7 @@ export function ProposalDetailPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-green border-t-transparent" />
-      </div>
-    );
+    return <ProposalDetailSkeleton />;
   }
 
   if (error || !proposal) {
@@ -108,7 +105,7 @@ export function ProposalDetailPage() {
       </Link>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* ── Main ────────────────────────── */}
+        {/* -- Main ----------------------------------- */}
         <div className="lg:col-span-2 space-y-6">
           {/* Title + status */}
           <div className="rounded-xl border border-border bg-card p-6">
@@ -141,7 +138,7 @@ export function ProposalDetailPage() {
             <p className="mt-2 text-xs text-muted">
               {totalVotes === 0
                 ? 'No votes yet'
-                : `${totalVotes} total votes · ${passing ? 'Passing' : 'Not passing'}`}
+                : `${totalVotes} total votes - ${passing ? 'Passing' : 'Not passing'}`}
             </p>
           </div>
 
@@ -150,7 +147,7 @@ export function ProposalDetailPage() {
             <div className="rounded-xl border border-border bg-card p-6">
               <h2 className="mb-4 text-sm font-semibold text-text">Cast Your Vote</h2>
               <div className="mb-4">
-                <label className="mb-1.5 block text-xs text-muted">Vote Weight (quadratic cost = weight²)</label>
+                <label className="mb-1.5 block text-xs text-muted">Vote Weight (quadratic cost = weight squared)</label>
                 <input
                   type="number"
                   min="1"
@@ -184,7 +181,7 @@ export function ProposalDetailPage() {
           )}
         </div>
 
-        {/* ── Sidebar ─────────────────────── */}
+        {/* -- Sidebar -------------------------------- */}
         <div className="space-y-4">
           {/* Info card */}
           <div className="rounded-xl border border-border bg-card p-5 space-y-3">
