@@ -40,6 +40,7 @@ export function DashboardPage() {
       setTotalProposals(count);
     } catch (err) {
       console.error('Dashboard fetch error:', err);
+      toast.error('Failed to load dashboard', 'Could not fetch on-chain data. Please try again.');
     } finally {
       setLoading(false);
     }
