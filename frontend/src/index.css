@@ -49,6 +49,13 @@ body {
   animation: skeleton-shimmer 1.8s ease-in-out infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none;
+    background: var(--color-border);
+  }
+}
+
 /* ── Screen reader only ───────────────────────── */
 
 .sr-only {
