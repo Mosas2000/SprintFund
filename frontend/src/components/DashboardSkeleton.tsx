@@ -8,7 +8,12 @@ import { StatCardSkeleton } from './StatCardSkeleton';
  */
 export function DashboardSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
+    <div
+      className="mx-auto max-w-5xl px-4 sm:px-6 py-8"
+      role="status"
+      aria-label="Loading dashboard"
+    >
+      <span className="sr-only">Loading dashboard data…</span>
       {/* Header row */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

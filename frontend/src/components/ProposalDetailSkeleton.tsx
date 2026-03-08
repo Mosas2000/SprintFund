@@ -6,7 +6,12 @@ import { Skeleton } from './Skeleton';
  */
 export function ProposalDetailSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
+    <div
+      className="mx-auto max-w-5xl px-4 sm:px-6 py-8"
+      role="status"
+      aria-label="Loading proposal details"
+    >
+      <span className="sr-only">Loading proposal details…</span>
       {/* Breadcrumb */}
       <Skeleton className="mb-6 h-4 w-28" />
 
