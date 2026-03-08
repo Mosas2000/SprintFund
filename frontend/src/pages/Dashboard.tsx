@@ -73,14 +73,22 @@ export function DashboardPage() {
 
   const handleWithdraw = () => {
     const stx = parseFloat(withdrawInput);
-    if (isNaN(stx) || stx <= 0) return;
-    setTxStatus('Opening wallet…');
+    if (isNaN(stx) || stx <= 0) {
+      toast.error('Invalid amount', 'Enter a valid STX amount to withdraw.');
+      return;
+    }
+    toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
     callWithdrawStake(stxToMicro(stx), {
       onFinish: (txId) => {
-        setTxStatus(`Withdrawn! TX: ${txId.slice(0, 12)}…`);
+        const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
+        pollTxStatus(toastId, txId);
         setWithdrawInput('');
+        setTxStatus(null);
       },
-      onCancel: () => setTxStatus(null),
+      onCancel: () => {
+        toast.warning('Transaction cancelled', 'Withdrawal was not submitted.');
+        setTxStatus(null);
+      },
     });
   };
 
