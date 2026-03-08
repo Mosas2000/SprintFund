@@ -6,6 +6,7 @@ import { callStake, callWithdrawStake } from '../lib/stacks';
 import { getStxBalance } from '../lib/api';
 import { formatStx, stxToMicro, MIN_STAKE_STX } from '../config';
 import { explorerAddressUrl, truncateAddress } from '../lib/api';
+import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import type { Proposal } from '../types';
 
 export function DashboardPage() {
@@ -92,11 +93,7 @@ export function DashboardPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-green border-t-transparent" />
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   /* ── Connected ─────────────────────── */
