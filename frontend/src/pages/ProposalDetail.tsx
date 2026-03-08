@@ -60,10 +60,18 @@ export function ProposalDetailPage() {
   };
 
   const handleExecute = () => {
+    toast.info('Opening wallet', 'Confirm proposal execution in your wallet.');
     setTxStatus('Opening wallet…');
     callExecuteProposal(proposalId, {
-      onFinish: (txId) => setTxStatus(`Submitted! TX: ${txId.slice(0, 12)}…`),
-      onCancel: () => setTxStatus(null),
+      onFinish: (txId) => {
+        const toastId = toast.tx(`Pending: Execute proposal #${proposalId}`, txId, 'Waiting for on-chain confirmation...');
+        pollTxStatus(toastId, txId);
+        setTxStatus(null);
+      },
+      onCancel: () => {
+        toast.warning('Transaction cancelled', 'Execution was not submitted.');
+        setTxStatus(null);
+      },
     });
   };
 
