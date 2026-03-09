@@ -49,6 +49,10 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
         {/* Dialog panel */}
         <div
           ref={trapRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirm-dialog-title"
+          aria-describedby="confirm-dialog-description"
           className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl"
           data-testid="confirm-dialog-panel"
         >
