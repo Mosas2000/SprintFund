@@ -2,14 +2,18 @@ import { createPortal } from 'react-dom';
 import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 /**
  * A modal confirmation dialog rendered via React portal.
  *
  * When `open` is false the component renders nothing.
- * When `open` is true the dialog is portal-mounted to document.body.
+ * When `open` is true the dialog is portal-mounted to document.body
+ * with a focus trap that cycles Tab/Shift+Tab between focusable elements.
  */
 export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
+  const trapRef = useFocusTrap<HTMLDivElement>(open);
+
   if (!open || !action) return null;
 
   const config = VARIANT_CONFIG[action.variant];
@@ -41,6 +45,7 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
       >
         {/* Dialog panel */}
         <div
+          ref={trapRef}
           className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl"
           data-testid="confirm-dialog-panel"
         >
