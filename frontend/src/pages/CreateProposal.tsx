@@ -5,6 +5,7 @@ import { callCreateProposal } from '../lib/stacks';
 import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
 import { useFormValidation } from '../hooks/useFormValidation';
+import { isFormValid, validateProposalForm } from '../lib/validation';
 import { CharacterCounter } from '../components/CharacterCounter';
 import { FieldErrorMessage } from '../components/FieldErrorMessage';
 import { pollTxStatus } from '../lib/pollTxStatus';
@@ -21,6 +22,9 @@ export function CreateProposalPage() {
   const [duration, setDuration] = useState('');
   const [txStatus, setTxStatus] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  /** Disable submit when a transaction is pending or any field has a known error. */
+  const canSubmit = !txStatus && isFormValid(validateProposalForm({ title, description, amount, duration }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,7 +210,7 @@ export function CreateProposalPage() {
         {/* Submit */}
         <button
           type="submit"
-          disabled={!!txStatus}
+          disabled={!canSubmit}
           className="w-full rounded-lg bg-green px-4 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
           Submit Proposal
