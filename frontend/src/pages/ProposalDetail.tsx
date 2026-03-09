@@ -6,9 +6,11 @@ import { formatStx } from '../config';
 import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
 import { useWalletStore } from '../store/wallet';
 import { useToast } from '../hooks/useToast';
+import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
@@ -24,6 +26,7 @@ export function ProposalDetailPage() {
 
   const { connected, address } = useWalletStore();
   const toast = useToast();
+  const dialog = useConfirmDialog();
 
   const fetchProposal = useCallback(() => {
     if (isNaN(proposalId)) {
