@@ -6,6 +6,7 @@ import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
 import { useFormValidation } from '../hooks/useFormValidation';
 import { CharacterCounter } from '../components/CharacterCounter';
+import { FieldErrorMessage } from '../components/FieldErrorMessage';
 import { pollTxStatus } from '../lib/pollTxStatus';
 
 export function CreateProposalPage() {
@@ -101,9 +102,7 @@ export function CreateProposalPage() {
                 : 'border-border focus:border-green/40'
             }`}
           />
-          {validation.errors.title && validation.touched.title && (
-            <p className="mt-1 text-xs text-red">{validation.errors.title}</p>
-          )}
+          <FieldErrorMessage message={validation.errors.title} touched={validation.touched.title} id="title-error" />
         </div>
 
         {/* Description */}
@@ -128,9 +127,7 @@ export function CreateProposalPage() {
                 : 'border-border focus:border-green/40'
             }`}
           />
-          {validation.errors.description && validation.touched.description && (
-            <p className="mt-1 text-xs text-red">{validation.errors.description}</p>
-          )}
+          <FieldErrorMessage message={validation.errors.description} touched={validation.touched.description} id="description-error" />
         </div>
 
         {/* Amount */}
@@ -156,7 +153,7 @@ export function CreateProposalPage() {
             }`}
           />
           {validation.errors.amount && validation.touched.amount ? (
-            <p className="mt-1 text-xs text-red">{validation.errors.amount}</p>
+            <FieldErrorMessage message={validation.errors.amount} touched={validation.touched.amount} id="amount-error" />
           ) : (
             <p className="mt-1 text-xs text-muted">Recommended: 50-200 STX for micro-grants</p>
           )}
@@ -186,7 +183,7 @@ export function CreateProposalPage() {
             }`}
           />
           {validation.errors.duration && validation.touched.duration ? (
-            <p className="mt-1 text-xs text-red">{validation.errors.duration}</p>
+            <FieldErrorMessage message={validation.errors.duration} touched={validation.touched.duration} id="duration-error" />
           ) : (
             <p className="mt-1 text-xs text-muted">How long the voting period should last (1-30 days)</p>
           )}
