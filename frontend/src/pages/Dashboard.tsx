@@ -9,6 +9,8 @@ import { explorerAddressUrl, truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
+import { ErrorState } from '../components/ErrorState';
+import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
 export function DashboardPage() {
@@ -20,6 +22,7 @@ export function DashboardPage() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [totalProposals, setTotalProposals] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [stakeInput, setStakeInput] = useState('');
   const [withdrawInput, setWithdrawInput] = useState('');
@@ -27,6 +30,7 @@ export function DashboardPage() {
 
   const fetchData = useCallback(async () => {
     if (!address) return;
+    setError(null);
     setLoading(true);
     try {
       const [stake, balance, allProposals, count] = await Promise.all([
@@ -40,8 +44,10 @@ export function DashboardPage() {
       setProposals(allProposals.filter((p) => p.proposer === address));
       setTotalProposals(count);
     } catch (err) {
+      const msg = toErrorMessage(err);
       console.error('Dashboard fetch error:', err);
-      toast.error('Failed to load dashboard', 'Could not fetch on-chain data. Please try again.');
+      setError(msg);
+      toast.error('Failed to load dashboard', msg);
     } finally {
       setLoading(false);
     }
@@ -114,6 +120,18 @@ export function DashboardPage() {
 
   if (loading) {
     return <DashboardSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
+        <ErrorState
+          title="Failed to load dashboard"
+          message={error}
+          onRetry={fetchData}
+        />
+      </div>
+    );
   }
 
   /* -- Connected --------------------------------- */
