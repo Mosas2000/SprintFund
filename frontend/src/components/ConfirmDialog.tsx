@@ -3,16 +3,19 @@ import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 /**
  * A modal confirmation dialog rendered via React portal.
  *
  * When `open` is false the component renders nothing.
  * When `open` is true the dialog is portal-mounted to document.body
- * with a focus trap that cycles Tab/Shift+Tab between focusable elements.
+ * with a focus trap that cycles Tab/Shift+Tab between focusable elements
+ * and a scroll lock that prevents the background page from scrolling.
  */
 export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
   const trapRef = useFocusTrap<HTMLDivElement>(open);
+  useScrollLock(open);
 
   if (!open || !action) return null;
 
