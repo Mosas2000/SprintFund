@@ -21,6 +21,8 @@ interface ErrorStateProps {
   onRetry?: () => void;
   /** Label for the action button. Defaults to "Try again". */
   retryLabel?: string;
+  /** Number of retry attempts so far. Shows a count when > 0. */
+  retryCount?: number;
 }
 
 const VARIANT_STYLES: Record<ErrorStateVariant, { container: string; icon: string; heading: string; button: string }> = {
@@ -44,6 +46,7 @@ export function ErrorState({
   message,
   onRetry,
   retryLabel = 'Try again',
+  retryCount = 0,
 }: ErrorStateProps) {
   const styles = VARIANT_STYLES[variant];
 
@@ -56,12 +59,19 @@ export function ErrorState({
       <h2 className={`mb-2 text-base font-semibold ${styles.heading}`}>{title}</h2>
       <p className="mb-4 text-sm text-muted leading-relaxed">{message}</p>
       {onRetry && (
-        <button
-          onClick={onRetry}
-          className={`rounded-lg border px-5 py-2 text-sm font-medium transition-colors active:scale-95 ${styles.button}`}
-        >
-          {retryLabel}
-        </button>
+        <div className="space-y-1.5">
+          <button
+            onClick={onRetry}
+            className={`rounded-lg border px-5 py-2 text-sm font-medium transition-colors active:scale-95 ${styles.button}`}
+          >
+            {retryLabel}
+          </button>
+          {retryCount > 0 && (
+            <p className="text-xs text-muted">
+              Attempt {retryCount} failed
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

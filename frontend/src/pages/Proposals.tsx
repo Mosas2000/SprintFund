@@ -12,6 +12,7 @@ export function ProposalsPage() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
   const toast = useToast();
 
@@ -23,6 +24,7 @@ export function ProposalsPage() {
       .catch((err) => {
         const msg = toErrorMessage(err);
         setError(msg);
+        setRetryCount((c) => c + 1);
         toast.error('Failed to load proposals', msg);
       })
       .finally(() => setLoading(false));
@@ -79,6 +81,7 @@ export function ProposalsPage() {
           title="Failed to load proposals"
           message={error}
           onRetry={fetchProposals}
+          retryCount={retryCount}
         />
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border border-border bg-card p-10 text-center">
