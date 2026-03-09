@@ -56,17 +56,32 @@ export function ProposalDetailPage() {
       return;
     }
     const direction = support ? 'For' : 'Against';
-    toast.info('Opening wallet', `Confirm your ${direction} vote in your wallet.`);
-    setTxStatus('Opening wallet...');
-    callVote(proposalId, support, weight, {
-      onFinish: (txId) => {
-        const toastId = toast.tx(`Pending: Vote ${direction} (weight ${weight})`, txId, 'Waiting for on-chain confirmation...');
-        pollTxStatus(toastId, txId);
-        setTxStatus(null);
-      },
-      onCancel: () => {
-        toast.warning('Transaction cancelled', 'Vote was not submitted.');
-        setTxStatus(null);
+
+    dialog.open({
+      title: `Vote ${direction}`,
+      description: `You are about to cast a ${direction.toLowerCase()} vote on this proposal. This action is irreversible once confirmed on-chain.`,
+      variant: support ? 'warning' : 'danger',
+      confirmLabel: `Confirm Vote ${direction}`,
+      details: [
+        { label: 'Proposal', value: proposal?.title ?? `#${proposalId}` },
+        { label: 'Direction', value: direction },
+        { label: 'Weight', value: String(weight) },
+        { label: 'Quadratic Cost', value: `${weight ** 2} stake weight` },
+      ],
+      onConfirm: () => {
+        toast.info('Opening wallet', `Confirm your ${direction} vote in your wallet.`);
+        setTxStatus('Opening wallet...');
+        callVote(proposalId, support, weight, {
+          onFinish: (txId) => {
+            const toastId = toast.tx(`Pending: Vote ${direction} (weight ${weight})`, txId, 'Waiting for on-chain confirmation...');
+            pollTxStatus(toastId, txId);
+            setTxStatus(null);
+          },
+          onCancel: () => {
+            toast.warning('Transaction cancelled', 'Vote was not submitted.');
+            setTxStatus(null);
+          },
+        });
       },
     });
   };
