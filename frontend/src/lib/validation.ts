@@ -92,3 +92,44 @@ export function validateDuration(value: string): string | null {
   }
   return null;
 }
+
+/* ── Aggregate form validator ────────────────── */
+
+export interface ProposalFormValues {
+  title: string;
+  description: string;
+  amount: string;
+  duration: string;
+}
+
+export type FormErrors = Partial<Record<keyof ProposalFormValues, string>>;
+
+/**
+ * Validate all proposal form fields at once.
+ * Returns an object mapping field names to error messages.
+ * An empty object means the form is valid.
+ */
+export function validateProposalForm(values: ProposalFormValues): FormErrors {
+  const errors: FormErrors = {};
+
+  const titleError = validateTitle(values.title);
+  if (titleError) errors.title = titleError;
+
+  const descriptionError = validateDescription(values.description);
+  if (descriptionError) errors.description = descriptionError;
+
+  const amountError = validateAmount(values.amount);
+  if (amountError) errors.amount = amountError;
+
+  const durationError = validateDuration(values.duration);
+  if (durationError) errors.duration = durationError;
+
+  return errors;
+}
+
+/**
+ * Check whether a FormErrors object represents a fully valid form.
+ */
+export function isFormValid(errors: FormErrors): boolean {
+  return Object.keys(errors).length === 0;
+}
