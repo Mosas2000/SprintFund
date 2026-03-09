@@ -4,29 +4,30 @@ import { useWalletStore } from '../store/wallet';
 import { callCreateProposal } from '../lib/stacks';
 import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
+import { useFormValidation } from '../hooks/useFormValidation';
 import { pollTxStatus } from '../lib/pollTxStatus';
 
 export function CreateProposalPage() {
   const { connected, connect } = useWalletStore();
   const navigate = useNavigate();
   const toast = useToast();
+  const validation = useFormValidation();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
+  const [duration, setDuration] = useState('');
   const [txStatus, setTxStatus] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setSubmitError(null);
+
+    const isValid = validation.validateAll({ title, description, amount, duration });
+    if (!isValid) return;
 
     const stx = parseFloat(amount);
-    if (!title.trim()) return setError('Title is required');
-    if (title.length > 100) return setError('Title max 100 characters');
-    if (!description.trim()) return setError('Description is required');
-    if (description.length > 500) return setError('Description max 500 characters');
-    if (isNaN(stx) || stx <= 0) return setError('Enter a valid STX amount');
 
     toast.info('Opening wallet', 'Confirm the proposal submission in your wallet.');
     setTxStatus('Opening wallet...');
@@ -36,6 +37,7 @@ export function CreateProposalPage() {
           const toastId = toast.tx(`Pending: Create proposal "${title.trim().slice(0, 30)}..."`, txId, 'Waiting for on-chain confirmation...');
           pollTxStatus(toastId, txId);
           setTxStatus(null);
+          validation.resetValidation();
           setTimeout(() => navigate('/proposals'), 2000);
         },
         onCancel: () => {
@@ -46,7 +48,7 @@ export function CreateProposalPage() {
     } catch (err) {
       console.error('[SprintFund] Submit failed:', err);
       toast.error('Submission failed', String(err));
-      setError(String(err));
+      setSubmitError(String(err));
       setTxStatus(null);
     }
   };
@@ -123,10 +125,10 @@ export function CreateProposalPage() {
           <p className="mt-1 text-xs text-muted">Recommended: 50-200 STX for micro-grants</p>
         </div>
 
-        {/* Error */}
-        {error && (
+        {/* Submit Error */}
+        {submitError && (
           <p className="rounded-lg bg-red/5 border border-red/20 px-3 py-2 text-xs text-red">
-            {error}
+            {submitError}
           </p>
         )}
 
