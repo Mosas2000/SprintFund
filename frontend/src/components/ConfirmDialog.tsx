@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { useEffect, useCallback } from 'react';
 import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
@@ -16,6 +17,22 @@ import { useScrollLock } from '../hooks/useScrollLock';
 export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
   const trapRef = useFocusTrap<HTMLDivElement>(open);
   useScrollLock(open);
+
+  /** Close on Escape key press */
+  const handleEscape = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    },
+    [onClose],
+  );
+
+  useEffect(() => {
+    if (!open) return;
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [open, handleEscape]);
 
   if (!open || !action) return null;
 
