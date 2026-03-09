@@ -159,6 +159,36 @@ export function CreateProposalPage() {
           )}
         </div>
 
+        {/* Duration */}
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-muted">
+            Duration (days)
+          </label>
+          <input
+            type="number"
+            step="1"
+            min="1"
+            max="30"
+            value={duration}
+            onChange={(e) => {
+              setDuration(e.target.value);
+              validation.handleChange('duration', e.target.value);
+            }}
+            onBlur={() => validation.handleBlur('duration', duration)}
+            placeholder="14"
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+              validation.errors.duration && validation.touched.duration
+                ? 'border-red/60 focus:border-red/80'
+                : 'border-border focus:border-green/40'
+            }`}
+          />
+          {validation.errors.duration && validation.touched.duration ? (
+            <p className="mt-1 text-xs text-red">{validation.errors.duration}</p>
+          ) : (
+            <p className="mt-1 text-xs text-muted">How long the voting period should last (1-30 days)</p>
+          )}
+        </div>
+
         {/* Submit Error */}
         {submitError && (
           <p className="rounded-lg bg-red/5 border border-red/20 px-3 py-2 text-xs text-red">
