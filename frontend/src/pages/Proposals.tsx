@@ -5,6 +5,7 @@ import { ProposalCard } from '../components/ProposalCard';
 import { ErrorState } from '../components/ErrorState';
 import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
 import { useToast } from '../hooks/useToast';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
@@ -15,6 +16,7 @@ export function ProposalsPage() {
   const [retryCount, setRetryCount] = useState(0);
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
   const toast = useToast();
+  const online = useNetworkStatus();
 
   const fetchProposals = useCallback(() => {
     setError(null);
@@ -33,6 +35,13 @@ export function ProposalsPage() {
   useEffect(() => {
     fetchProposals();
   }, [fetchProposals]);
+
+  /* Auto-retry when coming back online after a failure */
+  useEffect(() => {
+    if (online && error) {
+      fetchProposals();
+    }
+  }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = proposals.filter((p) => {
     if (filter === 'active') return !p.executed;
