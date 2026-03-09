@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
@@ -8,6 +8,8 @@ import { useWalletStore } from '../store/wallet';
 import { useToast } from '../hooks/useToast';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
+import { ErrorState } from '../components/ErrorState';
+import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
 export function ProposalDetailPage() {
@@ -23,20 +25,26 @@ export function ProposalDetailPage() {
   const { connected, address } = useWalletStore();
   const toast = useToast();
 
-  useEffect(() => {
+  const fetchProposal = useCallback(() => {
     if (isNaN(proposalId)) {
       setError('Invalid proposal ID');
       setLoading(false);
       return;
     }
+    setError(null);
+    setLoading(true);
     getProposal(proposalId)
       .then((p) => {
         if (!p) setError('Proposal not found');
         else setProposal(p);
       })
-      .catch((err) => setError(err.message))
+      .catch((err) => setError(toErrorMessage(err)))
       .finally(() => setLoading(false));
   }, [proposalId]);
+
+  useEffect(() => {
+    fetchProposal();
+  }, [fetchProposal]);
 
   const handleVote = (support: boolean) => {
     const weight = parseInt(voteWeight, 10);
@@ -83,9 +91,13 @@ export function ProposalDetailPage() {
   if (error || !proposal) {
     return (
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
-        <div className="rounded-xl border border-red/20 bg-red/5 p-6 text-center">
-          <p className="text-sm text-red">{error ?? 'Proposal not found'}</p>
-          <Link to="/proposals" className="mt-3 inline-block text-sm text-green hover:underline">
+        <ErrorState
+          title="Could not load proposal"
+          message={error ?? 'Proposal not found'}
+          onRetry={fetchProposal}
+        />
+        <div className="mt-4 text-center">
+          <Link to="/proposals" className="text-sm text-green hover:underline">
             &larr; Back to Proposals
           </Link>
         </div>
