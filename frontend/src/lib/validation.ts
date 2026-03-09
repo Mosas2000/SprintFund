@@ -40,3 +40,55 @@ export const PROPOSAL_RULES = {
     max: 30,
   },
 } as const;
+
+/* ── Individual field validators ─────────────── */
+
+export function validateTitle(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return 'Title is required';
+  if (trimmed.length < PROPOSAL_RULES.title.minLength) {
+    return `Title must be at least ${PROPOSAL_RULES.title.minLength} characters`;
+  }
+  if (trimmed.length > PROPOSAL_RULES.title.maxLength) {
+    return `Title must be at most ${PROPOSAL_RULES.title.maxLength} characters`;
+  }
+  return null;
+}
+
+export function validateDescription(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return 'Description is required';
+  if (trimmed.length < PROPOSAL_RULES.description.minLength) {
+    return `Description must be at least ${PROPOSAL_RULES.description.minLength} characters`;
+  }
+  if (trimmed.length > PROPOSAL_RULES.description.maxLength) {
+    return `Description must be at most ${PROPOSAL_RULES.description.maxLength} characters`;
+  }
+  return null;
+}
+
+export function validateAmount(value: string): string | null {
+  if (!value.trim()) return 'Amount is required';
+  const num = parseFloat(value);
+  if (isNaN(num)) return 'Amount must be a valid number';
+  if (num < PROPOSAL_RULES.amount.min) {
+    return `Amount must be at least ${PROPOSAL_RULES.amount.min} STX`;
+  }
+  if (num > PROPOSAL_RULES.amount.max) {
+    return `Amount must be at most ${PROPOSAL_RULES.amount.max.toLocaleString()} STX`;
+  }
+  return null;
+}
+
+export function validateDuration(value: string): string | null {
+  if (!value.trim()) return 'Duration is required';
+  const num = parseInt(value, 10);
+  if (isNaN(num)) return 'Duration must be a whole number';
+  if (num < PROPOSAL_RULES.duration.min) {
+    return `Duration must be at least ${PROPOSAL_RULES.duration.min} day`;
+  }
+  if (num > PROPOSAL_RULES.duration.max) {
+    return `Duration must be at most ${PROPOSAL_RULES.duration.max} days`;
+  }
+  return null;
+}
