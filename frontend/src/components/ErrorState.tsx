@@ -5,6 +5,8 @@
  * and an optional retry button to re-attempt the failed operation.
  */
 
+import { ErrorIcon } from './ErrorIcon';
+
 interface ErrorStateProps {
   /** Short headline shown above the message. Defaults to "Something went wrong". */
   title?: string;
@@ -27,6 +29,7 @@ export function ErrorState({
       role="alert"
       className="mx-auto max-w-md rounded-xl border border-red/20 bg-red/5 p-6 text-center"
     >
+      <ErrorIcon size={40} className="mx-auto mb-3 text-red/60" />
       <h2 className="mb-2 text-base font-semibold text-red">{title}</h2>
       <p className="mb-4 text-sm text-muted leading-relaxed">{message}</p>
       {onRetry && (
