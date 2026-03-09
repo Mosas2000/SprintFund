@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
@@ -34,6 +34,17 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [open, handleEscape]);
 
+  /** Drive enter animation: set visible to true on next frame after mount */
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (open) {
+      // Delay by one frame so the initial opacity-0/scale-95 is painted first
+      const id = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setVisible(false);
+  }, [open]);
+
   if (!open || !action) return null;
 
   const config = VARIANT_CONFIG[action.variant];
@@ -53,7 +64,9 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
     <div className="fixed inset-0 z-50">
       {/* Overlay backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-200 ${
+          visible ? 'opacity-100' : 'opacity-0'
+        }`}
         aria-hidden="true"
       />
 
@@ -70,7 +83,11 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
           aria-modal="true"
           aria-labelledby="confirm-dialog-title"
           aria-describedby="confirm-dialog-description"
-          className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl"
+          className={`w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl transition-all duration-200 ${
+            visible
+              ? 'opacity-100 scale-100 translate-y-0'
+              : 'opacity-0 scale-95 translate-y-2'
+          }`}
           data-testid="confirm-dialog-panel"
         >
           {/* Icon */}
