@@ -83,14 +83,15 @@ export function CreateProposalPage() {
         Submit a funding request to the SprintFund DAO. Requires {MIN_STAKE_STX}+ STX staked.
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {/* Title */}
         <div>
-          <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-muted">
+          <label htmlFor="proposal-title" className="mb-1.5 flex items-center justify-between text-xs font-medium text-muted">
             <span>Title</span>
             <CharacterCounter current={title.length} field="title" />
           </label>
           <input
+            id="proposal-title"
             type="text"
             value={title}
             onChange={(e) => {
@@ -100,6 +101,8 @@ export function CreateProposalPage() {
             onBlur={() => validation.handleBlur('title', title)}
             maxLength={100}
             placeholder="E.g. Fund Stacks Developer Workshop"
+            aria-invalid={!!(validation.errors.title && validation.touched.title)}
+            aria-describedby={validation.errors.title && validation.touched.title ? 'title-error' : undefined}
             className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
               validation.errors.title && validation.touched.title
                 ? 'border-red/60 focus:border-red/80'
@@ -111,11 +114,12 @@ export function CreateProposalPage() {
 
         {/* Description */}
         <div>
-          <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-muted">
+          <label htmlFor="proposal-description" className="mb-1.5 flex items-center justify-between text-xs font-medium text-muted">
             <span>Description</span>
             <CharacterCounter current={description.length} field="description" />
           </label>
           <textarea
+            id="proposal-description"
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
@@ -125,6 +129,8 @@ export function CreateProposalPage() {
             maxLength={500}
             rows={5}
             placeholder="Describe what you'll build, who benefits, and your delivery timeline..."
+            aria-invalid={!!(validation.errors.description && validation.touched.description)}
+            aria-describedby={validation.errors.description && validation.touched.description ? 'description-error' : undefined}
             className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors resize-none ${
               validation.errors.description && validation.touched.description
                 ? 'border-red/60 focus:border-red/80'
@@ -136,10 +142,11 @@ export function CreateProposalPage() {
 
         {/* Amount */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted">
+          <label htmlFor="proposal-amount" className="mb-1.5 block text-xs font-medium text-muted">
             Requested Amount (STX)
           </label>
           <input
+            id="proposal-amount"
             type="number"
             step="0.01"
             min="0"
@@ -150,6 +157,8 @@ export function CreateProposalPage() {
             }}
             onBlur={() => validation.handleBlur('amount', amount)}
             placeholder="50"
+            aria-invalid={!!(validation.errors.amount && validation.touched.amount)}
+            aria-describedby={validation.errors.amount && validation.touched.amount ? 'amount-error' : 'amount-hint'}
             className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
               validation.errors.amount && validation.touched.amount
                 ? 'border-red/60 focus:border-red/80'
@@ -159,16 +168,17 @@ export function CreateProposalPage() {
           {validation.errors.amount && validation.touched.amount ? (
             <FieldErrorMessage message={validation.errors.amount} touched={validation.touched.amount} id="amount-error" />
           ) : (
-            <p className="mt-1 text-xs text-muted">Recommended: 50-200 STX for micro-grants</p>
+            <p id="amount-hint" className="mt-1 text-xs text-muted">Recommended: 50-200 STX for micro-grants</p>
           )}
         </div>
 
         {/* Duration */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted">
+          <label htmlFor="proposal-duration" className="mb-1.5 block text-xs font-medium text-muted">
             Duration (days)
           </label>
           <input
+            id="proposal-duration"
             type="number"
             step="1"
             min="1"
@@ -180,6 +190,8 @@ export function CreateProposalPage() {
             }}
             onBlur={() => validation.handleBlur('duration', duration)}
             placeholder="14"
+            aria-invalid={!!(validation.errors.duration && validation.touched.duration)}
+            aria-describedby={validation.errors.duration && validation.touched.duration ? 'duration-error' : 'duration-hint'}
             className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
               validation.errors.duration && validation.touched.duration
                 ? 'border-red/60 focus:border-red/80'
@@ -189,7 +201,7 @@ export function CreateProposalPage() {
           {validation.errors.duration && validation.touched.duration ? (
             <FieldErrorMessage message={validation.errors.duration} touched={validation.touched.duration} id="duration-error" />
           ) : (
-            <p className="mt-1 text-xs text-muted">How long the voting period should last (1-30 days)</p>
+            <p id="duration-hint" className="mt-1 text-xs text-muted">How long the voting period should last (1-30 days)</p>
           )}
         </div>
 
