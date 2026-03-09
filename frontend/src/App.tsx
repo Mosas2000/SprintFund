@@ -2,6 +2,7 @@ import { useEffect, Component, type ReactNode } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useWalletStore } from './store/wallet';
 import { Layout } from './components/Layout';
+import { OfflineBanner } from './components/OfflineBanner';
 import { LandingPage } from './pages/Landing';
 import { ProposalsPage } from './pages/Proposals';
 import { ProposalDetailPage } from './pages/ProposalDetail';
@@ -51,6 +52,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      <OfflineBanner />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
