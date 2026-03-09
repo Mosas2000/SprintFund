@@ -37,3 +37,18 @@ export interface ConfirmDialogAction {
   /** Callback executed when the user confirms the action */
   onConfirm: () => void;
 }
+
+/**
+ * Props accepted by the ConfirmDialog component.
+ *
+ * When `open` is false the component renders nothing (un-mounts from DOM).
+ * When `open` is true a modal overlay with focus trap is rendered.
+ */
+export interface ConfirmDialogProps {
+  /** Whether the dialog is currently visible */
+  open: boolean;
+  /** The action that triggered this dialog, or null when closed */
+  action: ConfirmDialogAction | null;
+  /** Called when the user dismisses the dialog (Cancel, Escape, overlay click) */
+  onClose: () => void;
+}
