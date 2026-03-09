@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllProposals } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
+import { ErrorState } from '../components/ErrorState';
+import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
 import { useToast } from '../hooks/useToast';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
@@ -13,15 +15,22 @@ export function ProposalsPage() {
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
   const toast = useToast();
 
-  useEffect(() => {
+  const fetchProposals = useCallback(() => {
+    setError(null);
+    setLoading(true);
     getAllProposals()
       .then(setProposals)
       .catch((err) => {
-        setError(err.message);
-        toast.error('Failed to load proposals', err.message);
+        const msg = toErrorMessage(err);
+        setError(msg);
+        toast.error('Failed to load proposals', msg);
       })
       .finally(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    fetchProposals();
+  }, [fetchProposals]);
 
   const filtered = proposals.filter((p) => {
     if (filter === 'active') return !p.executed;
@@ -66,9 +75,11 @@ export function ProposalsPage() {
       {loading ? (
         <ProposalListSkeleton />
       ) : error ? (
-        <div className="rounded-xl border border-red/20 bg-red/5 p-6 text-center">
-          <p className="text-sm text-red">{error}</p>
-        </div>
+        <ErrorState
+          title="Failed to load proposals"
+          message={error}
+          onRetry={fetchProposals}
+        />
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border border-border bg-card p-10 text-center">
           <p className="text-lg text-muted">No proposals found</p>
