@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllProposals } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
+import { ErrorState } from '../components/ErrorState';
+import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
 import { useToast } from '../hooks/useToast';
+import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
@@ -10,18 +13,35 @@ export function ProposalsPage() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
   const toast = useToast();
+  const online = useNetworkStatus();
 
-  useEffect(() => {
+  const fetchProposals = useCallback(() => {
+    setError(null);
+    setLoading(true);
     getAllProposals()
       .then(setProposals)
       .catch((err) => {
-        setError(err.message);
-        toast.error('Failed to load proposals', err.message);
+        const msg = toErrorMessage(err);
+        setError(msg);
+        setRetryCount((c) => c + 1);
+        toast.error('Failed to load proposals', msg);
       })
       .finally(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    fetchProposals();
+  }, [fetchProposals]);
+
+  /* Auto-retry when coming back online after a failure */
+  useEffect(() => {
+    if (online && error) {
+      fetchProposals();
+    }
+  }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = proposals.filter((p) => {
     if (filter === 'active') return !p.executed;
@@ -66,9 +86,12 @@ export function ProposalsPage() {
       {loading ? (
         <ProposalListSkeleton />
       ) : error ? (
-        <div className="rounded-xl border border-red/20 bg-red/5 p-6 text-center">
-          <p className="text-sm text-red">{error}</p>
-        </div>
+        <ErrorState
+          title="Failed to load proposals"
+          message={error}
+          onRetry={fetchProposals}
+          retryCount={retryCount}
+        />
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border border-border bg-card p-10 text-center">
           <p className="text-lg text-muted">No proposals found</p>

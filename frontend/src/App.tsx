@@ -2,6 +2,7 @@ import { useEffect, Component, type ReactNode } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useWalletStore } from './store/wallet';
 import { Layout } from './components/Layout';
+import { OfflineBanner } from './components/OfflineBanner';
 import { LandingPage } from './pages/Landing';
 import { ProposalsPage } from './pages/Proposals';
 import { ProposalDetailPage } from './pages/ProposalDetail';
@@ -19,20 +20,31 @@ class ErrorBoundary extends Component<EBProps, EBState> {
   render() {
     if (this.state.error) {
       return (
-        <div style={{ background: '#050505', color: '#ff4444', minHeight: '100vh', padding: '2rem', fontFamily: 'monospace' }}>
-          <h1 style={{ color: '#00ff88', fontSize: '1.5rem', marginBottom: '1rem' }}>SprintFund — Runtime Error</h1>
-          <pre style={{ whiteSpace: 'pre-wrap', fontSize: '0.875rem', color: '#ff8888' }}>
-            {this.state.error.message}
-          </pre>
-          <pre style={{ whiteSpace: 'pre-wrap', fontSize: '0.75rem', color: '#888', marginTop: '1rem' }}>
-            {this.state.error.stack}
-          </pre>
-          <button
-            onClick={() => window.location.reload()}
-            style={{ marginTop: '1rem', padding: '0.5rem 1rem', background: '#00ff88', color: '#050505', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
-          >
-            Reload
-          </button>
+        <div className="min-h-screen bg-dark px-6 py-10 font-mono">
+          <div className="mx-auto max-w-2xl">
+            <h1 className="mb-4 text-xl font-bold text-green">
+              SprintFund — Runtime Error
+            </h1>
+            <div className="mb-4 rounded-xl border border-red/20 bg-red/5 p-5">
+              <p className="text-sm text-red leading-relaxed whitespace-pre-wrap">
+                {this.state.error.message}
+              </p>
+            </div>
+            <details className="mb-6">
+              <summary className="cursor-pointer text-xs text-muted hover:text-text transition-colors">
+                Stack trace
+              </summary>
+              <pre className="mt-2 overflow-x-auto rounded-lg bg-surface p-4 text-xs text-muted leading-relaxed whitespace-pre-wrap">
+                {this.state.error.stack}
+              </pre>
+            </details>
+            <button
+              onClick={() => window.location.reload()}
+              className="rounded-lg bg-green px-5 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim active:scale-95"
+            >
+              Reload Page
+            </button>
+          </div>
         </div>
       );
     }
@@ -51,6 +63,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      <OfflineBanner />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
