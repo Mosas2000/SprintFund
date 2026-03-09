@@ -5,6 +5,7 @@ import { callCreateProposal } from '../lib/stacks';
 import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
 import { useFormValidation } from '../hooks/useFormValidation';
+import { CharacterCounter } from '../components/CharacterCounter';
 import { pollTxStatus } from '../lib/pollTxStatus';
 
 export function CreateProposalPage() {
@@ -80,8 +81,9 @@ export function CreateProposalPage() {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Title */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted">
-            Title <span className="text-muted">({title.length}/100)</span>
+          <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-muted">
+            <span>Title</span>
+            <CharacterCounter current={title.length} field="title" />
           </label>
           <input
             type="text"
@@ -106,8 +108,9 @@ export function CreateProposalPage() {
 
         {/* Description */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-muted">
-            Description <span className="text-muted">({description.length}/500)</span>
+          <label className="mb-1.5 flex items-center justify-between text-xs font-medium text-muted">
+            <span>Description</span>
+            <CharacterCounter current={description.length} field="description" />
           </label>
           <textarea
             value={description}
