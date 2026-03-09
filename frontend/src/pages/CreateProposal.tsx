@@ -86,11 +86,22 @@ export function CreateProposalPage() {
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              validation.handleChange('title', e.target.value);
+            }}
+            onBlur={() => validation.handleBlur('title', title)}
             maxLength={100}
             placeholder="E.g. Fund Stacks Developer Workshop"
-            className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none focus:border-green/40 transition-colors"
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+              validation.errors.title && validation.touched.title
+                ? 'border-red/60 focus:border-red/80'
+                : 'border-border focus:border-green/40'
+            }`}
           />
+          {validation.errors.title && validation.touched.title && (
+            <p className="mt-1 text-xs text-red">{validation.errors.title}</p>
+          )}
         </div>
 
         {/* Description */}
