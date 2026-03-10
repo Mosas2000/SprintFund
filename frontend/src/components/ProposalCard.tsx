@@ -22,7 +22,7 @@ export function ProposalCard({ proposal }: Props) {
       <div className="mb-3 flex items-start justify-between gap-3">
         <h2 className="text-base font-semibold text-text group-hover:text-green transition-colors line-clamp-1">
           {proposal.title}
-        </h3>
+        </h2>
         <span
           className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
             proposal.executed
