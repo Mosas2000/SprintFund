@@ -177,6 +177,7 @@ export function DashboardPage() {
             href={explorerAddressUrl(address!)}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`View address ${truncateAddress(address!)} on Stacks Explorer (opens in new tab)`}
             className="text-xs font-mono text-green hover:underline"
           >
             {truncateAddress(address!)}
