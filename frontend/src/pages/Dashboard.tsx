@@ -7,15 +7,18 @@ import { getStxBalance } from '../lib/api';
 import { formatStx, stxToMicro, MIN_STAKE_STX } from '../config';
 import { explorerAddressUrl, truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
+import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { ErrorState } from '../components/ErrorState';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
 export function DashboardPage() {
   const { connected, address, connect } = useWalletStore();
   const toast = useToast();
+  const dialog = useConfirmDialog();
 
   const [stakeAmount, setStakeAmount] = useState(0);
   const [stxBalance, setStxBalance] = useState(0);
