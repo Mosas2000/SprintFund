@@ -1,5 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ConnectWallet } from './ConnectWallet';
+import { HamburgerButton } from './HamburgerButton';
+import { MobileNavDrawer } from './MobileNavDrawer';
+import { useMobileMenu } from '../hooks/useMobileMenu';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 
 const NAV = [
@@ -10,6 +13,7 @@ const NAV = [
 
 export function Header() {
   const { pathname } = useLocation();
+  const mobileMenu = useMobileMenu();
 
   return (
     <header role="banner" className="sticky top-0 z-50 border-b border-border bg-dark/90 backdrop-blur-md">
@@ -24,8 +28,8 @@ export function Header() {
           <span className="hidden sm:inline">SprintFund</span>
         </Link>
 
-        {/* Nav */}
-        <nav aria-label="Main navigation" className="flex items-center gap-1">
+        {/* Desktop nav */}
+        <nav aria-label="Main navigation" className="hidden sm:flex items-center gap-1">
           {NAV.map((item) => {
             const active = pathname === item.to || (item.to !== '/' && pathname.startsWith(item.to));
             return (
@@ -47,7 +51,13 @@ export function Header() {
             <ConnectWallet />
           </div>
         </nav>
+
+        {/* Mobile hamburger */}
+        <HamburgerButton isOpen={mobileMenu.isOpen} onClick={mobileMenu.toggle} />
       </div>
+
+      {/* Mobile drawer */}
+      <MobileNavDrawer isOpen={mobileMenu.isOpen} onClose={mobileMenu.close} navItems={NAV} />
     </header>
   );
 }
