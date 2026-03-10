@@ -212,23 +212,23 @@ export function ProposalDetailPage() {
                   value={voteWeight}
                   onChange={(e) => setVoteWeight(e.target.value)}
                   aria-describedby="vote-weight-cost"
-                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text placeholder-muted outline-none focus:border-green/40"
+                  className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-text placeholder-muted outline-none focus:border-green/40 min-h-[44px]"
                   placeholder="1"
                 />
                 <p id="vote-weight-cost" className="mt-1 text-xs text-muted">
                   Cost: {parseInt(voteWeight || '0', 10) ** 2} stake weight
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <button
                   onClick={() => handleVote(true)}
-                  className="flex-1 rounded-lg bg-green px-4 py-2 text-sm font-semibold text-dark transition-all hover:bg-green-dim active:scale-95"
+                  className="flex-1 rounded-lg bg-green px-4 py-3 text-sm font-semibold text-dark transition-all hover:bg-green-dim active:scale-95 min-h-[44px]"
                 >
                   Vote For
                 </button>
                 <button
                   onClick={() => handleVote(false)}
-                  className="flex-1 rounded-lg border border-red/30 px-4 py-2 text-sm font-semibold text-red transition-all hover:bg-red/10 active:scale-95"
+                  className="flex-1 rounded-lg border border-red/30 px-4 py-3 text-sm font-semibold text-red transition-all hover:bg-red/10 active:scale-95 min-h-[44px]"
                 >
                   Vote Against
                 </button>
