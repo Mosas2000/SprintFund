@@ -4,10 +4,12 @@ import { useWalletStore } from '../store/wallet';
 import { callCreateProposal } from '../lib/stacks';
 import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
+import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFormValidation } from '../hooks/useFormValidation';
 import { isFormValid, validateProposalForm } from '../lib/validation';
 import { CharacterCounter } from '../components/CharacterCounter';
 import { FieldErrorMessage } from '../components/FieldErrorMessage';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { pollTxStatus } from '../lib/pollTxStatus';
 
 export function CreateProposalPage() {
@@ -15,6 +17,7 @@ export function CreateProposalPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const validation = useFormValidation();
+  const dialog = useConfirmDialog();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
