@@ -154,13 +154,13 @@ export function ProposalDetailPage() {
         </Link>
       </nav>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
         {/* -- Main ----------------------------------- */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Title + status */}
-          <div className="rounded-xl border border-border bg-card p-6">
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <h1 ref={headingRef} tabIndex={-1} className="text-xl font-bold text-text sm:text-2xl outline-none">{proposal.title}</h1>
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
+            <div className="mb-3 sm:mb-4 flex items-start justify-between gap-3 sm:gap-4">
+              <h1 ref={headingRef} tabIndex={-1} className="text-lg font-bold text-text sm:text-2xl outline-none">{proposal.title}</h1>
               <span
                 className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   proposal.executed ? 'bg-green/10 text-green' : 'bg-amber/10 text-amber'
@@ -173,7 +173,7 @@ export function ProposalDetailPage() {
           </div>
 
           {/* Vote bar */}
-          <div className="rounded-xl border border-border bg-card p-6" aria-label="Vote results" role="region">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-6" aria-label="Vote results" role="region">
             <h2 className="mb-4 text-sm font-semibold text-text">Votes</h2>
             <div className="mb-2 flex justify-between text-sm" aria-live="polite">
               <span className="text-green">For: {proposal.votesFor}</span>
@@ -201,7 +201,7 @@ export function ProposalDetailPage() {
 
           {/* Vote actions */}
           {connected && !proposal.executed && (
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
               <h2 className="mb-4 text-sm font-semibold text-text">Cast Your Vote</h2>
               <div className="mb-4">
                 <label htmlFor="vote-weight" className="mb-1.5 block text-xs text-muted">Vote Weight (quadratic cost = weight squared)</label>
