@@ -24,28 +24,28 @@ export function LandingPage() {
     <div className="flex flex-col">
 
       {/* ── Hero ─────────────────────────────── */}
-      <section aria-labelledby="hero-heading" className="flex items-center justify-center py-20 sm:py-28">
+      <section aria-labelledby="hero-heading" className="flex items-center justify-center py-12 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
           <div className="mb-4 inline-block rounded-full border border-green/20 bg-green/5 px-4 py-1 text-xs font-medium text-green">
             Live on Stacks Mainnet
           </div>
-          <h1 id="hero-heading" className="mb-4 text-4xl font-bold tracking-tight text-text sm:text-5xl lg:text-6xl">
+          <h1 id="hero-heading" className="mb-4 text-3xl font-bold tracking-tight text-text sm:text-5xl lg:text-6xl">
             Fund Ideas.<br />
             <span className="text-green">Ship Fast.</span>
           </h1>
           <p className="mx-auto mb-8 max-w-lg text-base text-muted sm:text-lg">
             {SITE.description}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
               to="/proposals"
-              className={`rounded-lg bg-green px-6 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_20px_rgba(0,255,136,0.3)] active:scale-95 ${FOCUS_RING_GREEN}`}
+              className={`w-full sm:w-auto rounded-lg bg-green px-6 py-3 text-sm font-semibold text-dark text-center transition-all hover:bg-green-dim hover:shadow-[0_0_20px_rgba(0,255,136,0.3)] active:scale-95 min-h-[44px] ${FOCUS_RING_GREEN}`}
             >
               Browse Proposals
             </Link>
             <Link
               to="/dashboard"
-              className={`rounded-lg border border-border px-6 py-2.5 text-sm font-semibold text-text transition-colors hover:border-green/40 hover:text-green ${FOCUS_RING_MUTED}`}
+              className={`w-full sm:w-auto rounded-lg border border-border px-6 py-3 text-sm font-semibold text-text text-center transition-colors hover:border-green/40 hover:text-green min-h-[44px] ${FOCUS_RING_MUTED}`}
             >
               Open Dashboard
             </Link>
