@@ -38,28 +38,41 @@ export function CreateProposalPage() {
 
     const stx = parseFloat(amount);
 
-    toast.info('Opening wallet', 'Confirm the proposal submission in your wallet.');
-    setTxStatus('Opening wallet...');
-    try {
-      await callCreateProposal(stxToMicro(stx), title.trim(), description.trim(), {
-        onFinish: (txId) => {
-          const toastId = toast.tx(`Pending: Create proposal "${title.trim().slice(0, 30)}..."`, txId, 'Waiting for on-chain confirmation...');
-          pollTxStatus(toastId, txId);
+    dialog.open({
+      title: 'Submit Proposal',
+      description: 'Your proposal will be submitted to the DAO for community voting. The requested STX will be held in the treasury until the proposal is executed.',
+      variant: 'info',
+      confirmLabel: 'Confirm Submission',
+      details: [
+        { label: 'Title', value: title.trim().slice(0, 40) + (title.trim().length > 40 ? '...' : '') },
+        { label: 'Requested Amount', value: `${stx} STX` },
+        { label: 'Duration', value: `${duration} days` },
+      ],
+      onConfirm: async () => {
+        toast.info('Opening wallet', 'Confirm the proposal submission in your wallet.');
+        setTxStatus('Opening wallet...');
+        try {
+          await callCreateProposal(stxToMicro(stx), title.trim(), description.trim(), {
+            onFinish: (txId) => {
+              const toastId = toast.tx(`Pending: Create proposal "${title.trim().slice(0, 30)}..."`, txId, 'Waiting for on-chain confirmation...');
+              pollTxStatus(toastId, txId);
+              setTxStatus(null);
+              validation.resetValidation();
+              setTimeout(() => navigate('/proposals'), 2000);
+            },
+            onCancel: () => {
+              toast.warning('Transaction cancelled', 'Proposal was not submitted.');
+              setTxStatus(null);
+            },
+          });
+        } catch (err) {
+          console.error('[SprintFund] Submit failed:', err);
+          toast.error('Submission failed', String(err));
+          setSubmitError(String(err));
           setTxStatus(null);
-          validation.resetValidation();
-          setTimeout(() => navigate('/proposals'), 2000);
-        },
-        onCancel: () => {
-          toast.warning('Transaction cancelled', 'Proposal was not submitted.');
-          setTxStatus(null);
-        },
-      });
-    } catch (err) {
-      console.error('[SprintFund] Submit failed:', err);
-      toast.error('Submission failed', String(err));
-      setSubmitError(String(err));
-      setTxStatus(null);
-    }
+        }
+      },
+    });
   };
 
   if (!connected) {
