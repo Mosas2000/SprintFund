@@ -265,6 +265,13 @@ export function ProposalDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        open={dialog.isOpen}
+        action={dialog.pendingAction}
+        onClose={dialog.close}
+      />
     </div>
   );
 }
