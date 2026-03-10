@@ -1,10 +1,11 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useScrollLock } from '../hooks/useScrollLock';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 /**
  * A modal confirmation dialog rendered via React portal.
@@ -17,22 +18,7 @@ import { useScrollLock } from '../hooks/useScrollLock';
 export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
   const trapRef = useFocusTrap<HTMLDivElement>(open);
   useScrollLock(open);
-
-  /** Close on Escape key press */
-  const handleEscape = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    },
-    [onClose],
-  );
-
-  useEffect(() => {
-    if (!open) return;
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [open, handleEscape]);
+  useEscapeKey(open, onClose);
 
   /** Drive enter animation: set visible to true on next frame after mount */
   const [visible, setVisible] = useState(false);
