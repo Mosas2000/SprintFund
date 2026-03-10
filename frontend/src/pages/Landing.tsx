@@ -20,12 +20,12 @@ export function LandingPage() {
     <div className="flex flex-col">
 
       {/* ── Hero ─────────────────────────────── */}
-      <section className="flex items-center justify-center py-20 sm:py-28">
+      <section aria-labelledby="hero-heading" className="flex items-center justify-center py-20 sm:py-28">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
           <div className="mb-4 inline-block rounded-full border border-green/20 bg-green/5 px-4 py-1 text-xs font-medium text-green">
             Live on Stacks Mainnet
           </div>
-          <h1 className="mb-4 text-4xl font-bold tracking-tight text-text sm:text-5xl lg:text-6xl">
+          <h1 id="hero-heading" className="mb-4 text-4xl font-bold tracking-tight text-text sm:text-5xl lg:text-6xl">
             Fund Ideas.<br />
             <span className="text-green">Ship Fast.</span>
           </h1>
@@ -50,9 +50,9 @@ export function LandingPage() {
       </section>
 
       {/* ── Features ─────────────────────────── */}
-      <section className="border-t border-border py-16">
+      <section aria-labelledby="features-heading" className="border-t border-border py-16">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <h2 className="mb-10 text-center text-2xl font-bold text-text">How It Works</h2>
+          <h2 id="features-heading" className="mb-10 text-center text-2xl font-bold text-text">How It Works</h2>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((f) => (
               <div key={f.title} className="rounded-xl border border-border bg-card p-5 text-center transition-colors hover:border-green/20">
@@ -66,9 +66,9 @@ export function LandingPage() {
       </section>
 
       {/* ── Steps ────────────────────────────── */}
-      <section className="border-t border-border py-16">
+      <section aria-labelledby="steps-heading" className="border-t border-border py-16">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <h2 className="mb-10 text-center text-2xl font-bold text-text">Get Started</h2>
+          <h2 id="steps-heading" className="mb-10 text-center text-2xl font-bold text-text">Get Started</h2>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s) => (
               <div key={s.num} className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-green/20">
