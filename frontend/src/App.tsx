@@ -20,7 +20,7 @@ class ErrorBoundary extends Component<EBProps, EBState> {
   render() {
     if (this.state.error) {
       return (
-        <div className="min-h-screen bg-dark px-6 py-10 font-mono">
+        <div className="min-h-screen bg-dark px-6 py-10 font-mono" role="alert">
           <div className="mx-auto max-w-2xl">
             <h1 className="mb-4 text-xl font-bold text-green">
               SprintFund — Runtime Error
@@ -40,6 +40,7 @@ class ErrorBoundary extends Component<EBProps, EBState> {
             </details>
             <button
               onClick={() => window.location.reload()}
+              aria-label="Reload the page to recover from the error"
               className="rounded-lg bg-green px-5 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim active:scale-95"
             >
               Reload Page
