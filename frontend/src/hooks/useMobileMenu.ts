@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
+import { BREAKPOINTS } from '../lib/breakpoints';
 
 /**
  * Manages mobile navigation menu open/close state.
  *
  * Automatically closes the menu on route changes and when the viewport
- * resizes above the mobile breakpoint (640px). Also supports closing
+ * resizes above the mobile breakpoint (sm: 640px). Also supports closing
  * via the Escape key.
  */
 export function useMobileMenu() {
@@ -23,7 +24,7 @@ export function useMobileMenu() {
 
   /* Close when viewport passes mobile breakpoint */
   useEffect(() => {
-    const mql = window.matchMedia('(min-width: 640px)');
+    const mql = window.matchMedia(`(min-width: ${BREAKPOINTS.sm}px)`);
 
     const handleChange = (e: MediaQueryListEvent) => {
       if (e.matches) setIsOpen(false);
