@@ -194,7 +194,7 @@ export function DashboardPage() {
       </div>
 
       {/* -- Stats row -------------------------------- */}
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="STX Balance" value={`${formatStx(stxBalance)} STX`} />
         <StatCard label="Your Stake" value={`${formatStx(stakeAmount)} STX`} />
         <StatCard label="Your Proposals" value={String(proposals.length)} />
