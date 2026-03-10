@@ -63,20 +63,20 @@ export function ProposalsPage() {
         </div>
         <Link
           to="/proposals/create"
-          className="rounded-lg bg-green px-4 py-2 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 text-center"
+          className="w-full sm:w-auto rounded-lg bg-green px-4 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 text-center min-h-[44px] flex items-center justify-center"
         >
           + New Proposal
         </Link>
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex gap-2" role="group" aria-label="Filter proposals">
+      <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter proposals">
         {(['all', 'active', 'executed'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             aria-pressed={filter === f}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${
+            className={`rounded-md px-4 py-2 text-xs font-medium capitalize transition-colors min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${
               filter === f
                 ? 'bg-green/10 text-green'
                 : 'text-muted hover:text-text hover:bg-white/5'
