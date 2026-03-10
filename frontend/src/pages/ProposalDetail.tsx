@@ -7,6 +7,7 @@ import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
 import { useWalletStore } from '../store/wallet';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
@@ -27,6 +28,7 @@ export function ProposalDetailPage() {
   const { connected, address } = useWalletStore();
   const toast = useToast();
   const dialog = useConfirmDialog();
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
 
   const fetchProposal = useCallback(() => {
     if (isNaN(proposalId)) {
@@ -154,7 +156,7 @@ export function ProposalDetailPage() {
           {/* Title + status */}
           <div className="rounded-xl border border-border bg-card p-6">
             <div className="mb-4 flex items-start justify-between gap-4">
-              <h1 className="text-xl font-bold text-text sm:text-2xl">{proposal.title}</h1>
+              <h1 ref={headingRef} tabIndex={-1} className="text-xl font-bold text-text sm:text-2xl outline-none">{proposal.title}</h1>
               <span
                 className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   proposal.executed ? 'bg-green/10 text-green' : 'bg-amber/10 text-amber'
