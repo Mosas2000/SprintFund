@@ -258,6 +258,13 @@ export function CreateProposalPage() {
           Submit Proposal
         </button>
       </form>
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={dialog.isOpen}
+        action={dialog.pendingAction}
+        onClose={dialog.close}
+      />
     </div>
   );
 }
