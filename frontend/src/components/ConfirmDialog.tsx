@@ -109,6 +109,13 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
             {action.description}
           </p>
 
+          {/* Blockchain warning for danger variant */}
+          {action.variant === 'danger' && (
+            <p className="mt-3 text-center text-xs text-red/70">
+              This action interacts with the blockchain and cannot be reversed once confirmed on-chain.
+            </p>
+          )}
+
           {/* Detail items */}
           {action.details && action.details.length > 0 && (
             <div className="mt-4 space-y-2 rounded-lg bg-surface p-3">
