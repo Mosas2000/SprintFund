@@ -8,6 +8,7 @@ import { formatStx, stxToMicro, MIN_STAKE_STX } from '../config';
 import { explorerAddressUrl, truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { ErrorState } from '../components/ErrorState';
@@ -19,6 +20,7 @@ export function DashboardPage() {
   const { connected, address, connect } = useWalletStore();
   const toast = useToast();
   const dialog = useConfirmDialog();
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
 
   const [stakeAmount, setStakeAmount] = useState(0);
   const [stxBalance, setStxBalance] = useState(0);
@@ -135,7 +137,7 @@ export function DashboardPage() {
   if (!connected) {
     return (
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-20 text-center">
-        <h1 className="mb-4 text-2xl font-bold text-text">Dashboard</h1>
+        <h1 ref={headingRef} tabIndex={-1} className="mb-4 text-2xl font-bold text-text outline-none">Dashboard</h1>
         <p className="mb-6 text-sm text-muted">
           Connect your wallet to view your stake, balance, and proposals.
         </p>
@@ -170,7 +172,7 @@ export function DashboardPage() {
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text">Dashboard</h1>
+          <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-bold text-text outline-none">Dashboard</h1>
           <a
             href={explorerAddressUrl(address!)}
             target="_blank"
