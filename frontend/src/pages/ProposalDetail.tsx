@@ -228,7 +228,7 @@ export function ProposalDetailPage() {
                 </button>
               </div>
               {txStatus && (
-                <p className="mt-3 text-xs text-green">{txStatus}</p>
+                <p className="mt-3 text-xs text-green" role="status" aria-live="polite">{txStatus}</p>
               )}
             </div>
           )}
