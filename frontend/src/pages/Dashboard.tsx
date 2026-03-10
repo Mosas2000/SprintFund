@@ -198,7 +198,7 @@ export function DashboardPage() {
 
       {/* -- TX Status -------------------------------- */}
       {txStatus && (
-        <div className="mb-6 rounded-lg bg-green/5 border border-green/20 px-4 py-2.5 text-xs text-green">
+        <div className="mb-6 rounded-lg bg-green/5 border border-green/20 px-4 py-2.5 text-xs text-green" role="status" aria-live="polite">
           {txStatus}
         </div>
       )}
