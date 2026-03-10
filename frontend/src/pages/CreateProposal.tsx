@@ -123,7 +123,7 @@ export function CreateProposalPage() {
             placeholder="E.g. Fund Stacks Developer Workshop"
             aria-invalid={!!(validation.errors.title && validation.touched.title)}
             aria-describedby={validation.errors.title && validation.touched.title ? 'title-error' : undefined}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors min-h-[44px] ${
               validation.errors.title && validation.touched.title
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
@@ -151,7 +151,7 @@ export function CreateProposalPage() {
             placeholder="Describe what you'll build, who benefits, and your delivery timeline..."
             aria-invalid={!!(validation.errors.description && validation.touched.description)}
             aria-describedby={validation.errors.description && validation.touched.description ? 'description-error' : undefined}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors resize-none ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors resize-none min-h-[120px] ${
               validation.errors.description && validation.touched.description
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
@@ -179,7 +179,7 @@ export function CreateProposalPage() {
             placeholder="50"
             aria-invalid={!!(validation.errors.amount && validation.touched.amount)}
             aria-describedby={validation.errors.amount && validation.touched.amount ? 'amount-error' : 'amount-hint'}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors min-h-[44px] ${
               validation.errors.amount && validation.touched.amount
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
@@ -212,7 +212,7 @@ export function CreateProposalPage() {
             placeholder="14"
             aria-invalid={!!(validation.errors.duration && validation.touched.duration)}
             aria-describedby={validation.errors.duration && validation.touched.duration ? 'duration-error' : 'duration-hint'}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors min-h-[44px] ${
               validation.errors.duration && validation.touched.duration
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
