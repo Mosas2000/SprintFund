@@ -102,17 +102,31 @@ export function DashboardPage() {
       toast.error('Invalid amount', 'Enter a valid STX amount to withdraw.');
       return;
     }
-    toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
-    callWithdrawStake(stxToMicro(stx), {
-      onFinish: (txId) => {
-        const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
-        pollTxStatus(toastId, txId);
-        setWithdrawInput('');
-        setTxStatus(null);
-      },
-      onCancel: () => {
-        toast.warning('Transaction cancelled', 'Withdrawal was not submitted.');
-        setTxStatus(null);
+
+    dialog.open({
+      title: `Withdraw ${stx} STX`,
+      description: 'Withdrawing your stake reduces your voting power and may prevent you from creating proposals if your balance falls below the minimum.',
+      variant: 'danger',
+      confirmLabel: 'Confirm Withdrawal',
+      details: [
+        { label: 'Withdraw Amount', value: `${stx} STX` },
+        { label: 'Current Stake', value: `${formatStx(stakeAmount)} STX` },
+        { label: 'Remaining Stake', value: `${formatStx(stakeAmount - stxToMicro(stx))} STX` },
+      ],
+      onConfirm: () => {
+        toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
+        callWithdrawStake(stxToMicro(stx), {
+          onFinish: (txId) => {
+            const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
+            pollTxStatus(toastId, txId);
+            setWithdrawInput('');
+            setTxStatus(null);
+          },
+          onCancel: () => {
+            toast.warning('Transaction cancelled', 'Withdrawal was not submitted.');
+            setTxStatus(null);
+          },
+        });
       },
     });
   };
