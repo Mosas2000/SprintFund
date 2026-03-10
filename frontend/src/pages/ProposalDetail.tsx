@@ -167,19 +167,26 @@ export function ProposalDetailPage() {
           </div>
 
           {/* Vote bar */}
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-6" aria-label="Vote results" role="region">
             <h2 className="mb-4 text-sm font-semibold text-text">Votes</h2>
-            <div className="mb-2 flex justify-between text-sm">
+            <div className="mb-2 flex justify-between text-sm" aria-live="polite">
               <span className="text-green">For: {proposal.votesFor}</span>
               <span className="text-red">Against: {proposal.votesAgainst}</span>
             </div>
-            <div className="h-2 w-full rounded-full bg-border overflow-hidden">
+            <div
+              className="h-2 w-full rounded-full bg-border overflow-hidden"
+              role="progressbar"
+              aria-valuenow={forPct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${forPct}% of votes in favor`}
+            >
               <div
                 className="h-full rounded-full bg-green transition-all"
                 style={{ width: `${forPct}%` }}
               />
             </div>
-            <p className="mt-2 text-xs text-muted">
+            <p className="mt-2 text-xs text-muted" aria-live="polite">
               {totalVotes === 0
                 ? 'No votes yet'
                 : `${totalVotes} total votes - ${passing ? 'Passing' : 'Not passing'}`}
