@@ -8,6 +8,7 @@ import { useWalletStore } from '../store/wallet';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
@@ -29,6 +30,7 @@ export function ProposalDetailPage() {
   const toast = useToast();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
+  useDocumentTitle(proposal?.title ? `${proposal.title}` : 'Proposal Detail');
 
   const fetchProposal = useCallback(() => {
     if (isNaN(proposalId)) {

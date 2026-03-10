@@ -9,6 +9,7 @@ import { explorerAddressUrl, truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { ErrorState } from '../components/ErrorState';
@@ -21,6 +22,7 @@ export function DashboardPage() {
   const toast = useToast();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
+  useDocumentTitle('Dashboard');
 
   const [stakeAmount, setStakeAmount] = useState(0);
   const [stxBalance, setStxBalance] = useState(0);

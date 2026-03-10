@@ -7,6 +7,7 @@ import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFormValidation } from '../hooks/useFormValidation';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { isFormValid, validateProposalForm } from '../lib/validation';
 import { CharacterCounter } from '../components/CharacterCounter';
 import { FieldErrorMessage } from '../components/FieldErrorMessage';
@@ -20,6 +21,7 @@ export function CreateProposalPage() {
   const validation = useFormValidation();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
+  useDocumentTitle('Create Proposal');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
