@@ -207,7 +207,7 @@ export function DashboardPage() {
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {/* Stake */}
         <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="mb-3 text-sm font-semibold text-text">Stake STX</h3>
+          <h2 className="mb-3 text-sm font-semibold text-text">Stake STX</h2>
           <p className="mb-3 text-xs text-muted">Min {MIN_STAKE_STX} STX required to create proposals</p>
           <div className="flex gap-2">
             <input
@@ -230,7 +230,7 @@ export function DashboardPage() {
 
         {/* Withdraw */}
         <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="mb-3 text-sm font-semibold text-text">Withdraw Stake</h3>
+          <h2 className="mb-3 text-sm font-semibold text-text">Withdraw Stake</h2>
           <p className="mb-3 text-xs text-muted">Current stake: {formatStx(stakeAmount)} STX</p>
           <div className="flex gap-2">
             <input
