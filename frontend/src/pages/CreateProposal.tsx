@@ -223,7 +223,7 @@ export function CreateProposalPage() {
 
         {/* Validation summary -- shown after a failed submit attempt */}
         {validation.submitted && Object.keys(validation.errors).length > 0 && (
-          <div className="rounded-lg bg-red/5 border border-red/20 px-4 py-3">
+          <div role="alert" aria-live="assertive" className="rounded-lg bg-red/5 border border-red/20 px-4 py-3">
             <p className="mb-1.5 text-xs font-medium text-red">
               Please fix the following before submitting:
             </p>
@@ -237,14 +237,14 @@ export function CreateProposalPage() {
 
         {/* Submit Error */}
         {submitError && (
-          <p className="rounded-lg bg-red/5 border border-red/20 px-3 py-2 text-xs text-red">
+          <p role="alert" aria-live="assertive" className="rounded-lg bg-red/5 border border-red/20 px-3 py-2 text-xs text-red">
             {submitError}
           </p>
         )}
 
         {/* TX Status */}
         {txStatus && (
-          <p className="rounded-lg bg-green/5 border border-green/20 px-3 py-2 text-xs text-green">
+          <p role="status" aria-live="polite" className="rounded-lg bg-green/5 border border-green/20 px-3 py-2 text-xs text-green">
             {txStatus}
           </p>
         )}
