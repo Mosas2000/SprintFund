@@ -146,9 +146,11 @@ export function ProposalDetailPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
       {/* Breadcrumb */}
-      <Link to="/proposals" className="mb-6 inline-block text-sm text-muted hover:text-green transition-colors">
-        &larr; All Proposals
-      </Link>
+      <nav aria-label="Breadcrumb" className="mb-6">
+        <Link to="/proposals" className="inline-block text-sm text-muted hover:text-green transition-colors">
+          &larr; All Proposals
+        </Link>
+      </nav>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* -- Main ----------------------------------- */}
