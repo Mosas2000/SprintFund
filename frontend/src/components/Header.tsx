@@ -3,6 +3,7 @@ import { ConnectWallet } from './ConnectWallet';
 import { HamburgerButton } from './HamburgerButton';
 import { MobileNavDrawer } from './MobileNavDrawer';
 import { useMobileMenu } from '../hooks/useMobileMenu';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 
 const NAV = [
@@ -14,6 +15,7 @@ const NAV = [
 export function Header() {
   const { pathname } = useLocation();
   const mobileMenu = useMobileMenu();
+  useBodyScrollLock(mobileMenu.isOpen);
 
   return (
     <header role="banner" className="sticky top-0 z-50 border-b border-border bg-dark/90 backdrop-blur-md">
