@@ -11,7 +11,7 @@ export function Header() {
   const { pathname } = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-dark/90 backdrop-blur-md">
+    <header role="banner" className="sticky top-0 z-50 border-b border-border bg-dark/90 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
 
         {/* Logo */}
@@ -24,13 +24,14 @@ export function Header() {
         </Link>
 
         {/* Nav */}
-        <nav className="flex items-center gap-1">
+        <nav aria-label="Main navigation" className="flex items-center gap-1">
           {NAV.map((item) => {
             const active = pathname === item.to || (item.to !== '/' && pathname.startsWith(item.to));
             return (
               <Link
                 key={item.to}
                 to={item.to}
+                aria-current={active ? 'page' : undefined}
                 className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
                   active
                     ? 'bg-green/10 text-green'
