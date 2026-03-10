@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { SITE } from '../config';
 import { FOCUS_RING_GREEN, FOCUS_RING_MUTED } from '../lib/focus-styles';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const FEATURES = [
   { icon: '⚡', title: 'Lightning Grants', desc: '$50–200 STX micro-grants funded in hours, not months.' },
@@ -17,6 +18,8 @@ const STEPS = [
 ] as const;
 
 export function LandingPage() {
+  useDocumentTitle('Home');
+
   return (
     <div className="flex flex-col">
 

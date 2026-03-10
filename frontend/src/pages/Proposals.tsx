@@ -7,6 +7,7 @@ import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
 import { useToast } from '../hooks/useToast';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
@@ -19,6 +20,7 @@ export function ProposalsPage() {
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
+  useDocumentTitle('Proposals');
 
   const fetchProposals = useCallback(() => {
     setError(null);
