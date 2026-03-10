@@ -1,4 +1,13 @@
 /**
+ * Confirmation dialog type definitions.
+ *
+ * All types related to the reusable ConfirmDialog component are
+ * co-located here for easy importing across the codebase.
+ *
+ * @module types/confirm-dialog
+ */
+
+/**
  * Visual variant for the confirmation dialog.
  *
  * - `warning`  - amber styling, used for risky but recoverable actions (stake, vote)
