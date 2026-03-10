@@ -81,14 +81,14 @@ export function CreateProposalPage() {
 
   if (!connected) {
     return (
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-20 text-center">
-        <h1 ref={headingRef} tabIndex={-1} className="mb-4 text-2xl font-bold text-text outline-none">Create Proposal</h1>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-20 text-center">
+        <h1 ref={headingRef} tabIndex={-1} className="mb-4 text-xl sm:text-2xl font-bold text-text outline-none">Create Proposal</h1>
         <p className="mb-6 text-sm text-muted">
           Connect your wallet to create a proposal. You need at least {MIN_STAKE_STX} STX staked.
         </p>
         <button
           onClick={connect}
-          className="rounded-lg bg-green px-6 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95"
+          className="w-full sm:w-auto rounded-lg bg-green px-6 py-3 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 min-h-[44px]"
         >
           Connect Wallet
         </button>
@@ -257,7 +257,7 @@ export function CreateProposalPage() {
         <button
           type="submit"
           disabled={!canSubmit}
-          className="w-full rounded-lg bg-green px-4 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full rounded-lg bg-green px-4 py-3 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 disabled:opacity-50 disabled:pointer-events-none min-h-[44px]"
         >
           Submit Proposal
         </button>
