@@ -15,8 +15,8 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 text-green font-bold text-lg tracking-tight select-none">
-          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <Link to="/" aria-label="SprintFund home" className="flex items-center gap-2 text-green font-bold text-lg tracking-tight select-none">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
             <rect width="32" height="32" rx="8" fill="#00ff88" fillOpacity="0.12" />
             <text x="5" y="23" fontFamily="monospace" fontWeight="700" fontSize="18" fill="#00ff88">SF</text>
           </svg>
