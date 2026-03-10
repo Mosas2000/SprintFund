@@ -285,6 +285,13 @@ export function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={dialog.isOpen}
+        action={dialog.pendingAction}
+        onClose={dialog.close}
+      />
     </div>
   );
 }
