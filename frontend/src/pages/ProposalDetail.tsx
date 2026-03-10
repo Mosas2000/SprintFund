@@ -243,7 +243,7 @@ export function ProposalDetailPage() {
         {/* -- Sidebar -------------------------------- */}
         <aside aria-label="Proposal details" className="space-y-4">
           {/* Info card */}
-          <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
             <div>
               <p className="text-xs text-muted">Requested Amount</p>
               <p className="text-lg font-bold text-green">{formatStx(proposal.amount)} STX</p>
@@ -274,7 +274,7 @@ export function ProposalDetailPage() {
           {connected && !proposal.executed && passing && totalVotes > 0 && (
             <button
               onClick={handleExecute}
-              className="w-full rounded-lg bg-green px-4 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95"
+              className="w-full rounded-lg bg-green px-4 py-3 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 min-h-[44px]"
             >
               Execute Proposal
             </button>
