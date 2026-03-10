@@ -68,12 +68,13 @@ export function ProposalsPage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 flex gap-2" role="group" aria-label="Filter proposals">
         {(['all', 'active', 'executed'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
+            aria-pressed={filter === f}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${
               filter === f
                 ? 'bg-green/10 text-green'
                 : 'text-muted hover:text-text hover:bg-white/5'
