@@ -83,7 +83,7 @@ export default function App() {
 
 function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center py-20">
+    <div className="flex flex-col items-center justify-center py-20" role="alert">
       <h1 className="text-4xl font-bold text-green mb-2">404</h1>
       <p className="text-sm text-muted">Page not found</p>
     </div>
