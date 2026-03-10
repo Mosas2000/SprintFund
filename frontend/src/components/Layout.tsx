@@ -7,7 +7,7 @@ import { RouteAnnouncer } from './RouteAnnouncer';
 
 export function Layout() {
   return (
-    <div className="flex min-h-screen flex-col bg-dark">
+    <div className="flex min-h-screen flex-col bg-dark overflow-x-hidden">
       <SkipToContent />
       <RouteAnnouncer />
       <Header />
