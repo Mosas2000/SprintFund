@@ -237,7 +237,7 @@ export function ProposalDetailPage() {
         </div>
 
         {/* -- Sidebar -------------------------------- */}
-        <div className="space-y-4">
+        <aside aria-label="Proposal details" className="space-y-4">
           {/* Info card */}
           <div className="rounded-xl border border-border bg-card p-5 space-y-3">
             <div>
@@ -250,6 +250,7 @@ export function ProposalDetailPage() {
                 href={explorerAddressUrl(proposal.proposer)}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`View proposer ${truncateAddress(proposal.proposer)} on Stacks Explorer (opens in new tab)`}
                 className="font-mono text-xs text-green hover:underline"
               >
                 {truncateAddress(proposal.proposer)}
@@ -274,7 +275,7 @@ export function ProposalDetailPage() {
               Execute Proposal
             </button>
           )}
-        </div>
+        </aside>
       </div>
 
       {/* Confirmation Dialog */}
