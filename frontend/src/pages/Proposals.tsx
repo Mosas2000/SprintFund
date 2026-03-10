@@ -6,6 +6,7 @@ import { ErrorState } from '../components/ErrorState';
 import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
 import { useToast } from '../hooks/useToast';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
@@ -17,6 +18,7 @@ export function ProposalsPage() {
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
   const toast = useToast();
   const online = useNetworkStatus();
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
 
   const fetchProposals = useCallback(() => {
     setError(null);
@@ -54,7 +56,7 @@ export function ProposalsPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text">Proposals</h1>
+          <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-bold text-text outline-none">Proposals</h1>
           <p className="text-sm text-muted">Browse and vote on community proposals</p>
         </div>
         <Link
