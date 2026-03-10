@@ -36,3 +36,11 @@ export interface TxToast {
   label: string;
   status: TxStatus;
 }
+
+/* Re-export confirmation dialog types for convenience */
+export type {
+  DialogVariant,
+  DetailItem,
+  ConfirmDialogAction,
+  ConfirmDialogProps,
+} from './types/confirm-dialog';

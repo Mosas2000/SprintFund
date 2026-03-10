@@ -7,15 +7,18 @@ import { getStxBalance } from '../lib/api';
 import { formatStx, stxToMicro, MIN_STAKE_STX } from '../config';
 import { explorerAddressUrl, truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
+import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { ErrorState } from '../components/ErrorState';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
 export function DashboardPage() {
   const { connected, address, connect } = useWalletStore();
   const toast = useToast();
+  const dialog = useConfirmDialog();
 
   const [stakeAmount, setStakeAmount] = useState(0);
   const [stxBalance, setStxBalance] = useState(0);
@@ -64,17 +67,31 @@ export function DashboardPage() {
       toast.error('Invalid amount', 'Enter a valid STX amount to stake.');
       return;
     }
-    toast.info('Opening wallet', 'Confirm the transaction in your wallet.');
-    callStake(stxToMicro(stx), {
-      onFinish: (txId) => {
-        const toastId = toast.tx(`Pending: Stake ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
-        pollTxStatus(toastId, txId);
-        setStakeInput('');
-        setTxStatus(null);
-      },
-      onCancel: () => {
-        toast.warning('Transaction cancelled', 'Stake was not submitted.');
-        setTxStatus(null);
+
+    dialog.open({
+      title: `Stake ${stx} STX`,
+      description: 'Staking STX locks your tokens in the DAO contract. You can withdraw them later.',
+      variant: 'warning',
+      confirmLabel: 'Confirm Stake',
+      details: [
+        { label: 'Amount', value: `${stx} STX` },
+        { label: 'Current Stake', value: `${formatStx(stakeAmount)} STX` },
+        { label: 'Wallet Balance', value: `${formatStx(stxBalance)} STX` },
+      ],
+      onConfirm: () => {
+        toast.info('Opening wallet', 'Confirm the transaction in your wallet.');
+        callStake(stxToMicro(stx), {
+          onFinish: (txId) => {
+            const toastId = toast.tx(`Pending: Stake ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
+            pollTxStatus(toastId, txId);
+            setStakeInput('');
+            setTxStatus(null);
+          },
+          onCancel: () => {
+            toast.warning('Transaction cancelled', 'Stake was not submitted.');
+            setTxStatus(null);
+          },
+        });
       },
     });
   };
@@ -85,17 +102,31 @@ export function DashboardPage() {
       toast.error('Invalid amount', 'Enter a valid STX amount to withdraw.');
       return;
     }
-    toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
-    callWithdrawStake(stxToMicro(stx), {
-      onFinish: (txId) => {
-        const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
-        pollTxStatus(toastId, txId);
-        setWithdrawInput('');
-        setTxStatus(null);
-      },
-      onCancel: () => {
-        toast.warning('Transaction cancelled', 'Withdrawal was not submitted.');
-        setTxStatus(null);
+
+    dialog.open({
+      title: `Withdraw ${stx} STX`,
+      description: 'Withdrawing your stake reduces your voting power and may prevent you from creating proposals if your balance falls below the minimum.',
+      variant: 'danger',
+      confirmLabel: 'Confirm Withdrawal',
+      details: [
+        { label: 'Withdraw Amount', value: `${stx} STX` },
+        { label: 'Current Stake', value: `${formatStx(stakeAmount)} STX` },
+        { label: 'Remaining Stake', value: `${formatStx(stakeAmount - stxToMicro(stx))} STX` },
+      ],
+      onConfirm: () => {
+        toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
+        callWithdrawStake(stxToMicro(stx), {
+          onFinish: (txId) => {
+            const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
+            pollTxStatus(toastId, txId);
+            setWithdrawInput('');
+            setTxStatus(null);
+          },
+          onCancel: () => {
+            toast.warning('Transaction cancelled', 'Withdrawal was not submitted.');
+            setTxStatus(null);
+          },
+        });
       },
     });
   };
@@ -254,6 +285,13 @@ export function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={dialog.isOpen}
+        action={dialog.pendingAction}
+        onClose={dialog.close}
+      />
     </div>
   );
 }

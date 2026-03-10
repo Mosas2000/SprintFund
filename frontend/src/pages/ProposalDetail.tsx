@@ -6,9 +6,11 @@ import { formatStx } from '../config';
 import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
 import { useWalletStore } from '../store/wallet';
 import { useToast } from '../hooks/useToast';
+import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
@@ -24,6 +26,7 @@ export function ProposalDetailPage() {
 
   const { connected, address } = useWalletStore();
   const toast = useToast();
+  const dialog = useConfirmDialog();
 
   const fetchProposal = useCallback(() => {
     if (isNaN(proposalId)) {
@@ -53,33 +56,62 @@ export function ProposalDetailPage() {
       return;
     }
     const direction = support ? 'For' : 'Against';
-    toast.info('Opening wallet', `Confirm your ${direction} vote in your wallet.`);
-    setTxStatus('Opening wallet...');
-    callVote(proposalId, support, weight, {
-      onFinish: (txId) => {
-        const toastId = toast.tx(`Pending: Vote ${direction} (weight ${weight})`, txId, 'Waiting for on-chain confirmation...');
-        pollTxStatus(toastId, txId);
-        setTxStatus(null);
-      },
-      onCancel: () => {
-        toast.warning('Transaction cancelled', 'Vote was not submitted.');
-        setTxStatus(null);
+
+    dialog.open({
+      title: `Vote ${direction}`,
+      description: `You are about to cast a ${direction.toLowerCase()} vote on this proposal. This action is irreversible once confirmed on-chain.`,
+      variant: support ? 'warning' : 'danger',
+      confirmLabel: `Confirm Vote ${direction}`,
+      details: [
+        { label: 'Proposal', value: proposal?.title ?? `#${proposalId}` },
+        { label: 'Direction', value: direction },
+        { label: 'Weight', value: String(weight) },
+        { label: 'Quadratic Cost', value: `${weight ** 2} stake weight` },
+      ],
+      onConfirm: () => {
+        toast.info('Opening wallet', `Confirm your ${direction} vote in your wallet.`);
+        setTxStatus('Opening wallet...');
+        callVote(proposalId, support, weight, {
+          onFinish: (txId) => {
+            const toastId = toast.tx(`Pending: Vote ${direction} (weight ${weight})`, txId, 'Waiting for on-chain confirmation...');
+            pollTxStatus(toastId, txId);
+            setTxStatus(null);
+          },
+          onCancel: () => {
+            toast.warning('Transaction cancelled', 'Vote was not submitted.');
+            setTxStatus(null);
+          },
+        });
       },
     });
   };
 
   const handleExecute = () => {
-    toast.info('Opening wallet', 'Confirm proposal execution in your wallet.');
-    setTxStatus('Opening wallet...');
-    callExecuteProposal(proposalId, {
-      onFinish: (txId) => {
-        const toastId = toast.tx(`Pending: Execute proposal #${proposalId}`, txId, 'Waiting for on-chain confirmation...');
-        pollTxStatus(toastId, txId);
-        setTxStatus(null);
-      },
-      onCancel: () => {
-        toast.warning('Transaction cancelled', 'Execution was not submitted.');
-        setTxStatus(null);
+    dialog.open({
+      title: 'Execute Proposal',
+      description: 'Executing this proposal will transfer the requested STX from the treasury. This action cannot be undone.',
+      variant: 'danger',
+      confirmLabel: 'Confirm Execution',
+      details: [
+        { label: 'Proposal', value: proposal?.title ?? `#${proposalId}` },
+        { label: 'Amount', value: `${formatStx(proposal?.amount ?? 0)} STX` },
+        { label: 'Votes For', value: String(proposal?.votesFor ?? 0) },
+        { label: 'Votes Against', value: String(proposal?.votesAgainst ?? 0) },
+      ],
+      onConfirm: () => {
+        toast.info('Opening wallet', 'Confirm proposal execution in your wallet.');
+        setTxStatus('Opening wallet...');
+        callExecuteProposal(proposalId, {
+          onFinish: (txId) => {
+            const toastId = toast.tx(`Pending: Execute proposal #${proposalId}`, txId, 'Waiting for on-chain confirmation...');
+            pollTxStatus(toastId, txId);
+            setTxStatus(null);
+          },
+          onCancel: () => {
+            toast.warning('Transaction cancelled', 'Execution was not submitted.');
+            setTxStatus(null);
+          },
+        });
       },
     });
   };
@@ -233,6 +265,13 @@ export function ProposalDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        open={dialog.isOpen}
+        action={dialog.pendingAction}
+        onClose={dialog.close}
+      />
     </div>
   );
 }
