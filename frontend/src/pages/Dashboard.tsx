@@ -210,7 +210,9 @@ export function DashboardPage() {
           <h2 className="mb-3 text-sm font-semibold text-text">Stake STX</h2>
           <p className="mb-3 text-xs text-muted">Min {MIN_STAKE_STX} STX required to create proposals</p>
           <div className="flex gap-2">
+            <label htmlFor="stake-amount" className="sr-only">Amount to stake in STX</label>
             <input
+              id="stake-amount"
               type="number"
               step="0.01"
               min="0"
@@ -233,7 +235,9 @@ export function DashboardPage() {
           <h2 className="mb-3 text-sm font-semibold text-text">Withdraw Stake</h2>
           <p className="mb-3 text-xs text-muted">Current stake: {formatStx(stakeAmount)} STX</p>
           <div className="flex gap-2">
+            <label htmlFor="withdraw-amount" className="sr-only">Amount to withdraw in STX</label>
             <input
+              id="withdraw-amount"
               type="number"
               step="0.01"
               min="0"
