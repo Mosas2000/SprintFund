@@ -191,16 +191,18 @@ export function ProposalDetailPage() {
             <div className="rounded-xl border border-border bg-card p-6">
               <h2 className="mb-4 text-sm font-semibold text-text">Cast Your Vote</h2>
               <div className="mb-4">
-                <label className="mb-1.5 block text-xs text-muted">Vote Weight (quadratic cost = weight squared)</label>
+                <label htmlFor="vote-weight" className="mb-1.5 block text-xs text-muted">Vote Weight (quadratic cost = weight squared)</label>
                 <input
+                  id="vote-weight"
                   type="number"
                   min="1"
                   value={voteWeight}
                   onChange={(e) => setVoteWeight(e.target.value)}
+                  aria-describedby="vote-weight-cost"
                   className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text placeholder-muted outline-none focus:border-green/40"
                   placeholder="1"
                 />
-                <p className="mt-1 text-xs text-muted">
+                <p id="vote-weight-cost" className="mt-1 text-xs text-muted">
                   Cost: {parseInt(voteWeight || '0', 10) ** 2} stake weight
                 </p>
               </div>
