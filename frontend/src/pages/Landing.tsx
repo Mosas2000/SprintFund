@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { SITE } from '../config';
+import { FOCUS_RING_GREEN, FOCUS_RING_MUTED } from '../lib/focus-styles';
 
 const FEATURES = [
   { icon: '⚡', title: 'Lightning Grants', desc: '$50–200 STX micro-grants funded in hours, not months.' },
@@ -35,13 +36,13 @@ export function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/proposals"
-              className="rounded-lg bg-green px-6 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_20px_rgba(0,255,136,0.3)] active:scale-95"
+              className={`rounded-lg bg-green px-6 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_20px_rgba(0,255,136,0.3)] active:scale-95 ${FOCUS_RING_GREEN}`}
             >
               Browse Proposals
             </Link>
             <Link
               to="/dashboard"
-              className="rounded-lg border border-border px-6 py-2.5 text-sm font-semibold text-text transition-colors hover:border-green/40 hover:text-green"
+              className={`rounded-lg border border-border px-6 py-2.5 text-sm font-semibold text-text transition-colors hover:border-green/40 hover:text-green ${FOCUS_RING_MUTED}`}
             >
               Open Dashboard
             </Link>
@@ -56,7 +57,7 @@ export function LandingPage() {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((f) => (
               <div key={f.title} className="rounded-xl border border-border bg-card p-5 text-center transition-colors hover:border-green/20">
-                <div className="mb-3 text-2xl">{f.icon}</div>
+                <div className="mb-3 text-2xl" aria-hidden="true">{f.icon}</div>
                 <h3 className="mb-1.5 text-sm font-semibold text-text">{f.title}</h3>
                 <p className="text-xs text-muted leading-relaxed">{f.desc}</p>
               </div>
