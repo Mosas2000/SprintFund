@@ -67,17 +67,31 @@ export function DashboardPage() {
       toast.error('Invalid amount', 'Enter a valid STX amount to stake.');
       return;
     }
-    toast.info('Opening wallet', 'Confirm the transaction in your wallet.');
-    callStake(stxToMicro(stx), {
-      onFinish: (txId) => {
-        const toastId = toast.tx(`Pending: Stake ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
-        pollTxStatus(toastId, txId);
-        setStakeInput('');
-        setTxStatus(null);
-      },
-      onCancel: () => {
-        toast.warning('Transaction cancelled', 'Stake was not submitted.');
-        setTxStatus(null);
+
+    dialog.open({
+      title: `Stake ${stx} STX`,
+      description: 'Staking STX locks your tokens in the DAO contract. You can withdraw them later.',
+      variant: 'warning',
+      confirmLabel: 'Confirm Stake',
+      details: [
+        { label: 'Amount', value: `${stx} STX` },
+        { label: 'Current Stake', value: `${formatStx(stakeAmount)} STX` },
+        { label: 'Wallet Balance', value: `${formatStx(stxBalance)} STX` },
+      ],
+      onConfirm: () => {
+        toast.info('Opening wallet', 'Confirm the transaction in your wallet.');
+        callStake(stxToMicro(stx), {
+          onFinish: (txId) => {
+            const toastId = toast.tx(`Pending: Stake ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
+            pollTxStatus(toastId, txId);
+            setStakeInput('');
+            setTxStatus(null);
+          },
+          onCancel: () => {
+            toast.warning('Transaction cancelled', 'Stake was not submitted.');
+            setTxStatus(null);
+          },
+        });
       },
     });
   };
