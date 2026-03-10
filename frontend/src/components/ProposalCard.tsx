@@ -18,7 +18,7 @@ export function ProposalCard({ proposal }: Props) {
     >
       {/* Header row */}
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h3 className="text-base font-semibold text-text group-hover:text-green transition-colors line-clamp-1">
+        <h2 className="text-base font-semibold text-text group-hover:text-green transition-colors line-clamp-1">
           {proposal.title}
         </h3>
         <span
