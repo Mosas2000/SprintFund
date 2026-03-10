@@ -14,6 +14,7 @@ export function ProposalCard({ proposal }: Props) {
   return (
     <Link
       to={`/proposals/${proposal.id}`}
+      aria-label={`${proposal.title} - ${proposal.executed ? 'Executed' : 'Active'} - ${formatStx(proposal.amount)} STX`}
       className="group block rounded-xl border border-border bg-card p-5 transition-all hover:border-green/30 hover:shadow-[0_0_20px_rgba(0,255,136,0.05)]"
     >
       {/* Header row */}
@@ -38,12 +39,19 @@ export function ProposalCard({ proposal }: Props) {
       </p>
 
       {/* Vote bar */}
-      <div className="mb-3">
+      <div className="mb-3" role="group" aria-label="Vote distribution">
         <div className="mb-1 flex justify-between text-xs text-muted">
           <span>For: {proposal.votesFor}</span>
           <span>Against: {proposal.votesAgainst}</span>
         </div>
-        <div className="h-1.5 w-full rounded-full bg-border">
+        <div
+          className="h-1.5 w-full rounded-full bg-border"
+          role="progressbar"
+          aria-valuenow={forPct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`${forPct}% votes in favor`}
+        >
           <div
             className="h-full rounded-full bg-green transition-all"
             style={{ width: `${forPct}%` }}
