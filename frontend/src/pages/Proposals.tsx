@@ -101,9 +101,11 @@ export function ProposalsPage() {
           <p className="mt-1 text-sm text-muted">Be the first to create one!</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div role="list" aria-label="Proposals" className="grid gap-4 sm:grid-cols-2">
           {filtered.map((p) => (
-            <ProposalCard key={p.id} proposal={p} />
+            <div role="listitem" key={p.id}>
+              <ProposalCard proposal={p} />
+            </div>
           ))}
         </div>
       )}
