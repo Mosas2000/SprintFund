@@ -1,6 +1,7 @@
 import { useWalletStore } from '../store/wallet';
 import { truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
+import { FOCUS_RING_GREEN, FOCUS_RING_RED } from '../lib/focus-styles';
 
 export function ConnectWallet() {
   const { address, connected, connect, disconnect } = useWalletStore();
@@ -18,13 +19,14 @@ export function ConnectWallet() {
 
   if (connected && address) {
     return (
-      <div className="flex items-center gap-2">
-        <span className="rounded-md bg-green/10 px-2.5 py-1 text-xs font-mono text-green">
+      <div className="flex items-center gap-2" role="status" aria-label="Wallet connected">
+        <span className="rounded-md bg-green/10 px-2.5 py-1 text-xs font-mono text-green" aria-label={`Connected address: ${address}`}>
           {truncateAddress(address)}
         </span>
         <button
           onClick={handleDisconnect}
-          className="rounded-md px-2.5 py-1 text-xs text-muted hover:text-red transition-colors"
+          aria-label="Disconnect wallet"
+          className={`rounded-md px-2.5 py-1 text-xs text-muted hover:text-red transition-colors ${FOCUS_RING_RED}`}
         >
           Disconnect
         </button>
@@ -35,7 +37,8 @@ export function ConnectWallet() {
   return (
     <button
       onClick={handleConnect}
-      className="rounded-md bg-green px-3 py-1.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95"
+      aria-label="Connect Stacks wallet"
+      className={`rounded-md bg-green px-3 py-1.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 ${FOCUS_RING_GREEN}`}
     >
       Connect Wallet
     </button>

@@ -6,6 +6,8 @@ import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFormValidation } from '../hooks/useFormValidation';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { isFormValid, validateProposalForm } from '../lib/validation';
 import { CharacterCounter } from '../components/CharacterCounter';
 import { FieldErrorMessage } from '../components/FieldErrorMessage';
@@ -18,6 +20,8 @@ export function CreateProposalPage() {
   const toast = useToast();
   const validation = useFormValidation();
   const dialog = useConfirmDialog();
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
+  useDocumentTitle('Create Proposal');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -78,7 +82,7 @@ export function CreateProposalPage() {
   if (!connected) {
     return (
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-20 text-center">
-        <h1 className="mb-4 text-2xl font-bold text-text">Create Proposal</h1>
+        <h1 ref={headingRef} tabIndex={-1} className="mb-4 text-2xl font-bold text-text outline-none">Create Proposal</h1>
         <p className="mb-6 text-sm text-muted">
           Connect your wallet to create a proposal. You need at least {MIN_STAKE_STX} STX staked.
         </p>
@@ -94,7 +98,7 @@ export function CreateProposalPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
-      <h1 className="mb-2 text-2xl font-bold text-text">Create Proposal</h1>
+      <h1 ref={headingRef} tabIndex={-1} className="mb-2 text-2xl font-bold text-text outline-none">Create Proposal</h1>
       <p className="mb-8 text-sm text-muted">
         Submit a funding request to the SprintFund DAO. Requires {MIN_STAKE_STX}+ STX staked.
       </p>
@@ -223,7 +227,7 @@ export function CreateProposalPage() {
 
         {/* Validation summary -- shown after a failed submit attempt */}
         {validation.submitted && Object.keys(validation.errors).length > 0 && (
-          <div className="rounded-lg bg-red/5 border border-red/20 px-4 py-3">
+          <div role="alert" aria-live="assertive" className="rounded-lg bg-red/5 border border-red/20 px-4 py-3">
             <p className="mb-1.5 text-xs font-medium text-red">
               Please fix the following before submitting:
             </p>
@@ -237,14 +241,14 @@ export function CreateProposalPage() {
 
         {/* Submit Error */}
         {submitError && (
-          <p className="rounded-lg bg-red/5 border border-red/20 px-3 py-2 text-xs text-red">
+          <p role="alert" aria-live="assertive" className="rounded-lg bg-red/5 border border-red/20 px-3 py-2 text-xs text-red">
             {submitError}
           </p>
         )}
 
         {/* TX Status */}
         {txStatus && (
-          <p className="rounded-lg bg-green/5 border border-green/20 px-3 py-2 text-xs text-green">
+          <p role="status" aria-live="polite" className="rounded-lg bg-green/5 border border-green/20 px-3 py-2 text-xs text-green">
             {txStatus}
           </p>
         )}

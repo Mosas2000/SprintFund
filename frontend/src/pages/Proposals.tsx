@@ -6,6 +6,8 @@ import { ErrorState } from '../components/ErrorState';
 import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
 import { useToast } from '../hooks/useToast';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
@@ -17,6 +19,8 @@ export function ProposalsPage() {
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
   const toast = useToast();
   const online = useNetworkStatus();
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
+  useDocumentTitle('Proposals');
 
   const fetchProposals = useCallback(() => {
     setError(null);
@@ -54,7 +58,7 @@ export function ProposalsPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text">Proposals</h1>
+          <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-bold text-text outline-none">Proposals</h1>
           <p className="text-sm text-muted">Browse and vote on community proposals</p>
         </div>
         <Link
@@ -66,12 +70,13 @@ export function ProposalsPage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 flex gap-2" role="group" aria-label="Filter proposals">
         {(['all', 'active', 'executed'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
+            aria-pressed={filter === f}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${
               filter === f
                 ? 'bg-green/10 text-green'
                 : 'text-muted hover:text-text hover:bg-white/5'
@@ -98,9 +103,11 @@ export function ProposalsPage() {
           <p className="mt-1 text-sm text-muted">Be the first to create one!</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div role="list" aria-label="Proposals" className="grid gap-4 sm:grid-cols-2">
           {filtered.map((p) => (
-            <ProposalCard key={p.id} proposal={p} />
+            <div role="listitem" key={p.id}>
+              <ProposalCard proposal={p} />
+            </div>
           ))}
         </div>
       )}
