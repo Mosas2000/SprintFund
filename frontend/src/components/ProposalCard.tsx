@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { formatStx } from '../config';
 import { truncateAddress } from '../lib/api';
+import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 import type { Proposal } from '../types';
 
 interface Props {
@@ -15,7 +16,7 @@ export function ProposalCard({ proposal }: Props) {
     <Link
       to={`/proposals/${proposal.id}`}
       aria-label={`${proposal.title} - ${proposal.executed ? 'Executed' : 'Active'} - ${formatStx(proposal.amount)} STX`}
-      className="group block rounded-xl border border-border bg-card p-5 transition-all hover:border-green/30 hover:shadow-[0_0_20px_rgba(0,255,136,0.05)]"
+      className={`group block rounded-xl border border-border bg-card p-5 transition-all hover:border-green/30 hover:shadow-[0_0_20px_rgba(0,255,136,0.05)] ${FOCUS_RING_GREEN}`}
     >
       {/* Header row */}
       <div className="mb-3 flex items-start justify-between gap-3">
