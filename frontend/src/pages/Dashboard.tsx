@@ -274,7 +274,7 @@ export function DashboardPage() {
               <Link
                 key={p.id}
                 to={`/proposals/${p.id}`}
-                className="flex items-center justify-between rounded-xl border border-border bg-card p-4 transition-colors hover:border-green/30"
+                className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-border bg-card p-3 sm:p-4 transition-colors hover:border-green/30 min-h-[44px]"
               >
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-text truncate">{p.title}</p>
@@ -283,7 +283,7 @@ export function DashboardPage() {
                   </p>
                 </div>
                 <span
-                  className={`shrink-0 ml-3 rounded-full px-2 py-0.5 text-xs font-medium ${
+                  className={`self-start sm:self-center shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
                     p.executed ? 'bg-green/10 text-green' : 'bg-amber/10 text-amber'
                   }`}
                 >
