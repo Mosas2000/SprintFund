@@ -129,7 +129,7 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-text transition-colors hover:bg-surface active:scale-[0.98]"
+              className="flex-1 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-text transition-colors hover:bg-surface active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border focus-visible:ring-offset-2 focus-visible:ring-offset-card"
               data-testid="confirm-dialog-cancel"
             >
               {action.cancelLabel ?? 'Cancel'}
@@ -137,7 +137,7 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
             <button
               type="button"
               onClick={handleConfirm}
-              className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] ${config.confirmButton}`}
+              className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-card ${config.confirmButton}`}
               data-testid="confirm-dialog-confirm"
             >
               {action.confirmLabel}
