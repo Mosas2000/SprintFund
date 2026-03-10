@@ -187,7 +187,7 @@ export function DashboardPage() {
         </div>
         <Link
           to="/proposals/create"
-          className="rounded-lg bg-green px-4 py-2 text-sm font-semibold text-dark text-center transition-all hover:bg-green-dim active:scale-95"
+          className="w-full sm:w-auto rounded-lg bg-green px-4 py-2.5 text-sm font-semibold text-dark text-center transition-all hover:bg-green-dim active:scale-95 min-h-[44px] flex items-center justify-center"
         >
           + New Proposal
         </Link>
@@ -211,10 +211,10 @@ export function DashboardPage() {
       {/* -- Stake / Withdraw -------------------------- */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {/* Stake */}
-        <div className="rounded-xl border border-border bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="mb-3 text-sm font-semibold text-text">Stake STX</h2>
           <p className="mb-3 text-xs text-muted">Min {MIN_STAKE_STX} STX required to create proposals</p>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <label htmlFor="stake-amount" className="sr-only">Amount to stake in STX</label>
             <input
               id="stake-amount"
@@ -224,11 +224,11 @@ export function DashboardPage() {
               value={stakeInput}
               onChange={(e) => setStakeInput(e.target.value)}
               placeholder="10"
-              className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text placeholder-muted outline-none focus:border-green/40"
+              className="flex-1 rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-text placeholder-muted outline-none focus:border-green/40 min-h-[44px]"
             />
             <button
               onClick={handleStake}
-              className="rounded-lg bg-green px-4 py-2 text-sm font-semibold text-dark transition-all hover:bg-green-dim active:scale-95"
+              className="w-full sm:w-auto rounded-lg bg-green px-4 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim active:scale-95 min-h-[44px]"
             >
               Stake
             </button>
@@ -236,10 +236,10 @@ export function DashboardPage() {
         </div>
 
         {/* Withdraw */}
-        <div className="rounded-xl border border-border bg-card p-5">
+        <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="mb-3 text-sm font-semibold text-text">Withdraw Stake</h2>
           <p className="mb-3 text-xs text-muted">Current stake: {formatStx(stakeAmount)} STX</p>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <label htmlFor="withdraw-amount" className="sr-only">Amount to withdraw in STX</label>
             <input
               id="withdraw-amount"
@@ -249,11 +249,11 @@ export function DashboardPage() {
               value={withdrawInput}
               onChange={(e) => setWithdrawInput(e.target.value)}
               placeholder="5"
-              className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text placeholder-muted outline-none focus:border-green/40"
+              className="flex-1 rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-text placeholder-muted outline-none focus:border-green/40 min-h-[44px]"
             />
             <button
               onClick={handleWithdraw}
-              className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-text transition-colors hover:border-green/40 hover:text-green active:scale-95"
+              className="w-full sm:w-auto rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:border-green/40 hover:text-green active:scale-95 min-h-[44px]"
             >
               Withdraw
             </button>
@@ -309,9 +309,9 @@ export function DashboardPage() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="mt-1 text-lg font-bold text-text">{value}</p>
+    <div className="min-w-0 rounded-xl border border-border bg-card p-4">
+      <p className="text-xs text-muted truncate">{label}</p>
+      <p className="mt-1 text-lg font-bold text-text truncate">{value}</p>
     </div>
   );
 }
