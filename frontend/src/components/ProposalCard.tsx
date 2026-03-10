@@ -16,11 +16,11 @@ export function ProposalCard({ proposal }: Props) {
     <Link
       to={`/proposals/${proposal.id}`}
       aria-label={`${proposal.title} - ${proposal.executed ? 'Executed' : 'Active'} - ${formatStx(proposal.amount)} STX`}
-      className={`group block rounded-xl border border-border bg-card p-5 transition-all hover:border-green/30 hover:shadow-[0_0_20px_rgba(0,255,136,0.05)] ${FOCUS_RING_GREEN}`}
+      className={`group block rounded-xl border border-border bg-card p-4 sm:p-5 transition-all hover:border-green/30 hover:shadow-[0_0_20px_rgba(0,255,136,0.05)] ${FOCUS_RING_GREEN}`}
     >
       {/* Header row */}
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <h2 className="text-base font-semibold text-text group-hover:text-green transition-colors line-clamp-1">
+      <div className="mb-2 sm:mb-3 flex items-start justify-between gap-2 sm:gap-3">
+        <h2 className="text-sm sm:text-base font-semibold text-text group-hover:text-green transition-colors line-clamp-2 sm:line-clamp-1">
           {proposal.title}
         </h2>
         <span
@@ -35,7 +35,7 @@ export function ProposalCard({ proposal }: Props) {
       </div>
 
       {/* Description */}
-      <p className="mb-4 text-sm text-muted line-clamp-2">
+      <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-muted line-clamp-2">
         {proposal.description}
       </p>
 
