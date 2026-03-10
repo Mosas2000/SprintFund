@@ -1,6 +1,7 @@
 import { useWalletStore } from '../store/wallet';
 import { truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
+import { FOCUS_RING_GREEN, FOCUS_RING_RED } from '../lib/focus-styles';
 
 export function ConnectWallet() {
   const { address, connected, connect, disconnect } = useWalletStore();
@@ -25,7 +26,7 @@ export function ConnectWallet() {
         <button
           onClick={handleDisconnect}
           aria-label="Disconnect wallet"
-          className="rounded-md px-2.5 py-1 text-xs text-muted hover:text-red transition-colors"
+          className={`rounded-md px-2.5 py-1 text-xs text-muted hover:text-red transition-colors ${FOCUS_RING_RED}`}
         >
           Disconnect
         </button>
@@ -37,7 +38,7 @@ export function ConnectWallet() {
     <button
       onClick={handleConnect}
       aria-label="Connect Stacks wallet"
-      className="rounded-md bg-green px-3 py-1.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95"
+      className={`rounded-md bg-green px-3 py-1.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 ${FOCUS_RING_GREEN}`}
     >
       Connect Wallet
     </button>
