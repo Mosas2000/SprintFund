@@ -8,6 +8,7 @@ import { ProposalsPage } from './pages/Proposals';
 import { ProposalDetailPage } from './pages/ProposalDetail';
 import { CreateProposalPage } from './pages/CreateProposal';
 import { DashboardPage } from './pages/Dashboard';
+import { ProfilePage } from './pages/Profile';
 
 /* ── Error Boundary ──────────────────────────── */
 
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="/proposals/:id" element={<ProposalDetailPage />} />
             <Route path="/proposals/create" element={<CreateProposalPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
