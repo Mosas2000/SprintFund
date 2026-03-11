@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import { Skeleton } from './Skeleton';
 
 /**
  * Skeleton placeholder for the full proposal detail page.
  * Mirrors the three-column layout of ProposalDetailPage.
  */
-export function ProposalDetailSkeleton() {
+export const ProposalDetailSkeleton = memo(function ProposalDetailSkeleton() {
   return (
     <div
       className="mx-auto max-w-5xl px-4 sm:px-6 py-8"
@@ -79,4 +80,4 @@ export function ProposalDetailSkeleton() {
       </div>
     </div>
   );
-}
+});
