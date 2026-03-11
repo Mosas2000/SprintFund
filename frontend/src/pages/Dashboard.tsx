@@ -6,6 +6,7 @@ import { callStake, callWithdrawStake } from '../lib/stacks';
 import { getStxBalance } from '../lib/api';
 import { formatStx, stxToMicro, MIN_STAKE_STX } from '../config';
 import { explorerAddressUrl, truncateAddress } from '../lib/api';
+import { sanitizeText } from '../lib/sanitize';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
@@ -279,7 +280,7 @@ export function DashboardPage() {
                 className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-border bg-card p-3 sm:p-4 transition-colors hover:border-green/30 min-h-[44px]"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-text truncate">{p.title}</p>
+                  <p className="text-sm font-medium text-text truncate">{sanitizeText(p.title)}</p>
                   <p className="text-xs text-muted">
                     {formatStx(p.amount)} STX  {p.votesFor} for / {p.votesAgainst} against
                   </p>
