@@ -1,12 +1,16 @@
+import { memo } from 'react';
 import { Skeleton } from './Skeleton';
 import { StatCardSkeleton } from './StatCardSkeleton';
+
+/** Pre-allocated array to avoid creating a new one on each render. */
+const PROPOSAL_SKELETON_ROWS = [0, 1, 2] as const;
 
 /**
  * Full-page skeleton for the Dashboard loading state.
  * Mirrors the connected Dashboard layout: header, stat cards,
  * stake/withdraw panels, and proposals list.
  */
-export function DashboardSkeleton() {
+export const DashboardSkeleton = memo(function DashboardSkeleton() {
   return (
     <div
       className="mx-auto max-w-5xl px-4 sm:px-6 py-8"
@@ -55,7 +59,7 @@ export function DashboardSkeleton() {
       <div>
         <Skeleton className="h-5 w-32 mb-4" />
         <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
+          {PROPOSAL_SKELETON_ROWS.map((i) => (
             <div
               key={i}
               className="flex items-center justify-between rounded-xl border border-border bg-card p-4"
@@ -71,4 +75,4 @@ export function DashboardSkeleton() {
       </div>
     </div>
   );
-}
+});

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useWalletStore } from '../store/wallet';
+import { useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
 import { callCreateProposal } from '../lib/stacks';
 import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
@@ -15,7 +15,8 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 import { pollTxStatus } from '../lib/pollTxStatus';
 
 export function CreateProposalPage() {
-  const { connected, connect } = useWalletStore();
+  const connected = useWalletConnected();
+  const connect = useWalletConnect();
   const navigate = useNavigate();
   const toast = useToast();
   const validation = useFormValidation();
@@ -31,9 +32,12 @@ export function CreateProposalPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   /** Disable submit when a transaction is pending or any field has a known error. */
-  const canSubmit = !txStatus && isFormValid(validateProposalForm({ title, description, amount, duration }));
+  const canSubmit = useMemo(
+    () => !txStatus && isFormValid(validateProposalForm({ title, description, amount, duration })),
+    [txStatus, title, description, amount, duration],
+  );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
 
@@ -77,7 +81,7 @@ export function CreateProposalPage() {
         }
       },
     });
-  };
+  }, [title, description, amount, duration, validation, dialog, toast, navigate]);
 
   if (!connected) {
     return (

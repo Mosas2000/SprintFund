@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllProposals } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
@@ -47,11 +47,11 @@ export function ProposalsPage() {
     }
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const filtered = proposals.filter((p) => {
+  const filtered = useMemo(() => proposals.filter((p) => {
     if (filter === 'active') return !p.executed;
     if (filter === 'executed') return p.executed;
     return true;
-  });
+  }), [proposals, filter]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">

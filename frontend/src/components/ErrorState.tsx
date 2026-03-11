@@ -6,6 +6,7 @@
  * - "empty": neutral/muted accent for empty data sets
  */
 
+import { memo } from 'react';
 import { ErrorIcon } from './ErrorIcon';
 
 type ErrorStateVariant = 'error' | 'empty';
@@ -42,7 +43,7 @@ const VARIANT_STYLES: Record<ErrorStateVariant, { container: string; icon: strin
   },
 };
 
-export function ErrorState({
+export const ErrorState = memo(function ErrorState({
   variant = 'error',
   title = 'Something went wrong',
   message,
@@ -82,4 +83,4 @@ export function ErrorState({
       )}
     </div>
   );
-}
+});

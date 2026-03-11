@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { useWalletStore } from '../store/wallet';
+import { useWalletAddress, useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
 import { getStake, getAllProposals, getProposalCount } from '../lib/stacks';
 import { callStake, callWithdrawStake } from '../lib/stacks';
 import { getStxBalance } from '../lib/api';
@@ -18,7 +18,9 @@ import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
 export function DashboardPage() {
-  const { connected, address, connect } = useWalletStore();
+  const connected = useWalletConnected();
+  const address = useWalletAddress();
+  const connect = useWalletConnect();
   const toast = useToast();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -58,14 +60,14 @@ export function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [address]);
+  }, [address, toast]);
 
   useEffect(() => {
     if (connected && address) fetchData();
     else setLoading(false);
   }, [connected, address, fetchData]);
 
-  const handleStake = () => {
+  const handleStake = useCallback(() => {
     const stx = parseFloat(stakeInput);
     if (isNaN(stx) || stx <= 0) {
       toast.error('Invalid amount', 'Enter a valid STX amount to stake.');
@@ -98,9 +100,9 @@ export function DashboardPage() {
         });
       },
     });
-  };
+  }, [stakeInput, stakeAmount, stxBalance, toast, dialog]);
 
-  const handleWithdraw = () => {
+  const handleWithdraw = useCallback(() => {
     const stx = parseFloat(withdrawInput);
     if (isNaN(stx) || stx <= 0) {
       toast.error('Invalid amount', 'Enter a valid STX amount to withdraw.');
@@ -133,7 +135,7 @@ export function DashboardPage() {
         });
       },
     });
-  };
+  }, [withdrawInput, stakeAmount, toast, dialog]);
 
   /* -- Not connected ----------------------------- */
   if (!connected) {
@@ -307,11 +309,11 @@ export function DashboardPage() {
 
 /* -- Stat card helper ----------------------------- */
 
-function StatCard({ label, value }: { label: string; value: string }) {
+const StatCard = memo(function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 rounded-xl border border-border bg-card p-4">
       <p className="text-xs text-muted truncate">{label}</p>
       <p className="mt-1 text-lg font-bold text-text truncate">{value}</p>
     </div>
   );
-}
+});

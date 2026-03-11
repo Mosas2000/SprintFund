@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useToastStore } from '../store/toast';
 import type { ToastVariant, TxStatus } from '../types';
 
@@ -69,7 +69,7 @@ export function useToast() {
     [updateTxStatus],
   );
 
-  return {
+  return useMemo(() => ({
     show,
     success,
     error,
@@ -79,5 +79,5 @@ export function useToast() {
     dismiss,
     dismissAll: clearAll,
     updateTxStatus: updateStatus,
-  };
+  }), [show, success, error, warning, info, tx, dismiss, clearAll, updateStatus]);
 }

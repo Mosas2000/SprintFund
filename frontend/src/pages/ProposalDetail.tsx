@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
 import { formatStx } from '../config';
 import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
-import { useWalletStore } from '../store/wallet';
+import { useWalletConnected, useWalletAddress } from '../store/wallet-selectors';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
@@ -13,6 +13,7 @@ import { pollTxStatus } from '../lib/pollTxStatus';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { VoteProgressBar } from '../components/VoteProgressBar';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
@@ -26,7 +27,8 @@ export function ProposalDetailPage() {
   const [voteWeight, setVoteWeight] = useState('1');
   const [txStatus, setTxStatus] = useState<string | null>(null);
 
-  const { connected, address } = useWalletStore();
+  const connected = useWalletConnected();
+  const address = useWalletAddress();
   const toast = useToast();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -53,7 +55,7 @@ export function ProposalDetailPage() {
     fetchProposal();
   }, [fetchProposal]);
 
-  const handleVote = (support: boolean) => {
+  const handleVote = useCallback((support: boolean) => {
     const weight = parseInt(voteWeight, 10);
     if (isNaN(weight) || weight < 1) {
       toast.error('Invalid vote weight', 'Enter a weight of at least 1.');
@@ -88,9 +90,9 @@ export function ProposalDetailPage() {
         });
       },
     });
-  };
+  }, [voteWeight, proposalId, proposal, toast, dialog]);
 
-  const handleExecute = () => {
+  const handleExecute = useCallback(() => {
     dialog.open({
       title: 'Execute Proposal',
       description: 'Executing this proposal will transfer the requested STX from the treasury. This action cannot be undone.',
@@ -118,7 +120,16 @@ export function ProposalDetailPage() {
         });
       },
     });
-  };
+  }, [proposalId, proposal, toast, dialog]);
+
+  // Derived vote statistics - memoized to avoid recalculation on unrelated
+  // state changes (e.g. voteWeight input, txStatus updates).
+  const { totalVotes, forPct, passing } = useMemo(() => {
+    if (!proposal) return { totalVotes: 0, forPct: 0, passing: false };
+    const total = proposal.votesFor + proposal.votesAgainst;
+    const pct = total > 0 ? Math.round((proposal.votesFor / total) * 100) : 0;
+    return { totalVotes: total, forPct: pct, passing: proposal.votesFor > proposal.votesAgainst };
+  }, [proposal]);
 
   if (loading) {
     return <ProposalDetailSkeleton />;
@@ -140,10 +151,6 @@ export function ProposalDetailPage() {
       </div>
     );
   }
-
-  const totalVotes = proposal.votesFor + proposal.votesAgainst;
-  const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
-  const passing = proposal.votesFor > proposal.votesAgainst;
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
@@ -179,19 +186,7 @@ export function ProposalDetailPage() {
               <span className="text-green">For: {proposal.votesFor}</span>
               <span className="text-red">Against: {proposal.votesAgainst}</span>
             </div>
-            <div
-              className="h-2 w-full rounded-full bg-border overflow-hidden"
-              role="progressbar"
-              aria-valuenow={forPct}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`${forPct}% of votes in favor`}
-            >
-              <div
-                className="h-full rounded-full bg-green transition-all"
-                style={{ width: `${forPct}%` }}
-              />
-            </div>
+            <VoteProgressBar forPct={forPct} heightClass="h-2" />
             <p className="mt-2 text-xs text-muted" aria-live="polite">
               {totalVotes === 0
                 ? 'No votes yet'
