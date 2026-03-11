@@ -15,11 +15,11 @@ export function ProposalDetailSkeleton() {
       {/* Breadcrumb */}
       <Skeleton className="mb-6 h-4 w-28" />
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
         {/* Main content area */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Title card */}
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
             <div className="mb-4 flex items-start justify-between gap-4">
               <Skeleton className="h-7 w-3/4" />
               <Skeleton className="h-6 w-16 rounded-full" />
@@ -32,7 +32,7 @@ export function ProposalDetailSkeleton() {
           </div>
 
           {/* Vote bar card */}
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
             <Skeleton className="mb-4 h-4 w-12" />
             <div className="mb-2 flex justify-between">
               <Skeleton className="h-4 w-16" />
@@ -43,7 +43,7 @@ export function ProposalDetailSkeleton() {
           </div>
 
           {/* Vote actions card */}
-          <div className="rounded-xl border border-border bg-card p-6">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
             <Skeleton className="mb-4 h-4 w-28" />
             <Skeleton className="mb-4 h-10 w-full rounded-lg" />
             <Skeleton className="mb-1 h-3 w-40" />

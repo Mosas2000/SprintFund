@@ -81,14 +81,14 @@ export function CreateProposalPage() {
 
   if (!connected) {
     return (
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-20 text-center">
-        <h1 ref={headingRef} tabIndex={-1} className="mb-4 text-2xl font-bold text-text outline-none">Create Proposal</h1>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-20 text-center">
+        <h1 ref={headingRef} tabIndex={-1} className="mb-4 text-xl sm:text-2xl font-bold text-text outline-none">Create Proposal</h1>
         <p className="mb-6 text-sm text-muted">
           Connect your wallet to create a proposal. You need at least {MIN_STAKE_STX} STX staked.
         </p>
         <button
           onClick={connect}
-          className="rounded-lg bg-green px-6 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95"
+          className="w-full sm:w-auto rounded-lg bg-green px-6 py-3 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 min-h-[44px]"
         >
           Connect Wallet
         </button>
@@ -123,7 +123,7 @@ export function CreateProposalPage() {
             placeholder="E.g. Fund Stacks Developer Workshop"
             aria-invalid={!!(validation.errors.title && validation.touched.title)}
             aria-describedby={validation.errors.title && validation.touched.title ? 'title-error' : undefined}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors min-h-[44px] ${
               validation.errors.title && validation.touched.title
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
@@ -151,7 +151,7 @@ export function CreateProposalPage() {
             placeholder="Describe what you'll build, who benefits, and your delivery timeline..."
             aria-invalid={!!(validation.errors.description && validation.touched.description)}
             aria-describedby={validation.errors.description && validation.touched.description ? 'description-error' : undefined}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors resize-none ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors resize-none min-h-[120px] ${
               validation.errors.description && validation.touched.description
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
@@ -179,7 +179,7 @@ export function CreateProposalPage() {
             placeholder="50"
             aria-invalid={!!(validation.errors.amount && validation.touched.amount)}
             aria-describedby={validation.errors.amount && validation.touched.amount ? 'amount-error' : 'amount-hint'}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors min-h-[44px] ${
               validation.errors.amount && validation.touched.amount
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
@@ -212,7 +212,7 @@ export function CreateProposalPage() {
             placeholder="14"
             aria-invalid={!!(validation.errors.duration && validation.touched.duration)}
             aria-describedby={validation.errors.duration && validation.touched.duration ? 'duration-error' : 'duration-hint'}
-            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors ${
+            className={`w-full rounded-lg border bg-card px-3 py-2.5 text-sm text-text placeholder-muted/50 outline-none transition-colors min-h-[44px] ${
               validation.errors.duration && validation.touched.duration
                 ? 'border-red/60 focus:border-red/80'
                 : 'border-border focus:border-green/40'
@@ -257,7 +257,7 @@ export function CreateProposalPage() {
         <button
           type="submit"
           disabled={!canSubmit}
-          className="w-full rounded-lg bg-green px-4 py-2.5 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          className="w-full rounded-lg bg-green px-4 py-3 text-sm font-semibold text-dark transition-all hover:bg-green-dim hover:shadow-[0_0_16px_rgba(0,255,136,0.3)] active:scale-95 disabled:opacity-50 disabled:pointer-events-none min-h-[44px]"
         >
           Submit Proposal
         </button>
