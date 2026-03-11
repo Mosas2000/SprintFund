@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { DialogVariant } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 
@@ -12,7 +13,7 @@ interface DialogIconProps {
  * - danger: exclamation circle (red)
  * - info: information circle (green)
  */
-export function DialogIcon({ variant }: DialogIconProps) {
+export const DialogIcon = memo(function DialogIcon({ variant }: DialogIconProps) {
   const config = VARIANT_CONFIG[variant];
 
   return (
@@ -51,4 +52,4 @@ export function DialogIcon({ variant }: DialogIconProps) {
       </svg>
     </div>
   );
-}
+});
