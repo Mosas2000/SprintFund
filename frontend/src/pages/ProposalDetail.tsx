@@ -33,7 +33,7 @@ export function ProposalDetailPage() {
   const toast = useToast();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
-  useDocumentTitle(proposal?.title ? `${proposal.title}` : 'Proposal Detail');
+  useDocumentTitle(proposal?.title ? sanitizeText(proposal.title) : 'Proposal Detail');
 
   const fetchProposal = useCallback(() => {
     if (isNaN(proposalId)) {
