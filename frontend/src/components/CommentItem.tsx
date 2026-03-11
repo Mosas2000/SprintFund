@@ -4,6 +4,7 @@ import { useToggleReaction, useDeleteComment, useEditComment } from '../store/co
 import { formatRelativeTime, formatFullDateTime, shortenAddress, getAddressInitials } from '../lib/comment-formatting';
 import { sanitizeText } from '../lib/sanitize';
 import { COMMENT_RULES } from '../types/comment';
+import { CommentForm } from './CommentForm';
 import type { CommentItemProps } from '../types/comment';
 
 export const CommentItem = memo(function CommentItem({
@@ -250,9 +251,16 @@ export const CommentItem = memo(function CommentItem({
         </div>
       </div>
 
-      {/* Reply form slot (rendered by CommentList) */}
+      {/* Inline reply form */}
       {showReplyForm && (
-        <div className="mt-2 ml-4" data-reply-slot={comment.id} />
+        <div className="mt-2 ml-4 sm:ml-6">
+          <CommentForm
+            proposalId={proposalId}
+            parentId={comment.id}
+            onSubmitted={() => setShowReplyForm(false)}
+            onCancel={() => setShowReplyForm(false)}
+          />
+        </div>
       )}
     </div>
   );
