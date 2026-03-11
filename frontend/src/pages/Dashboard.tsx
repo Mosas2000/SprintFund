@@ -60,7 +60,7 @@ export function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, [address]);
+  }, [address, toast]);
 
   useEffect(() => {
     if (connected && address) fetchData();
