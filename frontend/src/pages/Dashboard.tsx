@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useWalletAddress, useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
 import { getStake, getAllProposals, getProposalCount } from '../lib/stacks';
@@ -309,11 +309,11 @@ export function DashboardPage() {
 
 /* -- Stat card helper ----------------------------- */
 
-function StatCard({ label, value }: { label: string; value: string }) {
+const StatCard = memo(function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 rounded-xl border border-border bg-card p-4">
       <p className="text-xs text-muted truncate">{label}</p>
       <p className="mt-1 text-lg font-bold text-text truncate">{value}</p>
     </div>
   );
-}
+});
