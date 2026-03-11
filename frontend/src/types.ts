@@ -63,3 +63,19 @@ export type {
 } from './types/comment';
 
 export { COMMENT_RULES } from './types/comment';
+
+/* Re-export profile types for convenience */
+export type {
+  ActivityEventType,
+  ActivityEvent,
+  ProfileStats,
+  VoteRecord,
+  UserProfile,
+  ProfileLoadingState,
+  ProfileTab,
+  ProfileHeaderProps,
+  ProfileStatsGridProps,
+  UserProposalsProps,
+  VotingHistoryProps,
+  ActivityTimelineProps,
+} from './types/profile';
