@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
@@ -14,8 +14,11 @@ import { useEscapeKey } from '../hooks/useEscapeKey';
  * When `open` is true the dialog is portal-mounted to document.body
  * with a focus trap that cycles Tab/Shift+Tab between focusable elements
  * and a scroll lock that prevents the background page from scrolling.
+ *
+ * Wrapped in React.memo to avoid re-rendering when parent state changes
+ * (e.g. input fields, tx status) without affecting the dialog's own props.
  */
-export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
+export const ConfirmDialog = memo(function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
   const trapRef = useFocusTrap<HTMLDivElement>(open);
   useScrollLock(open);
   useEscapeKey(open, onClose);
@@ -149,4 +152,4 @@ export function ConfirmDialog({ open, action, onClose }: ConfirmDialogProps) {
     </div>,
     document.body,
   );
-}
+});
