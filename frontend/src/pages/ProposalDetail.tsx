@@ -70,7 +70,7 @@ export function ProposalDetailPage() {
       variant: support ? 'warning' : 'danger',
       confirmLabel: `Confirm Vote ${direction}`,
       details: [
-        { label: 'Proposal', value: proposal?.title ?? `#${proposalId}` },
+        { label: 'Proposal', value: proposal?.title ? sanitizeText(proposal.title) : `#${proposalId}` },
         { label: 'Direction', value: direction },
         { label: 'Weight', value: String(weight) },
         { label: 'Quadratic Cost', value: `${weight ** 2} stake weight` },
@@ -100,7 +100,7 @@ export function ProposalDetailPage() {
       variant: 'danger',
       confirmLabel: 'Confirm Execution',
       details: [
-        { label: 'Proposal', value: proposal?.title ?? `#${proposalId}` },
+        { label: 'Proposal', value: proposal?.title ? sanitizeText(proposal.title) : `#${proposalId}` },
         { label: 'Amount', value: `${formatStx(proposal?.amount ?? 0)} STX` },
         { label: 'Votes For', value: String(proposal?.votesFor ?? 0) },
         { label: 'Votes Against', value: String(proposal?.votesAgainst ?? 0) },
