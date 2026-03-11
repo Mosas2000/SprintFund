@@ -5,6 +5,8 @@
  * message string or null when the value is valid.
  */
 
+import { stripHtmlTags } from './sanitize';
+
 export interface ValidationRule {
   required: boolean;
   minLength?: number;
@@ -46,6 +48,13 @@ export const PROPOSAL_RULES = {
 export function validateTitle(value: string): string | null {
   const trimmed = value.trim();
   if (!trimmed) return 'Title is required';
+
+  // Reject content containing HTML markup
+  const stripped = stripHtmlTags(trimmed);
+  if (stripped.length !== trimmed.length) {
+    return 'Title must not contain HTML tags';
+  }
+
   if (trimmed.length < PROPOSAL_RULES.title.minLength) {
     return `Title must be at least ${PROPOSAL_RULES.title.minLength} characters`;
   }
@@ -58,6 +67,13 @@ export function validateTitle(value: string): string | null {
 export function validateDescription(value: string): string | null {
   const trimmed = value.trim();
   if (!trimmed) return 'Description is required';
+
+  // Reject content containing HTML markup
+  const stripped = stripHtmlTags(trimmed);
+  if (stripped.length !== trimmed.length) {
+    return 'Description must not contain HTML tags';
+  }
+
   if (trimmed.length < PROPOSAL_RULES.description.minLength) {
     return `Description must be at least ${PROPOSAL_RULES.description.minLength} characters`;
   }
