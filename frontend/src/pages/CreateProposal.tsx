@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
 import { callCreateProposal } from '../lib/stacks';
@@ -32,9 +32,12 @@ export function CreateProposalPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   /** Disable submit when a transaction is pending or any field has a known error. */
-  const canSubmit = !txStatus && isFormValid(validateProposalForm({ title, description, amount, duration }));
+  const canSubmit = useMemo(
+    () => !txStatus && isFormValid(validateProposalForm({ title, description, amount, duration })),
+    [txStatus, title, description, amount, duration],
+  );
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
 
@@ -78,7 +81,7 @@ export function CreateProposalPage() {
         }
       },
     });
-  };
+  }, [title, description, amount, duration, validation, dialog, toast, navigate]);
 
   if (!connected) {
     return (
