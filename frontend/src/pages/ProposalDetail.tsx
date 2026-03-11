@@ -4,6 +4,7 @@ import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
 import { formatStx } from '../config';
 import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
+import { sanitizeText, sanitizeMultilineText } from '../lib/sanitize';
 import { useWalletConnected, useWalletAddress } from '../store/wallet-selectors';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
@@ -167,7 +168,7 @@ export function ProposalDetailPage() {
           {/* Title + status */}
           <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
             <div className="mb-3 sm:mb-4 flex items-start justify-between gap-3 sm:gap-4">
-              <h1 ref={headingRef} tabIndex={-1} className="text-lg font-bold text-text sm:text-2xl outline-none">{proposal.title}</h1>
+              <h1 ref={headingRef} tabIndex={-1} className="text-lg font-bold text-text sm:text-2xl outline-none">{sanitizeText(proposal.title)}</h1>
               <span
                 className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   proposal.executed ? 'bg-green/10 text-green' : 'bg-amber/10 text-amber'
@@ -176,7 +177,7 @@ export function ProposalDetailPage() {
                 {proposal.executed ? 'Executed' : 'Active'}
               </span>
             </div>
-            <p className="text-sm text-muted leading-relaxed whitespace-pre-wrap">{proposal.description}</p>
+            <p className="text-sm text-muted leading-relaxed whitespace-pre-wrap">{sanitizeMultilineText(proposal.description)}</p>
           </div>
 
           {/* Vote bar */}
