@@ -4,7 +4,7 @@ import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
 import { formatStx } from '../config';
 import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
-import { useWalletStore } from '../store/wallet';
+import { useWalletConnected, useWalletAddress } from '../store/wallet-selectors';
 import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
@@ -26,7 +26,8 @@ export function ProposalDetailPage() {
   const [voteWeight, setVoteWeight] = useState('1');
   const [txStatus, setTxStatus] = useState<string | null>(null);
 
-  const { connected, address } = useWalletStore();
+  const connected = useWalletConnected();
+  const address = useWalletAddress();
   const toast = useToast();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
