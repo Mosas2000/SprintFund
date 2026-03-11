@@ -25,11 +25,11 @@ echo ""
 
 # 2. Check for innerHTML assignments
 echo "--- Checking for innerHTML assignments ---"
-if grep -rn "\.innerHTML\s*=" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" 2>/dev/null; then
+if grep -rn "\.innerHTML\s*=" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" --exclude="*.test.*" --exclude="*.spec.*" 2>/dev/null; then
   echo "FAIL: innerHTML assignment found"
   EXIT_CODE=1
 else
-  echo "PASS: No innerHTML assignments detected"
+  echo "PASS: No innerHTML assignments detected in production code"
 fi
 echo ""
 
