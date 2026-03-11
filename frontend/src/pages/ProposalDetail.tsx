@@ -13,6 +13,7 @@ import { pollTxStatus } from '../lib/pollTxStatus';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { VoteProgressBar } from '../components/VoteProgressBar';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
@@ -180,19 +181,7 @@ export function ProposalDetailPage() {
               <span className="text-green">For: {proposal.votesFor}</span>
               <span className="text-red">Against: {proposal.votesAgainst}</span>
             </div>
-            <div
-              className="h-2 w-full rounded-full bg-border overflow-hidden"
-              role="progressbar"
-              aria-valuenow={forPct}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`${forPct}% of votes in favor`}
-            >
-              <div
-                className="h-full rounded-full bg-green transition-all"
-                style={{ width: `${forPct}%` }}
-              />
-            </div>
+            <VoteProgressBar forPct={forPct} heightClass="h-2" />
             <p className="mt-2 text-xs text-muted" aria-live="polite">
               {totalVotes === 0
                 ? 'No votes yet'
