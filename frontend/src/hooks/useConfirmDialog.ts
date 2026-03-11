@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { ConfirmDialogAction } from '../types/confirm-dialog';
 
 /**
@@ -50,11 +50,11 @@ export function useConfirmDialog(): UseConfirmDialogReturn {
     }
   }, [pendingAction]);
 
-  return {
+  return useMemo(() => ({
     isOpen: pendingAction !== null,
     pendingAction,
     open,
     close,
     confirm,
-  };
+  }), [pendingAction, open, close, confirm]);
 }
