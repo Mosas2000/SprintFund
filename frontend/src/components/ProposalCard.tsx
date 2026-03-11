@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { formatStx } from '../config';
 import { truncateAddress } from '../lib/api';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
+import { VoteProgressBar } from './VoteProgressBar';
 import type { Proposal } from '../types';
 
 interface Props {
@@ -46,19 +47,7 @@ export const ProposalCard = memo(function ProposalCard({ proposal }: Props) {
           <span>For: {proposal.votesFor}</span>
           <span>Against: {proposal.votesAgainst}</span>
         </div>
-        <div
-          className="h-1.5 w-full rounded-full bg-border"
-          role="progressbar"
-          aria-valuenow={forPct}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label={`${forPct}% votes in favor`}
-        >
-          <div
-            className="h-full rounded-full bg-green transition-all"
-            style={{ width: `${forPct}%` }}
-          />
-        </div>
+        <VoteProgressBar forPct={forPct} />
       </div>
 
       {/* Footer */}
