@@ -3,6 +3,7 @@ import { memo, useEffect, useState } from 'react';
 import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
+import { sanitizeText } from '../lib/sanitize';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useScrollLock } from '../hooks/useScrollLock';
 import { useEscapeKey } from '../hooks/useEscapeKey';
@@ -95,7 +96,7 @@ export const ConfirmDialog = memo(function ConfirmDialog({ open, action, onClose
             className="mt-4 text-center text-lg font-semibold text-text"
             id="confirm-dialog-title"
           >
-            {action.title}
+            {sanitizeText(action.title)}
           </h2>
 
           {/* Description */}
@@ -103,7 +104,7 @@ export const ConfirmDialog = memo(function ConfirmDialog({ open, action, onClose
             className="mt-2 text-center text-sm text-muted"
             id="confirm-dialog-description"
           >
-            {action.description}
+            {sanitizeText(action.description)}
           </p>
 
           {/* Blockchain warning for danger variant */}
@@ -121,8 +122,8 @@ export const ConfirmDialog = memo(function ConfirmDialog({ open, action, onClose
                   key={item.label}
                   className="flex items-center justify-between text-sm"
                 >
-                  <span className="text-muted">{item.label}</span>
-                  <span className="font-medium text-text">{item.value}</span>
+                  <span className="text-muted">{sanitizeText(item.label)}</span>
+                  <span className="font-medium text-text">{sanitizeText(item.value)}</span>
                 </div>
               ))}
             </div>
