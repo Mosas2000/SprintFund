@@ -1,10 +1,18 @@
-import { useWalletStore } from '../store/wallet';
+import {
+  useWalletAddress,
+  useWalletConnected,
+  useWalletConnect,
+  useWalletDisconnect,
+} from '../store/wallet-selectors';
 import { truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
 import { FOCUS_RING_GREEN, FOCUS_RING_RED } from '../lib/focus-styles';
 
 export function ConnectWallet() {
-  const { address, connected, connect, disconnect } = useWalletStore();
+  const address = useWalletAddress();
+  const connected = useWalletConnected();
+  const connect = useWalletConnect();
+  const disconnect = useWalletDisconnect();
   const toast = useToast();
 
   const handleConnect = () => {
