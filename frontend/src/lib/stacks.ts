@@ -8,6 +8,7 @@ import {
 } from '@stacks/transactions';
 import { request } from '@stacks/connect';
 import { CONTRACT_ADDRESS, CONTRACT_NAME, CONTRACT_PRINCIPAL, NETWORK } from '../config';
+import { sanitizeText, sanitizeMultilineText } from './sanitize';
 import type { Proposal } from '../types';
 
 /* ═══════════════════════════════════════════════
@@ -53,12 +54,16 @@ export async function getProposalCount(): Promise<number> {
 export async function getProposal(id: number): Promise<Proposal | null> {
   const raw = await readOnly<Record<string, unknown>>('get-proposal', [uintCV(id)]);
   if (!raw) return null;
+
+  const rawTitle = extractVal(raw.title as Record<string, unknown>) as string;
+  const rawDescription = extractVal(raw.description as Record<string, unknown>) as string;
+
   return {
     id,
     proposer: extractVal(raw.proposer as Record<string, unknown>) as string,
     amount: parseInt(String(extractVal(raw.amount as Record<string, unknown>)), 10),
-    title: extractVal(raw.title as Record<string, unknown>) as string,
-    description: extractVal(raw.description as Record<string, unknown>) as string,
+    title: sanitizeText(rawTitle ?? ''),
+    description: sanitizeMultilineText(rawDescription ?? ''),
     votesFor: parseInt(String(extractVal(raw['votes-for'] as Record<string, unknown>)), 10),
     votesAgainst: parseInt(String(extractVal(raw['votes-against'] as Record<string, unknown>)), 10),
     executed: extractVal(raw.executed as Record<string, unknown>) as boolean,
