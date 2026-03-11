@@ -256,6 +256,23 @@ export function ProfilePage() {
         stakedAmount={profile.stats.stakedAmount}
       />
 
+      {/* Background refresh error banner */}
+      {error && profile && (
+        <div
+          role="alert"
+          className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300 flex items-center justify-between"
+        >
+          <span>Failed to refresh profile data: {error}</span>
+          <button
+            type="button"
+            onClick={handleRetry}
+            className="text-xs text-amber-400 hover:text-amber-200 transition-colors underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded ml-4"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
       <TabPanel activeTab={activeTab} profile={profile} />
 
