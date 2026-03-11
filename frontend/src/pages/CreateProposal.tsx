@@ -9,6 +9,7 @@ import { useFormValidation } from '../hooks/useFormValidation';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { isFormValid, validateProposalForm } from '../lib/validation';
+import { sanitizeText, sanitizeMultilineText } from '../lib/sanitize';
 import { CharacterCounter } from '../components/CharacterCounter';
 import { FieldErrorMessage } from '../components/FieldErrorMessage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -52,7 +53,7 @@ export function CreateProposalPage() {
       variant: 'info',
       confirmLabel: 'Confirm Submission',
       details: [
-        { label: 'Title', value: title.trim().slice(0, 40) + (title.trim().length > 40 ? '...' : '') },
+        { label: 'Title', value: sanitizeText(title.trim().slice(0, 40) + (title.trim().length > 40 ? '...' : '')) },
         { label: 'Requested Amount', value: `${stx} STX` },
         { label: 'Duration', value: `${duration} days` },
       ],
@@ -60,9 +61,11 @@ export function CreateProposalPage() {
         toast.info('Opening wallet', 'Confirm the proposal submission in your wallet.');
         setTxStatus('Opening wallet...');
         try {
-          await callCreateProposal(stxToMicro(stx), title.trim(), description.trim(), {
+          const safeTitle = sanitizeText(title.trim());
+          const safeDescription = sanitizeMultilineText(description.trim());
+          await callCreateProposal(stxToMicro(stx), safeTitle, safeDescription, {
             onFinish: (txId) => {
-              const toastId = toast.tx(`Pending: Create proposal "${title.trim().slice(0, 30)}..."`, txId, 'Waiting for on-chain confirmation...');
+              const toastId = toast.tx(`Pending: Create proposal "${sanitizeText(title.trim().slice(0, 30))}..."`, txId, 'Waiting for on-chain confirmation...');
               pollTxStatus(toastId, txId);
               setTxStatus(null);
               validation.resetValidation();
