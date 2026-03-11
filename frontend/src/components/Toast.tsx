@@ -1,6 +1,8 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Toast as ToastType } from '../types';
 import { explorerTxUrl } from '../lib/api';
+import { sanitizeText } from '../lib/sanitize';
+import { isValidTxId } from '../lib/sanitize-url';
 
 /* ── Variant configuration ────────────────────── */
 
@@ -152,11 +154,11 @@ export const Toast = memo(function Toast({ toast, onDismiss }: ToastProps) {
 
         {/* Content */}
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-text">{toast.title}</p>
+          <p className="text-sm font-medium text-text">{sanitizeText(toast.title)}</p>
           {toast.description && (
-            <p className="mt-0.5 text-xs text-muted">{toast.description}</p>
+            <p className="mt-0.5 text-xs text-muted">{sanitizeText(toast.description)}</p>
           )}
-          {toast.txId && (
+          {toast.txId && isValidTxId(toast.txId) && (
             <a
               href={explorerTxUrl(toast.txId)}
               target="_blank"
