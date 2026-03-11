@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { formatStx } from '../config';
 import { truncateAddress } from '../lib/api';
@@ -8,7 +9,7 @@ interface Props {
   proposal: Proposal;
 }
 
-export function ProposalCard({ proposal }: Props) {
+export const ProposalCard = memo(function ProposalCard({ proposal }: Props) {
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
 
@@ -67,4 +68,4 @@ export function ProposalCard({ proposal }: Props) {
       </div>
     </Link>
   );
-}
+});
