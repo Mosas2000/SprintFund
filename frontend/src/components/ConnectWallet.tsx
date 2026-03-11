@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react';
 import {
   useWalletAddress,
   useWalletConnected,
@@ -8,22 +9,22 @@ import { truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
 import { FOCUS_RING_GREEN, FOCUS_RING_RED } from '../lib/focus-styles';
 
-export function ConnectWallet() {
+export const ConnectWallet = memo(function ConnectWallet() {
   const address = useWalletAddress();
   const connected = useWalletConnected();
   const connect = useWalletConnect();
   const disconnect = useWalletDisconnect();
   const toast = useToast();
 
-  const handleConnect = () => {
+  const handleConnect = useCallback(() => {
     connect();
     toast.info('Connecting wallet', 'Approve the connection in your wallet extension.');
-  };
+  }, [connect, toast]);
 
-  const handleDisconnect = () => {
+  const handleDisconnect = useCallback(() => {
     disconnect();
     toast.success('Wallet disconnected');
-  };
+  }, [disconnect, toast]);
 
   if (connected && address) {
     return (
@@ -51,4 +52,4 @@ export function ConnectWallet() {
       Connect Wallet
     </button>
   );
-}
+});
