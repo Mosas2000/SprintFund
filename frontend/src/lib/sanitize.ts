@@ -145,7 +145,8 @@ export function sanitizeMultilineText(input: string): string {
 
 /**
  * Truncate a sanitized string to a maximum length, appending an
- * ellipsis if truncation occurs.
+ * ellipsis if truncation occurs. The total output length including
+ * the ellipsis will not exceed maxLength.
  *
  * @param input - String to truncate
  * @param maxLength - Maximum character length (default 200)
@@ -153,5 +154,9 @@ export function sanitizeMultilineText(input: string): string {
  */
 export function truncateText(input: string, maxLength = 200): string {
   if (input.length <= maxLength) return input;
-  return input.slice(0, maxLength).trimEnd() + '...';
+
+  const ELLIPSIS = '...';
+  if (maxLength <= ELLIPSIS.length) return ELLIPSIS.slice(0, maxLength);
+
+  return input.slice(0, maxLength - ELLIPSIS.length).trimEnd() + ELLIPSIS;
 }

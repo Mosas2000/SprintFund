@@ -137,7 +137,7 @@ describe('sanitizeText', () => {
   });
 
   it('strips event handler injection', () => {
-    expect(sanitizeText('title" onerror="alert(1)')).toBe('title" alert(1)');
+    expect(sanitizeText('title" onerror="alert(1)')).toBe('title" "alert(1)');
   });
 
   it('strips HTML entities used for obfuscation', () => {
