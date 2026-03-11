@@ -12,6 +12,7 @@ import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { pollTxStatus } from '../lib/pollTxStatus';
+import { useLoadComments } from '../store/comment-selectors';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -37,6 +38,7 @@ export function DashboardPage() {
   const [stakeInput, setStakeInput] = useState('');
   const [withdrawInput, setWithdrawInput] = useState('');
   const [txStatus, setTxStatus] = useState<string | null>(null);
+  const loadComments = useLoadComments();
 
   const fetchData = useCallback(async () => {
     if (!address) return;
@@ -67,6 +69,11 @@ export function DashboardPage() {
     if (connected && address) fetchData();
     else setLoading(false);
   }, [connected, address, fetchData]);
+
+  // Hydrate comment counts for listed proposals
+  useEffect(() => {
+    proposals.forEach((p) => loadComments(p.id));
+  }, [proposals, loadComments]);
 
   const handleStake = useCallback(() => {
     const stx = parseFloat(stakeInput);

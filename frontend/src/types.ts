@@ -44,3 +44,22 @@ export type {
   ConfirmDialogAction,
   ConfirmDialogProps,
 } from './types/confirm-dialog';
+
+/* Re-export comment types for convenience */
+export type {
+  Comment,
+  CommentReaction,
+  CommentSortOrder,
+  ReactionType,
+  NewCommentInput,
+  EditCommentInput,
+  CommentRules,
+  CommentValidationError,
+  CommentFormProps,
+  CommentItemProps,
+  CommentListProps,
+  CommentSortToggleProps,
+  CommentSectionProps,
+} from './types/comment';
+
+export { COMMENT_RULES } from './types/comment';

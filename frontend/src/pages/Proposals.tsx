@@ -8,6 +8,7 @@ import { useToast } from '../hooks/useToast';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useLoadComments } from '../store/comment-selectors';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
@@ -20,6 +21,7 @@ export function ProposalsPage() {
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
+  const loadComments = useLoadComments();
   useDocumentTitle('Proposals');
 
   const fetchProposals = useCallback(() => {
@@ -39,6 +41,11 @@ export function ProposalsPage() {
   useEffect(() => {
     fetchProposals();
   }, [fetchProposals]);
+
+  // Hydrate comment counts for all loaded proposals
+  useEffect(() => {
+    proposals.forEach((p) => loadComments(p.id));
+  }, [proposals, loadComments]);
 
   /* Auto-retry when coming back online after a failure */
   useEffect(() => {

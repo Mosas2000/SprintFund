@@ -15,6 +15,7 @@ import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { VoteProgressBar } from '../components/VoteProgressBar';
+import { CommentSection } from '../components/CommentSection';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
@@ -234,6 +235,9 @@ export function ProposalDetailPage() {
               )}
             </div>
           )}
+
+          {/* Discussion */}
+          <CommentSection proposalId={proposalId} />
         </div>
 
         {/* -- Sidebar -------------------------------- */}

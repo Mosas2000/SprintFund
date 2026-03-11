@@ -5,6 +5,7 @@ import { truncateAddress } from '../lib/api';
 import { sanitizeText } from '../lib/sanitize';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 import { VoteProgressBar } from './VoteProgressBar';
+import { useCommentCount } from '../store/comment-selectors';
 import type { Proposal } from '../types';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 export const ProposalCard = memo(function ProposalCard({ proposal }: Props) {
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
+  const commentCount = useCommentCount(proposal.id);
 
   const safeTitle = sanitizeText(proposal.title);
   const safeDescription = sanitizeText(proposal.description);
@@ -56,7 +58,17 @@ export const ProposalCard = memo(function ProposalCard({ proposal }: Props) {
 
       {/* Footer */}
       <div className="flex items-center justify-between text-xs text-muted">
-        <span className="font-mono">{truncateAddress(proposal.proposer)}</span>
+        <div className="flex items-center gap-3">
+          <span className="font-mono">{truncateAddress(proposal.proposer)}</span>
+          {commentCount > 0 && (
+            <span className="flex items-center gap-1 text-muted" aria-label={`${commentCount} comments`}>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+              </svg>
+              <span className="tabular-nums">{commentCount}</span>
+            </span>
+          )}
+        </div>
         <span className="font-semibold text-green">{formatStx(proposal.amount)} STX</span>
       </div>
     </Link>
