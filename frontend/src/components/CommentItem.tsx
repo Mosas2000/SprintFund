@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useRef, useEffect } from 'react';
 import { useWalletAddress, useWalletConnected } from '../store/wallet-selectors';
 import { useToggleReaction, useDeleteComment, useEditComment } from '../store/comment-selectors';
 import { formatRelativeTime, formatFullDateTime, shortenAddress, getAddressInitials } from '../lib/comment-formatting';
@@ -16,6 +16,8 @@ export const CommentItem = memo(function CommentItem({
   const [editContent, setEditContent] = useState(comment.content);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showReplyForm, setShowReplyForm] = useState(false);
+
+  const editTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const connected = useWalletConnected();
   const address = useWalletAddress();
@@ -61,6 +63,27 @@ export const CommentItem = memo(function CommentItem({
     setEditContent(comment.content);
     setIsEditing(false);
   }, [comment.content]);
+
+  const handleEditKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      handleEditCancel();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      handleEditSubmit();
+    }
+  }, [handleEditCancel, handleEditSubmit]);
+
+  // Focus the edit textarea when entering edit mode
+  useEffect(() => {
+    if (isEditing && editTextareaRef.current) {
+      editTextareaRef.current.focus();
+      // Place cursor at the end
+      const len = editTextareaRef.current.value.length;
+      editTextareaRef.current.setSelectionRange(len, len);
+    }
+  }, [isEditing]);
 
   const handleDelete = useCallback(() => {
     if (!address) return;
@@ -122,12 +145,14 @@ export const CommentItem = memo(function CommentItem({
         {isEditing ? (
           <div className="space-y-2 mb-3">
             <textarea
+              ref={editTextareaRef}
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
+              onKeyDown={handleEditKeyDown}
               maxLength={COMMENT_RULES.maxLength + 50}
               rows={3}
               className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text placeholder-muted outline-none resize-none focus:border-green/40 min-h-[44px]"
-              aria-label="Edit comment"
+              aria-label="Edit comment. Press Escape to cancel, Ctrl+Enter to save."
             />
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted tabular-nums">
