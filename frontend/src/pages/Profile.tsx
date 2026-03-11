@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef, type KeyboardEvent } from 'react';
 import { useWalletAddress, useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
@@ -42,7 +42,7 @@ function NotConnected({ onConnect }: { onConnect: () => void }) {
   );
 }
 
-/* ── Tab bar ──────────────────────────────────── */
+/* ── Tab bar with keyboard navigation ─────────── */
 
 function TabBar({
   activeTab,
@@ -51,11 +51,44 @@ function TabBar({
   activeTab: ProfileTab;
   onTabChange: (tab: ProfileTab) => void;
 }) {
+  const tabListRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const currentIndex = TABS.findIndex((t) => t.id === activeTab);
+    let nextIndex = currentIndex;
+
+    switch (e.key) {
+      case 'ArrowRight':
+        nextIndex = (currentIndex + 1) % TABS.length;
+        break;
+      case 'ArrowLeft':
+        nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = TABS.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    e.preventDefault();
+    onTabChange(TABS[nextIndex].id);
+
+    // Move focus to the newly active tab button
+    const buttons = tabListRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    buttons?.[nextIndex]?.focus();
+  };
+
   return (
     <div
+      ref={tabListRef}
       className="flex gap-1 border-b border-white/10 pb-px"
       role="tablist"
       aria-label="Profile sections"
+      onKeyDown={handleKeyDown}
     >
       {TABS.map((tab) => {
         const isActive = activeTab === tab.id;
@@ -67,6 +100,7 @@ function TabBar({
             id={`profile-tab-${tab.id}`}
             aria-selected={isActive}
             aria-controls={`profile-panel-${tab.id}`}
+            tabIndex={isActive ? 0 : -1}
             onClick={() => onTabChange(tab.id)}
             className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
               isActive
