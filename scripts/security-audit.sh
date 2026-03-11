@@ -8,6 +8,7 @@
 set -euo pipefail
 
 FRONTEND_SRC="frontend/src"
+EXCLUDE_TEST='--exclude=*.test.* --exclude=*.spec.*'
 EXIT_CODE=0
 
 echo "=== SprintFund Security Audit ==="
@@ -15,7 +16,7 @@ echo ""
 
 # 1. Check for dangerouslySetInnerHTML
 echo "--- Checking for dangerouslySetInnerHTML ---"
-if grep -rn "dangerouslySetInnerHTML" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" 2>/dev/null; then
+if grep -rn "dangerouslySetInnerHTML" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" $EXCLUDE_TEST 2>/dev/null; then
   echo "FAIL: dangerouslySetInnerHTML found in production code"
   EXIT_CODE=1
 else
@@ -25,7 +26,7 @@ echo ""
 
 # 2. Check for innerHTML assignments
 echo "--- Checking for innerHTML assignments ---"
-if grep -rn "\.innerHTML\s*=" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" --exclude="*.test.*" --exclude="*.spec.*" 2>/dev/null; then
+if grep -rn "\.innerHTML\s*=" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" $EXCLUDE_TEST 2>/dev/null; then
   echo "FAIL: innerHTML assignment found"
   EXIT_CODE=1
 else
@@ -35,7 +36,7 @@ echo ""
 
 # 3. Check for document.write
 echo "--- Checking for document.write ---"
-if grep -rn "document\.write" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" 2>/dev/null; then
+if grep -rn "document\.write" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" $EXCLUDE_TEST 2>/dev/null; then
   echo "FAIL: document.write found"
   EXIT_CODE=1
 else
@@ -45,7 +46,7 @@ echo ""
 
 # 4. Check for eval()
 echo "--- Checking for eval() ---"
-if grep -rn "\beval\s*(" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" 2>/dev/null; then
+if grep -rn "\beval\s*(" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" $EXCLUDE_TEST 2>/dev/null; then
   echo "FAIL: eval() found"
   EXIT_CODE=1
 else
@@ -55,7 +56,7 @@ echo ""
 
 # 5. Check for new Function()
 echo "--- Checking for new Function() ---"
-if grep -rn "new\s\+Function\s*(" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" 2>/dev/null; then
+if grep -rn "new\s\+Function\s*(" "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" $EXCLUDE_TEST 2>/dev/null; then
   echo "FAIL: new Function() found"
   EXIT_CODE=1
 else
@@ -65,8 +66,8 @@ echo ""
 
 # 6. Check that external links use noopener noreferrer
 echo "--- Checking external links for rel attributes ---"
-TARGET_BLANK_COUNT=$(grep -rn 'target="_blank"' "$FRONTEND_SRC" --include="*.tsx" 2>/dev/null | wc -l | tr -d ' ')
-NOOPENER_COUNT=$(grep -rn 'rel="noopener noreferrer"' "$FRONTEND_SRC" --include="*.tsx" 2>/dev/null | wc -l | tr -d ' ')
+TARGET_BLANK_COUNT=$(grep -rn 'target="_blank"' "$FRONTEND_SRC" --include="*.tsx" $EXCLUDE_TEST 2>/dev/null | wc -l | tr -d ' ')
+NOOPENER_COUNT=$(grep -rn 'rel="noopener noreferrer"' "$FRONTEND_SRC" --include="*.tsx" $EXCLUDE_TEST 2>/dev/null | wc -l | tr -d ' ')
 
 if [ "$TARGET_BLANK_COUNT" -eq "$NOOPENER_COUNT" ]; then
   echo "PASS: All target=\"_blank\" links have rel=\"noopener noreferrer\" ($TARGET_BLANK_COUNT/$TARGET_BLANK_COUNT)"
@@ -78,7 +79,7 @@ echo ""
 
 # 7. Check for javascript: protocol in href
 echo "--- Checking for javascript: protocol in hrefs ---"
-if grep -rn 'href="javascript:' "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" 2>/dev/null; then
+if grep -rn 'href="javascript:' "$FRONTEND_SRC" --include="*.tsx" --include="*.ts" $EXCLUDE_TEST 2>/dev/null; then
   echo "FAIL: javascript: protocol found in href"
   EXIT_CODE=1
 else
