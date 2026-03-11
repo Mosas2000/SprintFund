@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
@@ -122,6 +122,15 @@ export function ProposalDetailPage() {
     });
   }, [proposalId, proposal, toast, dialog]);
 
+  // Derived vote statistics - memoized to avoid recalculation on unrelated
+  // state changes (e.g. voteWeight input, txStatus updates).
+  const { totalVotes, forPct, passing } = useMemo(() => {
+    if (!proposal) return { totalVotes: 0, forPct: 0, passing: false };
+    const total = proposal.votesFor + proposal.votesAgainst;
+    const pct = total > 0 ? Math.round((proposal.votesFor / total) * 100) : 0;
+    return { totalVotes: total, forPct: pct, passing: proposal.votesFor > proposal.votesAgainst };
+  }, [proposal]);
+
   if (loading) {
     return <ProposalDetailSkeleton />;
   }
@@ -142,10 +151,6 @@ export function ProposalDetailPage() {
       </div>
     );
   }
-
-  const totalVotes = proposal.votesFor + proposal.votesAgainst;
-  const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
-  const passing = proposal.votesFor > proposal.votesAgainst;
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
