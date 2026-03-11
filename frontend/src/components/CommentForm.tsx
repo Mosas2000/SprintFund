@@ -39,6 +39,20 @@ export const CommentForm = memo(function CommentForm({
     if (error) setError(null);
   }, [error]);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Ctrl+Enter or Cmd+Enter to submit
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      const form = e.currentTarget.closest('form');
+      if (form) form.requestSubmit();
+    }
+    // Escape to cancel (only for reply forms)
+    if (e.key === 'Escape' && onCancel) {
+      e.preventDefault();
+      onCancel();
+    }
+  }, [onCancel]);
+
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
@@ -104,6 +118,7 @@ export const CommentForm = memo(function CommentForm({
           id={`comment-input-${parentId ?? 'root'}`}
           value={content}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder={parentId ? 'Write a reply...' : 'Share your thoughts on this proposal...'}
           rows={parentId ? 3 : 4}
           maxLength={COMMENT_RULES.maxLength + 50}
