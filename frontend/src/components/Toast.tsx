@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Toast as ToastType } from '../types';
 import { explorerTxUrl } from '../lib/api';
 
@@ -41,11 +41,18 @@ interface ToastProps {
 
 /* ── Component ────────────────────────────────── */
 
-export function Toast({ toast, onDismiss }: ToastProps) {
+export const Toast = memo(function Toast({ toast, onDismiss }: ToastProps) {
   const [exiting, setExiting] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const style = VARIANT_STYLES[toast.variant];
+
+  // Memoize the progress bar inline style so it doesn't create a new
+  // object on every render when the duration hasn't changed.
+  const progressStyle = useMemo(
+    () => (toast.duration ? { animationDuration: `${toast.duration}ms` } : undefined),
+    [toast.duration],
+  );
 
   // Auto-dismiss timer
   useEffect(() => {
@@ -69,10 +76,10 @@ export function Toast({ toast, onDismiss }: ToastProps) {
     }
   }, [exiting, onDismiss, toast.id]);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setExiting(true);
-  };
+  }, []);
 
   return (
     <div
@@ -189,10 +196,10 @@ export function Toast({ toast, onDismiss }: ToastProps) {
         <div className="mt-2 h-0.5 w-full overflow-hidden rounded-full bg-border">
           <div
             className="h-full rounded-full bg-green/40 toast-progress"
-            style={{ animationDuration: `${toast.duration}ms` }}
+            style={progressStyle}
           />
         </div>
       )}
     </div>
   );
-}
+});
