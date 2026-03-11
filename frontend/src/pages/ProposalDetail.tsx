@@ -54,7 +54,7 @@ export function ProposalDetailPage() {
     fetchProposal();
   }, [fetchProposal]);
 
-  const handleVote = (support: boolean) => {
+  const handleVote = useCallback((support: boolean) => {
     const weight = parseInt(voteWeight, 10);
     if (isNaN(weight) || weight < 1) {
       toast.error('Invalid vote weight', 'Enter a weight of at least 1.');
@@ -89,9 +89,9 @@ export function ProposalDetailPage() {
         });
       },
     });
-  };
+  }, [voteWeight, proposalId, proposal, toast, dialog]);
 
-  const handleExecute = () => {
+  const handleExecute = useCallback(() => {
     dialog.open({
       title: 'Execute Proposal',
       description: 'Executing this proposal will transfer the requested STX from the treasury. This action cannot be undone.',
@@ -119,7 +119,7 @@ export function ProposalDetailPage() {
         });
       },
     });
-  };
+  }, [proposalId, proposal, toast, dialog]);
 
   if (loading) {
     return <ProposalDetailSkeleton />;
