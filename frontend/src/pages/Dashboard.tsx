@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useWalletStore } from '../store/wallet';
+import { useWalletAddress, useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
 import { getStake, getAllProposals, getProposalCount } from '../lib/stacks';
 import { callStake, callWithdrawStake } from '../lib/stacks';
 import { getStxBalance } from '../lib/api';
@@ -18,7 +18,9 @@ import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
 export function DashboardPage() {
-  const { connected, address, connect } = useWalletStore();
+  const connected = useWalletConnected();
+  const address = useWalletAddress();
+  const connect = useWalletConnect();
   const toast = useToast();
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
