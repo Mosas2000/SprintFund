@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
+import { saveVoteRecord } from '../lib/profile-data';
 import { formatStx } from '../config';
 import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
 import { sanitizeText, sanitizeMultilineText } from '../lib/sanitize';
@@ -84,6 +85,18 @@ export function ProposalDetailPage() {
             const toastId = toast.tx(`Pending: Vote ${direction} (weight ${weight})`, txId, 'Waiting for on-chain confirmation...');
             pollTxStatus(toastId, txId);
             setTxStatus(null);
+
+            // Persist vote record for the profile activity log
+            if (address) {
+              saveVoteRecord(address, {
+                proposalId,
+                title: proposal?.title ?? `Proposal #${proposalId}`,
+                support,
+                weight,
+                timestamp: Date.now(),
+                executed: false,
+              });
+            }
           },
           onCancel: () => {
             toast.warning('Transaction cancelled', 'Vote was not submitted.');
