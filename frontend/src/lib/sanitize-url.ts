@@ -7,21 +7,18 @@
  * attributes or fetch() calls.
  */
 
+import { SAFE_PROTOCOLS, BLOCKED_PROTOCOLS, EXPLORER_BASE_URL } from './security-constants';
+
 /**
  * Allowed URL protocols. Any URL not starting with one of these
  * is rejected by sanitizeUrl().
  */
-const ALLOWED_PROTOCOLS = ['https:', 'http:'] as const;
+const ALLOWED_PROTOCOLS: readonly string[] = SAFE_PROTOCOLS;
 
 /**
  * Dangerous URL protocol prefixes that could execute code.
  */
-const DANGEROUS_PROTOCOLS = [
-  'javascript:',
-  'data:',
-  'vbscript:',
-  'blob:',
-] as const;
+const DANGEROUS_PROTOCOLS: readonly string[] = BLOCKED_PROTOCOLS;
 
 /**
  * Validate and sanitize a URL string.
@@ -133,7 +130,7 @@ export function isValidTxId(txId: string): boolean {
  */
 export function safeExplorerTxUrl(txId: string): string {
   if (!txId || !isValidTxId(txId)) return '';
-  return `https://explorer.hiro.so/txid/${encodePathSegment(txId)}?chain=mainnet`;
+  return `${EXPLORER_BASE_URL}/txid/${encodePathSegment(txId)}?chain=mainnet`;
 }
 
 /**
@@ -147,5 +144,5 @@ export function safeExplorerTxUrl(txId: string): string {
  */
 export function safeExplorerAddressUrl(address: string): string {
   if (!address || !isValidStacksAddress(address)) return '';
-  return `https://explorer.hiro.so/address/${encodePathSegment(address)}?chain=mainnet`;
+  return `${EXPLORER_BASE_URL}/address/${encodePathSegment(address)}?chain=mainnet`;
 }
