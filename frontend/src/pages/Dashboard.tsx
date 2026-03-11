@@ -67,7 +67,7 @@ export function DashboardPage() {
     else setLoading(false);
   }, [connected, address, fetchData]);
 
-  const handleStake = () => {
+  const handleStake = useCallback(() => {
     const stx = parseFloat(stakeInput);
     if (isNaN(stx) || stx <= 0) {
       toast.error('Invalid amount', 'Enter a valid STX amount to stake.');
@@ -100,9 +100,9 @@ export function DashboardPage() {
         });
       },
     });
-  };
+  }, [stakeInput, stakeAmount, stxBalance, toast, dialog]);
 
-  const handleWithdraw = () => {
+  const handleWithdraw = useCallback(() => {
     const stx = parseFloat(withdrawInput);
     if (isNaN(stx) || stx <= 0) {
       toast.error('Invalid amount', 'Enter a valid STX amount to withdraw.');
@@ -135,7 +135,7 @@ export function DashboardPage() {
         });
       },
     });
-  };
+  }, [withdrawInput, stakeAmount, toast, dialog]);
 
   /* -- Not connected ----------------------------- */
   if (!connected) {
