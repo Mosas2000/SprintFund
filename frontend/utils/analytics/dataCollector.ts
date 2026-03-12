@@ -364,7 +364,7 @@ export function clearAnalyticsCache(): void {
 }
 
 export function getCacheStatus(): { isCached: boolean; isStale: boolean; age: number } {
-  const cached = getCachedData<any>('all_proposals');
+  const cached = getCachedData<ProposalMetrics[]>('all_proposals');
 
   if (!cached) {
     return { isCached: false, isStale: false, age: 0 };

@@ -2,14 +2,23 @@ import { ProposalMetrics } from './dataCollector';
 import { TimeSeriesData, TimeSeriesDataPoint } from './dataProcessor';
 import { orderBy, meanBy, groupBy, sumBy } from 'lodash';
 
+interface InsightUserContext {
+    role: 'proposer' | 'voter';
+    history: ProposalMetrics[];
+    preferences: string[];
+    lastProposal?: ProposalMetrics;
+}
+
+type InsightChartPayload = TimeSeriesData | TimeSeriesDataPoint[];
+
 export interface Insight {
     id: string;
     type: 'trend' | 'anomaly' | 'comparative' | 'predictive';
     priority: 'high' | 'medium' | 'low';
     title: string;
     description: string;
-    dataPoints: any[];
-    chartData?: any;
+    dataPoints: number[];
+    chartData?: InsightChartPayload;
     actionable: boolean;
     recommendations?: string[];
     timestamp: number;
@@ -192,7 +201,7 @@ export function prioritizeInsights(insights: Insight[]): Insight[] {
 export function generateAllInsights(
     allProposals: ProposalMetrics[],
     timeseries: TimeSeriesData,
-    userContext: any
+    userContext: InsightUserContext
 ): Insight[] {
     const insights: Insight[] = [];
 
