@@ -76,10 +76,10 @@ const useAnalyticsStore = create<AnalyticsState>((set, get) => ({
         lastUpdated: Date.now(),
         error: null
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({
         isLoading: false,
-        error: error.message || 'Failed to fetch analytics data'
+        error: error instanceof Error ? error.message : 'Failed to fetch analytics data'
       });
     }
   },
