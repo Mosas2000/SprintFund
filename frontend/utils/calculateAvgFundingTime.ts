@@ -1,7 +1,13 @@
 // Average Stacks block time in minutes (approximately 10 minutes per block)
 const STACKS_BLOCK_TIME_MINUTES = 10;
 
-export function calculateAvgFundingTime(proposals: any[]): number {
+interface ProposalWithBlocks {
+    executed: boolean;
+    executionBlock?: number;
+    creationBlock?: number;
+}
+
+export function calculateAvgFundingTime(proposals: ProposalWithBlocks[]): number {
     if (!proposals || proposals.length === 0) return 0;
 
     const executedProposals = proposals.filter(
