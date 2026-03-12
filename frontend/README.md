@@ -12,14 +12,15 @@ Modern Next.js frontend for the SprintFund DAO on Stacks blockchain.
 
 ## Features
 
-- ✅ Wallet connection (Hiro/Leather)
-- ✅ Create proposals with contract integration
-- ✅ Quadratic voting interface
-- ✅ Proposal execution for creators
-- ✅ User dashboard with personal stats
-- ✅ User profile page with activity history and voting record
-- ✅ Platform statistics and leaderboards
-- ✅ Real-time data fetching from mainnet
+- Wallet connection (Hiro/Leather)
+- Create proposals with contract integration
+- Quadratic voting interface
+- Proposal execution for creators
+- User dashboard with personal stats
+- User profile page with activity history and voting record
+- Platform statistics and leaderboards
+- Real-time data fetching from mainnet
+- In-app notification system for governance events
 
 ## Prerequisites
 
