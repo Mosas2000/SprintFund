@@ -35,3 +35,11 @@ export {
   buildNextMetadata,
   buildRootMetadata,
 } from './metadata-builder';
+
+// Client-side SEO helpers
+export {
+  getDocumentTitle,
+  getClientMetaTags,
+  getDefaultLinkTags,
+  getSiteDescription,
+} from './client-seo';
