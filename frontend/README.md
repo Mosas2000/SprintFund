@@ -17,6 +17,7 @@ Modern Next.js frontend for the SprintFund DAO on Stacks blockchain.
 - ✅ Quadratic voting interface
 - ✅ Proposal execution for creators
 - ✅ User dashboard with personal stats
+- ✅ User profile page with activity history and voting record
 - ✅ Platform statistics and leaderboards
 - ✅ Real-time data fetching from mainnet
 
