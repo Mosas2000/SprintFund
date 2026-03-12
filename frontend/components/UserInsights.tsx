@@ -2,6 +2,14 @@
 
 import { useState, useEffect } from 'react';
 
+interface AIRecommendationMetadata {
+  relatedProposalId?: number;
+  historicalAccuracy?: number;
+  confidenceInterval?: [number, number];
+  dataSource?: string;
+  lastUpdated?: number;
+}
+
 interface AIRecommendation {
   id: number;
   type: 'proposal' | 'voting' | 'collaboration' | 'timing' | 'strategy';
@@ -10,7 +18,7 @@ interface AIRecommendation {
   confidence: number;
   impact: 'high' | 'medium' | 'low';
   actionable: boolean;
-  metadata?: any;
+  metadata?: AIRecommendationMetadata;
 }
 
 interface PerformanceReport {
