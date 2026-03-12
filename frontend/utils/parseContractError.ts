@@ -21,8 +21,12 @@ const NETWORK_ERRORS: Record<string, string> = {
     'BadNonce': 'Transaction nonce mismatch. Please refresh the page and try again.',
 };
 
-export function parseContractError(error: any): string {
-    const message = error.message || String(error) || '';
+export function parseContractError(error: unknown): string {
+    const message = error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+            ? error
+            : String(error);
 
     // Check contract-specific error codes
     for (const [code, description] of Object.entries(CONTRACT_ERRORS)) {
