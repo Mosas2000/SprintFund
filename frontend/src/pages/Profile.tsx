@@ -4,12 +4,14 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { fetchUserProfile } from '../lib/profile-data';
 import { toErrorMessage } from '../lib/errors';
-import ProfileHeader from '../components/ProfileHeader';
-import ProfileStatsGrid from '../components/ProfileStatsGrid';
-import UserProposals from '../components/UserProposals';
-import VotingHistory from '../components/VotingHistory';
-import ActivityTimeline from '../components/ActivityTimeline';
-import ProfileSkeleton from '../components/ProfileSkeleton';
+import {
+  ProfileHeader,
+  ProfileStatsGrid,
+  UserProposals,
+  VotingHistory,
+  ActivityTimeline,
+  ProfileSkeleton,
+} from '../components/profile';
 import { ErrorState } from '../components/ErrorState';
 import type { UserProfile, ProfileTab } from '../types/profile';
 
