@@ -5,6 +5,7 @@ import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { formatMetric } from '../../utils/analytics/helpers';
 import { X, Download } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { VelocityDataPoint } from '../../src/types';
 
 interface ProposalComparatorProps {
   proposals: ProposalMetrics[];
@@ -100,7 +101,7 @@ export default function ProposalComparator({ proposals }: ProposalComparatorProp
     const hours = Array.from({ length: Math.ceil(maxHours) }, (_, i) => i);
 
     return hours.map(hour => {
-      const dataPoint: any = { hour };
+      const dataPoint: VelocityDataPoint = { hour };
       selectedProposalData.forEach(p => {
         dataPoint[`proposal${p.proposalId}`] = hour <= (p.timeToFunding || 0) ? p.totalVotes : 0;
       });

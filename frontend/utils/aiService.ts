@@ -1,5 +1,15 @@
 import { Proposal } from '../types/governance';
 
+interface VotingData {
+    totalVotes: number;
+    votesFor: number;
+    votesAgainst: number;
+    uniqueVoters: number;
+    whaleVotePercentage: number;
+    averageWeight: number;
+    votingPeriodProgress: number;
+}
+
 export const aiService = {
     async summarizeProposal(proposal: Proposal): Promise<string> {
         // Industrial grade simulation of AI summarization
@@ -16,7 +26,8 @@ export const aiService = {
         };
     },
 
-    async getConsensusRisk(votingData: any): Promise<string> {
+    async getConsensusRisk(votingData: VotingData): Promise<string> {
+        void votingData;
         await new Promise(resolve => setTimeout(resolve, 600));
         return "LOW: Consensus pattern suggests stable trajectory with minimal whale intervention detected.";
     }

@@ -107,7 +107,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
 
             setProposals(fetchedProposals);
             setLoading(false);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error fetching proposals:', err);
             setError('Failed to load proposals. Please try again.');
             setLoading(false);
@@ -158,7 +158,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                     functionName: 'vote',
                     functionArgs,
                     postConditionMode: PostConditionMode.Deny,
-                    onFinish: (data: any) => {
+                    onFinish: (data: { txId: string }) => {
                         toast.success('Vote submitted successfully!');
                         setVoteSuccess(`Vote submitted! Transaction ID: ${data.txId}`);
                         setVoteWeight('');
@@ -173,17 +173,18 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 };
 
                 await openContractCall(options);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Error voting:', err);
+                const message = err instanceof Error ? err.message : '';
                 let errorMessage = 'Failed to submit vote. Please try again.';
-                if (err.message?.includes('already voted')) {
+                if (message.includes('already voted')) {
                     errorMessage = 'You have already voted on this proposal';
                     setVoteError(errorMessage);
-                } else if (err.message?.includes('insufficient')) {
+                } else if (message.includes('insufficient')) {
                     errorMessage = 'Insufficient STX balance for this vote weight';
                     setVoteError(errorMessage);
                 } else {
-                    setVoteError(err.message || errorMessage);
+                    setVoteError(message || errorMessage);
                 }
                 toast.error(errorMessage);
                 setIsVoting(false);

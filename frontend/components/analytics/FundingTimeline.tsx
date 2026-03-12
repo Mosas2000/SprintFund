@@ -6,6 +6,7 @@ import { format, startOfDay } from 'date-fns';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { formatMetric } from '../../utils/analytics/helpers';
 import { Play, Pause, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import type { RechartsTooltipEntry, RechartsTooltipProps } from '../../src/types';
 
 interface FundingTimelineProps {
   proposals: ProposalMetrics[];
@@ -18,6 +19,14 @@ interface TimelineDataPoint {
   proposal: ProposalMetrics;
   category: string;
   date: Date;
+}
+
+interface TimelineTooltipEntry extends RechartsTooltipEntry {
+  payload: TimelineDataPoint;
+}
+
+interface TimelineTooltipProps extends Omit<RechartsTooltipProps, 'payload'> {
+  payload?: TimelineTooltipEntry[];
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -165,10 +174,10 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
     }
   };
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TimelineTooltipProps) => {
     if (!active || !payload || payload.length === 0) return null;
 
-    const data: TimelineDataPoint = payload[0].payload;
+    const data = payload[0].payload;
     const proposal = data.proposal;
 
     return (

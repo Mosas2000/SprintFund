@@ -409,7 +409,7 @@ export default function GrantPerformance() {
 
         <select
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as any)}
+          onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'completed' | 'delayed' | 'cancelled')}
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
                    focus:ring-2 focus:ring-blue-500"
         >

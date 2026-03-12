@@ -21,6 +21,7 @@ import { TrendingUp, ArrowUpRight, ArrowDownRight, Clock, Award, Activity, Spark
 import { InsightsFeed } from './index';
 import TreasuryTransparency from '../TreasuryTransparency';
 import EcosystemBenchmarks from '../EcosystemBenchmarks';
+import type { KPICardProps } from '../../src/types';
 
 const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
@@ -278,7 +279,7 @@ export default function OverviewTab() {
     );
 }
 
-function KPICard({ title, value, subtitle, trend, positive, sparkData }: any) {
+function KPICard({ title, value, subtitle, trend, positive, sparkData }: KPICardProps) {
     return (
         <div className="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 backdrop-blur-sm relative overflow-hidden group hover:border-slate-700 transition-all">
             <div className="relative z-10">
@@ -296,7 +297,7 @@ function KPICard({ title, value, subtitle, trend, positive, sparkData }: any) {
             {/* Sparkline */}
             <div className="absolute bottom-0 left-0 right-0 h-12 opacity-50 group-hover:opacity-80 transition-opacity">
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={sparkData.map((v: any, i: any) => ({ v, i }))}>
+                    <LineChart data={sparkData.map((v, i) => ({ v, i }))}>
                         <Line
                             type="monotone"
                             dataKey="v"

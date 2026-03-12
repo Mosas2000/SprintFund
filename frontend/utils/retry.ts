@@ -3,16 +3,17 @@ export async function retryTransaction<T>(
     maxAttempts: number = 3,
     delay: number = 1000
 ): Promise<T> {
-    let lastError: Error;
+    let lastError: unknown;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
             return await fn();
-        } catch (error: any) {
+        } catch (error: unknown) {
             lastError = error;
 
             // Don't retry if user cancelled
-            if (error.message?.includes('cancel')) {
+            const message = error instanceof Error ? error.message : '';
+            if (message.includes('cancel')) {
                 throw error;
             }
 

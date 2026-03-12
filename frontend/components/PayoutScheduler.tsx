@@ -248,7 +248,7 @@ export default function PayoutScheduler() {
       <div className="flex gap-3">
         <select
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as any)}
+          onChange={(e) => setFilterStatus(e.target.value as 'all' | 'scheduled' | 'processing' | 'completed' | 'failed')}
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
                    bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500"
         >
@@ -261,7 +261,7 @@ export default function PayoutScheduler() {
 
         <select
           value={filterType}
-          onChange={(e) => setFilterType(e.target.value as any)}
+          onChange={(e) => setFilterType(e.target.value as 'all' | 'milestone' | 'recurring' | 'one-time')}
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
                    bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500"
         >
@@ -433,7 +433,7 @@ export default function PayoutScheduler() {
                   <label className="block text-sm font-medium mb-2">Payment Type</label>
                   <select
                     value={newPayment.type}
-                    onChange={(e) => setNewPayment({ ...newPayment, type: e.target.value as any })}
+                    onChange={(e) => setNewPayment({ ...newPayment, type: e.target.value as 'milestone' | 'recurring' | 'one-time' })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
                              bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
                   >
@@ -474,7 +474,7 @@ export default function PayoutScheduler() {
                   <label className="block text-sm font-medium mb-2">Recurring Interval</label>
                   <select
                     value={newPayment.recurringInterval}
-                    onChange={(e) => setNewPayment({ ...newPayment, recurringInterval: e.target.value as any })}
+                    onChange={(e) => setNewPayment({ ...newPayment, recurringInterval: e.target.value as 'weekly' | 'monthly' | 'quarterly' })}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
                              bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
                   >

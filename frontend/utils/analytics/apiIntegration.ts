@@ -1,4 +1,15 @@
 import { ProposalMetrics } from './dataCollector';
+import type {
+  CoinGeckoHistoryResponse,
+  CoinGeckoPriceResponse,
+  GitHubCommitResponse,
+  GitHubContributorResponse,
+  GitHubRepoResponse,
+  HiroBlock,
+  HiroBlockListResponse,
+  HiroBlockTransaction,
+  HiroMempoolResponse,
+} from '../../src/types';
 
 const STACKS_API_URL = 'https://api.hiro.so';
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
@@ -34,7 +45,7 @@ interface EnrichedProposal extends ProposalMetrics {
 }
 
 class RateLimiter {
-  private queue: Array<() => Promise<any>> = [];
+  private queue: Array<() => Promise<unknown>> = [];
   private processing = false;
   private lastRequestTime = 0;
   private minInterval = 100;
@@ -123,7 +134,7 @@ async function fetchWithRetry<T>(
   options: RequestInit = {},
   maxRetries: number = 3
 ): Promise<T> {
-  let lastError: Error;
+  let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -145,11 +156,11 @@ async function fetchWithRetry<T>(
       }
 
       return await response.json();
-    } catch (error: any) {
-      lastError = error;
+    } catch (error: unknown) {
+      lastError = error instanceof Error ? error : new Error('Request failed');
 
       if (attempt === maxRetries) {
-        throw error;
+        throw lastError;
       }
 
       const backoffDelay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
@@ -157,7 +168,7 @@ async function fetchWithRetry<T>(
     }
   }
 
-  throw lastError!;
+  throw lastError ?? new Error('Request failed');
 }
 
 export async function fetchSTXPrice(timestamp?: number): Promise<number> {
@@ -176,7 +187,7 @@ export async function fetchSTXPrice(timestamp?: number): Promise<number> {
       const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
       
       const data = await rateLimiter.add(() =>
-        fetchWithRetry<any>(
+        fetchWithRetry<CoinGeckoHistoryResponse>(
           `${COINGECKO_API_URL}/coins/blockstack/history?date=${formattedDate}`
         )
       );
@@ -184,7 +195,7 @@ export async function fetchSTXPrice(timestamp?: number): Promise<number> {
       price = data.market_data?.current_price?.usd || 0;
     } else {
       const data = await rateLimiter.add(() =>
-        fetchWithRetry<any>(
+        fetchWithRetry<CoinGeckoPriceResponse>(
           `${COINGECKO_API_URL}/simple/price?ids=blockstack&vs_currencies=usd`
         )
       );
@@ -208,17 +219,17 @@ export async function getNetworkMetrics(): Promise<NetworkMetrics> {
   try {
     const [blockInfo, mempoolInfo] = await Promise.all([
       rateLimiter.add(() =>
-        fetchWithRetry<any>(`${STACKS_API_URL}/extended/v1/block?limit=10`)
+        fetchWithRetry<HiroBlockListResponse>(`${STACKS_API_URL}/extended/v1/block?limit=10`)
       ),
       rateLimiter.add(() =>
-        fetchWithRetry<any>(`${STACKS_API_URL}/extended/v1/tx/mempool?limit=1`)
+        fetchWithRetry<HiroMempoolResponse>(`${STACKS_API_URL}/extended/v1/tx/mempool?limit=1`)
       )
     ]);
 
-    const blocks = blockInfo.results || [];
+    const blocks: HiroBlock[] = blockInfo.results || [];
     const blockTimes = blocks
       .slice(0, -1)
-      .map((block: any, i: number) => {
+      .map((block, i: number) => {
         const currentTime = new Date(block.burn_block_time_iso).getTime();
         const prevTime = new Date(blocks[i + 1].burn_block_time_iso).getTime();
         return currentTime - prevTime;
@@ -229,7 +240,10 @@ export async function getNetworkMetrics(): Promise<NetworkMetrics> {
       : 600;
 
     const avgFeeRate = blocks.length > 0
-      ? blocks.reduce((sum: number, b: any) => sum + (b.txs?.reduce((s: number, tx: any) => s + (tx.fee_rate || 0), 0) || 0), 0) / blocks.length
+      ? blocks.reduce(
+          (sum: number, block) => sum + (block.txs?.reduce((feeSum: number, tx: HiroBlockTransaction) => feeSum + (tx.fee_rate || 0), 0) || 0),
+          0
+        ) / blocks.length
       : 0;
 
     const metrics: NetworkMetrics = {
@@ -266,13 +280,13 @@ async function fetchGithubData(repoPath: string): Promise<EnrichedProposal['gith
   try {
     const [repoData, commitsData, contributorsData] = await Promise.all([
       rateLimiter.add(() =>
-        fetchWithRetry<any>(`${GITHUB_API_URL}/repos/${repoPath}`)
+        fetchWithRetry<GitHubRepoResponse>(`${GITHUB_API_URL}/repos/${repoPath}`)
       ),
       rateLimiter.add(() =>
-        fetchWithRetry<any>(`${GITHUB_API_URL}/repos/${repoPath}/commits?per_page=1`)
+        fetchWithRetry<GitHubCommitResponse[]>(`${GITHUB_API_URL}/repos/${repoPath}/commits?per_page=1`)
       ),
       rateLimiter.add(() =>
-        fetchWithRetry<any>(`${GITHUB_API_URL}/repos/${repoPath}/contributors?per_page=100`)
+        fetchWithRetry<GitHubContributorResponse[]>(`${GITHUB_API_URL}/repos/${repoPath}/contributors?per_page=100`)
       )
     ]);
 

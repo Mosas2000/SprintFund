@@ -66,7 +66,7 @@ export default function ExecuteProposal({
                 functionName: 'execute-proposal',
                 functionArgs,
                 postConditionMode: PostConditionMode.Deny,
-                onFinish: (data: any) => {
+                onFinish: (data: { txId: string }) => {
                     setSuccess(`Proposal executed successfully! Transaction ID: ${data.txId}`);
                     setIsExecuting(false);
                     if (onExecuted) {
@@ -80,15 +80,16 @@ export default function ExecuteProposal({
             };
 
             await openContractCall(options);
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : '';
             console.error('Error executing proposal:', err);
 
-            if (err.message?.includes('not authorized')) {
+            if (message.includes('not authorized')) {
                 setError('Only the proposer can execute this proposal');
-            } else if (err.message?.includes('already executed')) {
+            } else if (message.includes('already executed')) {
                 setError('This proposal has already been executed');
             } else {
-                setError(err.message || 'Failed to execute proposal. Please try again.');
+                setError(message || 'Failed to execute proposal. Please try again.');
             }
 
             setIsExecuting(false);

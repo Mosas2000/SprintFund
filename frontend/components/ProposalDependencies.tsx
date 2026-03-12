@@ -188,7 +188,7 @@ export default function ProposalDependencies({ proposalId, currentProposalTitle 
               <select
                 value={newDependency.type}
                 onChange={(e) =>
-                  setNewDependency({ ...newDependency, type: e.target.value as any })
+                  setNewDependency({ ...newDependency, type: e.target.value as 'requires' | 'blocks' | 'follows' })
                 }
                 className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
               >

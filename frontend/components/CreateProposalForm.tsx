@@ -81,7 +81,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                 functionName: 'create-proposal',
                 functionArgs,
                 postConditionMode: PostConditionMode.Deny,
-                onFinish: (data: any) => {
+                onFinish: (data: { txId: string }) => {
                     console.log('Transaction submitted:', data);
                     toast.success('Proposal created successfully!');
                     setSuccess(`Proposal created successfully! Transaction ID: ${data.txId}`);
@@ -97,18 +97,19 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
             };
 
             await openContractCall(options);
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : '';
             console.error('Error creating proposal:', err);
 
             let errorMessage = 'Failed to create proposal. Please try again.';
-            if (err.message?.includes('insufficient')) {
+            if (message.includes('insufficient')) {
                 errorMessage = 'Insufficient STX balance. You need at least 10 STX staked.';
                 setError(errorMessage);
-            } else if (err.message?.includes('stake')) {
+            } else if (message.includes('stake')) {
                 errorMessage = 'You must stake at least 10 STX before creating a proposal.';
                 setError(errorMessage);
             } else {
-                setError(err.message || errorMessage);
+                setError(message || errorMessage);
             }
 
             toast.error(errorMessage);

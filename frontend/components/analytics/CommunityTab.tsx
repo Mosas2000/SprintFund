@@ -29,6 +29,7 @@ import {
     Star
 } from 'lucide-react';
 import { CommunityInsights } from './index';
+import type { HealthScoreProps } from '../../src/types';
 
 const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
@@ -282,7 +283,7 @@ export default function CommunityTab() {
     );
 }
 
-function HealthScore({ title, score, status, color }: any) {
+function HealthScore({ title, score, status, color }: HealthScoreProps) {
     return (
         <div>
             <div className="flex justify-between items-center mb-2">

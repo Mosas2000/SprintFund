@@ -266,7 +266,7 @@ export default function ExpenseTracker() {
       <div className="flex flex-wrap gap-2">
         <select
           value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as any)}
+          onChange={(e) => setFilterStatus(e.target.value as 'all' | 'pending' | 'approved' | 'rejected' | 'paid')}
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
                    focus:ring-2 focus:ring-blue-500"
         >
@@ -279,7 +279,7 @@ export default function ExpenseTracker() {
 
         <select
           value={filterType}
-          onChange={(e) => setFilterType(e.target.value as any)}
+          onChange={(e) => setFilterType(e.target.value as 'all' | 'grant_payout' | 'operational' | 'infrastructure' | 'marketing' | 'community' | 'other')}
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
                    focus:ring-2 focus:ring-blue-500"
         >

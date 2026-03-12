@@ -2,6 +2,14 @@
 
 import { useState, useEffect } from 'react';
 
+interface ScheduledVoteItem {
+  proposalId: number;
+  voteType: 'yes' | 'no';
+  executionTime: number;
+  createdAt: number;
+  status: 'pending' | 'executed' | 'cancelled';
+}
+
 interface ScheduledVoteProps {
   proposalId: number;
   onSchedule: (voteType: 'yes' | 'no', scheduledTime: number) => void;
@@ -10,18 +18,18 @@ interface ScheduledVoteProps {
 export default function ScheduledVote({ proposalId, onSchedule }: ScheduledVoteProps) {
   const [voteType, setVoteType] = useState<'yes' | 'no'>('yes');
   const [scheduledTime, setScheduledTime] = useState('');
-  const [scheduledVotes, setScheduledVotes] = useState<any[]>([]);
+  const [scheduledVotes, setScheduledVotes] = useState<ScheduledVoteItem[]>([]);
   const [countdown, setCountdown] = useState<Record<number, string>>({});
 
   useEffect(() => {
     // Load scheduled votes
-    const votes = JSON.parse(localStorage.getItem('scheduledVotes') || '[]');
-    setScheduledVotes(votes.filter((v: any) => v.proposalId === proposalId));
+    const votes: ScheduledVoteItem[] = JSON.parse(localStorage.getItem('scheduledVotes') || '[]');
+    setScheduledVotes(votes.filter((v) => v.proposalId === proposalId));
 
     // Update countdowns
     const interval = setInterval(() => {
       const newCountdowns: Record<number, string> = {};
-      votes.forEach((vote: any, index: number) => {
+      votes.forEach((vote, index: number) => {
         const timeLeft = vote.executionTime - Date.now();
         if (timeLeft > 0) {
           const hours = Math.floor(timeLeft / 3600000);
@@ -59,10 +67,10 @@ export default function ScheduledVote({ proposalId, onSchedule }: ScheduledVoteP
   };
 
   const cancelScheduled = (index: number) => {
-    const votes = JSON.parse(localStorage.getItem('scheduledVotes') || '[]');
+    const votes: ScheduledVoteItem[] = JSON.parse(localStorage.getItem('scheduledVotes') || '[]');
     votes.splice(index, 1);
     localStorage.setItem('scheduledVotes', JSON.stringify(votes));
-    setScheduledVotes(votes.filter((v: any) => v.proposalId === proposalId));
+    setScheduledVotes(votes.filter((v) => v.proposalId === proposalId));
   };
 
   return (
