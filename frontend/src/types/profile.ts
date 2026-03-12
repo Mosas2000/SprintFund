@@ -110,8 +110,8 @@ export type ProfileTab = 'overview' | 'proposals' | 'votes' | 'activity';
  */
 export interface ProfileHeaderProps {
   address: string;
-  stats: ProfileStats;
-  loading: boolean;
+  stxBalance: number;
+  stakedAmount: number;
 }
 
 /**
@@ -119,7 +119,6 @@ export interface ProfileHeaderProps {
  */
 export interface ProfileStatsGridProps {
   stats: ProfileStats;
-  loading: boolean;
 }
 
 /**
@@ -127,7 +126,6 @@ export interface ProfileStatsGridProps {
  */
 export interface UserProposalsProps {
   proposals: Proposal[];
-  loading: boolean;
 }
 
 /**
@@ -135,13 +133,11 @@ export interface UserProposalsProps {
  */
 export interface VotingHistoryProps {
   votes: VoteRecord[];
-  loading: boolean;
 }
 
 /**
  * Props for the ActivityTimeline component.
  */
 export interface ActivityTimelineProps {
-  events: ActivityEvent[];
-  loading: boolean;
+  activity: ActivityEvent[];
 }
