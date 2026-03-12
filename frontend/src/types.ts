@@ -93,3 +93,31 @@ export type {
 } from './types/notification';
 
 export { DEFAULT_MILESTONES } from './types/notification';
+
+/* Re-export SEO types for convenience */
+export type {
+  OpenGraphMeta,
+  OpenGraphImage,
+  TwitterCardMeta,
+  PageSeoConfig,
+  JsonLdOrganization,
+  JsonLdWebSite,
+  JsonLdWebPage,
+  SeoMetadata,
+  SitemapEntry,
+} from './types/seo';
+
+export {
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  SITE_LOCALE,
+  SITE_THEME_COLOR,
+  OG_IMAGE_WIDTH,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_PATH,
+  OG_IMAGE_ALT,
+  TWITTER_HANDLE,
+  TWITTER_CARD_TYPE,
+  PAGE_SEO_CONFIGS,
+} from './types/seo';

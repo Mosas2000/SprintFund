@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { buildRootMetadata } from "@/lib/metadata-builder";
+import { SITE_THEME_COLOR } from "@/types/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,11 +14,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "SprintFund - Fund ideas in 24 hours",
-  description: "Lightning-fast micro-grants DAO on Stacks blockchain with quadratic voting",
-  manifest: "/manifest.json",
-  themeColor: "#EA580C",
+export const metadata: Metadata = buildRootMetadata();
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: SITE_THEME_COLOR,
 };
 
 import { Providers } from "@/components/Providers";
