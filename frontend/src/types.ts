@@ -79,3 +79,17 @@ export type {
   VotingHistoryProps,
   ActivityTimelineProps,
 } from './types/profile';
+
+/* Re-export notification types for convenience */
+export type {
+  NotificationType,
+  Notification,
+  NotificationsState,
+  ProposalSnapshot,
+  MilestoneConfig,
+  NotificationBellProps,
+  NotificationDropdownProps,
+  NotificationItemProps,
+} from './types/notification';
+
+export { DEFAULT_MILESTONES } from './types/notification';
