@@ -19,7 +19,7 @@ export const SITE_THEME_COLOR = '#00ff88';
 
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
-export const OG_IMAGE_PATH = '/og-image.png';
+export const OG_IMAGE_PATH = '/og-image.svg';
 export const OG_IMAGE_ALT =
   'SprintFund - Lightning-fast micro-grants DAO on Stacks blockchain';
 
