@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { buildRootMetadata } from "@/lib/metadata-builder";
+import { SITE_THEME_COLOR } from "@/types/seo";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,6 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = buildRootMetadata();
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: SITE_THEME_COLOR,
+};
 
 import { Providers } from "@/components/Providers";
 import GlassBackground from "@/components/GlassBackground";
