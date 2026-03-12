@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { buildRootMetadata } from "@/lib/metadata-builder";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,12 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "SprintFund - Fund ideas in 24 hours",
-  description: "Lightning-fast micro-grants DAO on Stacks blockchain with quadratic voting",
-  manifest: "/manifest.json",
-  themeColor: "#EA580C",
-};
+export const metadata: Metadata = buildRootMetadata();
 
 import { Providers } from "@/components/Providers";
 import GlassBackground from "@/components/GlassBackground";
