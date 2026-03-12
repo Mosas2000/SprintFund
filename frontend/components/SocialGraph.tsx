@@ -237,7 +237,7 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
         />
         <select
           value={filterReputation}
-          onChange={(e) => setFilterReputation(e.target.value as any)}
+          onChange={(e) => setFilterReputation(e.target.value as 'all' | 'high' | 'medium')}
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
                    bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500"
         >

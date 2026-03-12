@@ -313,7 +313,7 @@ export default function NotificationCenter({ userAddress }: NotificationCenterPr
               <h4 className="font-medium mb-3">Digest Mode</h4>
               <select
                 value={preferences.digestMode}
-                onChange={(e) => setPreferences({ ...preferences, digestMode: e.target.value as any })}
+                onChange={(e) => setPreferences({ ...preferences, digestMode: e.target.value as 'instant' | 'daily' | 'weekly' })}
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
                          bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
               >

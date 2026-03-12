@@ -140,7 +140,7 @@ export default function ProposalCollaboration({ proposalId, authorAddress }: Pro
               <label className="block text-sm font-medium mb-1">Role</label>
               <select
                 value={newContributor.role}
-                onChange={(e) => setNewContributor({ ...newContributor, role: e.target.value as any })}
+                onChange={(e) => setNewContributor({ ...newContributor, role: e.target.value as 'author' | 'reviewer' | 'supporter' })}
                 className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
               >
                 <option value="supporter">Supporter</option>
