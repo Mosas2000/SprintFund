@@ -189,7 +189,7 @@ export default function BudgetAllocator() {
         <div className="flex gap-2">
           <select
             value={currentPeriod}
-            onChange={(e) => setCurrentPeriod(e.target.value as any)}
+            onChange={(e) => setCurrentPeriod(e.target.value as 'monthly' | 'quarterly')}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
                      bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500"
           >
