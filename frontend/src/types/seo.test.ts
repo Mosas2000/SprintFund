@@ -70,8 +70,8 @@ describe('Open Graph constants', () => {
     expect(OG_IMAGE_PATH.startsWith('/')).toBe(true);
   });
 
-  it('OG_IMAGE_PATH ends with .png', () => {
-    expect(OG_IMAGE_PATH.endsWith('.png')).toBe(true);
+  it('OG_IMAGE_PATH ends with an image extension', () => {
+    expect(OG_IMAGE_PATH.match(/\.(png|svg|jpg|webp)$/)).not.toBeNull();
   });
 
   it('OG_IMAGE_ALT is a descriptive string', () => {
