@@ -13,6 +13,16 @@ import {
   Legend,
   Filler
 } from 'chart.js';
+import type { ChartJsTickValue } from '../src/types';
+
+interface ForecastTooltipContext {
+  dataset: {
+    label?: string;
+  };
+  parsed: {
+    y: number;
+  };
+}
 
 ChartJS.register(
   CategoryScale,
@@ -160,7 +170,7 @@ export default function TreasuryForecasting() {
       },
       tooltip: {
         callbacks: {
-          label: (context: any) => {
+          label: (context: ForecastTooltipContext) => {
             return `${context.dataset.label}: ${(context.parsed.y / 1000).toFixed(0)}K STX`;
           }
         }
@@ -170,7 +180,7 @@ export default function TreasuryForecasting() {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: any) => `${(value / 1000).toFixed(0)}K`
+          callback: (value: ChartJsTickValue) => `${(Number(value) / 1000).toFixed(0)}K`
         }
       }
     }

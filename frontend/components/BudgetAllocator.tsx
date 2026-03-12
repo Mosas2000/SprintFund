@@ -12,6 +12,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import type { ChartJsTickValue } from '../src/types';
 
 ChartJS.register(
   CategoryScale,
@@ -122,7 +123,7 @@ export default function BudgetAllocator() {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: any) => `${(value / 1000).toFixed(0)}K`
+          callback: (value: ChartJsTickValue) => `${(Number(value) / 1000).toFixed(0)}K`
         }
       }
     }
