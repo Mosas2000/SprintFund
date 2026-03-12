@@ -121,3 +121,80 @@ export {
   TWITTER_CARD_TYPE,
   PAGE_SEO_CONFIGS,
 } from './types/seo';
+
+/* Re-export contract types for convenience */
+export type {
+  ClarityWrappedValue,
+  ClarityValue,
+  RawProposal,
+  RawStake,
+  RawVote,
+  ClarityOkResponse,
+  ReadOnlyResult,
+  TxFinishData,
+  TxCallbacks as ContractTxCallbacks,
+  ContractCallOptions,
+  ContractErrorCode,
+  ContractErrorName,
+  ContractError,
+  NetworkError,
+} from './types/contract';
+
+export {
+  CONTRACT_ERROR_CODES,
+  isErrorWithMessage,
+  getErrorMessage,
+  isNetworkError,
+} from './types/contract';
+
+/* Re-export analytics types for convenience */
+export type {
+  InsightDataPoint,
+  InsightChartData,
+  InsightChartDataset,
+  InsightUserContext,
+  ChartTickValue,
+  RechartsTooltipEntry,
+  RechartsTooltipProps,
+  RechartsLegendEntry,
+  RechartsLegendProps,
+  ChartJsTickValue,
+  CoinGeckoPriceResponse,
+  CoinGeckoHistoryResponse,
+  HiroBlockListResponse,
+  HiroBlock,
+  HiroBlockTransaction,
+  HiroMempoolResponse,
+  GitHubRepoResponse,
+  GitHubCommitResponse,
+  GitHubContributorResponse,
+  ProposalWithBlocks,
+  ScheduledVoteItem,
+  AIRecommendationMetadata,
+  StacksUserData,
+  VelocityDataPoint,
+  KPICardProps,
+  StatsCardProps,
+  HealthScoreProps,
+} from './types/analytics';
+
+/* Re-export select value types for convenience */
+export type {
+  BudgetPeriod,
+  ReportPeriod,
+  ExpenseStatus,
+  ExpenseType,
+  PaymentStatus,
+  PaymentType,
+  PaymentEntityType,
+  RecurringInterval,
+  GrantStatus,
+  DependencyType,
+  ContributorRole,
+  RelationshipFilter,
+  ReputationFilter,
+  DigestMode,
+  VoteHistoryFilter,
+} from './types/select-values';
+
+export { VOTE_HISTORY_FILTERS } from './types/select-values';
