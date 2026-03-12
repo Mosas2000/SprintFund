@@ -1,8 +1,8 @@
 /**
  * String literal union types for HTML select element values.
  *
- * These replace 'as any' casts on e.target.value in onChange handlers.
- * Each type matches the <option> values of its corresponding select element.
+ * Each type matches the <option> values of its corresponding select element
+ * so form handlers and filters can stay aligned with component state.
  */
 
 /* ═══════════════════════════════════════════════

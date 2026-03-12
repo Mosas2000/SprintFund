@@ -1,8 +1,8 @@
 /**
  * TypeScript types for the analytics subsystem.
  *
- * Replaces 'any' annotations in insight generators, chart components,
- * API integration, and data collectors with precise typed definitions.
+ * Defines shared payloads for insight generation, chart components,
+ * API integration, and analytics data collection.
  */
 
 /* ═══════════════════════════════════════════════
@@ -42,7 +42,7 @@ export interface InsightChartDataset {
 
 /**
  * Context about the current user passed to generateAllInsights.
- * Replaces the untyped 'userContext: any' parameter.
+ * Used when analytics features tailor insights to a connected user.
  */
 export interface InsightUserContext {
   address?: string;
@@ -217,7 +217,7 @@ export interface ProposalWithBlocks {
 
 /**
  * A scheduled vote stored in localStorage.
- * Replaces the untyped any[] in ScheduledVote component.
+ * Used by the scheduled voting workflow in the governance UI.
  */
 export interface ScheduledVoteItem {
   proposalId: number;
@@ -233,7 +233,7 @@ export interface ScheduledVoteItem {
 
 /**
  * Metadata attached to an AI recommendation.
- * Replaces 'metadata?: any' in UserInsights AIRecommendation.
+ * Used by insight and recommendation surfaces that attach optional context.
  */
 export interface AIRecommendationMetadata {
   relatedProposalId?: number;
@@ -249,7 +249,7 @@ export interface AIRecommendationMetadata {
 
 /**
  * Stacks Connect user session data shape.
- * Replaces useState<any>(null) in the home page.
+ * Used for strongly typed wallet session state in the frontend.
  */
 export interface StacksUserData {
   appPrivateKey: string;
@@ -273,7 +273,7 @@ export interface StacksUserData {
 
 /**
  * Data point for the proposal comparison velocity chart.
- * Replaces 'const dataPoint: any = { hour }' in ProposalComparator.
+ * Supports dynamic proposal series keys alongside the shared `hour` axis.
  */
 export interface VelocityDataPoint {
   hour: number;
