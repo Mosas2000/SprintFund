@@ -1,16 +1,20 @@
 {
-    "name": "SprintFund",
+    "name": "SprintFund - Fund Ideas in 24 Hours",
     "short_name": "SprintFund",
-    "description": "Lightning-fast micro-grants DAO on Stacks",
+    "description": "Lightning-fast micro-grants DAO on Stacks blockchain. Propose ideas, vote with quadratic voting, and receive funding within 24 hours.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0f172a",
-    "theme_color": "#EA580C",
+    "background_color": "#0a0a0a",
+    "theme_color": "#00ff88",
+    "orientation": "any",
+    "scope": "/",
+    "lang": "en",
+    "categories": ["finance", "productivity"],
     "icons": [
         {
-            "src": "/favicon.ico",
-            "sizes": "64x64",
-            "type": "image/x-icon"
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
         }
     ]
 }
