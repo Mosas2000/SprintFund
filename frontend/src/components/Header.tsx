@@ -10,6 +10,7 @@ const NAV = [
   { to: '/', label: 'Home' },
   { to: '/proposals', label: 'Proposals' },
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/profile', label: 'Profile' },
 ] as const;
 
 export function Header() {

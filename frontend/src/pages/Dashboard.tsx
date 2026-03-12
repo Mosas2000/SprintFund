@@ -211,6 +211,21 @@ export function DashboardPage() {
         <StatCard label="Total Proposals" value={String(totalProposals)} />
       </div>
 
+      {/* -- Profile link ------------------------------ */}
+      <div className="mb-6">
+        <Link
+          to="/profile"
+          className="group flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 transition-colors hover:border-green/30 min-h-[44px]"
+        >
+          <span className="text-sm text-muted group-hover:text-text transition-colors">
+            View your full activity history, voting record, and participation stats
+          </span>
+          <span className="ml-3 shrink-0 text-xs font-semibold text-green" aria-hidden="true">
+            Profile →
+          </span>
+        </Link>
+      </div>
+
       {/* -- TX Status -------------------------------- */}
       {txStatus && (
         <div className="mb-6 rounded-lg bg-green/5 border border-green/20 px-4 py-2.5 text-xs text-green" role="status" aria-live="polite">
