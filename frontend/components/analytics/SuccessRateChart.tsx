@@ -5,6 +5,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { format, subDays, subMonths, subYears, startOfDay } from 'date-fns';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { calculateMovingAverage, formatMetric } from '../../utils/analytics/helpers';
+import type {
+  RechartsLegendEntry,
+  RechartsLegendProps,
+  RechartsTooltipEntry,
+  RechartsTooltipProps,
+} from '../../src/types';
 
 type DateRangeOption = '7d' | '30d' | '90d' | '1y' | 'all';
 
@@ -19,6 +25,15 @@ interface SuccessRateDataPoint {
 interface SuccessRateChartProps {
   proposals: ProposalMetrics[];
   height?: number;
+}
+
+interface SuccessRateTooltipEntry extends RechartsTooltipEntry {
+  value: number;
+}
+
+interface SuccessRateTooltipProps extends Omit<RechartsTooltipProps, 'payload' | 'label'> {
+  payload?: SuccessRateTooltipEntry[];
+  label?: string;
 }
 
 const DATE_RANGE_OPTIONS: Array<{ value: DateRangeOption; label: string }> = [
@@ -216,8 +231,9 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
     URL.revokeObjectURL(url);
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: SuccessRateTooltipProps) => {
     if (!active || !payload || payload.length === 0) return null;
+    if (!label) return null;
 
     const dataPoint = chartData.find(d => d.date === label);
     if (!dataPoint) return null;
@@ -237,7 +253,7 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
           {format(new Date(label), 'MMM dd, yyyy')}
         </p>
         <div className="space-y-1">
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry, index) => (
             <div key={index} className="flex items-center justify-between gap-4 text-sm">
               <span className="flex items-center gap-2">
                 <span
@@ -274,10 +290,10 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
     );
   };
 
-  const CustomLegend = ({ payload }: any) => {
+  const CustomLegend = ({ payload = [] }: RechartsLegendProps) => {
     return (
       <div className="flex flex-wrap gap-4 justify-center mt-4">
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry: RechartsLegendEntry, index: number) => (
           <button
             key={index}
             onClick={() => toggleSeries(entry.dataKey)}

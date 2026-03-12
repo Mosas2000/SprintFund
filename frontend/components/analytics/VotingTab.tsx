@@ -31,6 +31,16 @@ import {
 } from 'lucide-react';
 import { VotingHeatmap, VoterNetworkGraph } from './index';
 import BulkVotingQueue from '../BulkVotingQueue';
+import type { StatsCardProps } from '../../src/types';
+
+interface LiveVote {
+    id: number;
+    user: string;
+    proposal: string;
+    type: 'YES' | 'NO';
+    weight: number;
+    time: string;
+}
 
 const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
@@ -59,7 +69,7 @@ const influenceRankings = [
 ];
 
 export default function VotingTab() {
-    const [liveVotes, setLiveVotes] = useState<any[]>([]);
+    const [liveVotes, setLiveVotes] = useState<LiveVote[]>([]);
 
     useEffect(() => {
         // Mock live voting feed
@@ -313,7 +323,7 @@ export default function VotingTab() {
     );
 }
 
-function StatsCard({ label, value, trend, trendUp, highlight }: any) {
+function StatsCard({ label, value, trend, trendUp, highlight }: StatsCardProps) {
     return (
         <div className={`p-6 rounded-3xl border transition-all ${highlight
             ? 'bg-orange-600/10 border-orange-500/30'
