@@ -14,8 +14,27 @@ const userSession = new UserSession({ appConfig });
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core';
 
+/**
+ * User session data from Stacks Connect.
+ * Typed shape matching the return of userSession.loadUserData().
+ */
+interface StacksUserData {
+  appPrivateKey: string;
+  hubUrl: string;
+  username?: string;
+  profile: {
+    stxAddress: {
+      mainnet: string;
+      testnet: string;
+    };
+    [key: string]: unknown;
+  };
+  identityAddress?: string;
+  decentralizedID?: string;
+}
+
 export default function Home() {
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<StacksUserData | null>(null);
 
   useEffect(() => {
     if (userSession.isSignInPending()) {
