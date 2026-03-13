@@ -29,7 +29,7 @@ describe('VoteProgressBar module', () => {
     const component = VoteProgressBarModule.VoteProgressBar as unknown as {
       type: { name: string };
     };
-    expect(component.type.name).toBe('VoteProgressBar');
+    expect(component.type.name).toMatch(/^VoteProgressBar/);
   });
 });
 

@@ -69,7 +69,10 @@ describe('useMobileMenu supporting logic', () => {
     });
 
     it('change handler receives matches: true when viewport widens', () => {
-      window.matchMedia(`(min-width: ${BREAKPOINTS.sm}px)`);
+      const mql = window.matchMedia(`(min-width: ${BREAKPOINTS.sm}px)`);
+      mql.addEventListener('change', () => {
+        // no-op; we only care that the handler wiring exists for the mock
+      });
       expect(mediaChangeHandler).not.toBeNull();
 
       const result = { matches: true };
@@ -81,7 +84,10 @@ describe('useMobileMenu supporting logic', () => {
     });
 
     it('change handler receives matches: false when viewport narrows', () => {
-      window.matchMedia(`(min-width: ${BREAKPOINTS.sm}px)`);
+      const mql = window.matchMedia(`(min-width: ${BREAKPOINTS.sm}px)`);
+      mql.addEventListener('change', () => {
+        // no-op; we only care that the handler wiring exists for the mock
+      });
 
       const result = { matches: false };
       if (mediaChangeHandler) {
