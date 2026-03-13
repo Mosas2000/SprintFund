@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 
@@ -12,8 +12,17 @@ const FRONTEND_SRC = resolve(ROOT, 'frontend/src');
  */
 function grepFrontendSrc(pattern: string): string {
   try {
-    return execSync(
-      `grep -rn "${pattern}" "${FRONTEND_SRC}" --include="*.tsx" --include="*.ts" --exclude="*.test.ts" --exclude="*.test.tsx"`,
+    return execFileSync(
+      'grep',
+      [
+        '-rn',
+        pattern,
+        FRONTEND_SRC,
+        '--include=*.tsx',
+        '--include=*.ts',
+        '--exclude=*.test.ts',
+        '--exclude=*.test.tsx',
+      ],
       { encoding: 'utf-8' },
     );
   } catch {

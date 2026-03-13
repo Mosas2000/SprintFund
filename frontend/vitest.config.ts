@@ -1,4 +1,8 @@
 import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+
+const configDir = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Vitest configuration for frontend unit tests.
@@ -11,10 +15,13 @@ import { defineConfig } from 'vitest/config';
  *   npx vitest run --config frontend/vitest.config.ts
  */
 export default defineConfig({
+  // Ensure the frontend unit tests always run with the frontend package as the
+  // Vite/Vitest root, even when invoked from the monorepo root.
+  root: configDir,
   test: {
-    environment: 'node',
-    include: ['frontend/src/**/*.test.ts'],
-    exclude: ['node_modules/**', 'tests/**'],
-    setupFiles: [],
+    environment: 'jsdom',
+    include: ['src/**/*.test.ts'],
+    exclude: ['node_modules/**'],
+    setupFiles: [resolve(configDir, 'src/test/vitest.setup.ts')],
   },
 });

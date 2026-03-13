@@ -19,8 +19,9 @@ export function resolveRouteTitle(pathname: string): string {
     return ROUTE_TITLES[pathname];
   }
 
-  if (/^\/proposals\/\d+$/.test(pathname)) {
-    return 'Proposal Detail';
+  const proposalMatch = pathname.match(/^\/proposals\/(\d+)$/);
+  if (proposalMatch) {
+    return `Proposal #${proposalMatch[1]}`;
   }
 
   return 'Page';

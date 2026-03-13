@@ -111,7 +111,7 @@ describe('useBodyScrollLock logic', () => {
 
   it('handles zero scroll position on lock', () => {
     lockBody(0);
-    expect(document.body.style.top).toBe('-0px');
+    expect(document.body.style.top).toBe('0px');
   });
 
   it('scrollTo receives zero when page was at top', () => {

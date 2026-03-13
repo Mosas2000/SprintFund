@@ -22,6 +22,13 @@ import { vitestSetupFilePath, getClarinetVitestsArgv } from "@hirosystems/clarin
 export default defineConfig({
   test: {
     environment: "clarinet", // use vitest-environment-clarinet
+    // Contract tests live outside the frontend app. Excluding `frontend/**`
+    // prevents accidental execution of frontend unit tests under the Clarinet
+    // environment (which can cause false failures).
+    include: ["tests/**/*.{test,spec}.{ts,js}", "contracts/**/*.{test,spec}.{ts,js}"],
+    exclude: ["node_modules/**", "frontend/**"],
+    // It's valid for this repo to sometimes have zero contract tests.
+    passWithNoTests: true,
     pool: "forks",
     poolOptions: {
       threads: { singleThread: true },

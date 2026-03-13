@@ -58,7 +58,10 @@ describe('useMediaQuery supporting logic', () => {
   });
 
   it('change handler fires when media query changes to matching', () => {
-    window.matchMedia('(min-width: 640px)');
+    const mql = window.matchMedia('(min-width: 640px)');
+    mql.addEventListener('change', () => {
+      // no-op; we only care that the handler wiring exists for the mock
+    });
 
     let currentMatch = false;
     if (mediaChangeHandler) {
@@ -80,7 +83,10 @@ describe('useMediaQuery supporting logic', () => {
       value: createMockMatchMedia(),
     });
 
-    window.matchMedia('(min-width: 640px)');
+    const mql = window.matchMedia('(min-width: 640px)');
+    mql.addEventListener('change', () => {
+      // no-op; we only care that the handler wiring exists for the mock
+    });
 
     let currentMatch = true;
     if (mediaChangeHandler) {
