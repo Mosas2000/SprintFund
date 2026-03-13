@@ -15,7 +15,7 @@
     (map-set activities activity-id {
       caller: tx-sender,
       message: message,
-      timestamp: block-height
+      timestamp: stacks-block-height
     })
     (var-set activity-count (+ activity-id u1))
     (ok activity-id)
