@@ -30,6 +30,11 @@ import {
   getAllProposals,
   getStake,
   getMinStakeAmount,
+  callStake,
+  callWithdrawStake,
+  callCreateProposal,
+  callVote,
+  callExecuteProposal,
 } from '../stacks';
 
 const mockFetchReadOnly = vi.mocked(fetchCallReadOnlyFunction);
@@ -317,5 +322,225 @@ describe('getMinStakeAmount', () => {
 
     const min = await getMinStakeAmount();
     expect(min).toBe(10000000);
+  });
+});
+
+describe('callStake', () => {
+  it('invokes request with the stake function name', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xabc' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callStake(5000000, cb);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'stx_callContract',
+      expect.objectContaining({ functionName: 'stake' }),
+    );
+  });
+
+  it('calls onFinish with the transaction id on success', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xdef' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callStake(1000000, cb);
+
+    expect(cb.onFinish).toHaveBeenCalledWith('0xdef');
+    expect(cb.onCancel).not.toHaveBeenCalled();
+  });
+
+  it('calls onCancel when the request throws', async () => {
+    mockRequest.mockRejectedValue(new Error('user rejected'));
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callStake(1000000, cb);
+
+    expect(cb.onCancel).toHaveBeenCalled();
+    expect(cb.onFinish).not.toHaveBeenCalled();
+  });
+
+  it('passes the amount as a uint function argument', async () => {
+    mockRequest.mockResolvedValue({ txid: '0x1' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callStake(7777, cb);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'stx_callContract',
+      expect.objectContaining({
+        functionArgs: [{ type: 'uint', value: 7777 }],
+      }),
+    );
+  });
+});
+
+describe('callWithdrawStake', () => {
+  it('invokes request with withdraw-stake function name', async () => {
+    mockRequest.mockResolvedValue({ txid: '0x123' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callWithdrawStake(3000000, cb);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'stx_callContract',
+      expect.objectContaining({ functionName: 'withdraw-stake' }),
+    );
+  });
+
+  it('calls onFinish with txid on success', async () => {
+    mockRequest.mockResolvedValue({ txid: '0x456' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callWithdrawStake(2000000, cb);
+
+    expect(cb.onFinish).toHaveBeenCalledWith('0x456');
+  });
+
+  it('calls onCancel on failure', async () => {
+    mockRequest.mockRejectedValue(new Error('rejected'));
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callWithdrawStake(1000000, cb);
+
+    expect(cb.onCancel).toHaveBeenCalled();
+  });
+});
+
+describe('callCreateProposal', () => {
+  it('invokes request with create-proposal and three args', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xprop' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callCreateProposal(50000000, 'Fund workshops', 'Host 10 workshops', cb);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'stx_callContract',
+      expect.objectContaining({
+        functionName: 'create-proposal',
+        functionArgs: [
+          { type: 'uint', value: 50000000 },
+          { type: 'string-utf8', value: 'Fund workshops' },
+          { type: 'string-utf8', value: 'Host 10 workshops' },
+        ],
+      }),
+    );
+  });
+
+  it('calls onFinish with txid on success', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xfin' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callCreateProposal(1000, 'T', 'D', cb);
+
+    expect(cb.onFinish).toHaveBeenCalledWith('0xfin');
+  });
+
+  it('calls onCancel on rejection', async () => {
+    mockRequest.mockRejectedValue(new Error('user cancelled'));
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callCreateProposal(1000, 'T', 'D', cb);
+
+    expect(cb.onCancel).toHaveBeenCalled();
+  });
+});
+
+describe('callVote', () => {
+  it('invokes request with vote function and three args', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xvote' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callVote(5, true, 100, cb);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'stx_callContract',
+      expect.objectContaining({
+        functionName: 'vote',
+        functionArgs: [
+          { type: 'uint', value: 5 },
+          { type: 'bool', value: true },
+          { type: 'uint', value: 100 },
+        ],
+      }),
+    );
+  });
+
+  it('passes support=false for against votes', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xvno' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callVote(3, false, 50, cb);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'stx_callContract',
+      expect.objectContaining({
+        functionArgs: [
+          { type: 'uint', value: 3 },
+          { type: 'bool', value: false },
+          { type: 'uint', value: 50 },
+        ],
+      }),
+    );
+  });
+
+  it('calls onFinish with txid on success', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xv1' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callVote(1, true, 10, cb);
+
+    expect(cb.onFinish).toHaveBeenCalledWith('0xv1');
+  });
+
+  it('calls onCancel when request fails', async () => {
+    mockRequest.mockRejectedValue(new Error('timeout'));
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callVote(1, true, 10, cb);
+
+    expect(cb.onCancel).toHaveBeenCalled();
+  });
+});
+
+describe('callExecuteProposal', () => {
+  it('invokes request with execute-proposal and proposal id', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xexec' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callExecuteProposal(42, cb);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'stx_callContract',
+      expect.objectContaining({
+        functionName: 'execute-proposal',
+        functionArgs: [{ type: 'uint', value: 42 }],
+      }),
+    );
+  });
+
+  it('calls onFinish with txid on success', async () => {
+    mockRequest.mockResolvedValue({ txid: '0xex2' } as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callExecuteProposal(10, cb);
+
+    expect(cb.onFinish).toHaveBeenCalledWith('0xex2');
+  });
+
+  it('calls onCancel on failure', async () => {
+    mockRequest.mockRejectedValue(new Error('denied'));
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callExecuteProposal(10, cb);
+
+    expect(cb.onCancel).toHaveBeenCalled();
+  });
+
+  it('handles empty txid in response', async () => {
+    mockRequest.mockResolvedValue({} as never);
+    const cb = { onFinish: vi.fn(), onCancel: vi.fn() };
+
+    await callExecuteProposal(1, cb);
+
+    expect(cb.onFinish).toHaveBeenCalledWith('');
   });
 });
