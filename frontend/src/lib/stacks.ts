@@ -71,7 +71,7 @@ export async function getProposal(id: number): Promise<Proposal | null> {
   };
 }
 
-const BATCH_SIZE = 10;
+export const BATCH_SIZE = 10;
 
 /**
  * Fetch a range of proposals by their indices.
