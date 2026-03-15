@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useWalletAddress, useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
-import { getStake, getAllProposals, getProposalCount } from '../lib/stacks';
+import { getStake, getAllProposals } from '../lib/stacks';
 import { callStake, callWithdrawStake } from '../lib/stacks';
 import { getStxBalance } from '../lib/api';
 import { formatStx, stxToMicro, MIN_STAKE_STX } from '../config';
@@ -45,16 +45,15 @@ export function DashboardPage() {
     setError(null);
     setLoading(true);
     try {
-      const [stake, balance, allProposals, count] = await Promise.all([
+      const [stake, balance, allProposals] = await Promise.all([
         getStake(address),
         getStxBalance(address),
         getAllProposals(),
-        getProposalCount(),
       ]);
       setStakeAmount(stake);
       setStxBalance(balance);
       setProposals(allProposals.filter((p) => p.proposer === address));
-      setTotalProposals(count);
+      setTotalProposals(allProposals.length);
     } catch (err) {
       const msg = toErrorMessage(err);
       console.error('Dashboard fetch error:', err);
