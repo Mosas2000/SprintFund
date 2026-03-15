@@ -71,13 +71,78 @@ export async function getProposal(id: number): Promise<Proposal | null> {
   };
 }
 
+const BATCH_SIZE = 10;
+
+/**
+ * Fetch a range of proposals by their indices.
+ *
+ * Uses `Promise.allSettled` so a single failed fetch does not break the
+ * entire batch — individual failures are logged and excluded from results.
+ */
+async function fetchProposalBatch(ids: number[]): Promise<Proposal[]> {
+  const results = await Promise.allSettled(ids.map((id) => getProposal(id)));
+
+  return results
+    .map((r, i) => {
+      if (r.status === 'rejected') {
+        console.warn(`[SprintFund] Proposal ${ids[i]} fetch failed:`, r.reason);
+        return null;
+      }
+      return r.value;
+    })
+    .filter((p): p is Proposal => p !== null);
+}
+
+/**
+ * Fetch all proposals in batches of BATCH_SIZE.
+ *
+ * This replaces the previous N+1 approach of fetching every proposal
+ * individually with Promise.all. Now proposals are fetched in parallel
+ * chunks to limit concurrent connections and isolate failures.
+ */
 export async function getAllProposals(): Promise<Proposal[]> {
   const count = await getProposalCount();
   if (count === 0) return [];
 
-  const promises = Array.from({ length: count }, (_, i) => getProposal(i));
-  const results = await Promise.all(promises);
-  return results.filter((p): p is Proposal => p !== null).reverse();
+  const proposals: Proposal[] = [];
+  for (let offset = 0; offset < count; offset += BATCH_SIZE) {
+    const batchIds = Array.from(
+      { length: Math.min(BATCH_SIZE, count - offset) },
+      (_, i) => offset + i,
+    );
+    const batch = await fetchProposalBatch(batchIds);
+    proposals.push(...batch);
+  }
+
+  return proposals.reverse();
+}
+
+/**
+ * Fetch a single page of proposals for pagination.
+ *
+ * @param page  Zero-based page index.
+ * @param pageSize  Number of proposals per page (default 10).
+ * @returns The proposals on that page and the total count.
+ */
+export async function getProposalPage(
+  page: number,
+  pageSize: number = 10,
+): Promise<{ proposals: Proposal[]; total: number }> {
+  const total = await getProposalCount();
+  if (total === 0) return { proposals: [], total: 0 };
+
+  // Proposals are displayed newest-first, so page 0 shows the highest IDs.
+  const lastId = total - 1;
+  const startId = Math.max(lastId - page * pageSize, 0);
+  const endId = Math.max(startId - pageSize + 1, 0);
+
+  const ids: number[] = [];
+  for (let id = startId; id >= endId; id--) {
+    ids.push(id);
+  }
+
+  const proposals = await fetchProposalBatch(ids);
+  return { proposals, total };
 }
 
 export async function getStake(address: string): Promise<number> {
