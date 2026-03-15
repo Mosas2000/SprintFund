@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getAllProposals } from '../lib/stacks';
+import { getProposalPage } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
 import { ErrorState } from '../components/ErrorState';
 import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
@@ -18,6 +18,9 @@ export function ProposalsPage() {
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const pageSize = 10;
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -27,8 +30,11 @@ export function ProposalsPage() {
   const fetchProposals = useCallback(() => {
     setError(null);
     setLoading(true);
-    getAllProposals()
-      .then(setProposals)
+    getProposalPage(page, pageSize)
+      .then(({ proposals: fetched, total: count }) => {
+        setProposals(fetched);
+        setTotal(count);
+      })
       .catch((err) => {
         const msg = toErrorMessage(err);
         setError(msg);
@@ -36,7 +42,7 @@ export function ProposalsPage() {
         toast.error('Failed to load proposals', msg);
       })
       .finally(() => setLoading(false));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchProposals();
@@ -110,13 +116,38 @@ export function ProposalsPage() {
           <p className="mt-1 text-sm text-muted">Be the first to create one!</p>
         </div>
       ) : (
-        <div role="list" aria-label="Proposals" className="grid gap-4 sm:grid-cols-2">
-          {filtered.map((p) => (
-            <div role="listitem" key={p.id}>
-              <ProposalCard proposal={p} />
-            </div>
-          ))}
-        </div>
+        <>
+          <div role="list" aria-label="Proposals" className="grid gap-4 sm:grid-cols-2">
+            {filtered.map((p) => (
+              <div role="listitem" key={p.id}>
+                <ProposalCard proposal={p} />
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {total > pageSize && (
+            <nav className="mt-8 flex items-center justify-center gap-4" aria-label="Pagination">
+              <button
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40 min-h-[44px]"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-muted" aria-live="polite">
+                Page {page + 1} of {Math.ceil(total / pageSize)}
+              </span>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={(page + 1) * pageSize >= total}
+                className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40 min-h-[44px]"
+              >
+                Next
+              </button>
+            </nav>
+          )}
+        </>
       )}
     </div>
   );
