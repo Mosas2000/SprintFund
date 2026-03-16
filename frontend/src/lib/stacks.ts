@@ -41,14 +41,93 @@ function extractVal(v: Record<string, unknown> | string | number | boolean | nul
   return v;
 }
 
+const PROPOSAL_CACHE_TTL_MS = 30_000;
+
+type ProposalCountCacheEntry = {
+  value: number;
+  updatedAt: number;
+};
+
+type ProposalFetchOptions = {
+  forceRefresh?: boolean;
+  batchSize?: number;
+};
+
+type ProposalPageOptions = ProposalFetchOptions & {
+  page?: number;
+  pageSize?: number;
+};
+
+type ProposalPageResult = {
+  proposals: Proposal[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+let proposalCountCache: ProposalCountCacheEntry | null = null;
+const proposalByIdCache = new Map<number, Proposal>();
+
+function isProposalCountCacheFresh() {
+  if (!proposalCountCache) return false;
+  return Date.now() - proposalCountCache.updatedAt < PROPOSAL_CACHE_TTL_MS;
+}
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const safeSize = Math.max(1, size);
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += safeSize) {
+    chunks.push(items.slice(i, i + safeSize));
+  }
+  return chunks;
+}
+
+async function fetchAndCacheProposalIds(ids: number[], options?: ProposalFetchOptions): Promise<void> {
+  const forceRefresh = options?.forceRefresh ?? false;
+  const batchSize = Math.max(1, options?.batchSize ?? 10);
+
+  const idsToFetch = forceRefresh
+    ? ids
+    : ids.filter((proposalId) => !proposalByIdCache.has(proposalId));
+
+  if (idsToFetch.length === 0) {
+    return;
+  }
+
+  for (const batch of chunk(idsToFetch, batchSize)) {
+    const settled = await Promise.allSettled(batch.map((proposalId) => getProposal(proposalId)));
+    settled.forEach((result, index) => {
+      if (result.status !== 'fulfilled') {
+        return;
+      }
+      const proposal = result.value;
+      if (!proposal) {
+        return;
+      }
+      proposalByIdCache.set(batch[index], proposal);
+    });
+  }
+}
+
 /* ═══════════════════════════════════════════════
    Read-only API
    ═══════════════════════════════════════════════ */
 
-export async function getProposalCount(): Promise<number> {
+export async function getProposalCount(options?: { forceRefresh?: boolean }): Promise<number> {
+  const forceRefresh = options?.forceRefresh ?? false;
+  if (!forceRefresh && isProposalCountCacheFresh()) {
+    return proposalCountCache!.value;
+  }
+
   const raw = await readOnly<{ value?: number } | number>('get-proposal-count', []);
-  if (typeof raw === 'number') return raw;
-  return (raw as { value?: number })?.value ?? 0;
+  const value = typeof raw === 'number' ? raw : (raw as { value?: number })?.value ?? 0;
+  proposalCountCache = {
+    value,
+    updatedAt: Date.now(),
+  };
+
+  return value;
 }
 
 export async function getProposal(id: number): Promise<Proposal | null> {
@@ -71,13 +150,53 @@ export async function getProposal(id: number): Promise<Proposal | null> {
   };
 }
 
-export async function getAllProposals(): Promise<Proposal[]> {
-  const count = await getProposalCount();
+export async function getAllProposals(options?: ProposalFetchOptions): Promise<Proposal[]> {
+  const count = await getProposalCount({ forceRefresh: options?.forceRefresh });
   if (count === 0) return [];
 
-  const promises = Array.from({ length: count }, (_, i) => getProposal(i));
-  const results = await Promise.all(promises);
-  return results.filter((p): p is Proposal => p !== null).reverse();
+  const idsDescending = Array.from({ length: count }, (_, i) => count - 1 - i);
+  await fetchAndCacheProposalIds(idsDescending, options);
+  return idsDescending
+    .map((proposalId) => proposalByIdCache.get(proposalId) ?? null)
+    .filter((proposal): proposal is Proposal => proposal !== null);
+}
+
+export async function getProposalsPage(options?: ProposalPageOptions): Promise<ProposalPageResult> {
+  const pageSize = Math.max(1, options?.pageSize ?? 10);
+  const requestedPage = Math.max(1, options?.page ?? 1);
+  const totalCount = await getProposalCount({ forceRefresh: options?.forceRefresh });
+
+  if (totalCount === 0) {
+    return {
+      proposals: [],
+      totalCount: 0,
+      page: 1,
+      pageSize,
+      totalPages: 1,
+    };
+  }
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  const page = Math.min(requestedPage, totalPages);
+
+  const startOffset = (page - 1) * pageSize;
+  const firstId = totalCount - 1 - startOffset;
+  const ids: number[] = [];
+  for (let id = firstId; id >= 0 && ids.length < pageSize; id -= 1) {
+    ids.push(id);
+  }
+
+  await fetchAndCacheProposalIds(ids, options);
+
+  return {
+    proposals: ids
+      .map((proposalId) => proposalByIdCache.get(proposalId) ?? null)
+      .filter((proposal): proposal is Proposal => proposal !== null),
+    totalCount,
+    page,
+    pageSize,
+    totalPages,
+  };
 }
 
 export async function getStake(address: string): Promise<number> {

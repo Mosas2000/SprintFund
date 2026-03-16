@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getAllProposals } from '../lib/stacks';
+import { getProposalsPage } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
 import { ErrorState } from '../components/ErrorState';
-import { ERROR_MESSAGES, toErrorMessage } from '../lib/errors';
+import { toErrorMessage } from '../lib/errors';
 import { useToast } from '../hooks/useToast';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
@@ -13,11 +13,15 @@ import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import type { Proposal } from '../types';
 
 export function ProposalsPage() {
+  const PAGE_SIZE = 10;
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -27,8 +31,12 @@ export function ProposalsPage() {
   const fetchProposals = useCallback(() => {
     setError(null);
     setLoading(true);
-    getAllProposals()
-      .then(setProposals)
+    getProposalsPage({ page, pageSize: PAGE_SIZE })
+      .then((result) => {
+        setProposals(result.proposals);
+        setTotalPages(result.totalPages);
+        setTotalCount(result.totalCount);
+      })
       .catch((err) => {
         const msg = toErrorMessage(err);
         setError(msg);
@@ -36,10 +44,11 @@ export function ProposalsPage() {
         toast.error('Failed to load proposals', msg);
       })
       .finally(() => setLoading(false));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [page, toast]);
 
   useEffect(() => {
-    fetchProposals();
+    const timeout = window.setTimeout(fetchProposals, 0);
+    return () => window.clearTimeout(timeout);
   }, [fetchProposals]);
 
   // Hydrate comment counts for all loaded proposals
@@ -50,8 +59,10 @@ export function ProposalsPage() {
   /* Auto-retry when coming back online after a failure */
   useEffect(() => {
     if (online && error) {
-      fetchProposals();
+      const timeout = window.setTimeout(fetchProposals, 0);
+      return () => window.clearTimeout(timeout);
     }
+    return undefined;
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => proposals.filter((p) => {
@@ -81,7 +92,10 @@ export function ProposalsPage() {
         {(['all', 'active', 'executed'] as const).map((f) => (
           <button
             key={f}
-            onClick={() => setFilter(f)}
+            onClick={() => {
+              setFilter(f);
+              setPage(1);
+            }}
             aria-pressed={filter === f}
             className={`rounded-md px-4 py-2 text-xs font-medium capitalize transition-colors min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${
               filter === f
@@ -110,13 +124,39 @@ export function ProposalsPage() {
           <p className="mt-1 text-sm text-muted">Be the first to create one!</p>
         </div>
       ) : (
-        <div role="list" aria-label="Proposals" className="grid gap-4 sm:grid-cols-2">
-          {filtered.map((p) => (
-            <div role="listitem" key={p.id}>
-              <ProposalCard proposal={p} />
+        <>
+          <div role="list" aria-label="Proposals" className="grid gap-4 sm:grid-cols-2">
+            {filtered.map((p) => (
+              <div role="listitem" key={p.id}>
+                <ProposalCard proposal={p} />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-muted">
+              Showing page {page} of {totalPages} ({totalCount} total proposals)
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                disabled={page <= 1}
+                className="rounded-md border border-border px-3 py-2 text-xs font-medium text-text transition-colors hover:border-green/40 hover:text-green disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                disabled={page >= totalPages}
+                className="rounded-md border border-border px-3 py-2 text-xs font-medium text-text transition-colors hover:border-green/40 hover:text-green disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Next
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
