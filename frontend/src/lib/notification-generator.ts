@@ -3,8 +3,9 @@ import type {
   NotificationType,
   ProposalSnapshot,
   MilestoneConfig,
+  QuorumConfig,
 } from '../types/notification';
-import { DEFAULT_MILESTONES } from '../types/notification';
+import { DEFAULT_MILESTONES, DEFAULT_QUORUM } from '../types/notification';
 import { generateNotificationId } from '../store/notifications';
 
 /**
@@ -20,6 +21,7 @@ export function compareSnapshots(
   previous: ProposalSnapshot,
   current: ProposalSnapshot,
   milestones: MilestoneConfig = DEFAULT_MILESTONES,
+  quorum: QuorumConfig = DEFAULT_QUORUM,
 ): Notification[] {
   const notifications: Notification[] = [];
   const now = Date.now();
@@ -52,7 +54,7 @@ export function compareSnapshots(
     }
   }
 
-  // Detect vote milestone crossings
+  // Detect vote milestone crossings and quorum
   for (const [id, currentVotes] of current.voteTotals) {
     const previousVotes = previous.voteTotals.get(id) ?? 0;
     if (currentVotes > previousVotes) {
@@ -67,6 +69,17 @@ export function compareSnapshots(
             proposalId: id,
           });
         }
+      }
+
+      if (previousVotes < quorum.threshold && currentVotes >= quorum.threshold) {
+        notifications.push({
+          id: generateNotificationId(),
+          type: 'quorum_reached' as NotificationType,
+          title: `Proposal #${id} reached quorum`,
+          createdAt: now,
+          read: false,
+          proposalId: id,
+        });
       }
     }
   }
