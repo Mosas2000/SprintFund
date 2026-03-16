@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import type { ComponentType } from 'react';
+import dynamic from 'next/dynamic';
 import {
     BarChart3,
     Filter,
     Download,
     RefreshCw,
-    ChevronLeft,
-    ChevronRight,
     TrendingUp,
     Users,
     Vote,
@@ -18,23 +18,60 @@ import {
     X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    OverviewTab,
-    ProposalsTab,
-    VotingTab,
-    CommunityTab,
-    PersonalTab,
-    InsightsFeed,
-    PredictionsTab
-} from '@/components/analytics';
+
+const AnalyticsTabLoading = () => (
+    <div className="p-8">
+        <div className="h-40 rounded-2xl border border-slate-800 bg-slate-900/40 animate-pulse" />
+    </div>
+);
+
+const OverviewTab = dynamic(() => import('@/components/analytics/OverviewTab'), {
+    loading: AnalyticsTabLoading,
+    ssr: false,
+});
+const ProposalsTab = dynamic(() => import('@/components/analytics/ProposalsTab'), {
+    loading: AnalyticsTabLoading,
+    ssr: false,
+});
+const VotingTab = dynamic(() => import('@/components/analytics/VotingTab'), {
+    loading: AnalyticsTabLoading,
+    ssr: false,
+});
+const CommunityTab = dynamic(() => import('@/components/analytics/CommunityTab'), {
+    loading: AnalyticsTabLoading,
+    ssr: false,
+});
+const PersonalTab = dynamic(() => import('@/components/analytics/PersonalTab'), {
+    loading: AnalyticsTabLoading,
+    ssr: false,
+});
+const InsightsFeed = dynamic(() => import('@/components/analytics/InsightsFeed'), {
+    loading: AnalyticsTabLoading,
+    ssr: false,
+});
+const PredictionsTab = dynamic(() => import('@/components/analytics/PredictionsTab'), {
+    loading: AnalyticsTabLoading,
+    ssr: false,
+});
 
 type TabType = 'overview' | 'proposals' | 'voting' | 'community' | 'personal' | 'insights' | 'predictions';
+
+const TAB_COMPONENTS: Record<TabType, ComponentType> = {
+    overview: OverviewTab,
+    proposals: ProposalsTab,
+    voting: VotingTab,
+    community: CommunityTab,
+    personal: PersonalTab,
+    insights: InsightsFeed,
+    predictions: PredictionsTab,
+};
 
 export default function AnalyticsPage() {
     const [activeTab, setActiveTab] = useState<TabType>('overview');
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [lastUpdated, setLastUpdated] = useState(new Date());
+    const ActiveTabComponent = TAB_COMPONENTS[activeTab];
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
@@ -213,13 +250,7 @@ export default function AnalyticsPage() {
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                {activeTab === 'overview' && <OverviewTab />}
-                                {activeTab === 'proposals' && <ProposalsTab />}
-                                {activeTab === 'voting' && <VotingTab />}
-                                {activeTab === 'community' && <CommunityTab />}
-                                {activeTab === 'personal' && <PersonalTab />}
-                                {activeTab === 'insights' && <InsightsFeed />}
-                                {activeTab === 'predictions' && <PredictionsTab />}
+                                <ActiveTabComponent />
                             </motion.div>
                         </AnimatePresence>
                     </div>
