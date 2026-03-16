@@ -25,6 +25,8 @@ export function getToastLabel(type: Notification['type']): string {
       return 'Stake Update';
     case 'vote_received':
       return 'Vote Received';
+    case 'quorum_reached':
+      return 'Quorum Reached';
     default:
       return 'Notification';
   }
@@ -44,6 +46,8 @@ export function getToastAccentColor(type: Notification['type']): string {
       return 'border-l-blue-400';
     case 'vote_received':
       return 'border-l-purple-400';
+    case 'quorum_reached':
+      return 'border-l-emerald-400';
     default:
       return 'border-l-green';
   }

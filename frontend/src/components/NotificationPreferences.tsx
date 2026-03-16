@@ -42,6 +42,7 @@ function NotificationPreferencesPanel({ onClose }: NotificationPreferencesProps)
       vote_milestone: false,
       stake_change: false,
       vote_received: false,
+      quorum_reached: false,
     };
     setPreferences(disabled);
   }, []);
