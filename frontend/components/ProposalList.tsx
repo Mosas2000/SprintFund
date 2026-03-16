@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
+import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, principalCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { openContractCall } from '@stacks/connect';
 import { formatSTX } from '@/utils/formatSTX';
@@ -35,6 +35,8 @@ interface Proposal {
 export default function ProposalList({ userAddress }: { userAddress?: string }) {
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [loading, setLoading] = useState(true);
+    const [stakeLoading, setStakeLoading] = useState(false);
+    const [userStakeAmount, setUserStakeAmount] = useState<number | null>(null);
     const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
     const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes'>('newest');
     const [searchTerm, setSearchTerm] = useState('');
@@ -43,6 +45,52 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
     useEffect(() => {
         fetchProposals();
     }, []);
+
+    useEffect(() => {
+        const fetchStake = async () => {
+            if (!userAddress) {
+                setUserStakeAmount(null);
+                return;
+            }
+
+            try {
+                setStakeLoading(true);
+                const result = await fetchCallReadOnlyFunction({
+                    network: NETWORK,
+                    contractAddress: CONTRACT_ADDRESS,
+                    contractName: CONTRACT_NAME,
+                    functionName: 'get-stake',
+                    functionArgs: [principalCV(userAddress)],
+                    senderAddress: CONTRACT_ADDRESS,
+                });
+
+                const stakeValue = cvToValue(result) as Record<string, unknown> | number | null;
+                if (typeof stakeValue === 'number') {
+                    setUserStakeAmount(stakeValue);
+                    return;
+                }
+
+                const amount = typeof stakeValue === 'object' && stakeValue !== null
+                    ? (stakeValue.amount as Record<string, unknown> | number | undefined)
+                    : undefined;
+
+                if (typeof amount === 'number') {
+                    setUserStakeAmount(amount);
+                } else if (typeof amount === 'object' && amount !== null && 'value' in amount) {
+                    setUserStakeAmount(Number(amount.value) || 0);
+                } else {
+                    setUserStakeAmount(0);
+                }
+            } catch (err: unknown) {
+                console.error('Error fetching user stake:', err);
+                setUserStakeAmount(0);
+            } finally {
+                setStakeLoading(false);
+            }
+        };
+
+        fetchStake();
+    }, [userAddress]);
 
     const fetchProposals = async () => {
         try {
@@ -197,35 +245,167 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
 
         const weight = parseInt(voteWeight) || 0;
         const cost = calculateCost(weight);
+        const hasStakeData = !!userAddress && userStakeAmount !== null;
+        const stakeAmount = userStakeAmount ?? 0;
+        const remainingStake = Math.max(stakeAmount - cost, 0);
+        const maxAffordableWeight = stakeAmount > 0 ? Math.floor(Math.sqrt(stakeAmount)) : 100;
+        const sliderMax = Math.max(10, Math.min(250, maxAffordableWeight || 100));
+        const usageRatio = hasStakeData && stakeAmount > 0 ? cost / stakeAmount : 0;
+        const isNearLimit = hasStakeData && usageRatio >= 0.8 && usageRatio <= 1;
+        const exceedsStake = hasStakeData && cost > stakeAmount;
+        const votingPowerPerStx = cost > 0 ? weight / cost : 0;
+        const baselineVotingPowerPerStx = 1;
+        const efficiencyDrop = weight > 0 ? Math.max(0, (1 - (votingPowerPerStx / baselineVotingPowerPerStx)) * 100) : 0;
+
+        const curveMaxWeight = Math.max(6, Math.min(20, sliderMax));
+        const curveMaxCost = curveMaxWeight * curveMaxWeight;
+        const curvePoints = Array.from({ length: curveMaxWeight }, (_, index) => {
+            const pointWeight = index + 1;
+            const pointCost = pointWeight * pointWeight;
+            const x = (index / Math.max(1, curveMaxWeight - 1)) * 100;
+            const y = 100 - (pointCost / curveMaxCost) * 100;
+            return { pointWeight, pointCost, x, y };
+        });
+
+        const selectedPoint = weight > 0 && weight <= curveMaxWeight
+            ? curvePoints[weight - 1]
+            : null;
+
+        const handleWeightInput = (value: string) => {
+            const parsed = parseInt(value, 10);
+            if (Number.isNaN(parsed)) {
+                setVoteWeight('');
+                return;
+            }
+            const clamped = Math.max(1, Math.min(parsed, sliderMax));
+            setVoteWeight(String(clamped));
+        };
 
         return (
             <div className="mt-4 pt-4 border-t border-white/10">
-                <h5 className="text-white font-semibold mb-3 text-sm">Cast Your Vote</h5>
+                <div className="mb-3 flex items-center justify-between gap-2">
+                    <h5 className="text-white font-semibold text-sm">Cast Your Vote</h5>
+                    <div className="group relative">
+                        <button
+                            type="button"
+                            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/30 text-[11px] text-purple-200 hover:border-white/50"
+                            aria-label="Quadratic voting explanation"
+                        >
+                            i
+                        </button>
+                        <div className="pointer-events-none absolute right-0 top-7 z-20 w-64 rounded-lg border border-white/20 bg-black/90 p-3 text-xs text-purple-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
+                            Quadratic voting uses cost = weight^2. A larger vote carries higher impact but each additional unit of weight costs more stake than the previous one.
+                        </div>
+                    </div>
+                </div>
 
-                {/* Vote Weight Input */}
+                <div className="mb-3 rounded-lg border border-white/10 bg-white/5 p-3">
+                    <div className="mb-2 flex items-center justify-between">
+                        <span className="text-xs text-purple-200">Quadratic cost curve</span>
+                        <span className="text-[11px] text-purple-300">cost = weight^2</span>
+                    </div>
+                    <div className="h-28 w-full rounded-md bg-black/20 p-2">
+                        <svg viewBox="0 0 100 100" className="h-full w-full" role="img" aria-label="Quadratic voting cost curve">
+                            <polyline
+                                fill="none"
+                                stroke="rgb(129 140 248)"
+                                strokeWidth="2"
+                                points={curvePoints.map((point) => `${point.x},${point.y}`).join(' ')}
+                            />
+                            {selectedPoint && (
+                                <circle cx={selectedPoint.x} cy={selectedPoint.y} r="3.5" fill="rgb(96 165 250)" />
+                            )}
+                        </svg>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between text-[11px] text-purple-300">
+                        <span>Weight 1</span>
+                        <span>Weight {curveMaxWeight}</span>
+                    </div>
+                </div>
+
                 <div className="mb-3">
-                    <label className="block text-purple-200 text-xs mb-2">Vote Weight</label>
+                    <div className="mb-2 flex items-center justify-between">
+                        <label className="block text-purple-200 text-xs">Vote Weight</label>
+                        <span className="text-xs font-semibold text-white">{weight || 1}</span>
+                    </div>
+                    <input
+                        type="range"
+                        min="1"
+                        max={sliderMax}
+                        value={weight > 0 ? weight : 1}
+                        onChange={(e) => handleWeightInput(e.target.value)}
+                        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/20"
+                        disabled={isVoting || sliderMax <= 1}
+                    />
                     <input
                         type="number"
                         value={voteWeight}
-                        onChange={(e) => setVoteWeight(e.target.value)}
+                        onChange={(e) => handleWeightInput(e.target.value)}
                         min="1"
+                        max={sliderMax}
                         placeholder="10"
-                        className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 text-sm"
+                        className="mt-2 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
                         disabled={isVoting}
                     />
+
+                    {stakeLoading && !!userAddress && (
+                        <p className="mt-2 text-xs text-purple-300">Loading stake balance...</p>
+                    )}
+
                     {weight > 0 && (
-                        <p className="text-xs text-purple-300 mt-1">
-                            Cost: <span className="font-semibold">{cost} STX</span> for {weight} votes (quadratic)
-                        </p>
+                        <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-3 text-xs text-purple-200">
+                            <div className="flex items-center justify-between">
+                                <span>Quadratic Cost</span>
+                                <span className="font-semibold text-white">{cost.toLocaleString()} units</span>
+                            </div>
+                            <div className="mt-1 flex items-center justify-between">
+                                <span>Cost in STX</span>
+                                <span className="font-semibold text-white">{formatSTX(cost, 6)} STX</span>
+                            </div>
+                            {hasStakeData && (
+                                <>
+                                    <div className="mt-1 flex items-center justify-between">
+                                        <span>Your Stake</span>
+                                        <span className="font-semibold text-white">{formatSTX(stakeAmount)} STX</span>
+                                    </div>
+                                    <div className="mt-1 flex items-center justify-between">
+                                        <span>Remaining After Vote</span>
+                                        <span className="font-semibold text-white">{formatSTX(remainingStake)} STX</span>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
+
+                    {weight > 0 && (
+                        <div className="mt-2 rounded-lg border border-blue-400/25 bg-blue-500/10 p-3 text-xs text-blue-100">
+                            <div className="flex items-center justify-between">
+                                <span>Voting power per STX spent</span>
+                                <span className="font-semibold">{votingPowerPerStx.toFixed(4)} votes / unit</span>
+                            </div>
+                            <p className="mt-1 text-blue-200">
+                                Efficiency drop vs weight 1: {efficiencyDrop.toFixed(2)}%
+                            </p>
+                        </div>
+                    )}
+
+                    {isNearLimit && (
+                        <div className="mt-2 rounded-lg border border-amber-400/30 bg-amber-500/15 p-3">
+                            <p className="text-xs text-amber-100">Warning: this vote uses more than 80% of your current staked balance.</p>
+                        </div>
+                    )}
+
+                    {exceedsStake && (
+                        <div className="mt-2 rounded-lg border border-red-400/30 bg-red-500/15 p-3">
+                            <p className="text-xs text-red-100">This vote cost exceeds your staked balance. Reduce the vote weight.</p>
+                        </div>
                     )}
                 </div>
 
-                {/* Vote Buttons */}
                 <div className="grid grid-cols-2 gap-2 mb-3">
                     <button
                         onClick={() => handleVote(true)}
-                        disabled={isVoting || !voteWeight}
+                        disabled={isVoting || !voteWeight || exceedsStake}
                         className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg font-semibold transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                     >
                         {isVoting ? (
@@ -239,7 +419,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                     </button>
                     <button
                         onClick={() => handleVote(false)}
-                        disabled={isVoting || !voteWeight}
+                        disabled={isVoting || !voteWeight || exceedsStake}
                         className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg font-semibold transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                     >
                         {isVoting ? (
