@@ -16,7 +16,8 @@ export type NotificationType =
   | 'proposal_executed'
   | 'vote_milestone'
   | 'stake_change'
-  | 'vote_received';
+  | 'vote_received'
+  | 'quorum_reached';
 
 /* ── Core notification model ──────────────────── */
 
@@ -131,3 +132,51 @@ export interface NotificationItemProps {
   /** Callback when the item is clicked */
   onClick: (notification: Notification) => void;
 }
+
+/* ── WebSocket types ─────────────────────────── */
+
+export type WsEventType =
+  | 'transaction'
+  | 'block'
+  | 'microblock';
+
+export interface WsMessage {
+  event: WsEventType;
+  payload: {
+    tx_id?: string;
+    tx_type?: string;
+    contract_call?: {
+      contract_id: string;
+      function_name: string;
+      function_args: Array<{ repr: string }>;
+    };
+    tx_status?: string;
+  };
+}
+
+/* ── Push notification types ─────────────────── */
+
+export type PushPermissionState = 'default' | 'granted' | 'denied';
+
+export interface PushPreferences {
+  enabled: boolean;
+  permission: PushPermissionState;
+}
+
+/* ── Email notification types ────────────────── */
+
+export interface EmailPreferences {
+  enabled: boolean;
+  address: string;
+  digestMode: 'instant' | 'daily' | 'weekly';
+}
+
+/* ── Quorum configuration ────────────────────── */
+
+export interface QuorumConfig {
+  threshold: number;
+}
+
+export const DEFAULT_QUORUM: QuorumConfig = {
+  threshold: 50,
+};
