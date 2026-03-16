@@ -8,6 +8,8 @@ import ProposalList from '@/components/ProposalList';
 import UserDashboard from '@/components/UserDashboard';
 import Stats from '@/components/Stats';
 import Header from '@/components/Header';
+import Link from 'next/link';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 const userSession = new UserSession({ appConfig });
@@ -35,16 +37,20 @@ interface StacksUserData {
 
 export default function Home() {
   const [userData, setUserData] = useState<StacksUserData | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    let timeout: number | undefined;
     if (userSession.isSignInPending()) {
       userSession.handlePendingSignIn().then((data) => {
-        setUserData(data);
+        timeout = window.setTimeout(() => setUserData(data), 0);
       });
     } else if (userSession.isUserSignedIn()) {
-      const data = userSession.loadUserData();
-      setUserData(data);
+      timeout = window.setTimeout(() => setUserData(userSession.loadUserData()), 0);
     }
+    return () => {
+      if (timeout) window.clearTimeout(timeout);
+    };
   }, []);
 
   const connectWallet = () => {
@@ -65,6 +71,16 @@ export default function Home() {
   const disconnectWallet = () => {
     userSession.signUserOut();
     setUserData(null);
+  };
+
+  const copyContractAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch (error) {
+      console.error('Failed to copy contract address', error);
+    }
   };
 
   return (
@@ -129,10 +145,65 @@ export default function Home() {
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-slate-700 mt-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <p className="text-center text-slate-400 text-sm">
-              Built with ❤️ on Stacks Blockchain
+        <footer className="border-t border-slate-700 mt-20 bg-slate-950/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Navigation</h4>
+                <ul className="space-y-2 text-sm text-slate-300">
+                  <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
+                  <li><Link href="/proposals" className="hover:text-white transition-colors">Proposals</Link></li>
+                  <li><Link href="/analytics" className="hover:text-white transition-colors">Dashboard</Link></li>
+                  <li><Link href="/api-docs" className="hover:text-white transition-colors">API Docs</Link></li>
+                  <li><Link href="/community" className="hover:text-white transition-colors">Community</Link></li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Social</h4>
+                <ul className="space-y-2 text-sm text-slate-300">
+                  <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a></li>
+                  <li><a href="https://x.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Twitter/X</a></li>
+                  <li><a href="https://discord.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Discord</a></li>
+                </ul>
+              </div>
+
+              <div className="md:col-span-2">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Contract</h4>
+                <div className="rounded-lg border border-slate-700 bg-slate-900/70 p-3">
+                  <p className="text-[11px] text-slate-400 mb-1">Mainnet Contract Address</p>
+                  <code className="text-xs text-slate-200 break-all">{CONTRACT_ADDRESS}</code>
+                  <button
+                    type="button"
+                    onClick={copyContractAddress}
+                    className="mt-3 inline-flex items-center rounded-md border border-slate-600 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:border-slate-500 hover:text-white transition-colors"
+                  >
+                    {copied ? 'Copied' : 'Copy Address'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between text-xs text-slate-400">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                  <span>Network: Mainnet Online</span>
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-blue-500" />
+                  <span>API: Operational</span>
+                </div>
+                <span>Version: v0.1.0</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-4">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Documentation</a>
+                <span>Terms and Privacy: Coming Soon</span>
+              </div>
+            </div>
+
+            <p className="text-center text-slate-500 text-xs">
+              SprintFund DAO on Stacks.
             </p>
           </div>
         </footer>
