@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchCallReadOnlyFunction, cvToValue } from '@stacks/transactions';
+import { fetchCallReadOnlyFunction, cvToValue, uintCV } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { formatSTX } from '@/utils/formatSTX';
 
@@ -57,7 +57,7 @@ export default function Stats() {
                     contractAddress: CONTRACT_ADDRESS,
                     contractName: CONTRACT_NAME,
                     functionName: 'get-proposal',
-                    functionArgs: [{ type: 'uint', value: i }],
+                    functionArgs: [uintCV(i)],
                     senderAddress: CONTRACT_ADDRESS,
                 });
 
