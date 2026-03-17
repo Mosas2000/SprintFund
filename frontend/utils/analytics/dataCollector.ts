@@ -312,7 +312,7 @@ export async function fetchVoterMetrics(proposals: ProposalMetrics[]): Promise<V
   const totalProposals = proposals.length;
 
   proposals.forEach(proposal => {
-    const votes = [];
+    const votes: VoteData[] = [];
 
     votes.forEach(vote => {
       const existing = voterMap.get(vote.voter) || {
