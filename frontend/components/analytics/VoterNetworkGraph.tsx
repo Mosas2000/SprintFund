@@ -245,7 +245,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
 
   const keyInfluencers = useMemo(() => {
     return [...filteredVoters]
-      .sort((a, b) => b.totalVotes * b.avgWeight - a.totalVotes * a.avgWeight)
+      .sort((a, b) => b.totalVotes * b.averageWeight - a.totalVotes * a.averageWeight)
       .slice(0, 5);
   }, [filteredVoters]);
 
