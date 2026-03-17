@@ -2,6 +2,15 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+} from 'recharts';
 import { TrendingUp, Sparkles, Brain, Zap, Target, AlertCircle, ArrowRight, BarChart3, Globe } from 'lucide-react';
 import ProbabilityCalculator from './ProbabilityCalculator';
 import OptimizationPanel from './OptimizationPanel';
