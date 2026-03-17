@@ -52,7 +52,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
         vx: 0,
         vy: 0,
         totalVotes: voter.totalVotes,
-        avgWeight: voter.avgWeight,
+        avgWeight: voter.averageWeight,
         radius: Math.max(5, Math.min(20, Math.sqrt(voter.totalVotes) * 2))
       };
     });
