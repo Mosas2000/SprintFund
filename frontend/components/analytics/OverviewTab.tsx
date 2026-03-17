@@ -262,19 +262,19 @@ export default function OverviewTab() {
             </div>
         </div>
 
-            {/* AI Insights Engine Row */ }
-    <section className="bg-slate-900/30 border border-slate-800 rounded-[48px] p-2">
-        <div className="p-8 pb-0 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-orange-600/20 flex items-center justify-center border border-orange-500/30">
-                <Sparkles className="w-5 h-5 text-orange-500" />
-            </div>
-            <div>
-                <h3 className="text-xl font-black uppercase tracking-tight">AI Insights Feed</h3>
-                <p className="text-[10px] font-black text-slate-500 uppercase mt-1">Real-time analysis of platform dynamics and growth patterns</p>
-            </div>
-        </div>
-        <InsightsFeed />
-    </section>
+            {/* AI Insights Engine Row */}
+            <section className="bg-slate-900/30 border border-slate-800 rounded-[48px] p-2">
+                <div className="p-8 pb-0 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-orange-600/20 flex items-center justify-center border border-orange-500/30">
+                        <Sparkles className="w-5 h-5 text-orange-500" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black uppercase tracking-tight">AI Insights Feed</h3>
+                        <p className="text-[10px] font-black text-slate-500 uppercase mt-1">Real-time analysis of platform dynamics and growth patterns</p>
+                    </div>
+                </div>
+                <InsightsFeed />
+            </section>
         </div >
     );
 }
