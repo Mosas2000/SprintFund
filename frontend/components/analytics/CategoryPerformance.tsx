@@ -211,7 +211,10 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
               <Bar 
                 dataKey="amount" 
                 radius={[8, 8, 0, 0]}
-                onClick={(data) => onCategoryClick?.(data.category)}
+                onClick={(data) => {
+                  const category = (data as { payload?: { category?: unknown } } | undefined)?.payload?.category;
+                  if (typeof category === 'string') onCategoryClick?.(category);
+                }}
                 cursor="pointer"
               />
             </BarChart>
