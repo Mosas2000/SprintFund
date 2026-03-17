@@ -115,6 +115,12 @@ export interface JsonLdWebPage {
     name: string;
     url: string;
   };
+  about?: {
+    '@type': 'Thing';
+    name: string;
+    description?: string;
+  };
+  image?: string;
 }
 
 /**
