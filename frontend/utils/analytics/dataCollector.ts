@@ -1,4 +1,4 @@
-import { fetchCallReadOnlyFunction, cvToValue } from '@stacks/transactions';
+import { fetchCallReadOnlyFunction, cvToValue, uintCV } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { retryTransaction } from '../retry';
 
@@ -128,7 +128,7 @@ async function fetchRawProposal(proposalId: number): Promise<RawProposalData | n
         contractAddress: CONTRACT_ADDRESS,
         contractName: CONTRACT_NAME,
         functionName: 'get-proposal',
-        functionArgs: [{ type: 'uint', value: proposalId }],
+        functionArgs: [uintCV(proposalId)],
         senderAddress: CONTRACT_ADDRESS,
       });
 
