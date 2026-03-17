@@ -53,7 +53,7 @@ interface RawProposalData {
   createdAt: number;
 }
 
-interface VoteData {
+export interface VoteData {
   weight: number;
   support: boolean;
   timestamp: number;
