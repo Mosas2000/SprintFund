@@ -12,6 +12,7 @@ export interface NotificationPreferences {
   vote_milestone: boolean;
   stake_change: boolean;
   vote_received: boolean;
+  quorum_reached: boolean;
 }
 
 export const DEFAULT_PREFERENCES: NotificationPreferences = {
@@ -20,6 +21,7 @@ export const DEFAULT_PREFERENCES: NotificationPreferences = {
   vote_milestone: true,
   stake_change: true,
   vote_received: true,
+  quorum_reached: true,
 };
 
 export const TYPE_LABELS: Record<NotificationType, string> = {
@@ -28,6 +30,7 @@ export const TYPE_LABELS: Record<NotificationType, string> = {
   vote_milestone: 'Vote Milestones',
   stake_change: 'Stake Changes',
   vote_received: 'Votes Received',
+  quorum_reached: 'Quorum Reached',
 };
 
 export const TYPE_DESCRIPTIONS: Record<NotificationType, string> = {
@@ -36,6 +39,7 @@ export const TYPE_DESCRIPTIONS: Record<NotificationType, string> = {
   vote_milestone: 'When a proposal reaches a vote threshold',
   stake_change: 'When your staking position changes',
   vote_received: 'When your proposal receives a vote',
+  quorum_reached: 'When a proposal reaches quorum',
 };
 
 export const NOTIFICATION_TYPES: NotificationType[] = [
@@ -44,6 +48,7 @@ export const NOTIFICATION_TYPES: NotificationType[] = [
   'vote_milestone',
   'stake_change',
   'vote_received',
+  'quorum_reached',
 ];
 
 /**

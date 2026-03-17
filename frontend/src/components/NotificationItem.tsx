@@ -10,6 +10,7 @@ const TYPE_META: Record<NotificationType, { icon: string; color: string; label: 
   vote_milestone:    { icon: 'M',  color: 'text-amber',  label: 'Milestone' },
   stake_change:      { icon: 'S',  color: 'text-blue-400', label: 'Stake' },
   vote_received:     { icon: 'V',  color: 'text-purple-400', label: 'Vote' },
+  quorum_reached:    { icon: 'Q',  color: 'text-emerald-400', label: 'Quorum' },
 };
 
 /**
