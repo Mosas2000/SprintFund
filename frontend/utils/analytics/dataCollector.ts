@@ -54,6 +54,7 @@ interface RawProposalData {
 }
 
 export interface VoteData {
+  proposalId: number;
   weight: number;
   support: boolean;
   timestamp: number;
