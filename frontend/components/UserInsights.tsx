@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 interface AIRecommendationMetadata {
   relatedProposalId?: number;
+  userAddress?: string;
   historicalAccuracy?: number;
   confidenceInterval?: [number, number];
   dataSource?: string;
@@ -60,7 +61,7 @@ export default function UserInsights({ userAddress }: UserInsightsProps) {
         confidence: 92,
         impact: 'high',
         actionable: true,
-        metadata: { proposalId: 47 }
+        metadata: { relatedProposalId: 47 }
       },
       {
         id: 2,
