@@ -21,7 +21,7 @@ export default function InsightsFeed() {
                 const timeseries = generateTimeSeriesData(proposals, 'week');
                 // In a real app, userContext would come from a wallet provider or session
                 const mockUserContext = {
-                    role: 'proposer',
+                    role: 'proposer' as const,
                     lastProposal: proposals[0],
                     history: proposals.slice(0, 5),
                     preferences: ['DeFi', 'Infrastructure']
