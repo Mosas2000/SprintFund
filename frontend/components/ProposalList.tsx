@@ -134,7 +134,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                         contractAddress: CONTRACT_ADDRESS,
                         contractName: CONTRACT_NAME,
                         functionName: 'get-proposal',
-                        functionArgs: [{ type: 'uint', value: i }],
+                        functionArgs: [uintCV(i)],
                         senderAddress: CONTRACT_ADDRESS,
                     })
                 );
