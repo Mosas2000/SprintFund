@@ -6,6 +6,8 @@ export { default as CommunityInsights } from './CommunityInsights';
 export { default as OverviewTab } from './OverviewTab';
 export { default as ProposalsTab } from './ProposalsTab';
 export { default as VotingTab } from './VotingTab';
+export { default as VotingHeatmap } from './VotingHeatmap';
+export { default as VoterNetworkGraph } from './VoterNetworkGraph';
 export { default as CommunityTab } from './CommunityTab';
 export { default as PersonalTab } from './PersonalTab';
 export { default as PredictionsTab } from './PredictionsTab';
