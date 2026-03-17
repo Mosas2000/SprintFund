@@ -21,9 +21,9 @@ interface TimelineDataPoint {
   date: Date;
 }
 
-interface TimelineTooltipEntry extends RechartsTooltipEntry {
+type TimelineTooltipEntry = Omit<RechartsTooltipEntry, 'payload'> & {
   payload: TimelineDataPoint;
-}
+};
 
 interface TimelineTooltipProps extends Omit<RechartsTooltipProps, 'payload'> {
   payload?: TimelineTooltipEntry[];
