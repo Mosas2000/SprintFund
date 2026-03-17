@@ -21,8 +21,8 @@ const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-c
  * Typed shape matching the return of userSession.loadUserData().
  */
 interface StacksUserData {
-  appPrivateKey: string;
-  hubUrl: string;
+  appPrivateKey?: string;
+  hubUrl?: string;
   username?: string;
   profile: {
     stxAddress: {
