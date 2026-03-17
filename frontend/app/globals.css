@@ -95,3 +95,18 @@ body {
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
+
+@keyframes notification-badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+.notification-badge-pulse {
+  animation: notification-badge-pulse 2s ease-in-out infinite;
+}
