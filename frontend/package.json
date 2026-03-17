@@ -25,6 +25,7 @@
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.3.0",
     "recharts": "^3.6.0",
+    "simple-statistics": "^7.8.9",
     "zustand": "^5.0.10"
   },
   "devDependencies": {
