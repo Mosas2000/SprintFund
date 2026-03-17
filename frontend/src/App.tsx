@@ -3,12 +3,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useWalletStore } from './store/wallet';
 import { Layout } from './components/Layout';
 import { OfflineBanner } from './components/OfflineBanner';
-import { LandingPage } from './pages/Landing';
-import { ProposalsPage } from './pages/Proposals';
-import { ProposalDetailPage } from './pages/ProposalDetail';
-import { CreateProposalPage } from './pages/CreateProposal';
-import { DashboardPage } from './pages/Dashboard';
-import { ProfilePage } from './pages/Profile';
+import { LandingPage } from './spa-pages/Landing';
+import { ProposalsPage } from './spa-pages/Proposals';
+import { ProposalDetailPage } from './spa-pages/ProposalDetail';
+import { CreateProposalPage } from './spa-pages/CreateProposal';
+import { DashboardPage } from './spa-pages/Dashboard';
+import { ProfilePage } from './spa-pages/Profile';
 
 /* ── Error Boundary ──────────────────────────── */
 
