@@ -11,6 +11,7 @@ describe('TYPE_META', () => {
     'vote_milestone',
     'stake_change',
     'vote_received',
+    'quorum_reached',
   ];
 
   it('has an entry for every NotificationType', () => {
@@ -51,8 +52,8 @@ describe('TYPE_META', () => {
     expect(TYPE_META.vote_received.color).toContain('purple');
   });
 
-  it('has exactly five entries', () => {
-    expect(Object.keys(TYPE_META)).toHaveLength(5);
+  it('has exactly six entries', () => {
+    expect(Object.keys(TYPE_META)).toHaveLength(6);
   });
 });
 

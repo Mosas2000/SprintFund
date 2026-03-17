@@ -16,6 +16,7 @@ const ALL_TYPES = [
   'vote_milestone',
   'stake_change',
   'vote_received',
+  'quorum_reached',
 ] as const;
 
 let storage: Record<string, string> = {};
@@ -56,6 +57,7 @@ describe('loadPreferences', () => {
       vote_milestone: true,
       stake_change: false,
       vote_received: true,
+      quorum_reached: true,
     };
     storage['sprintfund-notification-preferences'] = JSON.stringify(saved);
     const prefs = loadPreferences();
@@ -95,6 +97,7 @@ describe('savePreferences', () => {
       vote_milestone: false,
       stake_change: true,
       vote_received: false,
+      quorum_reached: true,
     };
     savePreferences(prefs);
     expect(localStorage.setItem).toHaveBeenCalledWith(
@@ -118,6 +121,7 @@ describe('savePreferences', () => {
       vote_milestone: true,
       stake_change: true,
       vote_received: true,
+      quorum_reached: true,
     };
 
     // Should not throw
@@ -131,6 +135,7 @@ describe('savePreferences', () => {
       vote_milestone: false,
       stake_change: true,
       vote_received: false,
+      quorum_reached: true,
     };
     savePreferences(original);
 
@@ -151,6 +156,7 @@ describe('isTypeEnabled', () => {
       vote_milestone: true,
       stake_change: false,
       vote_received: true,
+      quorum_reached: true,
     };
     expect(isTypeEnabled(prefs, 'proposal_created')).toBe(true);
     expect(isTypeEnabled(prefs, 'vote_milestone')).toBe(true);
@@ -164,18 +170,20 @@ describe('isTypeEnabled', () => {
       vote_milestone: true,
       stake_change: false,
       vote_received: true,
+      quorum_reached: true,
     };
     expect(isTypeEnabled(prefs, 'proposal_executed')).toBe(false);
     expect(isTypeEnabled(prefs, 'stake_change')).toBe(false);
   });
 
-  it('checks all five notification types', () => {
+  it('checks all six notification types', () => {
     const allEnabled: NotificationPreferences = {
       proposal_created: true,
       proposal_executed: true,
       vote_milestone: true,
       stake_change: true,
       vote_received: true,
+      quorum_reached: true,
     };
     for (const type of ALL_TYPES) {
       expect(isTypeEnabled(allEnabled, type)).toBe(true);
