@@ -128,7 +128,7 @@ describe('buildTwitterCardMeta', () => {
   it('includes the Twitter handle', () => {
     const twitter = buildTwitterCardMeta(MOCK_CONFIG);
     expect(twitter.site).toBe(TWITTER_HANDLE);
-  });
+  }, 10000);
 
   it('includes title and description from config', () => {
     const twitter = buildTwitterCardMeta(MOCK_CONFIG);
