@@ -31,7 +31,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
   const [edges, setEdges] = useState<Edge[]>([]);
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
   const [viewMode, setViewMode] = useState<'influence' | 'delegation' | 'specialization'>('influence');
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
 
   const filteredVoters = useMemo(() => {
     return voters.filter(v => v.totalVotes >= minVoteCount);
@@ -198,7 +198,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
     simulate();
 
     return () => {
-      if (animationRef.current) {
+      if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
       }
     };
