@@ -202,6 +202,16 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
   };
 
   const exportToCSV = () => {
+    const formatCsvNumber = (value: unknown) => {
+      const num =
+        typeof value === 'number'
+          ? value
+          : typeof value === 'string'
+            ? Number(value)
+            : 0;
+      return Number.isFinite(num) ? num.toFixed(2) : '0.00';
+    };
+
     const headers = ['Date', 'Overall Rate', 'Proposal Count', 'MA7', 'MA30'];
     topCategories.forEach(cat => headers.push(`${cat} Rate`));
 
@@ -210,12 +220,12 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
         point.date,
         point.overallRate.toFixed(2),
         point.proposalCount.toString(),
-        (point.ma7 || 0).toFixed(2),
-        (point.ma30 || 0).toFixed(2)
+        formatCsvNumber(point.ma7),
+        formatCsvNumber(point.ma30)
       ];
       
       topCategories.forEach(cat => {
-        row.push((point[`${cat}Rate`] || 0).toFixed(2));
+        row.push(formatCsvNumber(point[`${cat}Rate`]));
       });
       
       return row;
