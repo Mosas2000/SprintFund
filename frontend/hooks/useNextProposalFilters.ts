@@ -7,13 +7,13 @@ import {
   serializeParams,
   countActiveFilters,
   isDefaultParams,
-} from '../lib/proposal-params';
+} from '../src/lib/proposal-params';
 import type {
   ProposalFilterParams,
   StatusFilter,
   CategoryFilter,
   SortOption,
-} from '../lib/proposal-params';
+} from '../src/lib/proposal-params';
 
 export interface UseNextProposalFiltersReturn {
   params: ProposalFilterParams;
