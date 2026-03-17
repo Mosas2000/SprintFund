@@ -6,7 +6,7 @@ const config = findPageSeoConfig('/proposals');
 
 export const metadata: Metadata = config
   ? buildNextMetadata(config)
-  : { title: 'Governance - SprintFund' };
+  : { title: 'Proposals - SprintFund' };
 
 export default function ProposalsLayout({
   children,
