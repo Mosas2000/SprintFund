@@ -7,13 +7,18 @@ export type CategoryFilter = 'all' | 'development' | 'design' | 'marketing' | 'c
 
 interface FilterDropdownProps {
     onFilterChange: (statusFilter: StatusFilter, categoryFilter: CategoryFilter) => void;
+    status?: StatusFilter;
+    category?: CategoryFilter;
 }
 
-export default function FilterDropdown({ onFilterChange }: FilterDropdownProps) {
+export default function FilterDropdown({ onFilterChange, status, category }: FilterDropdownProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedStatus, setSelectedStatus] = useState<StatusFilter>('all');
-    const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
+    const [internalStatus, setInternalStatus] = useState<StatusFilter>('all');
+    const [internalCategory, setInternalCategory] = useState<CategoryFilter>('all');
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const selectedStatus = status ?? internalStatus;
+    const selectedCategory = category ?? internalCategory;
 
     const statusFilters = [
         { value: 'all' as const, label: 'All Proposals' },
@@ -43,14 +48,14 @@ export default function FilterDropdown({ onFilterChange }: FilterDropdownProps) 
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleStatusSelect = (status: StatusFilter) => {
-        setSelectedStatus(status);
-        onFilterChange(status, selectedCategory);
+    const handleStatusSelect = (s: StatusFilter) => {
+        if (status === undefined) setInternalStatus(s);
+        onFilterChange(s, selectedCategory);
     };
 
-    const handleCategorySelect = (category: CategoryFilter) => {
-        setSelectedCategory(category);
-        onFilterChange(selectedStatus, category);
+    const handleCategorySelect = (c: CategoryFilter) => {
+        if (category === undefined) setInternalCategory(c);
+        onFilterChange(selectedStatus, c);
     };
 
     const getButtonLabel = () => {
