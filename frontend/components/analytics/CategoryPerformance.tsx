@@ -200,7 +200,13 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
                   borderRadius: '0.5rem',
                   color: '#fff'
                 }}
-                formatter={(value: number) => [`${value.toFixed(2)}M STX`, 'Total Funded']}
+                formatter={(value) => {
+                  const numeric = typeof value === 'number' ? value : Number(value);
+                  const label = Number.isFinite(numeric)
+                    ? `${numeric.toFixed(2)}M STX`
+                    : String(value ?? '');
+                  return [label, 'Total Funded'];
+                }}
               />
               <Bar 
                 dataKey="amount" 
