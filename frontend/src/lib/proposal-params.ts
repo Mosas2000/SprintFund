@@ -17,6 +17,10 @@ export interface ProposalFilterParams {
   page: number;
 }
 
+export interface SearchParamsLike {
+  get(name: string): string | null;
+}
+
 export const DEFAULT_PARAMS: ProposalFilterParams = {
   status: 'all',
   category: 'all',
@@ -69,7 +73,7 @@ export function parsePage(value: string | null): number {
   return isNaN(n) || n < 1 ? 1 : n;
 }
 
-export function parseSearchParams(params: URLSearchParams): ProposalFilterParams {
+export function parseSearchParams(params: SearchParamsLike): ProposalFilterParams {
   return {
     status: parseStatus(params.get('status')),
     category: parseCategory(params.get('category')),
