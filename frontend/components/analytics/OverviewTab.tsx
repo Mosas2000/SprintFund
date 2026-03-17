@@ -260,7 +260,6 @@ export default function OverviewTab() {
                     <TrendingUp className="absolute -bottom-4 -right-4 w-24 h-24 text-orange-500/10 group-hover:scale-110 transition-transform" />
                 </div>
             </div>
-        </div>
 
             {/* AI Insights Engine Row */}
             <section className="bg-slate-900/30 border border-slate-800 rounded-[48px] p-2">
@@ -275,7 +274,7 @@ export default function OverviewTab() {
                 </div>
                 <InsightsFeed />
             </section>
-        </div >
+        </div>
     );
 }
 
