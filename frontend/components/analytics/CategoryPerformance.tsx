@@ -234,7 +234,10 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
-                onClick={(data) => onCategoryClick?.(data.name)}
+                onClick={(data) => {
+                  const name = (data as { name?: unknown } | undefined)?.name;
+                  if (typeof name === 'string') onCategoryClick?.(name);
+                }}
                 cursor="pointer"
               >
                 {pieChartData.map((entry, index) => (
