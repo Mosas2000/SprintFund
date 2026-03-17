@@ -373,7 +373,13 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
                     borderRadius: '0.5rem',
                     color: '#fff'
                   }}
-                  formatter={(value: number) => [`${value.toFixed(2)}M STX`, 'Cumulative']}
+                  formatter={(value) => {
+                    const numeric = typeof value === 'number' ? value : Number(value);
+                    const label = Number.isFinite(numeric)
+                      ? `${numeric.toFixed(2)}M STX`
+                      : String(value ?? '');
+                    return [label, 'Cumulative'];
+                  }}
                 />
                 <Scatter data={cumulativeData} fill="#3b82f6" line={{ stroke: '#3b82f6', strokeWidth: 2 }} />
               </ScatterChart>
