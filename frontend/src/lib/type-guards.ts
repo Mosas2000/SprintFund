@@ -14,84 +14,84 @@ import type {
 /**
  * Predicate: is this a valid Proposal?
  */
-export function isValidProposal(proposal: any): proposal is Proposal {
+export function isValidProposal(proposal: unknown): proposal is Proposal {
   return (
     proposal &&
     typeof proposal === 'object' &&
-    typeof proposal.id === 'number' &&
-    proposal.id > 0 &&
-    typeof proposal.proposer === 'string' &&
-    proposal.proposer.length > 0 &&
-    typeof proposal.amount === 'number' &&
-    proposal.amount >= 0 &&
-    typeof proposal.title === 'string' &&
-    proposal.title.length > 0 &&
-    typeof proposal.description === 'string' &&
-    typeof proposal.votesFor === 'number' &&
-    proposal.votesFor >= 0 &&
-    typeof proposal.votesAgainst === 'number' &&
-    proposal.votesAgainst >= 0 &&
-    typeof proposal.executed === 'boolean' &&
-    typeof proposal.createdAt === 'number' &&
-    proposal.createdAt > 0
+    typeof (proposal as Record<string, unknown>).id === 'number' &&
+    (proposal as Record<string, unknown>).id > 0 &&
+    typeof (proposal as Record<string, unknown>).proposer === 'string' &&
+    (proposal as Record<string, unknown>).proposer.length > 0 &&
+    typeof (proposal as Record<string, unknown>).amount === 'number' &&
+    (proposal as Record<string, unknown>).amount >= 0 &&
+    typeof (proposal as Record<string, unknown>).title === 'string' &&
+    (proposal as Record<string, unknown>).title.length > 0 &&
+    typeof (proposal as Record<string, unknown>).description === 'string' &&
+    typeof (proposal as Record<string, unknown>).votesFor === 'number' &&
+    (proposal as Record<string, unknown>).votesFor >= 0 &&
+    typeof (proposal as Record<string, unknown>).votesAgainst === 'number' &&
+    (proposal as Record<string, unknown>).votesAgainst >= 0 &&
+    typeof (proposal as Record<string, unknown>).executed === 'boolean' &&
+    typeof (proposal as Record<string, unknown>).createdAt === 'number' &&
+    (proposal as Record<string, unknown>).createdAt > 0
   );
 }
 
 /**
  * Predicate: is this a valid ProposalPage?
  */
-export function isValidProposalPage(page: any): page is ProposalPage {
+export function isValidProposalPage(page: unknown): page is ProposalPage {
   return (
     page &&
     typeof page === 'object' &&
-    Array.isArray(page.proposals) &&
-    page.proposals.every(isValidProposal) &&
-    typeof page.totalCount === 'number' &&
-    page.totalCount >= 0 &&
-    typeof page.page === 'number' &&
-    page.page >= 1 &&
-    typeof page.pageSize === 'number' &&
-    page.pageSize >= 1 &&
-    typeof page.totalPages === 'number' &&
-    page.totalPages >= 1
+    Array.isArray((page as Record<string, unknown>).proposals) &&
+    ((page as Record<string, unknown>).proposals as unknown[]).every(isValidProposal) &&
+    typeof (page as Record<string, unknown>).totalCount === 'number' &&
+    (page as Record<string, unknown>).totalCount >= 0 &&
+    typeof (page as Record<string, unknown>).page === 'number' &&
+    (page as Record<string, unknown>).page >= 1 &&
+    typeof (page as Record<string, unknown>).pageSize === 'number' &&
+    (page as Record<string, unknown>).pageSize >= 1 &&
+    typeof (page as Record<string, unknown>).totalPages === 'number' &&
+    (page as Record<string, unknown>).totalPages >= 1
   );
 }
 
 /**
  * Predicate: is this a valid StakeInfo?
  */
-export function isValidStakeInfo(stake: any): stake is StakeInfo {
+export function isValidStakeInfo(stake: unknown): stake is StakeInfo {
   return (
     stake &&
     typeof stake === 'object' &&
-    typeof stake.address === 'string' &&
-    stake.address.length > 0 &&
-    typeof stake.amount === 'number' &&
-    stake.amount >= 0
+    typeof (stake as Record<string, unknown>).address === 'string' &&
+    (stake as Record<string, unknown>).address.length > 0 &&
+    typeof (stake as Record<string, unknown>).amount === 'number' &&
+    (stake as Record<string, unknown>).amount >= 0
   );
 }
 
 /**
  * Predicate: is this a valid VoteRecord?
  */
-export function isValidVoteRecord(vote: any): vote is VoteRecord {
+export function isValidVoteRecord(vote: unknown): vote is VoteRecord {
   return (
     vote &&
     typeof vote === 'object' &&
-    typeof vote.proposalId === 'number' &&
-    vote.proposalId > 0 &&
-    typeof vote.voter === 'string' &&
-    vote.voter.length > 0 &&
-    typeof vote.support === 'boolean' &&
-    typeof vote.weight === 'number' &&
-    vote.weight > 0
+    typeof (vote as Record<string, unknown>).proposalId === 'number' &&
+    (vote as Record<string, unknown>).proposalId > 0 &&
+    typeof (vote as Record<string, unknown>).voter === 'string' &&
+    (vote as Record<string, unknown>).voter.length > 0 &&
+    typeof (vote as Record<string, unknown>).support === 'boolean' &&
+    typeof (vote as Record<string, unknown>).weight === 'number' &&
+    (vote as Record<string, unknown>).weight > 0
   );
 }
 
 /**
  * Predicate: is this a valid principal address?
  */
-export function isValidPrincipal(address: any): address is string {
+export function isValidPrincipal(address: unknown): address is string {
   if (typeof address !== 'string') return false;
   return /^S[PT][A-Z0-9]{38}$/.test(address);
 }
@@ -99,7 +99,7 @@ export function isValidPrincipal(address: any): address is string {
 /**
  * Predicate: is this a valid transaction ID?
  */
-export function isValidTxId(txId: any): txId is string {
+export function isValidTxId(txId: unknown): txId is string {
   if (typeof txId !== 'string') return false;
   return txId.length === 64 && /^[a-f0-9]{64}$/.test(txId);
 }
@@ -107,7 +107,7 @@ export function isValidTxId(txId: any): txId is string {
 /**
  * Filter proposals to only include valid ones.
  */
-export function filterValidProposals(proposals: any[]): Proposal[] {
+export function filterValidProposals(proposals: unknown[]): Proposal[] {
   if (!Array.isArray(proposals)) return [];
   return proposals.filter(isValidProposal);
 }
@@ -115,7 +115,7 @@ export function filterValidProposals(proposals: any[]): Proposal[] {
 /**
  * Filter vote records to only include valid ones.
  */
-export function filterValidVotes(votes: any[]): VoteRecord[] {
+export function filterValidVotes(votes: unknown[]): VoteRecord[] {
   if (!Array.isArray(votes)) return [];
   return votes.filter(isValidVoteRecord);
 }
