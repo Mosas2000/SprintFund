@@ -9,7 +9,15 @@ import {
 import { request } from '@stacks/connect';
 import { CONTRACT_ADDRESS, CONTRACT_NAME, CONTRACT_PRINCIPAL, NETWORK } from '../config';
 import { sanitizeText, sanitizeMultilineText } from './sanitize';
-import type { Proposal } from '../types';
+import type { Proposal, ProposalPage } from '../types';
+import {
+  validateRawProposal,
+  rawProposalToProposal,
+  validateProposalCount,
+  validateStxAmount,
+  validateRawStake,
+  unwrapClarityValue,
+} from './validators';
 
 /* ═══════════════════════════════════════════════
    Read-only helpers
@@ -56,14 +64,6 @@ type ProposalFetchOptions = {
 type ProposalPageOptions = ProposalFetchOptions & {
   page?: number;
   pageSize?: number;
-};
-
-type ProposalPageResult = {
-  proposals: Proposal[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
 };
 
 let proposalCountCache: ProposalCountCacheEntry | null = null;
@@ -120,8 +120,8 @@ export async function getProposalCount(options?: { forceRefresh?: boolean }): Pr
     return proposalCountCache!.value;
   }
 
-  const raw = await readOnly<{ value?: number } | number>('get-proposal-count', []);
-  const value = typeof raw === 'number' ? raw : (raw as { value?: number })?.value ?? 0;
+  const raw = await readOnly<unknown>('get-proposal-count', []);
+  const value = validateProposalCount(raw) ?? 0;
   proposalCountCache = {
     value,
     updatedAt: Date.now(),
@@ -134,19 +134,16 @@ export async function getProposal(id: number): Promise<Proposal | null> {
   const raw = await readOnly<Record<string, unknown>>('get-proposal', [uintCV(id)]);
   if (!raw) return null;
 
-  const rawTitle = extractVal(raw.title as Record<string, unknown>) as string;
-  const rawDescription = extractVal(raw.description as Record<string, unknown>) as string;
+  const validated = validateRawProposal(raw);
+  if (!validated) return null;
+
+  const rawTitle = unwrapClarityValue(validated.title as { value: string }) ?? '';
+  const rawDescription = unwrapClarityValue(validated.description as { value: string }) ?? '';
 
   return {
-    id,
-    proposer: extractVal(raw.proposer as Record<string, unknown>) as string,
-    amount: parseInt(String(extractVal(raw.amount as Record<string, unknown>)), 10),
-    title: sanitizeText(rawTitle ?? ''),
-    description: sanitizeMultilineText(rawDescription ?? ''),
-    votesFor: parseInt(String(extractVal(raw['votes-for'] as Record<string, unknown>)), 10),
-    votesAgainst: parseInt(String(extractVal(raw['votes-against'] as Record<string, unknown>)), 10),
-    executed: extractVal(raw.executed as Record<string, unknown>) as boolean,
-    createdAt: parseInt(String(extractVal(raw['created-at'] as Record<string, unknown>)), 10),
+    ...rawProposalToProposal(id, validated),
+    title: sanitizeText(rawTitle),
+    description: sanitizeMultilineText(rawDescription),
   };
 }
 
@@ -161,7 +158,7 @@ export async function getAllProposals(options?: ProposalFetchOptions): Promise<P
     .filter((proposal): proposal is Proposal => proposal !== null);
 }
 
-export async function getProposalsPage(options?: ProposalPageOptions): Promise<ProposalPageResult> {
+export async function getProposalsPage(options?: ProposalPageOptions): Promise<ProposalPage> {
   const pageSize = Math.max(1, options?.pageSize ?? 10);
   const requestedPage = Math.max(1, options?.page ?? 1);
   const totalCount = await getProposalCount({ forceRefresh: options?.forceRefresh });
@@ -202,13 +199,18 @@ export async function getProposalsPage(options?: ProposalPageOptions): Promise<P
 export async function getStake(address: string): Promise<number> {
   const raw = await readOnly<Record<string, unknown>>('get-stake', [principalCV(address)]);
   if (!raw) return 0;
-  return parseInt(String(extractVal(raw.amount as Record<string, unknown>)), 10);
+
+  const validated = validateRawStake(raw);
+  if (!validated) return 0;
+
+  const amount = unwrapClarityValue(validated.amount) ?? 0;
+  return validateStxAmount(amount) ?? 0;
 }
 
 export async function getMinStakeAmount(): Promise<number> {
-  const raw = await readOnly<{ value?: number } | number>('get-min-stake-amount', []);
-  if (typeof raw === 'number') return raw;
-  return (raw as { value?: number })?.value ?? 10_000_000;
+  const raw = await readOnly<unknown>('get-min-stake-amount', []);
+  const amount = validateStxAmount(raw) ?? 10_000_000;
+  return amount;
 }
 
 /* ═══════════════════════════════════════════════
