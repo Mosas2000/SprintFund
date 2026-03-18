@@ -48,6 +48,20 @@ export type {
 
 export { isErrorResponse, isSuccessResponse } from './types/api';
 
+/* Re-export real-time types for convenience */
+export type {
+  WsEventType,
+  WsTransactionEvent,
+  WsBlockEvent,
+  WsMessage,
+  ProposalUpdate,
+  VoteUpdate,
+  StakeUpdate,
+  SubscriptionFilters,
+  ConnectionState,
+  ConnectionStateUpdate,
+} from './types/realtime';
+
 export type TxStatus = 'pending' | 'success' | 'failed';
 
 export type ToastVariant = 'info' | 'success' | 'error' | 'warning' | 'tx';
