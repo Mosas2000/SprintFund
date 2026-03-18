@@ -14,6 +14,7 @@ import SortDropdown from './SortDropdown';
 import SearchBar from './SearchBar';
 import CategoryBadge from './CategoryBadge';
 import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
+import { useTransaction } from '@/hooks/useTransaction';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -179,9 +180,30 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
     // Voting Interface Component
     const VotingInterface = ({ proposalId, executed }: { proposalId: number; executed: boolean }) => {
         const [voteWeight, setVoteWeight] = useState('');
-        const [isVoting, setIsVoting] = useState(false);
         const [voteSuccess, setVoteSuccess] = useState('');
         const [voteError, setVoteError] = useState('');
+
+        const { isLoading: isVoting, execute } = useTransaction({
+            onSuccess: (txId) => {
+                toast.success('Vote submitted successfully!');
+                setVoteSuccess(`Vote submitted! Transaction ID: ${txId}`);
+                setVoteWeight('');
+                setTimeout(() => fetchProposals(), 3000);
+            },
+            onError: (err) => {
+                const message = err.message || '';
+                let errorMessage = 'Failed to submit vote. Please try again.';
+                if (message.includes('already voted')) {
+                    errorMessage = 'You have already voted on this proposal';
+                } else if (message.includes('insufficient')) {
+                    errorMessage = 'Insufficient STX balance for this vote weight';
+                } else {
+                    errorMessage = message || errorMessage;
+                }
+                setVoteError(errorMessage);
+                toast.error(errorMessage);
+            },
+        });
 
         const calculateCost = (weight: number) => {
             return weight * weight;
@@ -197,55 +219,37 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 return;
             }
 
-            setIsVoting(true);
+            const functionArgs = [
+                uintCV(proposalId),
+                boolCV(support),
+                uintCV(weight),
+            ];
 
-            try {
-                const functionArgs = [
-                    uintCV(proposalId),
-                    boolCV(support),
-                    uintCV(weight),
-                ];
+            const options = {
+                network: NETWORK,
+                anchorMode: AnchorMode.Any,
+                contractAddress: CONTRACT_ADDRESS,
+                contractName: CONTRACT_NAME,
+                functionName: 'vote',
+                functionArgs,
+                postConditionMode: PostConditionMode.Deny,
+            };
 
-                const options = {
-                    network: NETWORK,
-                    anchorMode: AnchorMode.Any,
-                    contractAddress: CONTRACT_ADDRESS,
-                    contractName: CONTRACT_NAME,
-                    functionName: 'vote',
-                    functionArgs,
-                    postConditionMode: PostConditionMode.Deny,
-                    onFinish: (data: { txId: string }) => {
-                        toast.success('Vote submitted successfully!');
-                        setVoteSuccess(`Vote submitted! Transaction ID: ${data.txId}`);
-                        setVoteWeight('');
-                        setIsVoting(false);
-                        // Refresh proposals after voting
-                        setTimeout(() => fetchProposals(), 3000);
-                    },
-                    onCancel: () => {
-                        setVoteError('Vote was cancelled');
-                        setIsVoting(false);
-                    },
-                };
-
-                const { openContractCall } = await import('@stacks/connect');
-                await openContractCall(options);
-            } catch (err: unknown) {
-                console.error('Error voting:', err);
-                const message = err instanceof Error ? err.message : '';
-                let errorMessage = 'Failed to submit vote. Please try again.';
-                if (message.includes('already voted')) {
-                    errorMessage = 'You have already voted on this proposal';
-                    setVoteError(errorMessage);
-                } else if (message.includes('insufficient')) {
-                    errorMessage = 'Insufficient STX balance for this vote weight';
-                    setVoteError(errorMessage);
-                } else {
-                    setVoteError(message || errorMessage);
-                }
-                toast.error(errorMessage);
-                setIsVoting(false);
-            }
+            const { openContractCall } = await import('@stacks/connect');
+            await execute(async () => {
+                return new Promise<string>((resolve, reject) => {
+                    openContractCall({
+                        ...options,
+                        onFinish: (data: { txId: string }) => {
+                            console.log('Vote transaction submitted:', data);
+                            resolve(data.txId);
+                        },
+                        onCancel: () => {
+                            reject(new Error('Vote was cancelled'));
+                        },
+                    }).catch(reject);
+                });
+            });
         };
 
         if (executed) {

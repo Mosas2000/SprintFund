@@ -7,6 +7,7 @@ import {
     uintCV,
 } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
+import { useTransaction } from '@/hooks/useTransaction';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -31,9 +32,27 @@ export default function ExecuteProposal({
     votesAgainst,
     onExecuted,
 }: ExecuteProposalProps) {
-    const [isExecuting, setIsExecuting] = useState(false);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
+
+    const { isLoading: isExecuting, execute } = useTransaction({
+        onSuccess: (txId) => {
+            setSuccess(`Proposal executed successfully! Transaction ID: ${txId}`);
+            if (onExecuted) {
+                setTimeout(() => onExecuted(), 3000);
+            }
+        },
+        onError: (err) => {
+            const message = err.message || '';
+            if (message.includes('not authorized')) {
+                setError('Only the proposer can execute this proposal');
+            } else if (message.includes('already executed')) {
+                setError('This proposal has already been executed');
+            } else {
+                setError(message || 'Failed to execute proposal. Please try again.');
+            }
+        },
+    });
 
     // Only show execute button if:
     // 1. User is the proposer
@@ -52,48 +71,34 @@ export default function ExecuteProposal({
     const handleExecute = async () => {
         setError('');
         setSuccess('');
-        setIsExecuting(true);
 
-        try {
-            const functionArgs = [uintCV(proposalId)];
+        const functionArgs = [uintCV(proposalId)];
 
-            const options = {
-                network: NETWORK,
-                anchorMode: AnchorMode.Any,
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: 'execute-proposal',
-                functionArgs,
-                postConditionMode: PostConditionMode.Deny,
-                onFinish: (data: { txId: string }) => {
-                    setSuccess(`Proposal executed successfully! Transaction ID: ${data.txId}`);
-                    setIsExecuting(false);
-                    if (onExecuted) {
-                        setTimeout(() => onExecuted(), 3000);
-                    }
-                },
-                onCancel: () => {
-                    setError('Execution was cancelled');
-                    setIsExecuting(false);
-                },
-            };
+        const options = {
+            network: NETWORK,
+            anchorMode: AnchorMode.Any,
+            contractAddress: CONTRACT_ADDRESS,
+            contractName: CONTRACT_NAME,
+            functionName: 'execute-proposal',
+            functionArgs,
+            postConditionMode: PostConditionMode.Deny,
+        };
 
-            const { openContractCall } = await import('@stacks/connect');
-            await openContractCall(options);
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : '';
-            console.error('Error executing proposal:', err);
-
-            if (message.includes('not authorized')) {
-                setError('Only the proposer can execute this proposal');
-            } else if (message.includes('already executed')) {
-                setError('This proposal has already been executed');
-            } else {
-                setError(message || 'Failed to execute proposal. Please try again.');
-            }
-
-            setIsExecuting(false);
-        }
+        const { openContractCall } = await import('@stacks/connect');
+        await execute(async () => {
+            return new Promise<string>((resolve, reject) => {
+                openContractCall({
+                    ...options,
+                    onFinish: (data: { txId: string }) => {
+                        console.log('Proposal execution submitted:', data);
+                        resolve(data.txId);
+                    },
+                    onCancel: () => {
+                        reject(new Error('Execution was cancelled'));
+                    },
+                }).catch(reject);
+            });
+        });
     };
 
     return (
