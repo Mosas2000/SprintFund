@@ -19,7 +19,11 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
-export function DashboardPage() {
+/**
+ * Dashboard provides user overview of stakes, balances, and proposals.
+ * Users can stake/unstake tokens and manage their governance participation.
+ */
+export function DashboardPage(): JSX.Element {
   const connected = useWalletConnected();
   const address = useWalletAddress();
   const connect = useWalletConnect();
@@ -28,19 +32,19 @@ export function DashboardPage() {
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle('Dashboard');
 
-  const [stakeAmount, setStakeAmount] = useState(0);
-  const [stxBalance, setStxBalance] = useState(0);
+  const [stakeAmount, setStakeAmount] = useState<number>(0);
+  const [stxBalance, setStxBalance] = useState<number>(0);
   const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [totalProposals, setTotalProposals] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [totalProposals, setTotalProposals] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [stakeInput, setStakeInput] = useState('');
-  const [withdrawInput, setWithdrawInput] = useState('');
+  const [stakeInput, setStakeInput] = useState<string>('');
+  const [withdrawInput, setWithdrawInput] = useState<string>('');
   const [txStatus, setTxStatus] = useState<string | null>(null);
   const loadComments = useLoadComments();
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (): Promise<void> => {
     if (!address) return;
     setError(null);
     setLoading(true);
@@ -55,7 +59,7 @@ export function DashboardPage() {
       setStxBalance(balance);
       setProposals(allProposals.filter((p) => p.proposer === address));
       setTotalProposals(count);
-    } catch (err) {
+    } catch (err: unknown) {
       const msg = toErrorMessage(err);
       console.error('Dashboard fetch error:', err);
       setError(msg);
@@ -70,12 +74,11 @@ export function DashboardPage() {
     else setLoading(false);
   }, [connected, address, fetchData]);
 
-  // Hydrate comment counts for listed proposals
   useEffect(() => {
     proposals.forEach((p) => loadComments(p.id));
   }, [proposals, loadComments]);
 
-  const handleStake = useCallback(() => {
+  const handleStake = useCallback((): void => {
     const stx = parseFloat(stakeInput);
     if (isNaN(stx) || stx <= 0) {
       toast.error('Invalid amount', 'Enter a valid STX amount to stake.');
@@ -95,7 +98,7 @@ export function DashboardPage() {
       onConfirm: () => {
         toast.info('Opening wallet', 'Confirm the transaction in your wallet.');
         callStake(stxToMicro(stx), {
-          onFinish: (txId) => {
+          onFinish: (txId: string) => {
             const toastId = toast.tx(`Pending: Stake ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
             pollTxStatus(toastId, txId);
             setStakeInput('');
@@ -110,7 +113,7 @@ export function DashboardPage() {
     });
   }, [stakeInput, stakeAmount, stxBalance, toast, dialog]);
 
-  const handleWithdraw = useCallback(() => {
+  const handleWithdraw = useCallback((): void => {
     const stx = parseFloat(withdrawInput);
     if (isNaN(stx) || stx <= 0) {
       toast.error('Invalid amount', 'Enter a valid STX amount to withdraw.');
@@ -130,7 +133,7 @@ export function DashboardPage() {
       onConfirm: () => {
         toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
         callWithdrawStake(stxToMicro(stx), {
-          onFinish: (txId) => {
+          onFinish: (txId: string) => {
             const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
             pollTxStatus(toastId, txId);
             setWithdrawInput('');
