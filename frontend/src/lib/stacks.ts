@@ -10,6 +10,15 @@ import { request } from '@stacks/connect';
 import { CONTRACT_ADDRESS, CONTRACT_NAME, CONTRACT_PRINCIPAL, NETWORK } from '../config';
 import { sanitizeText, sanitizeMultilineText } from './sanitize';
 import type { Proposal, ProposalPage } from '../types';
+import type {
+  ProposalCountResponse,
+  ProposalResponse,
+  StakeResponse,
+  MinStakeResponse,
+  TxCallbacks,
+  RawProposal,
+  RawStake,
+} from '../types/contract';
 import {
   validateRawProposal,
   rawProposalToProposal,
@@ -23,7 +32,11 @@ import {
    Read-only helpers
    ═══════════════════════════════════════════════ */
 
-async function readOnly<T = unknown>(
+/**
+ * Generic typed read-only function caller.
+ * Handles Stacks SDK integration and error management.
+ */
+async function readOnly<T>(
   functionName: string,
   functionArgs: Parameters<typeof fetchCallReadOnlyFunction>[0]['functionArgs'],
 ): Promise<T | null> {
@@ -120,7 +133,7 @@ export async function getProposalCount(options?: { forceRefresh?: boolean }): Pr
     return proposalCountCache!.value;
   }
 
-  const raw = await readOnly<unknown>('get-proposal-count', []);
+  const raw = await readOnly<ProposalCountResponse>('get-proposal-count', []);
   const value = validateProposalCount(raw) ?? 0;
   proposalCountCache = {
     value,
@@ -131,7 +144,7 @@ export async function getProposalCount(options?: { forceRefresh?: boolean }): Pr
 }
 
 export async function getProposal(id: number): Promise<Proposal | null> {
-  const raw = await readOnly<Record<string, unknown>>('get-proposal', [uintCV(id)]);
+  const raw = await readOnly<ProposalResponse>('get-proposal', [uintCV(id)]);
   if (!raw) return null;
 
   const validated = validateRawProposal(raw);
@@ -197,7 +210,7 @@ export async function getProposalsPage(options?: ProposalPageOptions): Promise<P
 }
 
 export async function getStake(address: string): Promise<number> {
-  const raw = await readOnly<Record<string, unknown>>('get-stake', [principalCV(address)]);
+  const raw = await readOnly<StakeResponse>('get-stake', [principalCV(address)]);
   if (!raw) return 0;
 
   const validated = validateRawStake(raw);
@@ -208,7 +221,7 @@ export async function getStake(address: string): Promise<number> {
 }
 
 export async function getMinStakeAmount(): Promise<number> {
-  const raw = await readOnly<unknown>('get-min-stake-amount', []);
+  const raw = await readOnly<MinStakeResponse>('get-min-stake-amount', []);
   const amount = validateStxAmount(raw) ?? 10_000_000;
   return amount;
 }
@@ -217,16 +230,14 @@ export async function getMinStakeAmount(): Promise<number> {
    Write (transaction) functions – using @stacks/connect v8 request() API
    ═══════════════════════════════════════════════ */
 
-interface TxCallbacks {
-  onFinish: (txId: string) => void;
-  onCancel: () => void;
-}
-
+/**
+ * Execute a contract call with callbacks for completion or cancellation.
+ */
 async function contractCall(opts: {
   functionName: string;
   functionArgs: unknown[];
   cb: TxCallbacks;
-}) {
+}): Promise<void> {
   try {
     console.log('[SprintFund] Calling contract:', {
       contract: CONTRACT_PRINCIPAL,
@@ -248,20 +259,37 @@ async function contractCall(opts: {
   }
 }
 
-export function callStake(amount: number, cb: TxCallbacks) {
+/**
+ * Submit a stake transaction.
+ * @param amount Amount to stake in microSTX
+ * @param cb Callbacks for transaction completion or cancellation
+ */
+export function callStake(amount: number, cb: TxCallbacks): void {
   contractCall({ functionName: 'stake', functionArgs: [uintCV(amount)], cb });
 }
 
-export function callWithdrawStake(amount: number, cb: TxCallbacks) {
+/**
+ * Submit a stake withdrawal transaction.
+ * @param amount Amount to withdraw in microSTX
+ * @param cb Callbacks for transaction completion or cancellation
+ */
+export function callWithdrawStake(amount: number, cb: TxCallbacks): void {
   contractCall({ functionName: 'withdraw-stake', functionArgs: [uintCV(amount)], cb });
 }
 
+/**
+ * Submit a proposal creation transaction.
+ * @param amount Requested funding amount in microSTX
+ * @param title Proposal title
+ * @param description Proposal description
+ * @param cb Callbacks for transaction completion or cancellation
+ */
 export async function callCreateProposal(
   amount: number,
   title: string,
   description: string,
   cb: TxCallbacks,
-) {
+): Promise<void> {
   return contractCall({
     functionName: 'create-proposal',
     functionArgs: [uintCV(amount), stringUtf8CV(title), stringUtf8CV(description)],
@@ -269,12 +297,19 @@ export async function callCreateProposal(
   });
 }
 
+/**
+ * Submit a vote transaction.
+ * @param proposalId ID of the proposal to vote on
+ * @param support True for yes vote, false for no vote
+ * @param weight Number of STX to use as voting weight
+ * @param cb Callbacks for transaction completion or cancellation
+ */
 export function callVote(
   proposalId: number,
   support: boolean,
   weight: number,
   cb: TxCallbacks,
-) {
+): void {
   contractCall({
     functionName: 'vote',
     functionArgs: [uintCV(proposalId), boolCV(support), uintCV(weight)],
@@ -282,7 +317,12 @@ export function callVote(
   });
 }
 
-export function callExecuteProposal(proposalId: number, cb: TxCallbacks) {
+/**
+ * Submit a proposal execution transaction.
+ * @param proposalId ID of the proposal to execute
+ * @param cb Callbacks for transaction completion or cancellation
+ */
+export function callExecuteProposal(proposalId: number, cb: TxCallbacks): void {
   contractCall({
     functionName: 'execute-proposal',
     functionArgs: [uintCV(proposalId)],

@@ -200,3 +200,101 @@ export function isNetworkError(error: unknown): error is NetworkError {
     typeof (error as { status: unknown }).status === 'number'
   );
 }
+
+/* ═══════════════════════════════════════════════
+   API Response Types
+   ═══════════════════════════════════════════════ */
+
+/**
+ * Generic wrapper for a successful read-only function response.
+ * Represents the normalized form after cvToValue processing.
+ */
+export interface ApiSuccess<T> {
+  success: true;
+  data: T;
+  timestamp: number;
+}
+
+/**
+ * Error response from API call.
+ */
+export interface ApiError {
+  success: false;
+  error: ContractError | NetworkError;
+  timestamp: number;
+}
+
+/**
+ * Union of success and error responses.
+ */
+export type ApiResponse<T> = ApiSuccess<T> | ApiError;
+
+/**
+ * Response from get-proposal-count read-only function.
+ */
+export type ProposalCountResponse = number;
+
+/**
+ * Response from get-proposal read-only function.
+ */
+export type ProposalResponse = RawProposal;
+
+/**
+ * Response from get-stake read-only function.
+ */
+export type StakeResponse = RawStake;
+
+/**
+ * Response from get-min-stake-amount read-only function.
+ */
+export type MinStakeResponse = number;
+
+/**
+ * Paginated list of proposals with metadata.
+ */
+export interface ProposalListResponse {
+  proposals: RawProposal[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
+ * Stake information for a user.
+ */
+export interface StakeInfo {
+  staker: string;
+  amount: number;
+  stakePercentage: number;
+  stakedAt?: number;
+}
+
+/**
+ * User portfolio of stakes across proposals.
+ */
+export interface UserStakePortfolio {
+  address: string;
+  totalStaked: number;
+  stakes: Map<number, number>;
+}
+
+/**
+ * Vote information for a specific proposal and voter.
+ */
+export interface VoteInfo {
+  proposalId: number;
+  voter: string;
+  weight: number;
+  support: boolean;
+  votedAt: number;
+}
+
+/**
+ * Contract state snapshot.
+ */
+export interface ContractState {
+  proposalCount: number;
+  minStakeAmount: number;
+  lastUpdated: number;
+}

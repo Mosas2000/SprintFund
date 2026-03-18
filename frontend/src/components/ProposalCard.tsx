@@ -8,11 +8,18 @@ import { VoteProgressBar } from './VoteProgressBar';
 import { useCommentCount } from '../store/comment-selectors';
 import type { Proposal } from '../types';
 
-interface Props {
+/**
+ * Props for ProposalCard component.
+ */
+interface ProposalCardProps {
   proposal: Proposal;
 }
 
-export const ProposalCard = memo(function ProposalCard({ proposal }: Props) {
+/**
+ * ProposalCard displays a proposal in list view with voting stats.
+ * Shows title, description, vote distribution, and proposal status.
+ */
+export const ProposalCard = memo(function ProposalCard({ proposal }: ProposalCardProps): JSX.Element {
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
   const commentCount = useCommentCount(proposal.id);
