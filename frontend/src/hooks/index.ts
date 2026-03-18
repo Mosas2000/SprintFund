@@ -6,3 +6,4 @@ export { useGlobalLoading, GlobalLoadingProvider } from './useGlobalLoading';
 export { useFormSubmit } from './useFormSubmit';
 export { useMultiStep } from './useMultiStep';
 export { useRetry } from './useRetry';
+export { useDebouncedSearch } from './useDebouncedSearch';
