@@ -20,14 +20,27 @@ import { CommentSection } from '../components/CommentSection';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
-export function ProposalDetailPage() {
+/**
+ * Vote statistics computed from proposal data.
+ */
+interface VoteStats {
+  totalVotes: number;
+  forPct: number;
+  passing: boolean;
+}
+
+/**
+ * ProposalDetailPage displays full proposal information with voting interface.
+ * Users can vote, execute approved proposals, and discuss in comments.
+ */
+export function ProposalDetailPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const proposalId = Number(id);
 
   const [proposal, setProposal] = useState<Proposal | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [voteWeight, setVoteWeight] = useState('1');
+  const [voteWeight, setVoteWeight] = useState<string>('1');
   const [txStatus, setTxStatus] = useState<string | null>(null);
 
   const connected = useWalletConnected();
@@ -37,7 +50,7 @@ export function ProposalDetailPage() {
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle(proposal?.title ? sanitizeText(proposal.title) : 'Proposal Detail');
 
-  const fetchProposal = useCallback(() => {
+  const fetchProposal = useCallback((): void => {
     if (isNaN(proposalId)) {
       setError('Invalid proposal ID');
       setLoading(false);
@@ -50,7 +63,7 @@ export function ProposalDetailPage() {
         if (!p) setError('Proposal not found');
         else setProposal(p);
       })
-      .catch((err) => setError(toErrorMessage(err)))
+      .catch((err: unknown) => setError(toErrorMessage(err)))
       .finally(() => setLoading(false));
   }, [proposalId]);
 
@@ -58,7 +71,7 @@ export function ProposalDetailPage() {
     fetchProposal();
   }, [fetchProposal]);
 
-  const handleVote = useCallback((support: boolean) => {
+  const handleVote = useCallback((support: boolean): void => {
     const weight = parseInt(voteWeight, 10);
     if (isNaN(weight) || weight < 1) {
       toast.error('Invalid vote weight', 'Enter a weight of at least 1.');
@@ -81,12 +94,11 @@ export function ProposalDetailPage() {
         toast.info('Opening wallet', `Confirm your ${direction} vote in your wallet.`);
         setTxStatus('Opening wallet...');
         callVote(proposalId, support, weight, {
-          onFinish: (txId) => {
+          onFinish: (txId: string) => {
             const toastId = toast.tx(`Pending: Vote ${direction} (weight ${weight})`, txId, 'Waiting for on-chain confirmation...');
             pollTxStatus(toastId, txId);
             setTxStatus(null);
 
-            // Persist vote record for the profile activity log
             if (address) {
               saveVoteRecord(address, {
                 proposalId,
@@ -105,9 +117,9 @@ export function ProposalDetailPage() {
         });
       },
     });
-  }, [voteWeight, proposalId, proposal, toast, dialog]);
+  }, [voteWeight, proposalId, proposal, toast, dialog, address]);
 
-  const handleExecute = useCallback(() => {
+  const handleExecute = useCallback((): void => {
     dialog.open({
       title: 'Execute Proposal',
       description: 'Executing this proposal will transfer the requested STX from the treasury. This action cannot be undone.',
@@ -123,7 +135,7 @@ export function ProposalDetailPage() {
         toast.info('Opening wallet', 'Confirm proposal execution in your wallet.');
         setTxStatus('Opening wallet...');
         callExecuteProposal(proposalId, {
-          onFinish: (txId) => {
+          onFinish: (txId: string) => {
             const toastId = toast.tx(`Pending: Execute proposal #${proposalId}`, txId, 'Waiting for on-chain confirmation...');
             pollTxStatus(toastId, txId);
             setTxStatus(null);
@@ -137,9 +149,7 @@ export function ProposalDetailPage() {
     });
   }, [proposalId, proposal, toast, dialog]);
 
-  // Derived vote statistics - memoized to avoid recalculation on unrelated
-  // state changes (e.g. voteWeight input, txStatus updates).
-  const { totalVotes, forPct, passing } = useMemo(() => {
+  const { totalVotes, forPct, passing } = useMemo((): VoteStats => {
     if (!proposal) return { totalVotes: 0, forPct: 0, passing: false };
     const total = proposal.votesFor + proposal.votesAgainst;
     const pct = total > 0 ? Math.round((proposal.votesFor / total) * 100) : 0;
