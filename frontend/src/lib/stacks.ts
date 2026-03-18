@@ -10,6 +10,15 @@ import { request } from '@stacks/connect';
 import { CONTRACT_ADDRESS, CONTRACT_NAME, CONTRACT_PRINCIPAL, NETWORK } from '../config';
 import { sanitizeText, sanitizeMultilineText } from './sanitize';
 import type { Proposal, ProposalPage } from '../types';
+import type {
+  ProposalCountResponse,
+  ProposalResponse,
+  StakeResponse,
+  MinStakeResponse,
+  TxCallbacks,
+  RawProposal,
+  RawStake,
+} from '../types/contract';
 import {
   validateRawProposal,
   rawProposalToProposal,
@@ -23,7 +32,11 @@ import {
    Read-only helpers
    ═══════════════════════════════════════════════ */
 
-async function readOnly<T = unknown>(
+/**
+ * Generic typed read-only function caller.
+ * Handles Stacks SDK integration and error management.
+ */
+async function readOnly<T>(
   functionName: string,
   functionArgs: Parameters<typeof fetchCallReadOnlyFunction>[0]['functionArgs'],
 ): Promise<T | null> {
@@ -120,7 +133,7 @@ export async function getProposalCount(options?: { forceRefresh?: boolean }): Pr
     return proposalCountCache!.value;
   }
 
-  const raw = await readOnly<unknown>('get-proposal-count', []);
+  const raw = await readOnly<ProposalCountResponse>('get-proposal-count', []);
   const value = validateProposalCount(raw) ?? 0;
   proposalCountCache = {
     value,
@@ -131,7 +144,7 @@ export async function getProposalCount(options?: { forceRefresh?: boolean }): Pr
 }
 
 export async function getProposal(id: number): Promise<Proposal | null> {
-  const raw = await readOnly<Record<string, unknown>>('get-proposal', [uintCV(id)]);
+  const raw = await readOnly<ProposalResponse>('get-proposal', [uintCV(id)]);
   if (!raw) return null;
 
   const validated = validateRawProposal(raw);
@@ -197,7 +210,7 @@ export async function getProposalsPage(options?: ProposalPageOptions): Promise<P
 }
 
 export async function getStake(address: string): Promise<number> {
-  const raw = await readOnly<Record<string, unknown>>('get-stake', [principalCV(address)]);
+  const raw = await readOnly<StakeResponse>('get-stake', [principalCV(address)]);
   if (!raw) return 0;
 
   const validated = validateRawStake(raw);
@@ -208,7 +221,7 @@ export async function getStake(address: string): Promise<number> {
 }
 
 export async function getMinStakeAmount(): Promise<number> {
-  const raw = await readOnly<unknown>('get-min-stake-amount', []);
+  const raw = await readOnly<MinStakeResponse>('get-min-stake-amount', []);
   const amount = validateStxAmount(raw) ?? 10_000_000;
   return amount;
 }
