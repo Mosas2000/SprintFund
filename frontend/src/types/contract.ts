@@ -82,6 +82,12 @@ export interface ClarityOkResponse<T> {
  */
 export type ReadOnlyResult<T> = T | null;
 
+/**
+ * Generic shape for read-only function responses from the Stacks API.
+ * Some functions return wrapped values, others return unwrapped primitives.
+ */
+export type RawReadOnlyResponse<T> = T | { value: T } | null;
+
 /* ═══════════════════════════════════════════════
    Transaction types
    ═══════════════════════════════════════════════ */
