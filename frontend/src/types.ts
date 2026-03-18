@@ -62,6 +62,23 @@ export type {
   ConnectionStateUpdate,
 } from './types/realtime';
 
+/* Re-export config types for convenience */
+export type {
+  AppEnvironment,
+  NetworkConfig,
+  ContractConfig,
+  AppConfig,
+  CacheConfig,
+  FeatureFlags,
+  ValidationConfig,
+} from './types/config';
+
+export {
+  getAppEnvironment,
+  isDevelopment,
+  isProduction,
+} from './types/config';
+
 export type TxStatus = 'pending' | 'success' | 'failed';
 
 export type ToastVariant = 'info' | 'success' | 'error' | 'warning' | 'tx';
