@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CategoryTags from './CategoryTags';
 import { predictProposalSuccess } from '@/utils/successPredictor';
 import { Target, AlertCircle, Sparkles, Brain, CheckCircle2 } from 'lucide-react';
+import { useTransaction } from '@/hooks/useTransaction';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -29,17 +30,40 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState('development');
     const [voteThreshold, setVoteThreshold] = useState('10');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState('');
     const [amountError, setAmountError] = useState('');
+    const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    const { isLoading, execute } = useTransaction({
+        onSuccess: (txId) => {
+            toast.success('Proposal created successfully!');
+            setSuccess(`Proposal created successfully! Transaction ID: ${txId}`);
+            setTitle('');
+            setDescription('');
+            setAmount('');
+        },
+        onError: (err) => {
+            const message = err.message || '';
+            let errorMessage = 'Failed to create proposal. Please try again.';
+
+            if (message.includes('insufficient')) {
+                errorMessage = 'Insufficient STX balance. You need at least 10 STX staked.';
+            } else if (message.includes('stake')) {
+                errorMessage = 'You must stake at least 10 STX before creating a proposal.';
+            } else {
+                errorMessage = message || errorMessage;
+            }
+
+            setError(errorMessage);
+            toast.error(errorMessage);
+        },
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
-        // Validation
         if (!title || title.length > 100) {
             setError('Title is required and must be 100 characters or less');
             return;
@@ -60,61 +84,39 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
             return;
         }
 
-        setIsSubmitting(true);
+        const amountInMicroStx = toMicroSTX(parseFloat(amount));
 
-        try {
-            // Convert STX to microSTX
-            const amountInMicroStx = toMicroSTX(parseFloat(amount));
+        const functionArgs = [
+            uintCV(amountInMicroStx),
+            stringUtf8CV(title),
+            stringUtf8CV(description),
+        ];
 
-            const functionArgs = [
-                uintCV(amountInMicroStx),
-                stringUtf8CV(title),
-                stringUtf8CV(description),
-            ];
+        const options = {
+            network: NETWORK,
+            anchorMode: AnchorMode.Any,
+            contractAddress: CONTRACT_ADDRESS,
+            contractName: CONTRACT_NAME,
+            functionName: 'create-proposal',
+            functionArgs,
+            postConditionMode: PostConditionMode.Deny,
+        };
 
-            const options = {
-                network: NETWORK,
-                anchorMode: AnchorMode.Any,
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: 'create-proposal',
-                functionArgs,
-                postConditionMode: PostConditionMode.Deny,
-                onFinish: (data: { txId: string }) => {
-                    console.log('Transaction submitted:', data);
-                    toast.success('Proposal created successfully!');
-                    setSuccess(`Proposal created successfully! Transaction ID: ${data.txId}`);
-                    setTitle('');
-                    setDescription('');
-                    setAmount('');
-                    setIsSubmitting(false);
-                },
-                onCancel: () => {
-                    setError('Transaction was cancelled');
-                    setIsSubmitting(false);
-                },
-            };
-
-            const { openContractCall } = await import('@stacks/connect');
-            await openContractCall(options);
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : '';
-            console.error('Error creating proposal:', err);
-
-            let errorMessage = 'Failed to create proposal. Please try again.';
-            if (message.includes('insufficient')) {
-                errorMessage = 'Insufficient STX balance. You need at least 10 STX staked.';
-                setError(errorMessage);
-            } else if (message.includes('stake')) {
-                errorMessage = 'You must stake at least 10 STX before creating a proposal.';
-                setError(errorMessage);
-            } else {
-                setError(message || errorMessage);
-            }
-
-            toast.error(errorMessage);
-            setIsSubmitting(false);
-        }
+        const { openContractCall } = await import('@stacks/connect');
+        await execute(async () => {
+            return new Promise<string>((resolve, reject) => {
+                openContractCall({
+                    ...options,
+                    onFinish: (data: { txId: string }) => {
+                        console.log('Transaction submitted:', data);
+                        resolve(data.txId);
+                    },
+                    onCancel: () => {
+                        reject(new Error('Transaction was cancelled'));
+                    },
+                }).catch(reject);
+            });
+        });
     };
 
     const prediction = predictProposalSuccess({
@@ -164,7 +166,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                             maxLength={100}
                             placeholder="e.g., Build Community Dashboard"
                             className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         />
                         <p className={`text-xs mt-1 ${title.length === 0 ? 'text-purple-300' : title.length >= 90 ? 'text-red-400 font-semibold' : 'text-green-400'}`}>
                             {title.length}/100 characters
@@ -184,7 +186,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                             rows={4}
                             placeholder="Describe your project and how the funds will be used..."
                             className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent resize-none"
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         />
                         <p className={`text-xs mt-1 ${description.length === 0 ? 'text-purple-300' : description.length >= 450 ? 'text-red-400 font-semibold' : 'text-green-400'}`}>
                             {description.length}/500 characters
@@ -218,7 +220,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                                 max="200"
                                 placeholder="50"
                                 className={`w-full px-4 py-3 bg-white/10 border ${amountError ? 'border-red-500' : 'border-white/20'} rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent`}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             />
                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-purple-300 text-sm">
                                 STX
@@ -256,7 +258,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                             min="1"
                             placeholder="10"
                             className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         />
                         <p className="text-xs text-purple-300 mt-1">
                             Minimum total votes required for execution
@@ -300,10 +302,10 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={isSubmitting || !userAddress || !!amountError}
+                        disabled={isLoading || !userAddress || !!amountError}
                         className="w-full px-8 py-5 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black uppercase tracking-[0.2em] transition-all duration-300 shadow-xl hover:shadow-orange-500/20 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
                     >
-                        {isSubmitting ? (
+                        {isLoading ? (
                             <>
                                 <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
