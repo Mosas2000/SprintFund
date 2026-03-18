@@ -1,18 +1,83 @@
-export interface Proposal {
-  id: number;
-  proposer: string;
-  amount: number;
-  title: string;
-  description: string;
-  votesFor: number;
-  votesAgainst: number;
-  executed: boolean;
-  createdAt: number;
-}
+/* Re-export proposal types for convenience */
+export type {
+  Proposal,
+  ProposalWithStats,
+  CreateProposalInput,
+  CreateProposalResult,
+  ProposalPage,
+  ProposalQueryOptions,
+  ProposalCacheEntry,
+  ProposalCountResult,
+} from './types/proposal';
 
-export interface StakeInfo {
-  amount: number;
-}
+/* Re-export stake types for convenience */
+export type {
+  StakeInfo,
+  StakeInput,
+  WithdrawStakeInput,
+  MinStakeInfo,
+  StakeTransactionResult,
+  StakeHistoryEntry,
+} from './types/stake';
+
+/* Re-export voting types for convenience */
+export type {
+  VoteInput,
+  VoteRecord,
+  UserVotingHistory,
+  VoteWithProposal,
+  VotingStats,
+} from './types/voting';
+
+/* Re-export API types for convenience */
+export type {
+  FetchProposalsRequest,
+  FetchProposalsResponse,
+  CreateProposalRequest,
+  CreateProposalResponse,
+  VoteRequest,
+  VoteResponse,
+  StakeRequest,
+  StakeResponse,
+  FetchStakeRequest,
+  FetchStakeResponse,
+  FetchVotingHistoryRequest,
+  FetchVotingHistoryResponse,
+  ErrorResponse,
+} from './types/api';
+
+export { isErrorResponse, isSuccessResponse } from './types/api';
+
+/* Re-export real-time types for convenience */
+export type {
+  WsEventType,
+  WsTransactionEvent,
+  WsBlockEvent,
+  WsMessage,
+  ProposalUpdate,
+  VoteUpdate,
+  StakeUpdate,
+  SubscriptionFilters,
+  ConnectionState,
+  ConnectionStateUpdate,
+} from './types/realtime';
+
+/* Re-export config types for convenience */
+export type {
+  AppEnvironment,
+  NetworkConfig,
+  ContractConfig,
+  AppConfig,
+  CacheConfig,
+  FeatureFlags,
+  ValidationConfig,
+} from './types/config';
+
+export {
+  getAppEnvironment,
+  isDevelopment,
+  isProduction,
+} from './types/config';
 
 export type TxStatus = 'pending' | 'success' | 'failed';
 
@@ -131,6 +196,7 @@ export type {
   RawVote,
   ClarityOkResponse,
   ReadOnlyResult,
+  RawReadOnlyResponse,
   TxFinishData,
   TxCallbacks as ContractTxCallbacks,
   ContractCallOptions,
