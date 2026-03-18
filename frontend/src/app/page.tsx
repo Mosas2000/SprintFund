@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { AppConfig, UserSession, showConnect } from '@stacks/connect';
+import { useState, useEffect, useRef } from 'react';
+import type { UserSession, UserData } from '@stacks/connect';
 import SprintFundHero from '@/components/ui/SprintFundHero';
 import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
@@ -11,65 +11,63 @@ import Header from '@/components/Header';
 import Link from 'next/link';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
-
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core';
 
 /**
  * User session data from Stacks Connect.
  * Typed shape matching the return of userSession.loadUserData().
  */
-interface StacksUserData {
-  appPrivateKey?: string;
-  hubUrl?: string;
-  username?: string;
-  profile: {
-    stxAddress: {
-      mainnet: string;
-      testnet: string;
-    };
-    [key: string]: unknown;
-  };
-  identityAddress?: string;
-  decentralizedID?: string;
-}
+type StacksUserData = UserData;
 
 export default function Home() {
   const [userData, setUserData] = useState<StacksUserData | null>(null);
   const [copied, setCopied] = useState(false);
+  const userSessionRef = useRef<UserSession | null>(null);
 
   useEffect(() => {
     let timeout: number | undefined;
-    if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn().then((data) => {
-        timeout = window.setTimeout(() => setUserData(data), 0);
-      });
-    } else if (userSession.isUserSignedIn()) {
-      timeout = window.setTimeout(() => setUserData(userSession.loadUserData()), 0);
-    }
+    (async () => {
+      const { AppConfig, UserSession } = await import('@stacks/connect');
+      const appConfig = new AppConfig(['store_write', 'publish_data']);
+      const userSession = new UserSession({ appConfig });
+      userSessionRef.current = userSession;
+
+      if (userSession.isSignInPending()) {
+        userSession.handlePendingSignIn().then((data) => {
+          timeout = window.setTimeout(() => setUserData(data), 0);
+        });
+      } else if (userSession.isUserSignedIn()) {
+        timeout = window.setTimeout(() => setUserData(userSession.loadUserData()), 0);
+      }
+    })();
     return () => {
       if (timeout) window.clearTimeout(timeout);
     };
   }, []);
 
   const connectWallet = () => {
-    showConnect({
-      appDetails: {
-        name: 'SprintFund',
-        icon: '/icon.png',
-      },
-      redirectTo: '/',
-      onFinish: () => {
-        const data = userSession.loadUserData();
-        setUserData(data);
-      },
-      userSession,
-    });
+    (async () => {
+      const userSession = userSessionRef.current;
+      if (!userSession) return;
+
+      const { showConnect } = await import('@stacks/connect');
+      showConnect({
+        appDetails: {
+          name: 'SprintFund',
+          icon: '/icon.png',
+        },
+        redirectTo: '/',
+        onFinish: () => {
+          const data = userSession.loadUserData();
+          setUserData(data);
+        },
+        userSession,
+      });
+    })();
   };
 
   const disconnectWallet = () => {
-    userSession.signUserOut();
+    userSessionRef.current?.signUserOut();
     setUserData(null);
   };
 

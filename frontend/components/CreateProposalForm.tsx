@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { openContractCall } from '@stacks/connect';
 import {
     AnchorMode,
     PostConditionMode,
@@ -96,6 +95,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                 },
             };
 
+            const { openContractCall } = await import('@stacks/connect');
             await openContractCall(options);
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : '';

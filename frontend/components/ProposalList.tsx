@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, principalCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
-import { openContractCall } from '@stacks/connect';
 import { formatSTX } from '@/utils/formatSTX';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
@@ -229,6 +228,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                     },
                 };
 
+                const { openContractCall } = await import('@stacks/connect');
                 await openContractCall(options);
             } catch (err: unknown) {
                 console.error('Error voting:', err);
