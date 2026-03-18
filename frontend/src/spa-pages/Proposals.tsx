@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, RefObject } from 'react';
 import { Link } from 'react-router-dom';
 import { getProposalsPage } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
@@ -13,14 +13,18 @@ import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import { useProposalUrlFilters } from '../hooks/useProposalUrlFilters';
 import type { Proposal } from '../types';
 
-export function ProposalsPage() {
+/**
+ * ProposalsPage displays all proposals with pagination and filters.
+ * Users can browse, search, and vote on proposals.
+ */
+export function ProposalsPage(): JSX.Element {
   const PAGE_SIZE = 10;
   const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
+  const [retryCount, setRetryCount] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -36,7 +40,7 @@ export function ProposalsPage() {
     activeFilterCount,
   } = useProposalUrlFilters();
 
-  const fetchProposals = useCallback(() => {
+  const fetchProposals = useCallback((): void => {
     setError(null);
     setLoading(true);
     getProposalsPage({ page: params.page, pageSize: PAGE_SIZE })
@@ -45,7 +49,7 @@ export function ProposalsPage() {
         setTotalPages(result.totalPages);
         setTotalCount(result.totalCount);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         const msg = toErrorMessage(err);
         setError(msg);
         setRetryCount((c) => c + 1);
@@ -71,7 +75,7 @@ export function ProposalsPage() {
     return undefined;
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const filtered = useMemo(() => proposals.filter((p) => {
+  const filtered: Proposal[] = useMemo(() => proposals.filter((p) => {
     if (params.status === 'active') return !p.executed;
     if (params.status === 'executed') return p.executed;
     return true;
