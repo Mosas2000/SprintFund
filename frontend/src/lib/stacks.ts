@@ -230,16 +230,14 @@ export async function getMinStakeAmount(): Promise<number> {
    Write (transaction) functions – using @stacks/connect v8 request() API
    ═══════════════════════════════════════════════ */
 
-interface TxCallbacks {
-  onFinish: (txId: string) => void;
-  onCancel: () => void;
-}
-
+/**
+ * Execute a contract call with callbacks for completion or cancellation.
+ */
 async function contractCall(opts: {
   functionName: string;
   functionArgs: unknown[];
   cb: TxCallbacks;
-}) {
+}): Promise<void> {
   try {
     console.log('[SprintFund] Calling contract:', {
       contract: CONTRACT_PRINCIPAL,
@@ -261,20 +259,37 @@ async function contractCall(opts: {
   }
 }
 
-export function callStake(amount: number, cb: TxCallbacks) {
+/**
+ * Submit a stake transaction.
+ * @param amount Amount to stake in microSTX
+ * @param cb Callbacks for transaction completion or cancellation
+ */
+export function callStake(amount: number, cb: TxCallbacks): void {
   contractCall({ functionName: 'stake', functionArgs: [uintCV(amount)], cb });
 }
 
-export function callWithdrawStake(amount: number, cb: TxCallbacks) {
+/**
+ * Submit a stake withdrawal transaction.
+ * @param amount Amount to withdraw in microSTX
+ * @param cb Callbacks for transaction completion or cancellation
+ */
+export function callWithdrawStake(amount: number, cb: TxCallbacks): void {
   contractCall({ functionName: 'withdraw-stake', functionArgs: [uintCV(amount)], cb });
 }
 
+/**
+ * Submit a proposal creation transaction.
+ * @param amount Requested funding amount in microSTX
+ * @param title Proposal title
+ * @param description Proposal description
+ * @param cb Callbacks for transaction completion or cancellation
+ */
 export async function callCreateProposal(
   amount: number,
   title: string,
   description: string,
   cb: TxCallbacks,
-) {
+): Promise<void> {
   return contractCall({
     functionName: 'create-proposal',
     functionArgs: [uintCV(amount), stringUtf8CV(title), stringUtf8CV(description)],
@@ -282,12 +297,19 @@ export async function callCreateProposal(
   });
 }
 
+/**
+ * Submit a vote transaction.
+ * @param proposalId ID of the proposal to vote on
+ * @param support True for yes vote, false for no vote
+ * @param weight Number of STX to use as voting weight
+ * @param cb Callbacks for transaction completion or cancellation
+ */
 export function callVote(
   proposalId: number,
   support: boolean,
   weight: number,
   cb: TxCallbacks,
-) {
+): void {
   contractCall({
     functionName: 'vote',
     functionArgs: [uintCV(proposalId), boolCV(support), uintCV(weight)],
@@ -295,7 +317,12 @@ export function callVote(
   });
 }
 
-export function callExecuteProposal(proposalId: number, cb: TxCallbacks) {
+/**
+ * Submit a proposal execution transaction.
+ * @param proposalId ID of the proposal to execute
+ * @param cb Callbacks for transaction completion or cancellation
+ */
+export function callExecuteProposal(proposalId: number, cb: TxCallbacks): void {
   contractCall({
     functionName: 'execute-proposal',
     functionArgs: [uintCV(proposalId)],
