@@ -1,14 +1,14 @@
-export interface Proposal {
-  id: number;
-  proposer: string;
-  amount: number;
-  title: string;
-  description: string;
-  votesFor: number;
-  votesAgainst: number;
-  executed: boolean;
-  createdAt: number;
-}
+/* Re-export proposal types for convenience */
+export type {
+  Proposal,
+  ProposalWithStats,
+  CreateProposalInput,
+  CreateProposalResult,
+  ProposalPage,
+  ProposalQueryOptions,
+  ProposalCacheEntry,
+  ProposalCountResult,
+} from './types/proposal';
 
 export interface StakeInfo {
   amount: number;
@@ -131,6 +131,7 @@ export type {
   RawVote,
   ClarityOkResponse,
   ReadOnlyResult,
+  RawReadOnlyResponse,
   TxFinishData,
   TxCallbacks as ContractTxCallbacks,
   ContractCallOptions,
