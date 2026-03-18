@@ -29,6 +29,25 @@ export type {
   VotingStats,
 } from './types/voting';
 
+/* Re-export API types for convenience */
+export type {
+  FetchProposalsRequest,
+  FetchProposalsResponse,
+  CreateProposalRequest,
+  CreateProposalResponse,
+  VoteRequest,
+  VoteResponse,
+  StakeRequest,
+  StakeResponse,
+  FetchStakeRequest,
+  FetchStakeResponse,
+  FetchVotingHistoryRequest,
+  FetchVotingHistoryResponse,
+  ErrorResponse,
+} from './types/api';
+
+export { isErrorResponse, isSuccessResponse } from './types/api';
+
 export type TxStatus = 'pending' | 'success' | 'failed';
 
 export type ToastVariant = 'info' | 'success' | 'error' | 'warning' | 'tx';
