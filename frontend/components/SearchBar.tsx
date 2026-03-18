@@ -4,17 +4,27 @@ import { useState, useEffect, useRef } from 'react';
 
 interface SearchBarProps {
     onSearchChange: (searchTerm: string) => void;
+    value?: string;
 }
 
-export default function SearchBar({ onSearchChange }: SearchBarProps) {
-    const [searchTerm, setSearchTerm] = useState('');
+export default function SearchBar({ onSearchChange, value }: SearchBarProps) {
+    const [searchTerm, setSearchTerm] = useState(value ?? '');
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
     const callbackRef = useRef(onSearchChange);
+    const isControlled = value !== undefined;
 
     // Keep the ref in sync with the latest callback without triggering effects
     useEffect(() => {
         callbackRef.current = onSearchChange;
     }, [onSearchChange]);
+
+    // Sync internal state when external value changes (e.g., browser back/forward)
+    useEffect(() => {
+        if (isControlled && value !== searchTerm) {
+            setSearchTerm(value);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value, isControlled]);
 
     // Debounce search - wait 300ms after user stops typing
     useEffect(() => {

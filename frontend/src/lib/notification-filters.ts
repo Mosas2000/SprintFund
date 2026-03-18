@@ -91,6 +91,7 @@ export function groupByType(
   const groups: Record<NotificationType, Notification[]> = {
     proposal_created: [],
     proposal_executed: [],
+    quorum_reached: [],
     vote_milestone: [],
     stake_change: [],
     vote_received: [],
@@ -110,6 +111,7 @@ export function countByType(
   const counts: Record<NotificationType, number> = {
     proposal_created: 0,
     proposal_executed: 0,
+    quorum_reached: 0,
     vote_milestone: 0,
     stake_change: 0,
     vote_received: 0,

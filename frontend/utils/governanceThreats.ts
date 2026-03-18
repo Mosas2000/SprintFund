@@ -5,8 +5,20 @@ export interface VoteEvent {
     timestamp: number;
 }
 
-export function detectGovernanceAnomalies(votes: VoteEvent[]) {
-    const anomalies = [];
+export interface GovernanceAnomaly {
+    type: string;
+    severity: 'low' | 'medium' | 'high';
+    detail: string;
+}
+
+export interface GovernanceThreatReport {
+    isUnderThreat: boolean;
+    threatLevel: 'SECURE' | 'WARNING' | 'CRITICAL';
+    logs: GovernanceAnomaly[];
+}
+
+export function detectGovernanceAnomalies(votes: VoteEvent[]): GovernanceThreatReport {
+    const anomalies: GovernanceAnomaly[] = [];
 
     // 1. Detection of high-velocity voting from single origin
     const voterTally: Record<string, number> = {};

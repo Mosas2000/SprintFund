@@ -200,12 +200,21 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
                   borderRadius: '0.5rem',
                   color: '#fff'
                 }}
-                formatter={(value: number) => [`${value.toFixed(2)}M STX`, 'Total Funded']}
+                formatter={(value) => {
+                  const numeric = typeof value === 'number' ? value : Number(value);
+                  const label = Number.isFinite(numeric)
+                    ? `${numeric.toFixed(2)}M STX`
+                    : String(value ?? '');
+                  return [label, 'Total Funded'];
+                }}
               />
               <Bar 
                 dataKey="amount" 
                 radius={[8, 8, 0, 0]}
-                onClick={(data) => onCategoryClick?.(data.category)}
+                onClick={(data) => {
+                  const category = (data as { payload?: { category?: unknown } } | undefined)?.payload?.category;
+                  if (typeof category === 'string') onCategoryClick?.(category);
+                }}
                 cursor="pointer"
               />
             </BarChart>
@@ -221,11 +230,14 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name} ${(((percent ?? 0) as number) * 100).toFixed(0)}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
-                onClick={(data) => onCategoryClick?.(data.name)}
+                onClick={(data) => {
+                  const name = (data as { name?: unknown } | undefined)?.name;
+                  if (typeof name === 'string') onCategoryClick?.(name);
+                }}
                 cursor="pointer"
               >
                 {pieChartData.map((entry, index) => (

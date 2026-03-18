@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ConnectWallet } from './ConnectWallet';
 import { HamburgerButton } from './HamburgerButton';
 import { MobileNavDrawer } from './MobileNavDrawer';
-import { NotificationCenter } from './NotificationCenter';
+import NotificationCenter from './NotificationCenter';
 import { useMobileMenu } from '../hooks/useMobileMenu';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';

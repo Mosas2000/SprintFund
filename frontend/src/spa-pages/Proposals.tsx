@@ -10,6 +10,7 @@ import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useLoadComments } from '../store/comment-selectors';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
+import { useProposalUrlFilters } from '../hooks/useProposalUrlFilters';
 import type { Proposal } from '../types';
 
 export function ProposalsPage() {
@@ -18,8 +19,6 @@ export function ProposalsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const toast = useToast();
@@ -28,10 +27,19 @@ export function ProposalsPage() {
   const loadComments = useLoadComments();
   useDocumentTitle('Proposals');
 
+  const {
+    params,
+    setStatus,
+    setPage,
+    resetFilters,
+    hasActiveFilters,
+    activeFilterCount,
+  } = useProposalUrlFilters();
+
   const fetchProposals = useCallback(() => {
     setError(null);
     setLoading(true);
-    getProposalsPage({ page, pageSize: PAGE_SIZE })
+    getProposalsPage({ page: params.page, pageSize: PAGE_SIZE })
       .then((result) => {
         setProposals(result.proposals);
         setTotalPages(result.totalPages);
@@ -44,19 +52,17 @@ export function ProposalsPage() {
         toast.error('Failed to load proposals', msg);
       })
       .finally(() => setLoading(false));
-  }, [page, toast]);
+  }, [params.page, toast]);
 
   useEffect(() => {
     const timeout = window.setTimeout(fetchProposals, 0);
     return () => window.clearTimeout(timeout);
   }, [fetchProposals]);
 
-  // Hydrate comment counts for all loaded proposals
   useEffect(() => {
     proposals.forEach((p) => loadComments(p.id));
   }, [proposals, loadComments]);
 
-  /* Auto-retry when coming back online after a failure */
   useEffect(() => {
     if (online && error) {
       const timeout = window.setTimeout(fetchProposals, 0);
@@ -66,10 +72,10 @@ export function ProposalsPage() {
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => proposals.filter((p) => {
-    if (filter === 'active') return !p.executed;
-    if (filter === 'executed') return p.executed;
+    if (params.status === 'active') return !p.executed;
+    if (params.status === 'executed') return p.executed;
     return true;
-  }), [proposals, filter]);
+  }), [proposals, params.status]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
@@ -88,17 +94,14 @@ export function ProposalsPage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter proposals">
+      <div className="mb-6 flex flex-wrap items-center gap-2" role="group" aria-label="Filter proposals">
         {(['all', 'active', 'executed'] as const).map((f) => (
           <button
             key={f}
-            onClick={() => {
-              setFilter(f);
-              setPage(1);
-            }}
-            aria-pressed={filter === f}
+            onClick={() => setStatus(f)}
+            aria-pressed={params.status === f}
             className={`rounded-md px-4 py-2 text-xs font-medium capitalize transition-colors min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-dark ${
-              filter === f
+              params.status === f
                 ? 'bg-green/10 text-green'
                 : 'text-muted hover:text-text hover:bg-white/5'
             }`}
@@ -106,6 +109,15 @@ export function ProposalsPage() {
             {f}
           </button>
         ))}
+        {hasActiveFilters && (
+          <button
+            onClick={resetFilters}
+            className="rounded-md px-3 py-2 text-xs font-medium text-muted hover:text-text hover:bg-white/5 transition-colors min-h-[44px]"
+            aria-label={`Clear ${activeFilterCount} active filter${activeFilterCount !== 1 ? 's' : ''}`}
+          >
+            Clear filters ({activeFilterCount})
+          </button>
+        )}
       </div>
 
       {/* Content */}
@@ -135,21 +147,21 @@ export function ProposalsPage() {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-muted">
-              Showing page {page} of {totalPages} ({totalCount} total proposals)
+              Showing page {params.page} of {totalPages} ({totalCount} total proposals)
             </p>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
-                disabled={page <= 1}
+                onClick={() => setPage(Math.max(1, params.page - 1))}
+                disabled={params.page <= 1}
                 className="rounded-md border border-border px-3 py-2 text-xs font-medium text-text transition-colors hover:border-green/40 hover:text-green disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
               </button>
               <button
                 type="button"
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                disabled={page >= totalPages}
+                onClick={() => setPage(Math.min(totalPages, params.page + 1))}
+                disabled={params.page >= totalPages}
                 className="rounded-md border border-border px-3 py-2 text-xs font-medium text-text transition-colors hover:border-green/40 hover:text-green disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next

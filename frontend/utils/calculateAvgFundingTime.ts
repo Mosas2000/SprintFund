@@ -11,7 +11,8 @@ export function calculateAvgFundingTime(proposals: ProposalWithBlocks[]): number
     if (!proposals || proposals.length === 0) return 0;
 
     const executedProposals = proposals.filter(
-        (p) => p.executed && p.executionBlock && p.creationBlock
+        (p): p is ProposalWithBlocks & { executionBlock: number; creationBlock: number } =>
+            p.executed && p.executionBlock !== undefined && p.creationBlock !== undefined
     );
     if (executedProposals.length === 0) return 0;
 
@@ -22,9 +23,7 @@ export function calculateAvgFundingTime(proposals: ProposalWithBlocks[]): number
         return sum + minutesElapsed / 60;
     }, 0);
 
-    const validCount = executedProposals.filter(
-        (p) => p.executionBlock - p.creationBlock > 0
-    ).length;
+    const validCount = executedProposals.filter((p) => p.executionBlock - p.creationBlock > 0).length;
 
     return validCount > 0 ? totalHours / validCount : 0;
 }

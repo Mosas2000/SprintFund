@@ -58,7 +58,7 @@ export default function WithdrawVoteModal({
         proposalId,
         proposalTitle,
         action: 'WITHDRAWN',
-        originalVote: current Vote,
+        originalVote: currentVote,
         refundAmount: refund.amount,
         timestamp: Date.now()
       };

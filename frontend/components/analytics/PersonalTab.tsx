@@ -10,6 +10,7 @@ import {
     Lock,
     ChevronRight,
     Zap,
+    Star,
     Award,
     Clock,
     TrendingUp

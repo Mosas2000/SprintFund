@@ -2,16 +2,19 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes';
+export type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes';
 
 interface SortDropdownProps {
     onSortChange: (sort: SortOption) => void;
+    sort?: SortOption;
 }
 
-export default function SortDropdown({ onSortChange }: SortDropdownProps) {
+export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedSort, setSelectedSort] = useState<SortOption>('newest');
+    const [internalSort, setInternalSort] = useState<SortOption>('newest');
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const selectedSort = sort ?? internalSort;
 
     const sortOptions = [
         { value: 'newest' as const, label: 'Newest First' },
@@ -33,9 +36,9 @@ export default function SortDropdown({ onSortChange }: SortDropdownProps) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleSortSelect = (sort: SortOption) => {
-        setSelectedSort(sort);
-        onSortChange(sort);
+    const handleSortSelect = (s: SortOption) => {
+        if (sort === undefined) setInternalSort(s);
+        onSortChange(s);
         setIsOpen(false);
     };
 

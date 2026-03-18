@@ -155,7 +155,7 @@ export default function ExpenseTracker() {
 
   const filteredExpenses = expenses.filter(exp => {
     const statusMatch = filterStatus === 'all' || exp.status === filterStatus;
-    const typeMatch = filterType === 'all' || exp.type === typeMatch;
+    const typeMatch = filterType === 'all' || exp.type === filterType;
     const recurringMatch = !showRecurring || exp.recurring;
     return statusMatch && typeMatch && recurringMatch;
   });

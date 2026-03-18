@@ -359,7 +359,7 @@ export default function TreasuryDiversification() {
                   tooltip: {
                     callbacks: {
                       label: (context) => {
-                        const value = context.parsed.y;
+                        const value = context.parsed.y ?? 0;
                         return `${(value / 1000).toFixed(0)}K STX`;
                       }
                     }

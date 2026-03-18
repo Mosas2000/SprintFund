@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, principalCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
-import { openContractCall } from '@stacks/connect';
 import { formatSTX } from '@/utils/formatSTX';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './LoadingSkeleton';
@@ -14,6 +13,7 @@ import FilterDropdown from './FilterDropdown';
 import SortDropdown from './SortDropdown';
 import SearchBar from './SearchBar';
 import CategoryBadge from './CategoryBadge';
+import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -37,10 +37,18 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
     const [loading, setLoading] = useState(true);
     const [stakeLoading, setStakeLoading] = useState(false);
     const [userStakeAmount, setUserStakeAmount] = useState<number | null>(null);
-    const [filter, setFilter] = useState<'all' | 'active' | 'executed'>('all');
-    const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes'>('newest');
-    const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState('');
+
+    const {
+        params: filterParams,
+        setStatus,
+        setCategory,
+        setSort,
+        setSearch,
+        resetFilters,
+        hasActiveFilters,
+        activeFilterCount,
+    } = useNextProposalFilters();
 
     useEffect(() => {
         fetchProposals();
@@ -125,7 +133,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                         contractAddress: CONTRACT_ADDRESS,
                         contractName: CONTRACT_NAME,
                         functionName: 'get-proposal',
-                        functionArgs: [{ type: 'uint', value: i }],
+                        functionArgs: [uintCV(i)],
                         senderAddress: CONTRACT_ADDRESS,
                     })
                 );
@@ -220,6 +228,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                     },
                 };
 
+                const { openContractCall } = await import('@stacks/connect');
                 await openContractCall(options);
             } catch (err: unknown) {
                 console.error('Error voting:', err);
@@ -495,26 +504,27 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
         );
     }
 
-    // Filter proposals based on selected filter
+    // Filter proposals based on URL params
     const filteredProposals = proposals.filter(proposal => {
-        if (filter === 'active') return !proposal.executed;
-        if (filter === 'executed') return proposal.executed;
-        return true; // 'all' shows everything
+        if (filterParams.status === 'active') return !proposal.executed;
+        if (filterParams.status === 'executed') return proposal.executed;
+        if (filterParams.category !== 'all' && proposal.category !== filterParams.category) return false;
+        return true;
     });
 
     // Search filter - search in title and description
     const searchedProposals = filteredProposals.filter(proposal => {
-        if (!searchTerm.trim()) return true;
-        const search = searchTerm.toLowerCase();
+        if (!filterParams.q.trim()) return true;
+        const search = filterParams.q.toLowerCase();
         return (
             proposal.title.toLowerCase().includes(search) ||
             proposal.description.toLowerCase().includes(search)
         );
     });
 
-    // Sort proposals based on selected sort option
+    // Sort proposals based on URL sort param
     const sortedProposals = [...searchedProposals].sort((a, b) => {
-        switch (sortBy) {
+        switch (filterParams.sort) {
             case 'newest':
                 return b.createdAt - a.createdAt;
             case 'oldest':
@@ -523,10 +533,11 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 return b.amount - a.amount;
             case 'lowest':
                 return a.amount - b.amount;
-            case 'most-votes':
+            case 'most-votes': {
                 const totalVotesA = a.votesFor + a.votesAgainst;
                 const totalVotesB = b.votesFor + b.votesAgainst;
                 return totalVotesB - totalVotesA;
+            }
             default:
                 return 0;
         }
@@ -536,7 +547,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 sm:p-8 border border-white/10">
             {/* Search Bar */}
             <div className="mb-4">
-                <SearchBar onSearchChange={setSearchTerm} />
+                <SearchBar onSearchChange={setSearch} value={filterParams.q} />
             </div>
 
             {/* Filter, Sort, and Refresh Controls */}
@@ -548,8 +559,24 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <FilterDropdown onFilterChange={setFilter} />
-                    <SortDropdown onSortChange={setSortBy} />
+                    <FilterDropdown
+                        onFilterChange={(s, c) => { setStatus(s); setCategory(c); }}
+                        status={filterParams.status}
+                        category={filterParams.category}
+                    />
+                    <SortDropdown
+                        onSortChange={setSort}
+                        sort={filterParams.sort}
+                    />
+                    {hasActiveFilters && (
+                        <button
+                            onClick={resetFilters}
+                            className="px-3 py-2 bg-white/10 hover:bg-white/20 text-purple-300 hover:text-white rounded-lg transition-all text-xs"
+                            aria-label={`Clear ${activeFilterCount} active filter${activeFilterCount !== 1 ? 's' : ''}`}
+                        >
+                            Clear ({activeFilterCount})
+                        </button>
+                    )}
                     <button
                         onClick={fetchProposals}
                         className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all text-sm"
@@ -560,7 +587,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             </div>
 
             <div className="space-y-4">
-                {sortedProposals.length === 0 && searchTerm ? (
+                {sortedProposals.length === 0 && filterParams.q ? (
                     <div className="text-center py-12">
                         <svg className="w-16 h-16 text-purple-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

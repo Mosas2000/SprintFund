@@ -31,7 +31,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
   const [edges, setEdges] = useState<Edge[]>([]);
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
   const [viewMode, setViewMode] = useState<'influence' | 'delegation' | 'specialization'>('influence');
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
 
   const filteredVoters = useMemo(() => {
     return voters.filter(v => v.totalVotes >= minVoteCount);
@@ -52,7 +52,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
         vx: 0,
         vy: 0,
         totalVotes: voter.totalVotes,
-        avgWeight: voter.avgWeight,
+        avgWeight: voter.averageWeight,
         radius: Math.max(5, Math.min(20, Math.sqrt(voter.totalVotes) * 2))
       };
     });
@@ -198,7 +198,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
     simulate();
 
     return () => {
-      if (animationRef.current) {
+      if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
       }
     };
@@ -245,7 +245,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
 
   const keyInfluencers = useMemo(() => {
     return [...filteredVoters]
-      .sort((a, b) => b.totalVotes * b.avgWeight - a.totalVotes * a.avgWeight)
+      .sort((a, b) => b.totalVotes * b.averageWeight - a.totalVotes * a.averageWeight)
       .slice(0, 5);
   }, [filteredVoters]);
 

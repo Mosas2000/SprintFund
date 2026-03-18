@@ -129,7 +129,8 @@ export function calculateSuccessFactors(proposals: ProposalMetrics[]): SuccessFa
     };
   });
 
-  const optimalAmountRange = maxBy(amountAnalysis, 'successRate') || amountRanges[0];
+  const optimalAmountRange =
+    maxBy(amountAnalysis, 'successRate') || { ...amountRanges[0], successRate: 0 };
 
   const timeAnalysis: Array<{ dayOfWeek: number; hour: number; proposals: ProposalMetrics[] }> = [];
   
@@ -178,7 +179,8 @@ export function calculateSuccessFactors(proposals: ProposalMetrics[]): SuccessFa
     };
   });
 
-  const idealDescriptionLength = maxBy(lengthAnalysis, 'successRate') || lengthRanges[1];
+  const idealDescriptionLength =
+    maxBy(lengthAnalysis, 'successRate') || { ...lengthRanges[1], successRate: 0 };
 
   const categoryGroups = groupBy(proposals, 'category');
   const categorySuccessRates = Object.entries(categoryGroups).map(([category, props]) => ({

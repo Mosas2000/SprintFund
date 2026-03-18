@@ -73,7 +73,7 @@ export default function VotingTab() {
 
     useEffect(() => {
         // Mock live voting feed
-        const items = [
+        const items: LiveVote[] = [
             { id: 1, user: 'mosas.btc', proposal: 'Stacks Wallet v3', type: 'YES', weight: 450, time: 'Now' },
             { id: 2, user: 'alice.stx', proposal: 'NFT Grant #42', type: 'YES', weight: 120, time: '2s ago' },
             { id: 3, user: 'bob.btc', proposal: 'Governance SIP-12', type: 'NO', weight: 800, time: '5s ago' },
@@ -83,7 +83,7 @@ export default function VotingTab() {
 
         const interval = setInterval(() => {
             setLiveVotes(prev => {
-                const newVote = {
+                const newVote: LiveVote = {
                     id: Date.now(),
                     user: 'user_' + Math.floor(Math.random() * 1000) + '.stx',
                     proposal: 'Proposal #' + Math.floor(Math.random() * 500),

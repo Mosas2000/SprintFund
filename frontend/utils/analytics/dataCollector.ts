@@ -1,4 +1,4 @@
-import { fetchCallReadOnlyFunction, cvToValue } from '@stacks/transactions';
+import { fetchCallReadOnlyFunction, cvToValue, uintCV } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { retryTransaction } from '../retry';
 
@@ -53,7 +53,8 @@ interface RawProposalData {
   createdAt: number;
 }
 
-interface VoteData {
+export interface VoteData {
+  proposalId: number;
   weight: number;
   support: boolean;
   timestamp: number;
@@ -127,7 +128,7 @@ async function fetchRawProposal(proposalId: number): Promise<RawProposalData | n
         contractAddress: CONTRACT_ADDRESS,
         contractName: CONTRACT_NAME,
         functionName: 'get-proposal',
-        functionArgs: [{ type: 'uint', value: proposalId }],
+        functionArgs: [uintCV(proposalId)],
         senderAddress: CONTRACT_ADDRESS,
       });
 
@@ -311,7 +312,7 @@ export async function fetchVoterMetrics(proposals: ProposalMetrics[]): Promise<V
   const totalProposals = proposals.length;
 
   proposals.forEach(proposal => {
-    const votes = [];
+    const votes: VoteData[] = [];
 
     votes.forEach(vote => {
       const existing = voterMap.get(vote.voter) || {

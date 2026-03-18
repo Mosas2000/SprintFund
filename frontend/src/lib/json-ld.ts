@@ -79,7 +79,7 @@ export function buildWebPageJsonLd(config: PageSeoConfig): JsonLdWebPage {
  * Serializes a JSON-LD object into a script tag string suitable for
  * injection into HTML. The output is a complete <script> element.
  */
-export function serializeJsonLd(data: Record<string, unknown>): string {
+export function serializeJsonLd(data: unknown): string {
   const json = JSON.stringify(data, null, 0);
   return `<script type="application/ld+json">${json}</script>`;
 }

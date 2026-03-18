@@ -49,7 +49,7 @@ export default function ScheduledVote({ proposalId, onSchedule }: ScheduledVoteP
     if (!scheduledTime) return;
 
     const executionTime = new Date(scheduledTime).getTime();
-    const vote = {
+    const vote: ScheduledVoteItem = {
       proposalId,
       voteType,
       executionTime,
@@ -57,7 +57,7 @@ export default function ScheduledVote({ proposalId, onSchedule }: ScheduledVoteP
       status: 'pending'
     };
 
-    const votes = JSON.parse(localStorage.getItem('scheduledVotes') || '[]');
+    const votes: ScheduledVoteItem[] = JSON.parse(localStorage.getItem('scheduledVotes') || '[]');
     votes.push(vote);
     localStorage.setItem('scheduledVotes', JSON.stringify(votes));
 
