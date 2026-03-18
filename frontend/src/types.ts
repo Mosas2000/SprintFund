@@ -10,9 +10,24 @@ export type {
   ProposalCountResult,
 } from './types/proposal';
 
-export interface StakeInfo {
-  amount: number;
-}
+/* Re-export stake types for convenience */
+export type {
+  StakeInfo,
+  StakeInput,
+  WithdrawStakeInput,
+  MinStakeInfo,
+  StakeTransactionResult,
+  StakeHistoryEntry,
+} from './types/stake';
+
+/* Re-export voting types for convenience */
+export type {
+  VoteInput,
+  VoteRecord,
+  UserVotingHistory,
+  VoteWithProposal,
+  VotingStats,
+} from './types/voting';
 
 export type TxStatus = 'pending' | 'success' | 'failed';
 
