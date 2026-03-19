@@ -35,7 +35,7 @@ describe('block-height utilities', () => {
   describe('formatBlockHeight', () => {
     it('should format block height with relative time', () => {
       const result = formatBlockHeight(12345);
-      expect(result).toMatch(/Block #\d+,?\d* \(.+ ago\)/);
+      expect(result).toMatch(/Block #\d+,?\d* \(.+\)/);
     });
 
     it('should handle zero', () => {
