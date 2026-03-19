@@ -9,6 +9,7 @@ import {
 import { request } from '@stacks/connect';
 import { CONTRACT_ADDRESS, CONTRACT_NAME, CONTRACT_PRINCIPAL, NETWORK } from '../config';
 import { sanitizeText, sanitizeMultilineText } from './sanitize';
+import { blockchainCache } from './blockchain-cache';
 import type { Proposal, ProposalPage } from '../types';
 import type {
   ProposalCountResponse,
@@ -62,13 +63,6 @@ function extractVal(v: Record<string, unknown> | string | number | boolean | nul
   return v;
 }
 
-const PROPOSAL_CACHE_TTL_MS = 30_000;
-
-type ProposalCountCacheEntry = {
-  value: number;
-  updatedAt: number;
-};
-
 type ProposalFetchOptions = {
   forceRefresh?: boolean;
   batchSize?: number;
@@ -78,14 +72,6 @@ type ProposalPageOptions = ProposalFetchOptions & {
   page?: number;
   pageSize?: number;
 };
-
-let proposalCountCache: ProposalCountCacheEntry | null = null;
-const proposalByIdCache = new Map<number, Proposal>();
-
-function isProposalCountCacheFresh() {
-  if (!proposalCountCache) return false;
-  return Date.now() - proposalCountCache.updatedAt < PROPOSAL_CACHE_TTL_MS;
-}
 
 function chunk<T>(items: T[], size: number): T[][] {
   const safeSize = Math.max(1, size);
@@ -102,7 +88,7 @@ async function fetchAndCacheProposalIds(ids: number[], options?: ProposalFetchOp
 
   const idsToFetch = forceRefresh
     ? ids
-    : ids.filter((proposalId) => !proposalByIdCache.has(proposalId));
+    : ids.filter((proposalId) => blockchainCache.getProposal(proposalId) === null);
 
   if (idsToFetch.length === 0) {
     return;
@@ -118,7 +104,7 @@ async function fetchAndCacheProposalIds(ids: number[], options?: ProposalFetchOp
       if (!proposal) {
         return;
       }
-      proposalByIdCache.set(batch[index], proposal);
+      blockchainCache.setProposal(batch[index], proposal);
     });
   }
 }
@@ -129,16 +115,16 @@ async function fetchAndCacheProposalIds(ids: number[], options?: ProposalFetchOp
 
 export async function getProposalCount(options?: { forceRefresh?: boolean }): Promise<number> {
   const forceRefresh = options?.forceRefresh ?? false;
-  if (!forceRefresh && isProposalCountCacheFresh()) {
-    return proposalCountCache!.value;
+  if (!forceRefresh) {
+    const cached = blockchainCache.getProposalCount();
+    if (cached !== null) {
+      return cached;
+    }
   }
 
   const raw = await readOnly<ProposalCountResponse>('get-proposal-count', []);
   const value = validateProposalCount(raw) ?? 0;
-  proposalCountCache = {
-    value,
-    updatedAt: Date.now(),
-  };
+  blockchainCache.setProposalCount(value);
 
   return value;
 }
@@ -167,23 +153,34 @@ export async function getAllProposals(options?: ProposalFetchOptions): Promise<P
   const idsDescending = Array.from({ length: count }, (_, i) => count - 1 - i);
   await fetchAndCacheProposalIds(idsDescending, options);
   return idsDescending
-    .map((proposalId) => proposalByIdCache.get(proposalId) ?? null)
+    .map((proposalId) => blockchainCache.getProposal(proposalId))
     .filter((proposal): proposal is Proposal => proposal !== null);
 }
 
 export async function getProposalsPage(options?: ProposalPageOptions): Promise<ProposalPage> {
   const pageSize = Math.max(1, options?.pageSize ?? 10);
   const requestedPage = Math.max(1, options?.page ?? 1);
-  const totalCount = await getProposalCount({ forceRefresh: options?.forceRefresh });
+  const forceRefresh = options?.forceRefresh ?? false;
+
+  if (!forceRefresh) {
+    const cached = blockchainCache.getProposalPage(requestedPage, pageSize);
+    if (cached !== null) {
+      return cached;
+    }
+  }
+
+  const totalCount = await getProposalCount({ forceRefresh });
 
   if (totalCount === 0) {
-    return {
+    const emptyPage: ProposalPage = {
       proposals: [],
       totalCount: 0,
       page: 1,
       pageSize,
       totalPages: 1,
     };
+    blockchainCache.setProposalPage(1, pageSize, emptyPage);
+    return emptyPage;
   }
 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
@@ -198,18 +195,26 @@ export async function getProposalsPage(options?: ProposalPageOptions): Promise<P
 
   await fetchAndCacheProposalIds(ids, options);
 
-  return {
+  const proposalPage: ProposalPage = {
     proposals: ids
-      .map((proposalId) => proposalByIdCache.get(proposalId) ?? null)
+      .map((proposalId) => blockchainCache.getProposal(proposalId))
       .filter((proposal): proposal is Proposal => proposal !== null),
     totalCount,
     page,
     pageSize,
     totalPages,
   };
+
+  blockchainCache.setProposalPage(page, pageSize, proposalPage);
+  return proposalPage;
 }
 
 export async function getStake(address: string): Promise<number> {
+  const cached = blockchainCache.getStake(address);
+  if (cached !== null) {
+    return cached;
+  }
+
   const raw = await readOnly<StakeResponse>('get-stake', [principalCV(address)]);
   if (!raw) return 0;
 
@@ -217,12 +222,20 @@ export async function getStake(address: string): Promise<number> {
   if (!validated) return 0;
 
   const amount = unwrapClarityValue(validated.amount) ?? 0;
-  return validateStxAmount(amount) ?? 0;
+  const validatedAmount = validateStxAmount(amount) ?? 0;
+  blockchainCache.setStake(address, validatedAmount);
+  return validatedAmount;
 }
 
 export async function getMinStakeAmount(): Promise<number> {
+  const cached = blockchainCache.getMinStakeAmount();
+  if (cached !== null) {
+    return cached;
+  }
+
   const raw = await readOnly<MinStakeResponse>('get-min-stake-amount', []);
   const amount = validateStxAmount(raw) ?? 10_000_000;
+  blockchainCache.setMinStakeAmount(amount);
   return amount;
 }
 
@@ -328,4 +341,24 @@ export function callExecuteProposal(proposalId: number, cb: TxCallbacks): void {
     functionArgs: [uintCV(proposalId)],
     cb,
   });
+}
+
+export function invalidateProposalCache(proposalId: number): void {
+  blockchainCache.invalidateProposal(proposalId);
+}
+
+export function invalidateProposalPagesCache(): void {
+  blockchainCache.invalidateProposalPages();
+}
+
+export function invalidateProposalCountCache(): void {
+  blockchainCache.invalidateProposalCount();
+}
+
+export function invalidateStakeCache(address: string): void {
+  blockchainCache.invalidateStake(address);
+}
+
+export function invalidateAllBlockchainCache(): void {
+  blockchainCache.invalidateAll();
 }
