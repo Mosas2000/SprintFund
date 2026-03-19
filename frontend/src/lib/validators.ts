@@ -92,6 +92,8 @@ export function validateRawProposal(raw: unknown): RawProposal | null {
 
 /**
  * Converts a validated raw proposal to a normalized Proposal.
+ * Note: createdAt is a block height (number), not a timestamp.
+ * Use formatBlockHeight() utility to display it as human-readable format.
  */
 export function rawProposalToProposal(id: number, raw: RawProposal): Proposal {
   return {
