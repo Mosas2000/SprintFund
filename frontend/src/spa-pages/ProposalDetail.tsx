@@ -12,6 +12,7 @@ import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { pollTxStatus } from '../lib/pollTxStatus';
+import { formatBlockHeight } from '../lib/block-height';
 import { ProposalDetailSkeleton } from '../components/ProposalDetailSkeleton';
 import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -289,7 +290,7 @@ export function ProposalDetailPage(): JSX.Element {
             </div>
             <div>
               <p className="text-xs text-muted">Created at Block</p>
-              <p className="font-mono text-xs text-text">{proposal.createdAt.toLocaleString()}</p>
+              <p className="font-mono text-xs text-text">{formatBlockHeight(proposal.createdAt)}</p>
             </div>
           </div>
 
