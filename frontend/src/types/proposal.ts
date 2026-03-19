@@ -8,6 +8,9 @@
 /**
  * Normalized proposal data ready for use throughout the application.
  * All fields are validated and in their canonical form.
+ *
+ * Note: createdAt is a block height (not a Unix timestamp).
+ * Use formatBlockHeight() from lib/block-height to display it.
  */
 export interface Proposal {
   id: number;
