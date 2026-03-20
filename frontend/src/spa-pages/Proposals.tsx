@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo, RefObject } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getProposalsPage } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
 import { ErrorState } from '../components/ErrorState';
@@ -11,6 +11,8 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useLoadComments } from '../store/comment-selectors';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import { useProposalUrlFilters } from '../hooks/useProposalUrlFilters';
+import { useArrowKeys } from '../hooks/useArrowKeys';
+import { useEnterKey } from '../hooks/useEnterKey';
 import type { Proposal } from '../types';
 
 /**
@@ -19,12 +21,14 @@ import type { Proposal } from '../types';
  */
 export function ProposalsPage(): JSX.Element {
   const PAGE_SIZE = 10;
+  const navigate = useNavigate();
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -39,6 +43,34 @@ export function ProposalsPage(): JSX.Element {
     hasActiveFilters,
     activeFilterCount,
   } = useProposalUrlFilters();
+
+  const handleSelectUp = useCallback(() => {
+    setSelectedIndex((prev) =>
+      prev === null || prev === 0 ? filtered.length - 1 : prev - 1,
+    );
+  }, []);
+
+  const handleSelectDown = useCallback(() => {
+    setSelectedIndex((prev) =>
+      prev === null || prev === filtered.length - 1 ? 0 : prev + 1,
+    );
+  }, []);
+
+  const handleOpenSelected = useCallback(() => {
+    if (selectedIndex !== null && filtered[selectedIndex]) {
+      navigate(`/proposals/${filtered[selectedIndex].id}`);
+    }
+  }, [selectedIndex, navigate]);
+
+  useArrowKeys(
+    {
+      onUp: handleSelectUp,
+      onDown: handleSelectDown,
+    },
+    selectedIndex !== null,
+  );
+
+  useEnterKey(handleOpenSelected, selectedIndex !== null);
 
   const fetchProposals = useCallback((): void => {
     setError(null);
@@ -142,9 +174,9 @@ export function ProposalsPage(): JSX.Element {
       ) : (
         <>
           <div role="list" aria-label="Proposals" className="grid gap-4 sm:grid-cols-2">
-            {filtered.map((p) => (
+            {filtered.map((p, idx) => (
               <div role="listitem" key={p.id}>
-                <ProposalCard proposal={p} />
+                <ProposalCard proposal={p} selected={selectedIndex === idx} />
               </div>
             ))}
           </div>

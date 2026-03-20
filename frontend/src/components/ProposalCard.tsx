@@ -13,13 +13,14 @@ import type { Proposal } from '../types';
  */
 interface ProposalCardProps {
   proposal: Proposal;
+  selected?: boolean;
 }
 
 /**
  * ProposalCard displays a proposal in list view with voting stats.
  * Shows title, description, vote distribution, and proposal status.
  */
-export const ProposalCard = memo(function ProposalCard({ proposal }: ProposalCardProps): JSX.Element {
+export const ProposalCard = memo(function ProposalCard({ proposal, selected }: ProposalCardProps): JSX.Element {
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
   const commentCount = useCommentCount(proposal.id);
@@ -31,7 +32,11 @@ export const ProposalCard = memo(function ProposalCard({ proposal }: ProposalCar
     <Link
       to={`/proposals/${proposal.id}`}
       aria-label={`${safeTitle} - ${proposal.executed ? 'Executed' : 'Active'} - ${formatStx(proposal.amount)} STX`}
-      className={`group block rounded-xl border border-border bg-card p-4 sm:p-5 transition-all hover:border-green/30 hover:shadow-[0_0_20px_rgba(0,255,136,0.05)] ${FOCUS_RING_GREEN}`}
+      className={`group block rounded-xl border transition-all ${
+        selected
+          ? 'border-green bg-green/5 shadow-[0_0_20px_rgba(0,255,136,0.15)]'
+          : 'border-border bg-card hover:border-green/30 hover:shadow-[0_0_20px_rgba(0,255,136,0.05)]'
+      } p-4 sm:p-5 ${FOCUS_RING_GREEN}`}
     >
       {/* Header row */}
       <div className="mb-2 sm:mb-3 flex items-start justify-between gap-2 sm:gap-3">
