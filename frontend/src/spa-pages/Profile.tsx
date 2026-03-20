@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef, type KeyboardEvent } from 'react';
-import { useWalletAddress, useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
+import { useWalletAddress, useWalletConnected, useWalletConnect, useWalletLoading } from '../store/wallet-selectors';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { fetchUserProfile } from '../lib/profile-data';
@@ -13,6 +13,7 @@ import {
   ProfileSkeleton,
 } from '../components/profile';
 import { ErrorState } from '../components/ErrorState';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import type { UserProfile, ProfileTab } from '../types/profile';
 
 /* ── Tab definitions ──────────────────────────── */
@@ -159,6 +160,7 @@ function TabPanel({
 /* ── Main page component ──────────────────────── */
 
 export function ProfilePage() {
+  const walletLoading = useWalletLoading();
   const connected = useWalletConnected();
   const address = useWalletAddress();
   const connect = useWalletConnect();
@@ -195,6 +197,11 @@ export function ProfilePage() {
     setRetryCount((c) => c + 1);
     loadProfile();
   }, [loadProfile]);
+
+  // Wallet hydrating
+  if (walletLoading) {
+    return <LoadingSpinner />;
+  }
 
   // Not connected
   if (!connected || !address) {

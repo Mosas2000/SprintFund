@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
+import { useWalletConnected, useWalletConnect, useWalletLoading } from '../store/wallet-selectors';
 import { callCreateProposal } from '../lib/stacks';
 import { stxToMicro, MIN_STAKE_STX } from '../config';
 import { useToast } from '../hooks/useToast';
@@ -13,9 +13,11 @@ import { sanitizeText, sanitizeMultilineText } from '../lib/sanitize';
 import { CharacterCounter } from '../components/CharacterCounter';
 import { FieldErrorMessage } from '../components/FieldErrorMessage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import { pollTxStatus } from '../lib/pollTxStatus';
 
 export function CreateProposalPage() {
+  const walletLoading = useWalletLoading();
   const connected = useWalletConnected();
   const connect = useWalletConnect();
   const navigate = useNavigate();
@@ -85,6 +87,10 @@ export function CreateProposalPage() {
       },
     });
   }, [title, description, amount, duration, validation, dialog, toast, navigate]);
+
+  if (walletLoading) {
+    return <LoadingSpinner />;
+  }
 
   if (!connected) {
     return (

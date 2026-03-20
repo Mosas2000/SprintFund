@@ -29,31 +29,43 @@ function getStoredStxAddress(): string | null {
   }
 }
 
+/**
+ * Wallet store manages connection state with proper hydration handling.
+ * 
+ * The store starts with loading=true to prevent race conditions where
+ * components render before wallet hydration completes. This eliminates
+ * the flash of "Connect Wallet" state for already-connected users.
+ * 
+ * Flow:
+ * 1. Initial state: loading=true, connected=false
+ * 2. App.tsx calls hydrate() on mount
+ * 3. hydrate() checks localStorage and sets loading=false
+ * 4. Pages check loading before rendering wallet-dependent UI
+ */
 export const useWalletStore = create<WalletState>((set) => ({
   address: null,
   connected: false,
   loading: true,
 
   connect: async () => {
+    set({ loading: true });
     try {
       const result = await connect({ network: 'mainnet' });
 
-      // result.addresses is AddressEntry[] with { symbol?, address, publicKey }
       let addr: string | null = null;
       if (result?.addresses?.length) {
-        // Prefer the STX entry; wallets typically return STX first
         const stx = result.addresses.find(
           (a: { symbol?: string }) => a.symbol === 'STX' || a.symbol === 'stx',
         );
         addr = stx?.address ?? result.addresses[0]?.address ?? null;
       }
 
-      // Fallback to localStorage
       if (!addr) addr = getStoredStxAddress();
 
-      set({ address: addr, connected: !!addr });
+      set({ address: addr, connected: !!addr, loading: false });
     } catch (err) {
       console.error('Wallet connect failed:', err);
+      set({ loading: false });
     }
   },
 

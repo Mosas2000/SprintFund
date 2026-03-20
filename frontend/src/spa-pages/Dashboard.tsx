@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { useWalletAddress, useWalletConnected, useWalletConnect } from '../store/wallet-selectors';
+import { useWalletAddress, useWalletConnected, useWalletConnect, useWalletLoading } from '../store/wallet-selectors';
 import { getStake, getAllProposals, getProposalCount } from '../lib/stacks';
 import { callStake, callWithdrawStake } from '../lib/stacks';
 import { getStxBalance } from '../lib/api';
@@ -16,6 +16,7 @@ import { useLoadComments } from '../store/comment-selectors';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 import { toErrorMessage } from '../lib/errors';
 import type { Proposal } from '../types';
 
@@ -24,6 +25,7 @@ import type { Proposal } from '../types';
  * Users can stake/unstake tokens and manage their governance participation.
  */
 export function DashboardPage(): JSX.Element {
+  const walletLoading = useWalletLoading();
   const connected = useWalletConnected();
   const address = useWalletAddress();
   const connect = useWalletConnect();
@@ -147,6 +149,11 @@ export function DashboardPage(): JSX.Element {
       },
     });
   }, [withdrawInput, stakeAmount, toast, dialog]);
+
+  /* -- Wallet hydrating ----------------------------- */
+  if (walletLoading) {
+    return <LoadingSpinner />;
+  }
 
   /* -- Not connected ----------------------------- */
   if (!connected) {
