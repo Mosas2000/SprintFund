@@ -22,6 +22,7 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 - **🛡️ Anti-Spam Staking** - Require 10 STX stake to submit proposals
 - **📊 Analytics Dashboard** - Real-time stats and leaderboards
 - **👤 User Dashboard** - Track your proposals, votes, and stake balance
+- **⌨️ Keyboard Shortcuts** - Power user navigation with keyboard commands
 
 ## Tech Stack
 
@@ -34,7 +35,8 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 - **Framework**: Next.js 16 with TypeScript
 - **Styling**: Tailwind CSS
 - **Web3**: @stacks/connect, @stacks/transactions
-- **Features**: Wallet connection, contract interaction, real-time data fetching
+- **Features**: Wallet connection, contract interaction, real-time data fetching, keyboard shortcuts
+- **UX**: Command palette, arrow key navigation, accessibility-first design
 
 ## How to Use
 
@@ -65,6 +67,19 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
    - Only proposal creators can execute
    - Requires votes-for > votes-against
    - Funds automatically transferred on execution
+
+### Keyboard Shortcuts
+
+Power users can navigate faster using keyboard shortcuts:
+
+- **`Cmd/Ctrl+K`** - Open command palette
+- **`Cmd/Ctrl+D`** - Go to dashboard
+- **`Cmd/Ctrl+N`** - Create new proposal
+- **Arrow Keys** - Navigate proposal list
+- **Enter** - Open selected proposal
+- **Esc** - Close modals
+
+Click the keyboard icon in the header for a complete list. See [KEYBOARD_SHORTCUTS.md](KEYBOARD_SHORTCUTS.md) for detailed documentation.
 
 ### For Developers
 
