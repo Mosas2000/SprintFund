@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useWalletStore } from './store/wallet';
 import { Layout } from './components/Layout';
 import { OfflineBanner } from './components/OfflineBanner';
+import { CommandPalette } from './components/CommandPalette';
 import { LandingPage } from './spa-pages/Landing';
 import { ProposalsPage } from './spa-pages/Proposals';
 import { ProposalDetailPage } from './spa-pages/ProposalDetail';
@@ -10,6 +11,7 @@ import { CreateProposalPage } from './spa-pages/CreateProposal';
 import { DashboardPage } from './spa-pages/Dashboard';
 import { ProfilePage } from './spa-pages/Profile';
 import { useKeyboardShortcuts, useNavigationShortcuts } from './hooks/useKeyboardShortcuts';
+import { useCommandPalette, type SearchCommand } from './hooks/useCommandPalette';
 
 /* ── Error Boundary ──────────────────────────── */
 
@@ -60,21 +62,52 @@ class ErrorBoundary extends Component<EBProps, EBState> {
 export default function App() {
   const hydrate = useWalletStore((s) => s.hydrate);
   const nav = useNavigationShortcuts();
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const [shortcuts, setShortcuts] = useState([
-    { key: 'k', ctrlKey: true, action: nav.goToProposals },
+    { key: 'k', ctrlKey: true, action: () => setPaletteOpen(true) },
     { key: 'n', ctrlKey: true, action: nav.createProposal },
     { key: 'd', ctrlKey: true, action: nav.goToDashboard },
   ]);
+
+  const commands: SearchCommand[] = [
+    {
+      id: 'dashboard',
+      title: 'Go to Dashboard',
+      description: 'Navigate to the main dashboard',
+      shortcut: 'Cmd+D',
+      action: nav.goToDashboard,
+    },
+    {
+      id: 'create',
+      title: 'Create New Proposal',
+      description: 'Start creating a new proposal',
+      shortcut: 'Cmd+N',
+      action: nav.createProposal,
+    },
+    {
+      id: 'proposals',
+      title: 'Browse Proposals',
+      description: 'View all proposals',
+      shortcut: 'Cmd+K',
+      action: nav.goToProposals,
+    },
+  ];
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
 
   useKeyboardShortcuts(shortcuts);
+  useCommandPalette(commands, () => setPaletteOpen(true), paletteOpen);
 
   return (
     <ErrorBoundary>
       <OfflineBanner />
+      <CommandPalette
+        isOpen={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        commands={commands}
+      />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
