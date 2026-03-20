@@ -44,23 +44,29 @@ export function ProposalsPage(): JSX.Element {
     activeFilterCount,
   } = useProposalUrlFilters();
 
+  const filtered: Proposal[] = useMemo(() => proposals.filter((p) => {
+    if (params.status === 'active') return !p.executed;
+    if (params.status === 'executed') return p.executed;
+    return true;
+  }), [proposals, params.status]);
+
   const handleSelectUp = useCallback(() => {
     setSelectedIndex((prev) =>
       prev === null || prev === 0 ? filtered.length - 1 : prev - 1,
     );
-  }, []);
+  }, [filtered.length]);
 
   const handleSelectDown = useCallback(() => {
     setSelectedIndex((prev) =>
       prev === null || prev === filtered.length - 1 ? 0 : prev + 1,
     );
-  }, []);
+  }, [filtered.length]);
 
   const handleOpenSelected = useCallback(() => {
     if (selectedIndex !== null && filtered[selectedIndex]) {
       navigate(`/proposals/${filtered[selectedIndex].id}`);
     }
-  }, [selectedIndex, navigate]);
+  }, [selectedIndex, filtered, navigate]);
 
   useArrowKeys(
     {
@@ -106,12 +112,6 @@ export function ProposalsPage(): JSX.Element {
     }
     return undefined;
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const filtered: Proposal[] = useMemo(() => proposals.filter((p) => {
-    if (params.status === 'active') return !p.executed;
-    if (params.status === 'executed') return p.executed;
-    return true;
-  }), [proposals, params.status]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
