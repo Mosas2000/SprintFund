@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ConnectWallet } from './ConnectWallet';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 
 interface NavItem {
@@ -25,7 +26,8 @@ export function MobileNavDrawer({ isOpen, onClose, navItems }: MobileNavDrawerPr
   const { pathname } = useLocation();
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  /* Focus the first link when the drawer opens */
+  useEscapeKey(isOpen, onClose);
+
   useEffect(() => {
     if (isOpen && drawerRef.current) {
       const firstLink = drawerRef.current.querySelector<HTMLElement>('a, button');
