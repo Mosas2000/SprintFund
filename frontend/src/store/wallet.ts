@@ -35,25 +35,24 @@ export const useWalletStore = create<WalletState>((set) => ({
   loading: true,
 
   connect: async () => {
+    set({ loading: true });
     try {
       const result = await connect({ network: 'mainnet' });
 
-      // result.addresses is AddressEntry[] with { symbol?, address, publicKey }
       let addr: string | null = null;
       if (result?.addresses?.length) {
-        // Prefer the STX entry; wallets typically return STX first
         const stx = result.addresses.find(
           (a: { symbol?: string }) => a.symbol === 'STX' || a.symbol === 'stx',
         );
         addr = stx?.address ?? result.addresses[0]?.address ?? null;
       }
 
-      // Fallback to localStorage
       if (!addr) addr = getStoredStxAddress();
 
-      set({ address: addr, connected: !!addr });
+      set({ address: addr, connected: !!addr, loading: false });
     } catch (err) {
       console.error('Wallet connect failed:', err);
+      set({ loading: false });
     }
   },
 
