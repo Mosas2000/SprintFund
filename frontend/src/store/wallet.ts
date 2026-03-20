@@ -29,6 +29,19 @@ function getStoredStxAddress(): string | null {
   }
 }
 
+/**
+ * Wallet store manages connection state with proper hydration handling.
+ * 
+ * The store starts with loading=true to prevent race conditions where
+ * components render before wallet hydration completes. This eliminates
+ * the flash of "Connect Wallet" state for already-connected users.
+ * 
+ * Flow:
+ * 1. Initial state: loading=true, connected=false
+ * 2. App.tsx calls hydrate() on mount
+ * 3. hydrate() checks localStorage and sets loading=false
+ * 4. Pages check loading before rendering wallet-dependent UI
+ */
 export const useWalletStore = create<WalletState>((set) => ({
   address: null,
   connected: false,
