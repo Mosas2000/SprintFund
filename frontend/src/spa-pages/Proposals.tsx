@@ -113,6 +113,10 @@ export function ProposalsPage(): JSX.Element {
     return undefined;
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    setSelectedIndex(null);
+  }, [params.status, params.page]);
+
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
       {/* Header */}
