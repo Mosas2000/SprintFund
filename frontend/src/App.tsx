@@ -1,4 +1,4 @@
-import { useEffect, Component, type ReactNode } from 'react';
+import { useEffect, useState, Component, type ReactNode } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useWalletStore } from './store/wallet';
 import { Layout } from './components/Layout';
@@ -9,6 +9,7 @@ import { ProposalDetailPage } from './spa-pages/ProposalDetail';
 import { CreateProposalPage } from './spa-pages/CreateProposal';
 import { DashboardPage } from './spa-pages/Dashboard';
 import { ProfilePage } from './spa-pages/Profile';
+import { useKeyboardShortcuts, useNavigationShortcuts } from './hooks/useKeyboardShortcuts';
 
 /* ── Error Boundary ──────────────────────────── */
 
@@ -58,10 +59,18 @@ class ErrorBoundary extends Component<EBProps, EBState> {
 
 export default function App() {
   const hydrate = useWalletStore((s) => s.hydrate);
+  const nav = useNavigationShortcuts();
+  const [shortcuts, setShortcuts] = useState([
+    { key: 'k', ctrlKey: true, action: nav.goToProposals },
+    { key: 'n', ctrlKey: true, action: nav.createProposal },
+    { key: 'd', ctrlKey: true, action: nav.goToDashboard },
+  ]);
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  useKeyboardShortcuts(shortcuts);
 
   return (
     <ErrorBoundary>
