@@ -4,12 +4,14 @@ import {
   useWalletConnected,
   useWalletConnect,
   useWalletDisconnect,
+  useWalletLoading,
 } from '../store/wallet-selectors';
 import { truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
 import { FOCUS_RING_GREEN, FOCUS_RING_RED } from '../lib/focus-styles';
 
 export const ConnectWallet = memo(function ConnectWallet() {
+  const loading = useWalletLoading();
   const address = useWalletAddress();
   const connected = useWalletConnected();
   const connect = useWalletConnect();
@@ -25,6 +27,15 @@ export const ConnectWallet = memo(function ConnectWallet() {
     disconnect();
     toast.success('Wallet disconnected');
   }, [disconnect, toast]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2" role="status" aria-label="Loading wallet status">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-green" />
+        <span className="text-xs text-muted">Loading...</span>
+      </div>
+    );
+  }
 
   if (connected && address) {
     return (
