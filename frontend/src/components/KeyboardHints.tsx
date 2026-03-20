@@ -1,9 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 
 export function KeyboardHints() {
   const [showHints, setShowHints] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
+
+  useEffect(() => {
+    if (!showHints) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        panelRef.current &&
+        buttonRef.current &&
+        !panelRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setShowHints(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showHints]);
 
   const shortcuts = [
     {
@@ -33,8 +53,9 @@ export function KeyboardHints() {
   ];
 
   return (
-    <div>
+    <div className="relative">
       <button
+        ref={buttonRef}
         onClick={() => setShowHints(!showHints)}
         aria-label="Toggle keyboard shortcuts help"
         aria-expanded={showHints}
@@ -58,7 +79,10 @@ export function KeyboardHints() {
       </button>
 
       {showHints && (
-        <div className="absolute top-full right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg p-4 z-50">
+        <div
+          ref={panelRef}
+          className="absolute top-full right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg p-4 z-50"
+        >
           <h3 className="text-sm font-semibold text-text mb-3">Keyboard Shortcuts</h3>
           <ul className="space-y-2">
             {shortcuts.map((shortcut, idx) => (
