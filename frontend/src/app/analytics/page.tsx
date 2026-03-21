@@ -18,12 +18,18 @@ import {
     X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import GovernanceAnalyticsDashboard from '@/components/GovernanceAnalyticsDashboard';
+import { AnalyticsKPIPanel } from '@/components/AnalyticsKPIPanel';
+import { AnalyticsExportPanel } from '@/components/AnalyticsExportPanel';
+import FundingMetricsChart from '@/components/FundingMetricsChart';
 
 const AnalyticsTabLoading = () => (
     <div className="p-8">
         <div className="h-40 rounded-2xl border border-slate-800 bg-slate-900/40 animate-pulse" />
     </div>
 );
+
+const GovernanceDashboard = () => <GovernanceAnalyticsDashboard />;
 
 const OverviewTab = dynamic(() => import('@/components/analytics/OverviewTab'), {
     loading: AnalyticsTabLoading,
@@ -54,7 +60,7 @@ const PredictionsTab = dynamic(() => import('@/components/analytics/PredictionsT
     ssr: false,
 });
 
-type TabType = 'overview' | 'proposals' | 'voting' | 'community' | 'personal' | 'insights' | 'predictions';
+type TabType = 'overview' | 'proposals' | 'voting' | 'community' | 'personal' | 'insights' | 'predictions' | 'governance';
 
 const TAB_COMPONENTS: Record<TabType, ComponentType> = {
     overview: OverviewTab,
@@ -64,6 +70,7 @@ const TAB_COMPONENTS: Record<TabType, ComponentType> = {
     personal: PersonalTab,
     insights: InsightsFeed,
     predictions: PredictionsTab,
+    governance: GovernanceDashboard,
 };
 
 export default function AnalyticsPage() {
@@ -83,6 +90,7 @@ export default function AnalyticsPage() {
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: BarChart3 },
+        { id: 'governance', label: 'Governance', icon: Vote },
         { id: 'proposals', label: 'Proposals', icon: FileText },
         { id: 'voting', label: 'Voting', icon: Vote },
         { id: 'community', label: 'Community', icon: Users },
