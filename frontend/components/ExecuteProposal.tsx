@@ -21,6 +21,7 @@ interface ExecuteProposalProps {
     votesFor: number;
     votesAgainst: number;
     onExecuted?: () => void;
+    title?: string;
 }
 
 export default function ExecuteProposal({
@@ -31,11 +32,15 @@ export default function ExecuteProposal({
     votesFor,
     votesAgainst,
     onExecuted,
+    title,
 }: ExecuteProposalProps) {
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
 
     const { isLoading: isExecuting, execute } = useTransaction({
+        type: 'execute',
+        proposalId,
+        title,
         onSuccess: (txId) => {
             setSuccess(`Proposal executed successfully! Transaction ID: ${txId}`);
             if (onExecuted) {

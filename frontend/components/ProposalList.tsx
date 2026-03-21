@@ -178,12 +178,15 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
     };
 
     // Voting Interface Component
-    const VotingInterface = ({ proposalId, executed }: { proposalId: number; executed: boolean }) => {
+    const VotingInterface = ({ proposalId, executed, proposalTitle }: { proposalId: number; executed: boolean; proposalTitle: string }) => {
         const [voteWeight, setVoteWeight] = useState('');
         const [voteSuccess, setVoteSuccess] = useState('');
         const [voteError, setVoteError] = useState('');
 
         const { isLoading: isVoting, execute } = useTransaction({
+            type: 'vote',
+            proposalId,
+            title: proposalTitle,
             onSuccess: (txId) => {
                 toast.success('Vote submitted successfully!');
                 setVoteSuccess(`Vote submitted! Transaction ID: ${txId}`);
@@ -655,7 +658,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                             </div>
 
                             {/* Voting Interface */}
-                            <VotingInterface proposalId={proposal.id} executed={proposal.executed} />
+                            <VotingInterface proposalId={proposal.id} executed={proposal.executed} proposalTitle={proposal.title} />
 
                             {/* Execute Proposal */}
                             <ExecuteProposal
@@ -666,6 +669,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                                 votesFor={proposal.votesFor}
                                 votesAgainst={proposal.votesAgainst}
                                 onExecuted={fetchProposals}
+                                title={proposal.title}
                             />
 
                             {/* Comments Section */}
