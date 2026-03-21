@@ -1,5 +1,5 @@
 import { makeContractDeploy, broadcastTransaction, AnchorMode } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { STACKS_MAINNET } from '@stacks/network';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
@@ -35,12 +35,12 @@ async function deployLogger() {
     contractName: 'sprintfund-logger',
     codeBody: contractCode,
     senderKey: privateKey,
-    network: new StacksMainnet(),
+    network: STACKS_MAINNET,
     anchorMode: AnchorMode.Any,
   };
 
   const transaction = await makeContractDeploy(txOptions);
-  const result = await broadcastTransaction(transaction, new StacksMainnet());
+  const result = await broadcastTransaction(transaction, STACKS_MAINNET);
   
   console.log('✅ Deployment TX:', result.txid);
   console.log('Explorer:', `https://explorer.hiro.so/txid/${result.txid}?chain=mainnet`);
