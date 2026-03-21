@@ -1,14 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTransactionStore } from '@/store/transactions';
 import { useTransactionPolling } from '@/hooks/useTransactionPolling';
 import { useTransactionNotifications } from '@/hooks/useTransactionNotifications';
+import { TransactionErrorBoundary } from './TransactionErrorBoundary';
 import TransactionItem from './TransactionItem';
 import { History, Filter, X, Trash2 } from 'lucide-react';
 import type { TransactionStatus, TransactionType } from '@/types/transaction';
 
 export default function TransactionHistory() {
+  return (
+    <TransactionErrorBoundary>
+      <TransactionHistoryContent />
+    </TransactionErrorBoundary>
+  );
+}
+
+function TransactionHistoryContent() {
   const { transactions, clearOldTransactions } = useTransactionStore();
   const [isOpen, setIsOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<TransactionStatus | 'all'>('all');
