@@ -5,11 +5,11 @@ import { useTransactionStore } from '@/store/transactions';
 import { useTransactionPolling } from '@/hooks/useTransactionPolling';
 import { useTransactionNotifications } from '@/hooks/useTransactionNotifications';
 import TransactionItem from './TransactionItem';
-import { History, Filter, X } from 'lucide-react';
+import { History, Filter, X, Trash2 } from 'lucide-react';
 import type { TransactionStatus, TransactionType } from '@/types/transaction';
 
 export default function TransactionHistory() {
-  const { transactions } = useTransactionStore();
+  const { transactions, clearOldTransactions } = useTransactionStore();
   const [isOpen, setIsOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<TransactionStatus | 'all'>('all');
   const [filterType, setFilterType] = useState<TransactionType | 'all'>('all');
@@ -72,13 +72,29 @@ export default function TransactionHistory() {
                   {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? 's' : ''}
                 </p>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                aria-label="Close"
-              >
-                <X className="h-5 w-5 text-white" />
-              </button>
+              <div className="flex items-center gap-2">
+                {Object.keys(transactions).length > 0 && (
+                  <button
+                    onClick={() => {
+                      if (confirm('Clear transactions older than 30 days?')) {
+                        clearOldTransactions(30);
+                      }
+                    }}
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    aria-label="Clear old transactions"
+                    title="Clear old transactions"
+                  >
+                    <Trash2 className="h-5 w-5 text-white/60" />
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5 text-white" />
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center gap-3 px-6 py-4 border-b border-white/10">
