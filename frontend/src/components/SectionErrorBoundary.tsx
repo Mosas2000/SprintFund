@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
+import { errorLogger } from '@/utils/error-logger';
 
 interface Props {
   children: ReactNode;
@@ -35,6 +36,12 @@ export class SectionErrorBoundary extends Component<Props, State> {
       `Error in ${this.props.componentName || 'component'}:`,
       error,
       errorInfo
+    );
+    errorLogger.log(
+      this.props.componentName || 'unknown',
+      error,
+      errorInfo,
+      'medium'
     );
     this.props.onError?.(error, errorInfo);
   }
