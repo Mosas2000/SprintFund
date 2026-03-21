@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTransactionStore } from '@/store/transactions';
 import { useTransactionPolling } from '@/hooks/useTransactionPolling';
+import { useTransactionNotifications } from '@/hooks/useTransactionNotifications';
 import TransactionItem from './TransactionItem';
 import { History, Filter, X } from 'lucide-react';
 import type { TransactionStatus, TransactionType } from '@/types/transaction';
@@ -14,6 +15,7 @@ export default function TransactionHistory() {
   const [filterType, setFilterType] = useState<TransactionType | 'all'>('all');
 
   useTransactionPolling();
+  useTransactionNotifications();
 
   const transactionList = Object.values(transactions).sort(
     (a, b) => b.timestamp - a.timestamp,
