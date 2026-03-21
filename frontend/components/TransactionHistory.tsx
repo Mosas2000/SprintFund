@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTransactionStore } from '@/store/transactions';
 import { useTransactionPolling } from '@/hooks/useTransactionPolling';
 import { useTransactionNotifications } from '@/hooks/useTransactionNotifications';
 import { TransactionErrorBoundary } from './TransactionErrorBoundary';
 import TransactionItem from './TransactionItem';
-import { History, Filter, X, Trash2 } from 'lucide-react';
+import { downloadTransactionsCSV } from '@/utils/transaction-utils';
+import { History, Filter, X, Trash2, Download } from 'lucide-react';
 import type { TransactionStatus, TransactionType } from '@/types/transaction';
 
 export default function TransactionHistory() {
@@ -82,6 +83,16 @@ function TransactionHistoryContent() {
                 </p>
               </div>
               <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-2">
+                {filteredTransactions.length > 0 && (
+                  <button
+                    onClick={() => downloadTransactionsCSV(filteredTransactions)}
+                    className="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    aria-label="Export transactions as CSV"
+                    title="Export transactions as CSV"
+                  >
+                    <Download className="h-4 w-4 sm:h-5 sm:w-5 text-white/60" />
+                  </button>
+                )}
                 {Object.keys(transactions).length > 0 && (
                   <button
                     onClick={() => {
