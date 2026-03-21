@@ -34,7 +34,6 @@ export const componentImportMapping = {
   'VoterInfluence': 'components/voting',
   'DelegationStats': 'components/voting',
   'VotingAnalyticsDashboard': 'components/voting',
-  'VotingTrendsChart': 'components/voting',
   'VotingProgressBar': 'components/voting',
   'QuorumMonitor': 'components/voting',
 

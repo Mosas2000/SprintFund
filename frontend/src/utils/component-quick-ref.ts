@@ -9,7 +9,7 @@ export const componentQuickRef = {
   'ProposalStatusBadge': { category: 'proposals', description: 'Status indicator for proposals' },
   'ProposalSearch': { category: 'proposals', description: 'Search proposals interface' },
   'ProposalSort': { category: 'proposals', description: 'Sort proposals controls' },
-  'VotingProgressBar': { category: 'proposals', description: 'Voting progress visualization' },
+  'VotingProgressBar': { category: 'voting', description: 'Voting progress visualization' },
   'PaginatedProposalList': { category: 'proposals', description: 'Paginated proposal list' },
   'RelatedProposals': { category: 'proposals', description: 'Show related proposals' },
 
@@ -18,7 +18,6 @@ export const componentQuickRef = {
   'DelegatorMarketplace': { category: 'voting', description: 'Delegator marketplace' },
   'VoterInfluence': { category: 'voting', description: 'Voting power metrics' },
   'BulkVotingQueue': { category: 'voting', description: 'Batch voting interface' },
-  'VotingTrendsChart': { category: 'voting', description: 'Voting trends visualization' },
 
   'UserDashboard': { category: 'dashboard', description: 'User main dashboard' },
   'UserProfile': { category: 'dashboard', description: 'User profile page' },
@@ -33,8 +32,8 @@ export const componentQuickRef = {
   'SuccessRateChart': { category: 'charts', description: 'Success rate visualization' },
   'TreasuryBalanceChart': { category: 'charts', description: 'Treasury balance over time' },
   'ProposerActivityChart': { category: 'charts', description: 'Proposer activity trends' },
+  'VotingTrendsChart': { category: 'charts', description: 'Voting trends visualization' },
 
-  'CreateProposalForm': { category: 'forms', description: 'Proposal creation form' },
   'MarkdownEditor': { category: 'forms', description: 'Markdown text editor' },
   'CommentInput': { category: 'forms', description: 'Comment input field' },
   'DateRangeFilter': { category: 'forms', description: 'Date range selection form' },
