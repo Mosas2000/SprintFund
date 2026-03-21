@@ -24,24 +24,68 @@ interface BlockResponse {
   burn_block_time: number;
 }
 
+const CACHE_DURATION = 30000;
+const MAX_CACHE_SIZE = 100;
+
 export class StacksApiService {
   private baseUrl: string;
+  private txCache: Map<string, { data: StacksTransaction; timestamp: number }> = new Map();
+  private blockHeightCache: { data: number; timestamp: number } | null = null;
 
   constructor(baseUrl: string = API_URL) {
     this.baseUrl = baseUrl;
   }
 
+  private clearExpiredCache(): void {
+    const now = Date.now();
+
+    for (const [key, value] of this.txCache.entries()) {
+      if (now - value.timestamp > CACHE_DURATION) {
+        this.txCache.delete(key);
+      }
+    }
+
+    if (this.blockHeightCache && now - this.blockHeightCache.timestamp > CACHE_DURATION) {
+      this.blockHeightCache = null;
+    }
+  }
+
+  private limitCacheSize(): void {
+    if (this.txCache.size > MAX_CACHE_SIZE) {
+      const keys = Array.from(this.txCache.keys());
+      const toDelete = keys.slice(0, this.txCache.size - MAX_CACHE_SIZE);
+      toDelete.forEach((key) => this.txCache.delete(key));
+    }
+  }
+
   async fetchTransaction(txId: string): Promise<StacksTransaction> {
+    this.clearExpiredCache();
+
+    const cached = this.txCache.get(txId);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.data;
+    }
+
     const response = await fetch(`${this.baseUrl}/extended/v1/tx/${txId}`);
     
     if (!response.ok) {
       throw new Error(`Failed to fetch transaction: ${response.statusText}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    this.txCache.set(txId, { data, timestamp: Date.now() });
+    this.limitCacheSize();
+
+    return data;
   }
 
   async getCurrentBlockHeight(): Promise<number> {
+    this.clearExpiredCache();
+
+    if (this.blockHeightCache && Date.now() - this.blockHeightCache.timestamp < CACHE_DURATION) {
+      return this.blockHeightCache.data;
+    }
+
     const response = await fetch(`${this.baseUrl}/extended/v1/block?limit=1`);
     
     if (!response.ok) {
@@ -49,7 +93,10 @@ export class StacksApiService {
     }
 
     const data = await response.json();
-    return data.results?.[0]?.height || 0;
+    const height = data.results?.[0]?.height || 0;
+    this.blockHeightCache = { data: height, timestamp: Date.now() };
+
+    return height;
   }
 
   mapTxStatus(stacksStatus: string, txResult?: { repr: string }): TransactionStatus {
@@ -132,6 +179,11 @@ export class StacksApiService {
 
   getExplorerUrl(txId: string): string {
     return `https://explorer.hiro.so/txid/${txId}?chain=mainnet`;
+  }
+
+  clearCache(): void {
+    this.txCache.clear();
+    this.blockHeightCache = null;
   }
 }
 
