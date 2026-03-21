@@ -1,0 +1,131 @@
+'use client';
+
+import { useState } from 'react';
+import { useWallet } from '@stacks/connect-react';
+import { useProposalDiscussion } from '@/hooks/useProposalDiscussion';
+import { Heart, MessageCircle, MoreVertical } from 'lucide-react';
+
+interface DiscussionCommentProps {
+  comment: any;
+  proposalId: string;
+  depth?: number;
+  onReplyClick?: (commentId: string) => void;
+  canDelete?: boolean;
+  onDelete?: (commentId: string) => void;
+}
+
+export function DiscussionComment({
+  comment,
+  proposalId,
+  depth = 0,
+  onReplyClick,
+  canDelete,
+  onDelete,
+}: DiscussionCommentProps) {
+  const { userSession } = useWallet();
+  const { likeComment } = useProposalDiscussion(proposalId);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  if (comment.isDeleted) {
+    return (
+      <div className="py-3 px-4 bg-white/5 rounded-lg border border-white/10">
+        <p className="text-sm text-white/40 italic">[Comment deleted]</p>
+      </div>
+    );
+  }
+
+  const isAuthor = userSession?.addresses.mainnet === comment.authorAddress;
+  const formatAddress = (addr: string) => `${addr.slice(0, 8)}...${addr.slice(-6)}`;
+
+  return (
+    <div className={`space-y-3 ${depth > 0 ? 'ml-6 mt-3' : ''}`}>
+      <div className="bg-white/5 rounded-lg p-4 border border-white/10 hover:border-purple-500/30 transition-colors">
+        <div className="flex items-start justify-between mb-2">
+          <div>
+            <p className="text-sm font-medium text-white">
+              {comment.authorName || formatAddress(comment.authorAddress)}
+            </p>
+            <p className="text-xs text-white/40">
+              {new Date(comment.createdAt).toLocaleDateString()} {new Date(comment.createdAt).toLocaleTimeString()}
+              {comment.isEdited && <span className="ml-2">(edited)</span>}
+            </p>
+          </div>
+          <div className="relative">
+            {(isAuthor || canDelete) && (
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-1 hover:bg-white/10 rounded transition-colors"
+              >
+                <MoreVertical className="h-4 w-4 text-white/60" />
+              </button>
+            )}
+            {showMenu && (
+              <div className="absolute right-0 top-full mt-1 bg-slate-800 border border-white/10 rounded-lg shadow-lg z-10">
+                {isAuthor && (
+                  <button
+                    onClick={() => {
+                      setIsEditing(true);
+                      setShowMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-white/10 first:rounded-t-lg"
+                  >
+                    Edit
+                  </button>
+                )}
+                {(isAuthor || canDelete) && (
+                  <button
+                    onClick={() => {
+                      onDelete?.(comment.id);
+                      setShowMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 last:rounded-b-lg"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <p className="text-sm text-white mb-4 break-words">{comment.content}</p>
+
+        <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+          <button
+            onClick={() => likeComment(comment.id)}
+            className="flex items-center gap-1 text-xs text-white/60 hover:text-purple-400 transition-colors"
+          >
+            <Heart className="h-3 w-3" />
+            <span>{comment.likes}</span>
+          </button>
+          {onReplyClick && depth < 2 && (
+            <button
+              onClick={() => onReplyClick(comment.id)}
+              className="flex items-center gap-1 text-xs text-white/60 hover:text-purple-400 transition-colors"
+            >
+              <MessageCircle className="h-3 w-3" />
+              <span>Reply</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="space-y-3">
+          {comment.replies.map((reply: any) => (
+            <DiscussionComment
+              key={reply.id}
+              comment={reply}
+              proposalId={proposalId}
+              depth={depth + 1}
+              onReplyClick={onReplyClick}
+              canDelete={canDelete}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
