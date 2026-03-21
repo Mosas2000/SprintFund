@@ -4,7 +4,7 @@ const {
   AnchorMode,
   uintCV
 } = require('@stacks/transactions');
-const { StacksMainnet } = require('@stacks/network');
+const { STACKS_MAINNET } = require('@stacks/network');
 require('dotenv').config();
 
 async function stakeSTX() {
@@ -20,7 +20,6 @@ async function stakeSTX() {
   console.log('SprintFund Stake STX');
   console.log('============================================\n');
   
-  const network = new StacksMainnet();
   const contractAddress = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
   const contractName = 'sprintfund-core';
   const stakeAmount = 10000000; // 10 STX minimum
@@ -42,7 +41,7 @@ async function stakeSTX() {
       ],
       senderKey: privateKey,
       validateWithAbi: true,
-      network,
+      network: STACKS_MAINNET,
       anchorMode: AnchorMode.Any,
       fee: 10000
     };
@@ -50,7 +49,7 @@ async function stakeSTX() {
     const transaction = await makeContractCall(txOptions);
     
     console.log('Broadcasting transaction to mainnet...\n');
-    const broadcastResponse = await broadcastTransaction(transaction, network);
+    const broadcastResponse = await broadcastTransaction(transaction, STACKS_MAINNET);
     
     if (broadcastResponse.error) {
       console.error('ERROR:', broadcastResponse.error);
