@@ -3,15 +3,15 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
 
-const COLORS = ['#10b981', '#ef4444', '#f59e0b'];
+const COLORS = ['#8b5cf6', '#06b6d4', '#f59e0b', '#10b981'];
 
-export default function SuccessRateChart() {
-  const { proposalStats, loading } = useGovernanceAnalytics();
+export default function VotingPowerConcentrationChart() {
+  const { votingPower, loading } = useGovernanceAnalytics();
 
   if (loading) {
     return (
       <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-        <h3 className="text-xl font-bold text-white mb-4">Proposal Success Rate</h3>
+        <h3 className="text-xl font-bold text-white mb-4">Voting Power Concentration</h3>
         <div className="h-[300px] flex items-center justify-center">
           <p className="text-white/60">Loading...</p>
         </div>
@@ -19,10 +19,10 @@ export default function SuccessRateChart() {
     );
   }
 
-  if (!proposalStats) {
+  if (!votingPower) {
     return (
       <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-        <h3 className="text-xl font-bold text-white mb-4">Proposal Success Rate</h3>
+        <h3 className="text-xl font-bold text-white mb-4">Voting Power Concentration</h3>
         <div className="h-[300px] flex items-center justify-center">
           <p className="text-white/60">No data available</p>
         </div>
@@ -30,18 +30,25 @@ export default function SuccessRateChart() {
     );
   }
 
+  const top10Total = votingPower.topVoters.reduce((sum, v) => sum + v.amount, 0);
+  const others = Math.max(0, votingPower.totalStake - top10Total);
+
   const data = [
-    { name: 'Approved', value: proposalStats.approved },
-    { name: 'Rejected', value: proposalStats.rejected },
-    { name: 'Pending', value: proposalStats.pending },
+    { name: 'Top 10 Stakers', value: top10Total / 1_000_000 },
+    { name: 'Others', value: others / 1_000_000 },
   ];
+
+  const whalePercentage = (votingPower.whaleConcentration || 0).toFixed(1);
 
   return (
     <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-      <h3 className="text-xl font-bold text-white mb-4">Proposal Success Rate</h3>
-      {data.every((d) => d.value === 0) ? (
+      <h3 className="text-xl font-bold text-white mb-2">Voting Power Concentration</h3>
+      <p className="text-sm text-white/60 mb-4">
+        Top 10 Stakers: {whalePercentage}% of total stake
+      </p>
+      {votingPower.uniqueStakers === 0 ? (
         <div className="h-[300px] flex items-center justify-center">
-          <p className="text-white/60">No proposals yet</p>
+          <p className="text-white/60">No staking data available</p>
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={300}>
@@ -51,10 +58,7 @@ export default function SuccessRateChart() {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => {
-                const pct = (percent ?? 0) * 100;
-                return `${name} ${pct.toFixed(0)}%`;
-              }}
+              label={({ name, value }) => `${name}: ${value.toFixed(2)} STX`}
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"
@@ -70,8 +74,8 @@ export default function SuccessRateChart() {
                 borderRadius: '8px',
                 color: '#fff',
               }}
+              formatter={(value) => [value.toFixed(2), 'STX']}
             />
-            <Legend />
           </PieChart>
         </ResponsiveContainer>
       )}
