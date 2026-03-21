@@ -82,11 +82,12 @@ export default function TransactionHistory() {
             </div>
 
             <div className="flex items-center gap-3 px-6 py-4 border-b border-white/10">
-              <Filter className="h-4 w-4 text-white/60" />
+              <Filter className="h-4 w-4 text-white/60" aria-hidden="true" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as TransactionStatus | 'all')}
                 className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                aria-label="Filter by transaction status"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -99,6 +100,7 @@ export default function TransactionHistory() {
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as TransactionType | 'all')}
                 className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                aria-label="Filter by transaction type"
               >
                 <option value="all">All Types</option>
                 <option value="stake">Stake</option>
@@ -109,10 +111,10 @@ export default function TransactionHistory() {
               </select>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-6" role="list" aria-label="Transaction list">
               {filteredTransactions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <History className="h-12 w-12 text-white/20 mb-4" />
+                <div className="flex flex-col items-center justify-center py-12 text-center" role="status">
+                  <History className="h-12 w-12 text-white/20 mb-4" aria-hidden="true" />
                   <p className="text-white/60">No transactions found</p>
                   <p className="text-sm text-white/40 mt-1">
                     Your transaction history will appear here
