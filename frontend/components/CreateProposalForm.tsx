@@ -35,6 +35,9 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
     const [success, setSuccess] = useState('');
 
     const { isLoading, execute } = useTransaction({
+        type: 'create-proposal',
+        title,
+        amount: parseFloat(amount) ? toMicroSTX(parseFloat(amount)) : undefined,
         onSuccess: (txId) => {
             toast.success('Proposal created successfully!');
             setSuccess(`Proposal created successfully! Transaction ID: ${txId}`);
