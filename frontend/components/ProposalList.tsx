@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, principalCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { formatSTX } from '@/utils/formatSTX';
@@ -15,6 +15,7 @@ import SearchBar from './SearchBar';
 import CategoryBadge from './CategoryBadge';
 import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 import { useTransaction } from '@/hooks/useTransaction';
+import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
 
 const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 const CONTRACT_NAME = 'sprintfund-core';
@@ -101,12 +102,11 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
         fetchStake();
     }, [userAddress]);
 
-    const fetchProposals = async () => {
+    const fetchProposals = useCallback(async () => {
         try {
             setLoading(true);
             setError('');
 
-            // First, get the proposal count
             const countResult = await fetchCallReadOnlyFunction({
                 network: NETWORK,
                 contractAddress: CONTRACT_ADDRESS,
@@ -125,7 +125,6 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                 return;
             }
 
-            // Fetch each proposal
             const proposalPromises = [];
             for (let i = 0; i < count; i++) {
                 proposalPromises.push(
@@ -169,7 +168,9 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             setError('Failed to load proposals. Please try again.');
             setLoading(false);
         }
-    };
+    }, []);
+
+    useRefreshOnConfirmation(fetchProposals);
 
     // Uses centralized formatSTX from utils/formatSTX
 
@@ -178,12 +179,15 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
     };
 
     // Voting Interface Component
-    const VotingInterface = ({ proposalId, executed }: { proposalId: number; executed: boolean }) => {
+    const VotingInterface = ({ proposalId, executed, proposalTitle }: { proposalId: number; executed: boolean; proposalTitle: string }) => {
         const [voteWeight, setVoteWeight] = useState('');
         const [voteSuccess, setVoteSuccess] = useState('');
         const [voteError, setVoteError] = useState('');
 
         const { isLoading: isVoting, execute } = useTransaction({
+            type: 'vote',
+            proposalId,
+            title: proposalTitle,
             onSuccess: (txId) => {
                 toast.success('Vote submitted successfully!');
                 setVoteSuccess(`Vote submitted! Transaction ID: ${txId}`);
@@ -655,7 +659,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                             </div>
 
                             {/* Voting Interface */}
-                            <VotingInterface proposalId={proposal.id} executed={proposal.executed} />
+                            <VotingInterface proposalId={proposal.id} executed={proposal.executed} proposalTitle={proposal.title} />
 
                             {/* Execute Proposal */}
                             <ExecuteProposal
@@ -666,6 +670,7 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
                                 votesFor={proposal.votesFor}
                                 votesAgainst={proposal.votesAgainst}
                                 onExecuted={fetchProposals}
+                                title={proposal.title}
                             />
 
                             {/* Comments Section */}
