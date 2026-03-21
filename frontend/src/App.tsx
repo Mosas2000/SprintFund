@@ -4,6 +4,7 @@ import { useWalletStore } from './store/wallet';
 import { Layout } from './components/Layout';
 import { OfflineBanner } from './components/OfflineBanner';
 import { CommandPalette } from './components/CommandPalette';
+import TransactionHistory from '../components/TransactionHistory';
 import { LandingPage } from './spa-pages/Landing';
 import { ProposalsPage } from './spa-pages/Proposals';
 import { ProposalDetailPage } from './spa-pages/ProposalDetail';
@@ -108,6 +109,7 @@ export default function App() {
         onClose={() => setPaletteOpen(false)}
         commands={commands}
       />
+      <TransactionHistory />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
