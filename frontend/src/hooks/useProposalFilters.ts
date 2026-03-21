@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 interface FilterState {
   status?: string;
   proposer?: string;
@@ -12,8 +14,8 @@ interface SortState {
 }
 
 export const useProposalFilters = () => {
-  const [filters, setFilters] = React.useState<FilterState>({});
-  const [sort, setSort] = React.useState<SortState>({
+  const [filters, setFilters] = useState<FilterState>({});
+  const [sort, setSort] = useState<SortState>({
     sortBy: 'createdAt',
     sortOrder: 'desc',
   });
