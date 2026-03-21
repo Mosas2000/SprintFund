@@ -5,11 +5,18 @@
 import { useState, useCallback } from 'react';
 import type { LoadingState } from '../lib/loading-state';
 import { createLoadingState, updateLoadingState } from '../lib/loading-state';
+import { useTransactionStore } from '../store/transactions';
+import type { TransactionType } from '../types/transaction';
 
 interface UseTransactionOptions {
   onSuccess?: (txId: string) => void;
   onError?: (error: Error) => void;
   onFinal?: () => void;
+  type?: TransactionType;
+  proposalId?: number;
+  amount?: number;
+  title?: string;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -19,6 +26,7 @@ export function useTransaction(options?: UseTransactionOptions) {
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
   const [txId, setTxId] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const { addTransaction } = useTransactionStore();
 
   const execute = useCallback(
     async (transaction: () => Promise<string>) => {
@@ -29,6 +37,20 @@ export function useTransaction(options?: UseTransactionOptions) {
         const id = await transaction();
         setTxId(id);
         setLoadingState(updateLoadingState(loadingState, 'success'));
+
+        if (options?.type) {
+          addTransaction({
+            id,
+            type: options.type,
+            status: 'pending',
+            timestamp: Date.now(),
+            proposalId: options.proposalId,
+            amount: options.amount,
+            title: options.title,
+            metadata: options.metadata,
+          });
+        }
+
         options?.onSuccess?.(id);
 
         return id;
@@ -42,7 +64,7 @@ export function useTransaction(options?: UseTransactionOptions) {
         options?.onFinal?.();
       }
     },
-    [loadingState, options],
+    [loadingState, options, addTransaction],
   );
 
   const reset = useCallback(() => {
