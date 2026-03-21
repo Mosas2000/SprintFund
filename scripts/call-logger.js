@@ -1,5 +1,5 @@
 import { makeContractCall, broadcastTransaction, AnchorMode, stringUtf8CV } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { STACKS_MAINNET } from '@stacks/network';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 
@@ -26,12 +26,12 @@ async function logActivity(message, index) {
       functionName: 'log-activity',
       functionArgs: [stringUtf8CV(message)],
       senderKey: process.env.PRIVATE_KEY,
-      network: new StacksMainnet(),
+      network: STACKS_MAINNET,
       anchorMode: AnchorMode.Any,
     };
 
     const transaction = await makeContractCall(txOptions);
-    const result = await broadcastTransaction(transaction, new StacksMainnet());
+    const result = await broadcastTransaction(transaction, STACKS_MAINNET);
     
     const logEntry = `LOG_${index}: ${result.txid} - ${message}\n`;
     fs.appendFileSync('../transactions.log', logEntry);
