@@ -39,6 +39,17 @@ yarn-error.log*
 # vercel
 .vercel
 
+# docker
+.docker
+docker-compose.override.yml
+
+# kubernetes secrets
+k8s/*-secret.yaml
+k8s/secrets/
+
+# netlify
+.netlify
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
