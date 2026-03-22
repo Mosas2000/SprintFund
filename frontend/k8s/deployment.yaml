@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sprintfund-frontend
+  labels:
+    app: sprintfund-frontend
+    tier: frontend
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: sprintfund-frontend
+  template:
+    metadata:
+      labels:
+        app: sprintfund-frontend
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: sprintfund-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: NEXT_TELEMETRY_DISABLED
+          value: "1"
+        - name: NEXT_PUBLIC_NETWORK
+          valueFrom:
+            configMapKeyRef:
+              name: sprintfund-config
+              key: network
+        - name: NEXT_PUBLIC_CONTRACT_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: sprintfund-config
+              key: contract-address
+        - name: NEXT_PUBLIC_STACKS_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: sprintfund-config
+              key: stacks-api-url
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3

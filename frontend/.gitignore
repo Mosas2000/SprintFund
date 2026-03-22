@@ -33,9 +33,22 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+!.env.staging
+!.env.production
 
 # vercel
 .vercel
+
+# docker
+.docker
+docker-compose.override.yml
+
+# kubernetes secrets
+k8s/*-secret.yaml
+k8s/secrets/
+
+# netlify
+.netlify
 
 # typescript
 *.tsbuildinfo
