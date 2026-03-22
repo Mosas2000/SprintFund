@@ -10,6 +10,28 @@
       "maxDuration": 10
     }
   },
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/proposal/:id",
+      "destination": "/proposals/:id",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/healthz",
+      "destination": "/api/health"
+    },
+    {
+      "source": "/ready",
+      "destination": "/api/health"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
