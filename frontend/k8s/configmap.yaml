@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sprintfund-config
+  labels:
+    app: sprintfund-frontend
+data:
+  network: "mainnet"
+  contract-address: "SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core"
+  stacks-api-url: "https://stacks-node-api.mainnet.stacks.co"
