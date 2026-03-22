@@ -1,0 +1,123 @@
+name: Scheduled Maintenance
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  dependency-updates:
+    name: Check Dependency Updates
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: List outdated packages
+        run: npm outdated > outdated.txt || true
+
+      - name: Create issue for outdated dependencies
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const outdated = fs.readFileSync('outdated.txt', 'utf8');
+            
+            if (outdated.trim()) {
+              const issue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Dependency Updates Available',
+                body: `## Outdated Dependencies\n\n\`\`\`\n${outdated}\n\`\`\`\n\nPlease review and update as needed.`,
+                labels: ['dependencies', 'maintenance']
+              });
+              console.log(`Created issue #${issue.data.number}`);
+            }
+
+  test-report:
+    name: Generate Test Report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run tests with report
+        run: npm run test:report
+        continue-on-error: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report
+          path: |
+            coverage/
+            frontend/coverage/
+
+  performance-baseline:
+    name: Record Performance Baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Analyze build
+        working-directory: frontend
+        run: |
+          echo "Build Analysis" > build-analysis.txt
+          du -sh .next >> build-analysis.txt
+          ls -lh .next >> build-analysis.txt
+
+      - name: Upload build analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-analysis
+          path: frontend/build-analysis.txt
+
+  cleanup:
+    name: Cleanup Old Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove old artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: |
+            frontend-build
+            test-report
+          failOnError: false

@@ -1,0 +1,18 @@
+# GitHub CODEOWNERS file for automatic code review assignment
+
+* @Mosas2000
+
+# Smart Contracts
+/contracts/ @Mosas2000
+
+# Frontend
+/frontend/ @Mosas2000
+
+# CI/CD and DevOps
+/.github/ @Mosas2000
+/scripts/ @Mosas2000
+
+# Configuration
+/Clarinet.toml @Mosas2000
+/package.json @Mosas2000
+/tsconfig.json @Mosas2000
