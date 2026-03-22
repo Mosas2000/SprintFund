@@ -1,0 +1,83 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "03:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - Mosas2000
+    assignees:
+      - Mosas2000
+    labels:
+      - dependencies
+      - automated
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    allow:
+      - dependency-type: production
+      - dependency-type: development
+    ignore:
+      - dependency-name: "@stacks/core"
+        update-types: ["version-update:semver-major"]
+    pull-request-branch-name:
+      separator: "-"
+
+  - package-ecosystem: npm
+    directory: "/frontend"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "04:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - Mosas2000
+    assignees:
+      - Mosas2000
+    labels:
+      - dependencies
+      - automated
+      - frontend
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    allow:
+      - dependency-type: production
+      - dependency-type: development
+    ignore:
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+    pull-request-branch-name:
+      separator: "-"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+      day: first
+    open-pull-requests-limit: 5
+    reviewers:
+      - Mosas2000
+    labels:
+      - dependencies
+      - automated
+      - github-actions
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: monthly
+      day: first
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - automated
+      - docker
