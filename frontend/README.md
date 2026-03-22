@@ -119,23 +119,66 @@ The frontend interacts with the deployed contract:
 
 ## Deployment
 
-### Vercel (Recommended)
+Multiple deployment options are available with full configuration included.
 
+### Quick Start
+
+**Vercel (Recommended)**
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
+npm ci
+npm run build
+npx vercel --prod
 ```
 
-### Other Platforms
+**Netlify**
+```bash
+npm ci
+npm run build
+```
+Connect your repository to Netlify and deploy.
 
-The app is a standard Next.js application and can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- AWS Amplify
-- Self-hosted
+**Docker**
+```bash
+./scripts/build-docker.sh
+docker run -p 3000:3000 sprintfund-frontend:latest
+```
+
+### Deployment Files
+
+- `vercel.json` - Vercel configuration with security headers and caching
+- `netlify.toml` - Netlify configuration with Next.js plugin
+- `Dockerfile` - Production Docker image (multi-stage build)
+- `Dockerfile.dev` - Development Docker image
+- `docker-compose.yml` - Container orchestration for local testing
+- `.dockerignore` - Docker build optimization
+
+### Health Check
+
+The application exposes health endpoints for monitoring:
+- `/api/health` - Primary health endpoint
+- `/healthz` - Kubernetes liveness probe
+- `/ready` - Kubernetes readiness probe
+
+### Documentation
+
+Comprehensive deployment guides available in `/docs`:
+
+- [Deployment Guide](./docs/DEPLOYMENT.md) - Complete deployment instructions
+- [Custom Domain](./docs/CUSTOM_DOMAIN.md) - Domain configuration
+- [SSL/HTTPS](./docs/SSL_HTTPS.md) - Certificate setup
+- [Environment Variables](./docs/ENVIRONMENT.md) - Configuration reference
+- [Staging Setup](./docs/STAGING.md) - Staging environment
+- [Monitoring](./docs/MONITORING.md) - Observability and alerts
+- [Deployment Checklist](./docs/DEPLOYMENT_CHECKLIST.md) - Pre-deployment validation
+- [Troubleshooting](./docs/TROUBLESHOOTING.md) - Common issues and solutions
+
+### Scripts
+
+Deployment helper scripts in `/scripts`:
+
+- `build-docker.sh` - Build production Docker image
+- `validate-deploy.sh` - Validate environment before deployment
+- `start-production.sh` - Start production server
 
 ## Troubleshooting
 
