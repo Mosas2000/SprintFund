@@ -10,6 +10,7 @@ import { request } from '@stacks/connect';
 import { CONTRACT_ADDRESS, CONTRACT_NAME, CONTRACT_PRINCIPAL, NETWORK } from '../config';
 import { sanitizeText, sanitizeMultilineText } from './sanitize';
 import { blockchainCache } from './blockchain-cache';
+import { AsyncError, ErrorCode } from './async-errors';
 import type { Proposal, ProposalPage } from '../types';
 import type {
   ProposalCountResponse,
@@ -29,18 +30,24 @@ import {
   unwrapClarityValue,
 } from './validators';
 
+export class ContractError extends AsyncError {
+  readonly functionName: string;
+
+  constructor(message: string, code: string, functionName?: string) {
+    super(message, code);
+    this.name = 'ContractError';
+    this.functionName = functionName || '';
+  }
+}
+
 /* ═══════════════════════════════════════════════
    Read-only helpers
    ═══════════════════════════════════════════════ */
 
-/**
- * Generic typed read-only function caller.
- * Handles Stacks SDK integration and error management.
- */
 async function readOnly<T>(
   functionName: string,
   functionArgs: Parameters<typeof fetchCallReadOnlyFunction>[0]['functionArgs'],
-): Promise<T | null> {
+): Promise<T> {
   try {
     const result = await fetchCallReadOnlyFunction({
       network: NETWORK,
@@ -52,8 +59,12 @@ async function readOnly<T>(
     });
     return cvToValue(result) as T;
   } catch (err) {
-    console.error(`readOnly(${functionName}) failed:`, err);
-    return null;
+    const message = err instanceof Error ? err.message : String(err);
+    throw new ContractError(
+      `Contract call failed: ${message}`,
+      ErrorCode.CONTRACT_CALL_FAILED,
+      functionName,
+    );
   }
 }
 
@@ -122,28 +133,43 @@ export async function getProposalCount(options?: { forceRefresh?: boolean }): Pr
     }
   }
 
-  const raw = await readOnly<ProposalCountResponse>('get-proposal-count', []);
-  const value = validateProposalCount(raw) ?? 0;
-  blockchainCache.setProposalCount(value);
-
-  return value;
+  try {
+    const raw = await readOnly<ProposalCountResponse>('get-proposal-count', []);
+    const value = validateProposalCount(raw) ?? 0;
+    blockchainCache.setProposalCount(value);
+    return value;
+  } catch (err) {
+    if (err instanceof ContractError) throw err;
+    throw new ContractError('Failed to fetch proposal count', ErrorCode.UNKNOWN);
+  }
 }
 
 export async function getProposal(id: number): Promise<Proposal | null> {
-  const raw = await readOnly<ProposalResponse>('get-proposal', [uintCV(id)]);
-  if (!raw) return null;
+  try {
+    const raw = await readOnly<ProposalResponse>('get-proposal', [uintCV(id)]);
+    if (!raw) return null;
 
-  const validated = validateRawProposal(raw);
-  if (!validated) return null;
+    const validated = validateRawProposal(raw);
+    if (!validated) {
+      throw new AsyncError('Invalid proposal data', ErrorCode.VALIDATION_FAILED);
+    }
 
-  const rawTitle = unwrapClarityValue(validated.title as { value: string }) ?? '';
-  const rawDescription = unwrapClarityValue(validated.description as { value: string }) ?? '';
+    const rawTitle = unwrapClarityValue(validated.title as { value: string }) ?? '';
+    const rawDescription = unwrapClarityValue(validated.description as { value: string }) ?? '';
 
-  return {
-    ...rawProposalToProposal(id, validated),
-    title: sanitizeText(rawTitle),
-    description: sanitizeMultilineText(rawDescription),
-  };
+    return {
+      ...rawProposalToProposal(id, validated),
+      title: sanitizeText(rawTitle),
+      description: sanitizeMultilineText(rawDescription),
+    };
+  } catch (err) {
+    if (err instanceof ContractError || err instanceof AsyncError) throw err;
+    throw new ContractError(
+      'Failed to fetch proposal',
+      ErrorCode.UNKNOWN,
+      'get-proposal',
+    );
+  }
 }
 
 export async function getAllProposals(options?: ProposalFetchOptions): Promise<Proposal[]> {
@@ -210,33 +236,55 @@ export async function getProposalsPage(options?: ProposalPageOptions): Promise<P
 }
 
 export async function getStake(address: string): Promise<number> {
-  const cached = blockchainCache.getStake(address);
-  if (cached !== null) {
-    return cached;
+  try {
+    const cached = blockchainCache.getStake(address);
+    if (cached !== null) {
+      return cached;
+    }
+
+    const raw = await readOnly<StakeResponse>('get-stake', [principalCV(address)]);
+    if (!raw) {
+      throw new AsyncError('Empty stake response', ErrorCode.INVALID_RESPONSE);
+    }
+
+    const validated = validateRawStake(raw);
+    if (!validated) {
+      throw new AsyncError('Invalid stake data', ErrorCode.VALIDATION_FAILED);
+    }
+
+    const amount = unwrapClarityValue(validated.amount) ?? 0;
+    const validatedAmount = validateStxAmount(amount) ?? 0;
+    blockchainCache.setStake(address, validatedAmount);
+    return validatedAmount;
+  } catch (err) {
+    if (err instanceof ContractError || err instanceof AsyncError) throw err;
+    throw new ContractError(
+      'Failed to fetch stake',
+      ErrorCode.UNKNOWN,
+      'get-stake',
+    );
   }
-
-  const raw = await readOnly<StakeResponse>('get-stake', [principalCV(address)]);
-  if (!raw) return 0;
-
-  const validated = validateRawStake(raw);
-  if (!validated) return 0;
-
-  const amount = unwrapClarityValue(validated.amount) ?? 0;
-  const validatedAmount = validateStxAmount(amount) ?? 0;
-  blockchainCache.setStake(address, validatedAmount);
-  return validatedAmount;
 }
 
 export async function getMinStakeAmount(): Promise<number> {
-  const cached = blockchainCache.getMinStakeAmount();
-  if (cached !== null) {
-    return cached;
-  }
+  try {
+    const cached = blockchainCache.getMinStakeAmount();
+    if (cached !== null) {
+      return cached;
+    }
 
-  const raw = await readOnly<MinStakeResponse>('get-min-stake-amount', []);
-  const amount = validateStxAmount(raw) ?? 10_000_000;
-  blockchainCache.setMinStakeAmount(amount);
-  return amount;
+    const raw = await readOnly<MinStakeResponse>('get-min-stake-amount', []);
+    const amount = validateStxAmount(raw) ?? 10_000_000;
+    blockchainCache.setMinStakeAmount(amount);
+    return amount;
+  } catch (err) {
+    if (err instanceof ContractError || err instanceof AsyncError) throw err;
+    throw new ContractError(
+      'Failed to fetch minimum stake amount',
+      ErrorCode.UNKNOWN,
+      'get-min-stake-amount',
+    );
+  }
 }
 
 /* ═══════════════════════════════════════════════
