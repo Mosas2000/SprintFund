@@ -11,6 +11,7 @@ import { ProposalDetailPage } from './spa-pages/ProposalDetail';
 import { CreateProposalPage } from './spa-pages/CreateProposal';
 import { DashboardPage } from './spa-pages/Dashboard';
 import { ProfilePage } from './spa-pages/Profile';
+import { GettingStartedPage } from './spa-pages/GettingStarted';
 import { useKeyboardShortcuts, useNavigationShortcuts } from './hooks/useKeyboardShortcuts';
 import { useCommandPalette, type SearchCommand } from './hooks/useCommandPalette';
 
@@ -114,6 +115,7 @@ export default function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/getting-started" element={<GettingStartedPage />} />
             <Route path="/proposals" element={<ProposalsPage />} />
             <Route path="/proposals/:id" element={<ProposalDetailPage />} />
             <Route path="/proposals/create" element={<CreateProposalPage />} />
