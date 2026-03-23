@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="128" fill="#0a0a0a"/>
+  <rect x="8" y="8" width="496" height="496" rx="120" stroke="#00ff88" stroke-opacity="0.2" stroke-width="8"/>
+  
+  <g transform="translate(256, 256)">
+    <path d="M -80 -40 L -80 80 L -20 80 L -20 20 L 40 20 L 40 80 L 100 80 L 100 -40 L 40 -40 L 40 -20 L -20 -20 L -20 -40 Z" 
+          fill="#00ff88" 
+          stroke="#00ff88" 
+          stroke-width="4" 
+          stroke-linejoin="round"/>
+    
+    <circle cx="-50" cy="-70" r="8" fill="#00ff88" opacity="0.6"/>
+    <circle cx="70" cy="-70" r="8" fill="#00ff88" opacity="0.6"/>
+    <circle cx="-50" cy="110" r="8" fill="#00ff88" opacity="0.6"/>
+    <circle cx="70" cy="110" r="8" fill="#00ff88" opacity="0.6"/>
+  </g>
+  
+  <text x="256" y="440" 
+        font-family="monospace" 
+        font-weight="700" 
+        font-size="48" 
+        fill="#00ff88" 
+        text-anchor="middle" 
+        opacity="0.5">SprintFund</text>
+</svg>
