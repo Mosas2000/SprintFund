@@ -17,7 +17,7 @@ export function dispatchPushNotification(notification: Notification): boolean {
   new window.Notification(label, {
     body: notification.title,
     tag,
-    icon: '/favicon.svg',
+    icon: '/icon-192.png',
     silent: false,
   });
 
