@@ -73,7 +73,7 @@ export default function Home() {
         showConnect({
           appDetails: {
             name: 'SprintFund',
-            icon: '/icon.png',
+            icon: window.location.origin + '/icon-192.png',
           },
           redirectTo: '/',
           onFinish: () => {
