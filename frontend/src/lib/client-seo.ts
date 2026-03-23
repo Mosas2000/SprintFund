@@ -59,8 +59,8 @@ export function getClientMetaTags(options: {
 export function getDefaultLinkTags(): Array<{ rel: string; href: string }> {
   return [
     { rel: 'canonical', href: SITE_URL },
-    { rel: 'icon', href: '/favicon.svg' },
-    { rel: 'apple-touch-icon', href: '/favicon.svg' },
+    { rel: 'icon', href: '/favicon.ico' },
+    { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
     { rel: 'manifest', href: '/manifest.json' },
   ];
 }
