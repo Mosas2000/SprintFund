@@ -4,6 +4,7 @@ import { HamburgerButton } from './HamburgerButton';
 import { MobileNavDrawer } from './MobileNavDrawer';
 import NotificationCenter from './NotificationCenter';
 import { KeyboardHints } from './KeyboardHints';
+import { OnboardingTrigger } from './OnboardingTrigger';
 import { useMobileMenu } from '../hooks/useMobileMenu';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
@@ -53,6 +54,7 @@ export function Header() {
             );
           })}
           <KeyboardHints />
+          <OnboardingTrigger compact />
           <NotificationCenter />
           <div className="ml-2">
             <ConnectWallet />

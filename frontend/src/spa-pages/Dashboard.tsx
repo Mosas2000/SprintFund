@@ -11,6 +11,7 @@ import { useToast } from '../hooks/useToast';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useOnboardingAutoComplete } from '../hooks/useOnboardingAutoComplete';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { useLoadComments } from '../store/comment-selectors';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
@@ -33,6 +34,11 @@ export function DashboardPage(): JSX.Element {
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle('Dashboard');
+  const { markDashboardPageViewed, markStakingStarted } = useOnboardingAutoComplete();
+
+  useEffect(() => {
+    markDashboardPageViewed();
+  }, [markDashboardPageViewed]);
 
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [stxBalance, setStxBalance] = useState<number>(0);

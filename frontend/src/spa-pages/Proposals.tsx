@@ -8,6 +8,7 @@ import { useToast } from '../hooks/useToast';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useOnboardingAutoComplete } from '../hooks/useOnboardingAutoComplete';
 import { useLoadComments } from '../store/comment-selectors';
 import { ProposalListSkeleton } from '../components/ProposalListSkeleton';
 import { useProposalUrlFilters } from '../hooks/useProposalUrlFilters';
@@ -34,6 +35,11 @@ export function ProposalsPage(): JSX.Element {
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   const loadComments = useLoadComments();
   useDocumentTitle('Proposals');
+  const { markProposalsPageViewed } = useOnboardingAutoComplete();
+
+  useEffect(() => {
+    markProposalsPageViewed();
+  }, [markProposalsPageViewed]);
 
   const {
     params,
