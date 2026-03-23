@@ -4,6 +4,7 @@ import { Footer } from './Footer';
 import { ToastContainer } from './ToastContainer';
 import { SkipToContent } from './SkipToContent';
 import { RouteAnnouncer } from './RouteAnnouncer';
+import { WelcomeBanner } from './WelcomeBanner';
 
 export function Layout() {
   return (
@@ -11,6 +12,7 @@ export function Layout() {
       <SkipToContent />
       <RouteAnnouncer />
       <Header />
+      <WelcomeBanner />
       <main id="main-content" className="flex-1" tabIndex={-1}>
         <Outlet />
       </main>
