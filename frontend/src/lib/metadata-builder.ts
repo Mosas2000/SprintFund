@@ -125,8 +125,18 @@ export function buildRootMetadata(): Metadata {
       },
     },
     icons: {
-      icon: '/favicon.svg',
-      apple: '/favicon.svg',
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/icon-16.png', sizes: '16x16', type: 'image/png' },
+        { url: '/icon-32.png', sizes: '32x32', type: 'image/png' },
+        { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+        { url: '/icon.svg', type: 'image/svg+xml' },
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
+      shortcut: '/favicon.ico',
     },
     themeColor: SITE_THEME_COLOR,
     verification: {},
