@@ -22,7 +22,7 @@ export function buildOrganizationJsonLd(): JsonLdOrganization {
     '@type': 'Organization',
     name: SITE_NAME,
     url: SITE_URL,
-    logo: buildOgImageUrl('/favicon.svg'),
+    logo: buildOgImageUrl('/icon-512.png'),
     description: SITE_DESCRIPTION,
     sameAs: [
       'https://twitter.com/sprintfund',
