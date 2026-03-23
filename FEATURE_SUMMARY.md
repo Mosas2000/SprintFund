@@ -211,7 +211,7 @@ const percentage = getCompletionPercentage();
 
 ## Commits Made
 
-24 professional commits implementing the feature:
+36 professional commits implementing the feature:
 1. Create onboarding store with Zustand
 2. Add first-time visitor detection helper
 3. Add comprehensive onboarding tour steps and DAO concepts
