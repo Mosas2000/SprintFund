@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { X, ChevronRight } from 'lucide-react';
 import { DaoConcept } from '../config/onboarding-tour';
 
@@ -46,7 +47,12 @@ export function OnboardingTooltip({
   };
 
   const tooltipContent = (
-    <div className="w-96 max-w-sm rounded-lg border border-green/30 bg-surface p-6 shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95, y: 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: 10 }}
+      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+      className="w-96 max-w-sm rounded-lg border border-green/30 bg-surface p-6 shadow-lg">
       <div className="mb-4 flex items-start justify-between">
         <div>
           <p className="text-xs font-semibold text-green uppercase tracking-wider">
@@ -108,15 +114,26 @@ export function OnboardingTooltip({
           </button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 
   if (position === 'center') {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center"
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50"
+          onClick={onClose}
+        />
         <div className="relative z-10">{tooltipContent}</div>
-      </div>
+      </motion.div>
     );
   }
 
