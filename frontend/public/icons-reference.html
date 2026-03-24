@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SprintFund Icons Reference</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .icon-item {
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .icon-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        h1, h2 { color: #00ff88; }
+        code {
+            background: #1a1a1a;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>SprintFund Icons Reference</h1>
+    
+    <h2>Available Icon Files</h2>
+    
+    <h3>Favicon</h3>
+    <ul>
+        <li><code>favicon.ico</code> - Multi-resolution ICO (16x16, 32x32, 48x48)</li>
+        <li><code>favicon.svg</code> - SVG favicon for modern browsers</li>
+        <li><code>favicon-16x16.png</code> - 16x16 PNG</li>
+        <li><code>favicon-32x32.png</code> - 32x32 PNG</li>
+    </ul>
+    
+    <h3>PNG Icons (Various Sizes)</h3>
+    <ul>
+        <li><code>icon-16.png</code> - 16x16</li>
+        <li><code>icon-32.png</code> - 32x32</li>
+        <li><code>icon-48.png</code> - 48x48</li>
+        <li><code>icon-72.png</code> - 72x72</li>
+        <li><code>icon-96.png</code> - 96x96</li>
+        <li><code>icon-128.png</code> - 128x128</li>
+        <li><code>icon-144.png</code> - 144x144</li>
+        <li><code>icon-152.png</code> - 152x152</li>
+        <li><code>icon-180.png</code> - 180x180</li>
+        <li><code>icon-192.png</code> - 192x192 (PWA standard)</li>
+        <li><code>icon-196.png</code> - 196x196</li>
+        <li><code>icon-256.png</code> - 256x256</li>
+        <li><code>icon-384.png</code> - 384x384</li>
+        <li><code>icon-512.png</code> - 512x512 (PWA standard)</li>
+    </ul>
+    
+    <h3>Apple Touch Icon</h3>
+    <ul>
+        <li><code>apple-touch-icon.png</code> - 180x180 for iOS devices</li>
+    </ul>
+    
+    <h3>Open Graph</h3>
+    <ul>
+        <li><code>og-image.png</code> - 1200x630 for social media sharing</li>
+        <li><code>og-image.svg</code> - SVG version</li>
+    </ul>
+    
+    <h3>SVG Icons</h3>
+    <ul>
+        <li><code>icon.svg</code> - Base SVG icon (512x512)</li>
+    </ul>
+    
+    <h2>Configuration Files</h2>
+    <ul>
+        <li><code>manifest.json</code> - PWA manifest</li>
+        <li><code>site.webmanifest</code> - Web app manifest with shortcuts</li>
+        <li><code>browserconfig.xml</code> - Windows tile configuration</li>
+    </ul>
+    
+    <h2>Usage in HTML</h2>
+    <pre><code>&lt;!-- Favicon --&gt;
+&lt;link rel="icon" href="/favicon.ico" sizes="any"&gt;
+&lt;link rel="icon" href="/icon.svg" type="image/svg+xml"&gt;
+&lt;link rel="apple-touch-icon" href="/apple-touch-icon.png"&gt;
+
+&lt;!-- Manifest --&gt;
+&lt;link rel="manifest" href="/manifest.json"&gt;
+
+&lt;!-- Open Graph --&gt;
+&lt;meta property="og:image" content="/og-image.png"&gt;</code></pre>
+</body>
+</html>
