@@ -87,3 +87,4 @@ Run `npm install` in the scripts directory.
 ⚠️ **Never commit your `.env` file or share your private key!**
 
 The `.env` file is already in `.gitignore` for safety.
+contin
