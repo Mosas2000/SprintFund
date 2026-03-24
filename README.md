@@ -151,6 +151,24 @@ Visit `http://localhost:3000` to see the app.
 - **Network**: Stacks Mainnet
 - **Date**: January 20, 2026
 
+## Icons and Assets
+
+SprintFund includes comprehensive icon and asset files for all platforms:
+
+### Icon Files
+- **Favicon**: Multi-resolution `favicon.ico`, `favicon.svg`
+- **PWA Icons**: 192x192, 512x512 for installable web app
+- **Apple Touch Icon**: 180x180 for iOS devices
+- **Various Sizes**: 16x16 to 512x512 PNG files
+- **Open Graph**: 1200x630 social media preview image
+
+### Configuration Files
+- `manifest.json` - PWA manifest
+- `site.webmanifest` - Enhanced web app manifest with shortcuts
+- `browserconfig.xml` - Windows tile configuration
+
+All icon files are located in `frontend/public/` and properly referenced in metadata. See `icons-reference.html` for complete documentation.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
