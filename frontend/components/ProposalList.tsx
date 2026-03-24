@@ -5,7 +5,7 @@ import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, principalCV, Anch
 import { STACKS_MAINNET } from '@stacks/network';
 import { formatSTX } from '@/utils/formatSTX';
 import ExecuteProposal from './ExecuteProposal';
-import LoadingSkeleton from './LoadingSkeleton';
+import LoadingSkeleton from './ui/LoadingSkeleton';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import Comments from './Comments';
