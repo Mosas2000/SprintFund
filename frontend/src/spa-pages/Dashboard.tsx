@@ -12,13 +12,16 @@ import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useOnboardingAutoComplete } from '../hooks/useOnboardingAutoComplete';
+import { useStxPriceData } from '../hooks/useStxPrice';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { useLoadComments } from '../store/comment-selectors';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
 import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { TreasuryBalance } from '../components/TreasuryBalance';
 import { toErrorMessage } from '../lib/errors';
+import { formatUsd, stxToUsd } from '../lib/currency';
 import type { Proposal } from '../types';
 
 /**
@@ -35,6 +38,7 @@ export function DashboardPage(): JSX.Element {
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle('Dashboard');
   const { markDashboardPageViewed, markStakingStarted } = useOnboardingAutoComplete();
+  const { price: stxPrice } = useStxPriceData();
 
   useEffect(() => {
     markDashboardPageViewed();
@@ -221,10 +225,23 @@ export function DashboardPage(): JSX.Element {
 
       {/* -- Stats row -------------------------------- */}
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="STX Balance" value={`${formatStx(stxBalance)} STX`} />
-        <StatCard label="Your Stake" value={`${formatStx(stakeAmount)} STX`} />
+        <StatCardWithUsd
+          label="STX Balance"
+          stxValue={stxBalance}
+          stxPrice={stxPrice}
+        />
+        <StatCardWithUsd
+          label="Your Stake"
+          stxValue={stakeAmount}
+          stxPrice={stxPrice}
+        />
         <StatCard label="Your Proposals" value={String(proposals.length)} />
         <StatCard label="Total Proposals" value={String(totalProposals)} />
+      </div>
+
+      {/* -- Treasury TVL ------------------------------ */}
+      <div className="mb-8">
+        <TreasuryBalance />
       </div>
 
       {/* -- Profile link ------------------------------ */}
@@ -353,6 +370,32 @@ const StatCard = memo(function StatCard({ label, value }: { label: string; value
     <div className="min-w-0 rounded-xl border border-border bg-card p-4">
       <p className="text-xs text-muted truncate">{label}</p>
       <p className="mt-1 text-lg font-bold text-text truncate">{value}</p>
+    </div>
+  );
+});
+
+interface StatCardWithUsdProps {
+  label: string;
+  stxValue: number;
+  stxPrice: number | null;
+}
+
+const StatCardWithUsd = memo(function StatCardWithUsd({
+  label,
+  stxValue,
+  stxPrice,
+}: StatCardWithUsdProps) {
+  const usdValue = stxPrice ? stxToUsd(stxValue / 1_000_000, stxPrice) : null;
+
+  return (
+    <div className="min-w-0 rounded-xl border border-border bg-card p-4">
+      <p className="text-xs text-muted truncate">{label}</p>
+      <p className="mt-1 text-lg font-bold text-text truncate">
+        {formatStx(stxValue)} STX
+      </p>
+      {usdValue !== null && (
+        <p className="text-xs text-muted mt-0.5">{formatUsd(usdValue)}</p>
+      )}
     </div>
   );
 });
