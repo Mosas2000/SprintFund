@@ -9,7 +9,10 @@
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "icons:generate": "node scripts/generate-all-icons.js",
+    "icons:favicon": "node scripts/generate-favicon.js",
+    "icons:og": "node scripts/generate-og-image.js"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.71",
