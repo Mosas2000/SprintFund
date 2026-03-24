@@ -7,3 +7,5 @@ export { useFormSubmit } from './useFormSubmit';
 export { useMultiStep } from './useMultiStep';
 export { useRetry } from './useRetry';
 export { useDebouncedSearch } from './useDebouncedSearch';
+export { useStxPriceData } from './useStxPrice';
+export { useWalletBalanceData } from './useWalletBalance';

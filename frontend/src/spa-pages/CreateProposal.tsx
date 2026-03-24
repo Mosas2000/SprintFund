@@ -8,8 +8,10 @@ import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useFormValidation } from '../hooks/useFormValidation';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useStxPriceData } from '../hooks/useStxPrice';
 import { isFormValid, validateProposalForm } from '../lib/validation';
 import { sanitizeText, sanitizeMultilineText } from '../lib/sanitize';
+import { formatUsd, stxToUsd } from '../lib/currency';
 import { CharacterCounter } from '../components/CharacterCounter';
 import { FieldErrorMessage } from '../components/FieldErrorMessage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
@@ -26,6 +28,7 @@ export function CreateProposalPage() {
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle('Create Proposal');
+  const { price: stxPrice } = useStxPriceData();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -48,6 +51,10 @@ export function CreateProposalPage() {
     if (!isValid) return;
 
     const stx = parseFloat(amount);
+    const usdValue = stxPrice ? stxToUsd(stx, stxPrice) : null;
+    const amountDisplay = usdValue !== null
+      ? `${stx} STX (${formatUsd(usdValue)})`
+      : `${stx} STX`;
 
     dialog.open({
       title: 'Submit Proposal',
@@ -56,7 +63,7 @@ export function CreateProposalPage() {
       confirmLabel: 'Confirm Submission',
       details: [
         { label: 'Title', value: sanitizeText(title.trim().slice(0, 40) + (title.trim().length > 40 ? '...' : '')) },
-        { label: 'Requested Amount', value: `${stx} STX` },
+        { label: 'Requested Amount', value: amountDisplay },
         { label: 'Duration', value: `${duration} days` },
       ],
       onConfirm: async () => {
@@ -201,7 +208,14 @@ export function CreateProposalPage() {
           {validation.errors.amount && validation.touched.amount ? (
             <FieldErrorMessage message={validation.errors.amount} touched={validation.touched.amount} id="amount-error" />
           ) : (
-            <p id="amount-hint" className="mt-1 text-xs text-muted">Recommended: 50-200 STX for micro-grants</p>
+            <p id="amount-hint" className="mt-1 text-xs text-muted">
+              Recommended: 50-200 STX for micro-grants
+              {amount && stxPrice && !isNaN(parseFloat(amount)) && (
+                <span className="ml-2 text-green">
+                  ({formatUsd(stxToUsd(parseFloat(amount), stxPrice))})
+                </span>
+              )}
+            </p>
           )}
         </div>
 

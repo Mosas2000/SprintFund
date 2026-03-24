@@ -264,3 +264,16 @@ export type {
 } from './types/select-values';
 
 export { VOTE_HISTORY_FILTERS } from './types/select-values';
+
+/* Re-export price types for convenience */
+export type {
+  PriceData,
+  PriceState,
+  CoinGeckoResponse,
+} from './types/price';
+
+/* Re-export balance types for convenience */
+export type {
+  WalletBalance,
+  WalletBalanceState,
+} from './types/balance';

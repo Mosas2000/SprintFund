@@ -8,6 +8,7 @@ import {
 } from '../store/wallet-selectors';
 import { truncateAddress } from '../lib/api';
 import { useToast } from '../hooks/useToast';
+import { useWalletBalanceData } from '../hooks/useWalletBalance';
 import { FOCUS_RING_GREEN, FOCUS_RING_RED } from '../lib/focus-styles';
 
 export const ConnectWallet = memo(function ConnectWallet() {
@@ -17,6 +18,7 @@ export const ConnectWallet = memo(function ConnectWallet() {
   const connect = useWalletConnect();
   const disconnect = useWalletDisconnect();
   const toast = useToast();
+  const { stxBalance } = useWalletBalanceData();
 
   const handleConnect = useCallback(() => {
     connect();
@@ -38,11 +40,25 @@ export const ConnectWallet = memo(function ConnectWallet() {
   }
 
   if (connected && address) {
+    const balanceDisplay = stxBalance !== null
+      ? `${stxBalance.toLocaleString('en-US', { maximumFractionDigits: 2 })} STX`
+      : null;
+
     return (
       <div className="flex items-center gap-2" role="status" aria-label="Wallet connected">
-        <span className="rounded-md bg-green/10 px-2.5 py-1.5 text-xs font-mono text-green min-h-[36px] sm:min-h-0 flex items-center" aria-label={`Connected address: ${address}`}>
-          {truncateAddress(address)}
-        </span>
+        <div className="flex flex-col items-end">
+          <span
+            className="rounded-md bg-green/10 px-2.5 py-1.5 text-xs font-mono text-green min-h-[36px] sm:min-h-0 flex items-center"
+            aria-label={`Connected address: ${address}`}
+          >
+            {truncateAddress(address)}
+          </span>
+          {balanceDisplay && (
+            <span className="text-[10px] text-muted mt-0.5 hidden lg:block">
+              {balanceDisplay}
+            </span>
+          )}
+        </div>
         <button
           onClick={handleDisconnect}
           aria-label="Disconnect wallet"
