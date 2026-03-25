@@ -10,7 +10,10 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.71",
@@ -47,6 +50,7 @@
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vitest": "^3.2.4"
   }
 }
