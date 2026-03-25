@@ -1,19 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchCallReadOnlyFunction, cvToValue, uintCV } from '@stacks/transactions';
-import { STACKS_MAINNET } from '@stacks/network';
+import { getAllProposals, getProposalCount } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
-import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
-
-const NETWORK = STACKS_MAINNET;
-
-interface Proposal {
-    id: number;
-    proposer: string;
-    amount: number;
-    executed: boolean;
-}
+import type { Proposal } from '@/types';
 
 export default function Stats() {
     const [totalProposals, setTotalProposals] = useState(0);
@@ -30,56 +20,28 @@ export default function Stats() {
         try {
             setLoading(true);
 
-            // Fetch total proposals
-            const countResult = await fetchCallReadOnlyFunction({
-                network: NETWORK,
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: 'get-proposal-count',
-                functionArgs: [],
-                senderAddress: CONTRACT_ADDRESS,
-            });
+            // Use centralized API with caching
+            const [count, proposals] = await Promise.all([
+                getProposalCount(),
+                getAllProposals()
+            ]);
 
-            const countValue = cvToValue(countResult);
-            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
             setTotalProposals(count);
 
-            // Fetch all proposals to calculate stats
-            const proposals: Proposal[] = [];
+            // Calculate stats from cached proposals
             const proposerCounts: { [key: string]: number } = {};
             let distributed = 0;
             let active = 0;
 
-            for (let i = 0; i < count; i++) {
-                const proposalResult = await fetchCallReadOnlyFunction({
-                    network: NETWORK,
-                    contractAddress: CONTRACT_ADDRESS,
-                    contractName: CONTRACT_NAME,
-                    functionName: 'get-proposal',
-                    functionArgs: [uintCV(i)],
-                    senderAddress: CONTRACT_ADDRESS,
-                });
+            for (const proposal of proposals) {
+                // Count proposers
+                proposerCounts[proposal.proposer] = (proposerCounts[proposal.proposer] || 0) + 1;
 
-                const proposalValue = cvToValue(proposalResult);
-                if (proposalValue) {
-                    const proposalData = {
-                        id: i,
-                        proposer: proposalValue.proposer?.value || proposalValue.proposer,
-                        amount: parseInt(proposalValue.amount?.value || proposalValue.amount),
-                        executed: proposalValue.executed?.value ?? proposalValue.executed,
-                    };
-
-                    proposals.push(proposalData);
-
-                    // Count proposers
-                    proposerCounts[proposalData.proposer] = (proposerCounts[proposalData.proposer] || 0) + 1;
-
-                    // Calculate distributed STX
-                    if (proposalData.executed) {
-                        distributed += proposalData.amount;
-                    } else {
-                        active++;
-                    }
+                // Calculate distributed STX
+                if (proposal.executed) {
+                    distributed += proposal.amount;
+                } else {
+                    active++;
                 }
             }
 
