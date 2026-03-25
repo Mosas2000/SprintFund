@@ -30,6 +30,10 @@ import {
   unwrapClarityValue,
 } from './validators';
 
+/**
+ * Error thrown when a smart contract call fails.
+ * Contains the function name that failed for debugging.
+ */
 export class ContractError extends AsyncError {
   readonly functionName: string;
 
@@ -44,6 +48,12 @@ export class ContractError extends AsyncError {
    Read-only helpers
    ═══════════════════════════════════════════════ */
 
+/**
+ * Execute a read-only smart contract function call.
+ * @param functionName - Name of the contract function to call
+ * @param functionArgs - Clarity-encoded function arguments
+ * @returns Decoded response from the contract
+ */
 async function readOnly<T>(
   functionName: string,
   functionArgs: Parameters<typeof fetchCallReadOnlyFunction>[0]['functionArgs'],
@@ -68,22 +78,36 @@ async function readOnly<T>(
   }
 }
 
+/**
+ * Extract unwrapped value from Clarity response.
+ * Handles both wrapped {value: T} and direct values.
+ */
 function extractVal(v: Record<string, unknown> | string | number | boolean | null | undefined): unknown {
   if (v === null || v === undefined) return v;
   if (typeof v === 'object' && 'value' in v) return v.value;
   return v;
 }
 
+/** Options for fetching proposals from the blockchain */
 type ProposalFetchOptions = {
+  /** If true, bypasses cache and fetches fresh data */
   forceRefresh?: boolean;
+  /** Number of proposals to fetch in parallel (default: 10) */
   batchSize?: number;
 };
 
+/** Options for paginated proposal fetching */
 type ProposalPageOptions = ProposalFetchOptions & {
+  /** Page number (1-indexed) */
   page?: number;
+  /** Number of proposals per page */
   pageSize?: number;
 };
 
+/**
+ * Split an array into chunks of specified size.
+ * Used for batched API calls to prevent rate limiting.
+ */
 function chunk<T>(items: T[], size: number): T[][] {
   const safeSize = Math.max(1, size);
   const chunks: T[][] = [];
@@ -93,10 +117,16 @@ function chunk<T>(items: T[], size: number): T[][] {
   return chunks;
 }
 
+/**
+ * Fetch and cache multiple proposals by ID.
+ * Skips already-cached proposals unless forceRefresh is true.
+ * Fetches in batches to avoid overwhelming the API.
+ */
 async function fetchAndCacheProposalIds(ids: number[], options?: ProposalFetchOptions): Promise<void> {
   const forceRefresh = options?.forceRefresh ?? false;
   const batchSize = Math.max(1, options?.batchSize ?? 10);
 
+  // Only fetch proposals not already in cache
   const idsToFetch = forceRefresh
     ? ids
     : ids.filter((proposalId) => blockchainCache.getProposal(proposalId) === null);
@@ -105,6 +135,7 @@ async function fetchAndCacheProposalIds(ids: number[], options?: ProposalFetchOp
     return;
   }
 
+  // Fetch in batches to prevent API rate limiting
   for (const batch of chunk(idsToFetch, batchSize)) {
     const settled = await Promise.allSettled(batch.map((proposalId) => getProposal(proposalId)));
     settled.forEach((result, index) => {
