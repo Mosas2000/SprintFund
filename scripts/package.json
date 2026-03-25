@@ -6,13 +6,17 @@
     "create-proposal": "node scripts/create-proposal.js",
     "stake": "node scripts/stake.js",
     "deploy-logger": "node deploy-logger.js",
-    "call-logger": "node call-logger.js"
+    "call-logger": "node call-logger.js",
+    "test": "jest"
   },
   "dependencies": {
     "@stacks/network": "^6.13.0",
     "@stacks/transactions": "^6.13.0",
     "@stacks/wallet-sdk": "^7.2.0",
     "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   },
   "type": "module"
 }
