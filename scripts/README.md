@@ -2,6 +2,15 @@
 
 This directory contains scripts for interacting with the SprintFund contract on Stacks mainnet.
 
+## Prerequisites
+
+Before running any scripts, ensure you have:
+
+1. **Node.js 18+** installed
+2. **A funded Stacks wallet** with sufficient STX balance
+3. **Your private key** (hex format, 64 characters)
+4. **Deployed contract** address (already deployed to mainnet)
+
 ## Quick Start
 
 ### 1. Install Dependencies
@@ -16,6 +25,13 @@ cp .env.example .env
 # Edit .env and add your private key
 ```
 
+Your `.env` file should contain:
+```
+PRIVATE_KEY=your_64_character_hex_private_key_here
+```
+
+⚠️ **Never share or commit your private key!**
+
 ### 3. Stake STX (Required First)
 Before creating proposals, you must stake at least 10 STX:
 ```bash
@@ -27,6 +43,17 @@ After staking and transaction confirmation:
 ```bash
 npm run create-proposal
 ```
+
+## Expected Costs
+
+| Action | STX Cost | Notes |
+|--------|----------|-------|
+| Stake | 10.0 STX + ~0.01 fee | Minimum stake required |
+| Create Proposal | ~0.01 STX | Transaction fee only |
+| Deploy Logger | ~0.05 STX | One-time deployment |
+| Call Logger | ~0.01 STX | Per batch call |
+
+**Recommendation**: Keep at least 15 STX in your wallet for staking + fees.
 
 ## Command Line Options
 
@@ -140,8 +167,35 @@ Run `npm install` in the scripts directory.
 
 ## Security
 
-**Never commit your `.env` file or share your private key!**
+⚠️ **Mainnet Safety Warnings**
+
+1. **Never commit your `.env` file** or share your private key
+2. **Always use `--dry-run` first** to verify transaction parameters
+3. **Test on testnet** before mainnet when possible
+4. **Double-check amounts** - transactions are irreversible
+5. **Keep backups** of your private key in a secure location
 
 The `.env` file is already in `.gitignore` for safety.
 
-Use `--dry-run` to verify transaction parameters before broadcasting to mainnet.
+## Verifying Transactions
+
+After running a script, verify your transaction:
+
+1. **Copy the transaction ID** from the script output
+2. **Open Stacks Explorer**: https://explorer.hiro.so
+3. **Paste the TX ID** in the search bar
+4. **Check status**: Look for "Success" confirmation
+
+Transaction confirmations typically take 10-30 minutes on mainnet.
+
+### Verifying Contract State
+
+Check your stake balance:
+```bash
+# Using Stacks API
+curl "https://api.mainnet.hiro.so/v2/contracts/call-read/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T/sprintfund-core/get-stake" \
+  -H "Content-Type: application/json" \
+  -d '{"sender":"YOUR_ADDRESS","arguments":["YOUR_ADDRESS_CV"]}'
+```
+
+Or view on explorer: https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core
