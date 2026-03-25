@@ -2,14 +2,22 @@ import Zustand from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ProposalDiscussionThread } from '@/types/proposal-detail';
 
+/** Entry in the proposal execution history */
+interface ExecutionHistoryEntry {
+  txId: string;
+  status: 'pending' | 'confirmed' | 'failed';
+  timestamp: number;
+  blockHeight?: number;
+}
+
 interface ProposalDetailStore {
   discussions: Record<string, ProposalDiscussionThread>;
-  executionHistory: Record<string, any[]>;
+  executionHistory: Record<string, ExecutionHistoryEntry[]>;
   addDiscussion: (proposalId: string, thread: ProposalDiscussionThread) => void;
   updateDiscussion: (proposalId: string, thread: ProposalDiscussionThread) => void;
   getDiscussion: (proposalId: string) => ProposalDiscussionThread | undefined;
-  addExecutionHistory: (proposalId: string, entry: any) => void;
-  getExecutionHistory: (proposalId: string) => any[];
+  addExecutionHistory: (proposalId: string, entry: ExecutionHistoryEntry) => void;
+  getExecutionHistory: (proposalId: string) => ExecutionHistoryEntry[];
   clearAll: () => void;
 }
 
@@ -41,7 +49,7 @@ export const useProposalDetailStore = Zustand<ProposalDetailStore>(
         return get().discussions[proposalId];
       },
 
-      addExecutionHistory: (proposalId: string, entry: any) => {
+      addExecutionHistory: (proposalId: string, entry: ExecutionHistoryEntry) => {
         set((state) => ({
           executionHistory: {
             ...state.executionHistory,
