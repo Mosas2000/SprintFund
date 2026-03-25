@@ -151,9 +151,46 @@ Visit `http://localhost:3000` to see the app.
 - **Network**: Stacks Mainnet
 - **Date**: January 20, 2026
 
+## Current Limitations
+
+### Known Issues
+- **Browser Support**: Optimized for Chrome/Firefox; Safari may have wallet connection quirks
+- **Mobile**: Wallet connection works but UI is optimized for desktop
+- **Rate Limiting**: Heavy API usage may trigger Stacks API rate limits
+
+### Planned Improvements
+- **Multi-signature**: Add time-locks for high-value proposals
+- **Delegation**: Allow stake delegation for voting power
+- **Off-chain Voting**: Gasless voting with on-chain execution
+- **Mobile App**: Native mobile experience
+
+### Security Considerations
+- Smart contracts are not formally audited
+- Use at your own risk on mainnet
+- Start with small amounts to test functionality
+
+## Roadmap
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| Core DAO | ✅ Complete | Staking, proposals, voting |
+| Frontend | ✅ Complete | Next.js dashboard |
+| Analytics | ✅ Complete | Dashboard with stats |
+| Mainnet | ✅ Complete | Live deployment |
+| Testing | 🔄 In Progress | Expanding test coverage |
+| Audit | 📋 Planned | Security audit |
+| Mobile | 📋 Planned | Mobile-optimized UI |
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Documentation
+
+- [Architecture Overview](ARCHITECTURE.md)
+- [Contributing Guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Keyboard Shortcuts](KEYBOARD_SHORTCUTS.md)
 
 ## License
 
