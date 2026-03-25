@@ -34,6 +34,25 @@ Modern Next.js frontend for the SprintFund DAO on Stacks blockchain.
 npm install
 ```
 
+## Environment Variables
+
+Create a `.env.local` file for local development:
+
+```bash
+# Copy the example file
+cp .env.example .env.local
+```
+
+Available environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_NETWORK` | Stacks network (mainnet/testnet) | mainnet |
+| `NEXT_PUBLIC_CONTRACT_ADDRESS` | Contract deployer address | SP31PKQ... |
+| `NEXT_PUBLIC_CONTRACT_NAME` | Contract name | sprintfund-core |
+
+For mainnet deployment, no environment changes are typically needed.
+
 ## Development
 
 ```bash
@@ -52,6 +71,21 @@ npm run build
 # Start production server
 npm start
 ```
+
+## Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+Tests are written with Vitest and React Testing Library.
 
 ## Project Structure
 
