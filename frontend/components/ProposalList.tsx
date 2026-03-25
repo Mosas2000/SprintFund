@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { fetchCallReadOnlyFunction, cvToValue, uintCV, boolCV, principalCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
-import { STACKS_MAINNET } from '@stacks/network';
+import { boolCV, uintCV } from '@stacks/transactions';
+import { getAllProposals, getStake, callVote } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
-import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './ui/LoadingSkeleton';
 import toast from 'react-hot-toast';
@@ -17,23 +16,13 @@ import CategoryBadge from './CategoryBadge';
 import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
+import type { Proposal } from '@/types';
 
-const NETWORK = STACKS_MAINNET;
-
-interface Proposal {
-    id: number;
-    proposer: string;
-    amount: number;
-    title: string;
-    description: string;
-    votesFor: number;
-    votesAgainst: number;
-    executed: boolean;
-    createdAt: number;
-    category?: string;
+interface ProposalListProps {
+    userAddress?: string;
 }
 
-export default function ProposalList({ userAddress }: { userAddress?: string }) {
+export default function ProposalList({ userAddress }: ProposalListProps) {
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [loading, setLoading] = useState(true);
     const [stakeLoading, setStakeLoading] = useState(false);
@@ -64,32 +53,8 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
 
             try {
                 setStakeLoading(true);
-                const result = await fetchCallReadOnlyFunction({
-                    network: NETWORK,
-                    contractAddress: CONTRACT_ADDRESS,
-                    contractName: CONTRACT_NAME,
-                    functionName: 'get-stake',
-                    functionArgs: [principalCV(userAddress)],
-                    senderAddress: CONTRACT_ADDRESS,
-                });
-
-                const stakeValue = cvToValue(result) as Record<string, unknown> | number | null;
-                if (typeof stakeValue === 'number') {
-                    setUserStakeAmount(stakeValue);
-                    return;
-                }
-
-                const amount = typeof stakeValue === 'object' && stakeValue !== null
-                    ? (stakeValue.amount as Record<string, unknown> | number | undefined)
-                    : undefined;
-
-                if (typeof amount === 'number') {
-                    setUserStakeAmount(amount);
-                } else if (typeof amount === 'object' && amount !== null && 'value' in amount) {
-                    setUserStakeAmount(Number(amount.value) || 0);
-                } else {
-                    setUserStakeAmount(0);
-                }
+                const stake = await getStake(userAddress);
+                setUserStakeAmount(stake);
             } catch (err: unknown) {
                 console.error('Error fetching user stake:', err);
                 setUserStakeAmount(0);
@@ -106,60 +71,8 @@ export default function ProposalList({ userAddress }: { userAddress?: string }) 
             setLoading(true);
             setError('');
 
-            const countResult = await fetchCallReadOnlyFunction({
-                network: NETWORK,
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: 'get-proposal-count',
-                functionArgs: [],
-                senderAddress: CONTRACT_ADDRESS,
-            });
-
-            const countValue = cvToValue(countResult);
-            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
-
-            if (count === 0) {
-                setProposals([]);
-                setLoading(false);
-                return;
-            }
-
-            const proposalPromises = [];
-            for (let i = 0; i < count; i++) {
-                proposalPromises.push(
-                    fetchCallReadOnlyFunction({
-                        network: NETWORK,
-                        contractAddress: CONTRACT_ADDRESS,
-                        contractName: CONTRACT_NAME,
-                        functionName: 'get-proposal',
-                        functionArgs: [uintCV(i)],
-                        senderAddress: CONTRACT_ADDRESS,
-                    })
-                );
-            }
-
-            const proposalResults = await Promise.all(proposalPromises);
-
-            const fetchedProposals: Proposal[] = proposalResults
-                .map((result, index) => {
-                    const proposalValue = cvToValue(result);
-                    if (proposalValue) {
-                        return {
-                            id: index,
-                            proposer: proposalValue.proposer?.value || proposalValue.proposer,
-                            amount: parseInt(proposalValue.amount?.value || proposalValue.amount),
-                            title: proposalValue.title?.value || proposalValue.title,
-                            description: proposalValue.description?.value || proposalValue.description,
-                            votesFor: parseInt(proposalValue['votes-for']?.value || proposalValue['votes-for']),
-                            votesAgainst: parseInt(proposalValue['votes-against']?.value || proposalValue['votes-against']),
-                            executed: proposalValue.executed?.value ?? proposalValue.executed,
-                            createdAt: parseInt(proposalValue['created-at']?.value || proposalValue['created-at']),
-                        };
-                    }
-                    return null;
-                })
-                .filter((p): p is Proposal => p !== null);
-
+            // Use centralized API with caching
+            const fetchedProposals = await getAllProposals();
             setProposals(fetchedProposals);
             setLoading(false);
         } catch (err: unknown) {

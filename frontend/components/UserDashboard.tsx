@@ -1,13 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchCallReadOnlyFunction, cvToValue, principalCV, uintCV } from '@stacks/transactions';
-import { STACKS_MAINNET } from '@stacks/network';
+import { getStake, getAllProposals } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
-import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
 import VoteDelegation from './VoteDelegation';
-
-const NETWORK = STACKS_MAINNET;
 
 interface UserDashboardProps {
     userAddress?: string;
@@ -31,55 +27,18 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
         try {
             setLoading(true);
 
-            // Fetch stake balance
-            const stakeResult = await fetchCallReadOnlyFunction({
-                network: NETWORK,
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: 'get-stake',
-                functionArgs: [principalCV(userAddress)],
-                senderAddress: CONTRACT_ADDRESS,
-            });
+            // Use centralized API with caching
+            const [stake, proposals] = await Promise.all([
+                getStake(userAddress),
+                getAllProposals()
+            ]);
 
-            const stakeValue = cvToValue(stakeResult);
-            if (stakeValue) {
-                const amount = stakeValue.amount?.value || stakeValue.amount;
-                setStakeBalance(parseInt(amount));
-            }
+            setStakeBalance(stake);
 
-            // Fetch proposal count to iterate through all proposals
-            const countResult = await fetchCallReadOnlyFunction({
-                network: NETWORK,
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: 'get-proposal-count',
-                functionArgs: [],
-                senderAddress: CONTRACT_ADDRESS,
-            });
-
-            const countValue = cvToValue(countResult);
-            const count = typeof countValue === 'number' ? countValue : (countValue?.value || 0);
-
-            // Fetch all proposals and filter user's proposals
-            const userProposalIds: number[] = [];
-            for (let i = 0; i < count; i++) {
-                const proposalResult = await fetchCallReadOnlyFunction({
-                    network: NETWORK,
-                    contractAddress: CONTRACT_ADDRESS,
-                    contractName: CONTRACT_NAME,
-                    functionName: 'get-proposal',
-                    functionArgs: [uintCV(i)],
-                    senderAddress: CONTRACT_ADDRESS,
-                });
-
-                const proposalValue = cvToValue(proposalResult);
-                if (proposalValue) {
-                    const proposer = proposalValue.proposer?.value || proposalValue.proposer;
-                    if (proposer === userAddress) {
-                        userProposalIds.push(i);
-                    }
-                }
-            }
+            // Filter user's proposals from cached data
+            const userProposalIds = proposals
+                .filter(p => p.proposer === userAddress)
+                .map(p => p.id);
 
             setMyProposals(userProposalIds);
             setLoading(false);
