@@ -12,7 +12,6 @@ interface UserDashboardProps {
 export default function UserDashboard({ userAddress }: UserDashboardProps) {
     const [stakeBalance, setStakeBalance] = useState(0);
     const [myProposals, setMyProposals] = useState<number[]>([]);
-    const [myVotes, setMyVotes] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -48,11 +47,12 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
         }
     };
 
-    // Uses centralized formatSTX from utils/formatSTX
-
     const shortenAddress = (address: string) => {
         return `${address.slice(0, 8)}...${address.slice(-6)}`;
     };
+
+    // Calculate voting power from stake (quadratic voting: power = sqrt(stake))
+    const votingPower = stakeBalance > 0 ? Math.floor(Math.sqrt(stakeBalance / 1_000_000)) : 0;
 
     if (!userAddress) {
         return (
@@ -92,29 +92,24 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 {/* Stake Balance */}
                 <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
                     <p className="text-slate-400 text-xs mb-1">Stake Balance</p>
                     <p className="text-white font-bold text-lg">{formatSTX(stakeBalance)} STX</p>
                 </div>
 
+                {/* Voting Power */}
+                <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
+                    <p className="text-green-300 text-xs mb-1">Voting Power</p>
+                    <p className="text-white font-bold text-lg">{votingPower}</p>
+                    <p className="text-slate-500 text-xs">√stake</p>
+                </div>
+
                 {/* My Proposals */}
                 <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
                     <p className="text-blue-300 text-xs mb-1">My Proposals</p>
                     <p className="text-white font-bold text-lg">{myProposals.length}</p>
-                </div>
-
-                {/* My Votes */}
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <p className="text-green-300 text-xs mb-1">Votes Cast</p>
-                    <p className="text-white font-bold text-lg">{myVotes.length}</p>
-                </div>
-
-                {/* Participation */}
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                    <p className="text-orange-300 text-xs mb-1">Participation</p>
-                    <p className="text-white font-bold text-lg">{myProposals.length + myVotes.length}</p>
                 </div>
             </div>
 
@@ -134,9 +129,9 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
             )}
 
             {/* Empty State */}
-            {myProposals.length === 0 && myVotes.length === 0 && (
+            {myProposals.length === 0 && (
                 <div className="text-center py-6">
-                    <p className="text-slate-400 text-sm">No activity yet. Create a proposal or vote to get started!</p>
+                    <p className="text-slate-400 text-sm">No proposals yet. Create a proposal to get started!</p>
                 </div>
             )}
 
