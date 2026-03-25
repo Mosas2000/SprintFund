@@ -198,4 +198,48 @@ curl "https://api.mainnet.hiro.so/v2/contracts/call-read/SP31PKQVQZVZCK3FM3NH67C
   -d '{"sender":"YOUR_ADDRESS","arguments":["YOUR_ADDRESS_CV"]}'
 ```
 
-Or view on explorer: https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core
+Or view on explorer: https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core''''''''''''''''''''''''''''''''''''''''''''''''''''''''/']'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

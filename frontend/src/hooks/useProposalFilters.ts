@@ -13,6 +13,9 @@ interface SortState {
   sortOrder: 'asc' | 'desc';
 }
 
+/** Filter value types mapped by key */
+type FilterValue<K extends keyof FilterState> = FilterState[K];
+
 export const useProposalFilters = () => {
   const [filters, setFilters] = useState<FilterState>({});
   const [sort, setSort] = useState<SortState>({
@@ -20,7 +23,7 @@ export const useProposalFilters = () => {
     sortOrder: 'desc',
   });
 
-  const updateFilter = (key: keyof FilterState, value: any) => {
+  const updateFilter = <K extends keyof FilterState>(key: K, value: FilterValue<K>) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,

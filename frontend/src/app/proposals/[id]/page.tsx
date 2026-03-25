@@ -10,13 +10,21 @@ import { ExecutionStatus } from '@/components/ExecutionStatus';
 import { VotingHistory } from '@/components/VotingHistory';
 import { RelatedProposals } from '@/components/RelatedProposals';
 import { proposalExecutionService } from '@/services/proposal-execution';
+import type { Proposal } from '@/types';
+
+/** Execution status returned from proposal execution service */
+interface ExecutionStatusData {
+  status: 'pending' | 'confirmed' | 'failed';
+  txId?: string;
+  timestamp: number;
+}
 
 export default function ProposalDetailPage() {
   const params = useParams();
   const proposalId = params.id as string;
-  const [proposal, setProposal] = useState<any>(null);
-  const [relatedProposals, setRelatedProposals] = useState<any[]>([]);
-  const [executionStatus, setExecutionStatus] = useState<any>(null);
+  const [proposal, setProposal] = useState<Proposal | null>(null);
+  const [relatedProposals, setRelatedProposals] = useState<Proposal[]>([]);
+  const [executionStatus, setExecutionStatus] = useState<ExecutionStatusData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
