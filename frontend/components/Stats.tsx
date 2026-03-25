@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import { fetchCallReadOnlyFunction, cvToValue, uintCV } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { formatSTX } from '@/utils/formatSTX';
+import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
 
-const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-const CONTRACT_NAME = 'sprintfund-core';
 const NETWORK = STACKS_MAINNET;
 
 interface Proposal {

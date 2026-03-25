@@ -1,9 +1,8 @@
 import { fetchCallReadOnlyFunction, cvToValue, uintCV } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { retryTransaction } from '../retry';
+import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
 
-const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-const CONTRACT_NAME = 'sprintfund-core';
 const NETWORK = STACKS_MAINNET;
 const CACHE_TTL = 5 * 60 * 1000;
 const CACHE_KEY_PREFIX = 'sprintfund_analytics_';
