@@ -9,7 +9,21 @@
     "test:frontend": "vitest run --config frontend/vitest.config.ts",
     "test:report": "vitest run -- --coverage --costs",
     "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\"",
-    "security:audit": "bash scripts/security-audit.sh"
+    "security:audit": "bash scripts/security-audit.sh",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "contracts/**/*.clar": [
+      "clarinet check --use-on-disk-deployment-plan"
+    ],
+    "frontend/**/*.{ts,tsx}": [
+      "npm run lint --prefix frontend --",
+      "npm run format:check --prefix frontend --",
+      "bash -c 'cd frontend && npx tsc --noEmit'"
+    ],
+    "frontend/**/*.{js,jsx,json,css,md}": [
+      "npm run format:check --prefix frontend --"
+    ]
   },
   "author": "",
   "license": "MIT",
@@ -22,6 +36,8 @@
     "vitest-environment-clarinet": "^2.3.0"
   },
   "devDependencies": {
-    "jsdom": "^28.1.0"
+    "husky": "^9.1.7",
+    "jsdom": "^28.1.0",
+    "lint-staged": "^16.4.0"
   }
 }
