@@ -81,19 +81,24 @@ export default function Comments({ proposalId, userAddress }: CommentsProps) {
                         </svg>
                     </div>
                     <div>
-                        <h4 className="text-xl font-black uppercase tracking-tight text-white leading-tight">Public Discourse</h4>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase">{comments.length} Registered Opinions</p>
+                        <h4 className="text-xl font-black uppercase tracking-tight text-white leading-tight">Personal Notes</h4>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase">{comments.length} Local Notes</p>
                     </div>
                 </div>
             </div>
 
             {/* Comment Form */}
+            <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                <p className="text-[11px] font-medium text-amber-400">
+                    <span className="font-bold">Note:</span> Comments are stored locally in your browser and are only visible to you. Shared commenting via Gaia storage is planned for a future update.
+                </p>
+            </div>
             {userAddress ? (
                 <form onSubmit={handleSubmit} className="mb-12 relative group">
                     <textarea
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Contribute to the governance dialogue..."
+                        placeholder="Add a personal note about this proposal..."
                         className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-[24px] text-white placeholder-slate-600 focus:outline-none focus:border-orange-500/50 transition-all resize-none font-medium text-sm leading-relaxed"
                         rows={4}
                         disabled={isSubmitting}
@@ -105,7 +110,7 @@ export default function Comments({ proposalId, userAddress }: CommentsProps) {
                             disabled={!newComment.trim() || isSubmitting}
                             className="px-6 py-2.5 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-600 hover:text-white transition-all disabled:opacity-20 shadow-xl"
                         >
-                            ENACT COMMENT
+                            SAVE NOTE
                         </button>
                     </div>
                 </form>
@@ -122,7 +127,7 @@ export default function Comments({ proposalId, userAddress }: CommentsProps) {
                         <svg className="w-12 h-12 mx-auto mb-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest">No discourse recorded yet</p>
+                        <p className="text-xs font-black text-slate-500 uppercase tracking-widest">No notes yet</p>
                     </div>
                 ) : (
                     comments.map((comment) => (
