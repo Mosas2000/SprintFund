@@ -1,7 +1,15 @@
 import { makeContractCall, broadcastTransaction, AnchorMode, stringUtf8CV } from '@stacks/transactions';
-import { STACKS_MAINNET } from '@stacks/network';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import {
+  parseArgs,
+  getNetwork,
+  getExplorerUrl,
+  validatePrivateKey,
+  confirmMainnetTransaction,
+  logDryRun,
+  printUsage
+} from './lib/script-utils.js';
 
 dotenv.config();
 
@@ -18,42 +26,109 @@ const activities = [
   "Platform development log"
 ];
 
-async function logActivity(message, index) {
-  try {
-    const txOptions = {
-      contractAddress: 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T',
-      contractName: 'sprintfund-logger',
-      functionName: 'log-activity',
-      functionArgs: [stringUtf8CV(message)],
-      senderKey: process.env.PRIVATE_KEY,
-      network: STACKS_MAINNET,
-      anchorMode: AnchorMode.Any,
-    };
+async function logActivity(message, index, options, network) {
+  const keyResult = validatePrivateKey(process.env.PRIVATE_KEY);
+  if (!keyResult.valid) {
+    throw new Error(keyResult.error);
+  }
 
+  const contractAddress = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
+  const contractName = 'sprintfund-logger';
+  
+  const txOptions = {
+    contractAddress,
+    contractName,
+    functionName: 'log-activity',
+    functionArgs: [stringUtf8CV(message)],
+    senderKey: keyResult.key,
+    network,
+    anchorMode: AnchorMode.Any,
+  };
+
+  if (options.dryRun) {
+    console.log(`[DRY RUN] #${index}: Would log "${message}"`);
+    return 'dry-run-txid';
+  }
+
+  try {
     const transaction = await makeContractCall(txOptions);
-    const result = await broadcastTransaction(transaction, STACKS_MAINNET);
+    const result = await broadcastTransaction(transaction, network);
     
-    const logEntry = `LOG_${index}: ${result.txid} - ${message}\n`;
+    if (result.error) {
+      throw new Error(result.error);
+    }
+    
+    const logEntry = `LOG_${index}: ${result.txid} - ${message} (${options.network})\n`;
     fs.appendFileSync('../transactions.log', logEntry);
     
-    console.log(`✅ #${index}: ${result.txid.slice(0, 10)}...`);
+    console.log(`#${index}: ${result.txid.slice(0, 10)}...`);
     return result.txid;
   } catch (error) {
-    console.error(`❌ #${index} failed:`, error.message);
+    console.error(`#${index} failed:`, error.message);
+    throw error;
   }
 }
 
-async function runBatch(batchNum) {
-  console.log(`\n🚀 Starting batch ${batchNum} (10 transactions)...`);
+async function runBatch(batchNum, options, network) {
+  console.log(`\nStarting batch ${batchNum} (10 transactions)...`);
+  console.log(`Network: ${options.network}`);
+  if (options.dryRun) {
+    console.log('Mode: DRY RUN\n');
+  } else {
+    console.log('');
+  }
   
   for (let i = 0; i < 10; i++) {
     const index = (batchNum - 1) * 10 + i + 1;
     const message = activities[i % activities.length] + ` #${index}`;
-    await logActivity(message, index);
-    await new Promise(r => setTimeout(r, 2000)); // 2s delay
+    await logActivity(message, index, options, network);
+    if (!options.dryRun) {
+      await new Promise(r => setTimeout(r, 2000));
+    }
   }
   
-  console.log(`✅ Batch ${batchNum} complete!\n`);
+  console.log(`\nBatch ${batchNum} complete!\n`);
 }
 
-runBatch(10);
+async function main() {
+  const args = process.argv.slice(2);
+  
+  if (args.includes('--help') || args.includes('-h')) {
+    printUsage('call-logger.js', '  --batch=N         Batch number to run (default: 10)');
+    process.exit(0);
+  }
+
+  const options = parseArgs(args);
+  const network = getNetwork(options.network);
+  
+  let batchNum = 10;
+  for (const arg of args) {
+    if (arg.startsWith('--batch=')) {
+      batchNum = parseInt(arg.split('=')[1], 10);
+    }
+  }
+
+  const keyResult = validatePrivateKey(process.env.PRIVATE_KEY);
+  if (!keyResult.valid) {
+    console.error(`ERROR: ${keyResult.error}`);
+    console.log('\nPlease create a .env file with:');
+    console.log('PRIVATE_KEY=your-private-key-here\n');
+    process.exit(1);
+  }
+
+  if (options.network === 'mainnet' && !options.skipConfirm && !options.dryRun) {
+    const confirmed = await confirmMainnetTransaction({
+      action: `Log Activity Batch ${batchNum}`,
+      contract: 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-logger',
+      function: 'log-activity (x10)'
+    });
+    if (!confirmed) {
+      console.log('Transaction cancelled.\n');
+      process.exit(0);
+    }
+  }
+
+  await runBatch(batchNum, options, network);
+}
+
+main();

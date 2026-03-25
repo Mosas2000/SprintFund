@@ -1,54 +1,98 @@
 import { makeContractDeploy, broadcastTransaction, AnchorMode } from '@stacks/transactions';
-import { STACKS_MAINNET } from '@stacks/network';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import {
+  parseArgs,
+  getNetwork,
+  getExplorerUrl,
+  validatePrivateKey,
+  confirmMainnetTransaction,
+  logDryRun,
+  printUsage
+} from './lib/script-utils.js';
 
 dotenv.config();
 
 const contractCode = fs.readFileSync('../contracts/sprintfund-logger.clar', 'utf8');
 
 async function deployLogger() {
-  if (!process.env.PRIVATE_KEY) {
-    console.error('❌ ERROR: PRIVATE_KEY not set in .env file');
+  const args = process.argv.slice(2);
+  
+  if (args.includes('--help') || args.includes('-h')) {
+    printUsage('deploy-logger.js');
+    process.exit(0);
+  }
+
+  const options = parseArgs(args);
+  const network = getNetwork(options.network);
+  
+  const keyResult = validatePrivateKey(process.env.PRIVATE_KEY);
+  if (!keyResult.valid) {
+    console.error(`ERROR: ${keyResult.error}`);
     console.log('\nPlease create a .env file with:');
     console.log('PRIVATE_KEY=your-private-key-here\n');
     process.exit(1);
   }
   
-  // Clean the private key (remove quotes, 0x prefix, whitespace)
-  let privateKey = process.env.PRIVATE_KEY.trim();
-  privateKey = privateKey.replace(/^["']|["']$/g, ''); // Remove quotes
-  privateKey = privateKey.replace(/^0x/i, ''); // Remove 0x prefix if present
+  const privateKey = keyResult.key;
+  const contractName = 'sprintfund-logger';
   
-  // Validate private key format (should be 64 or 66 hex characters)
-  // 66 chars includes the compression suffix "01" which is valid
-  if (!/^[0-9a-fA-F]{64,66}$/.test(privateKey)) {
-    console.error('❌ ERROR: Invalid private key format');
-    console.log('\nPrivate key should be 64-66 hexadecimal characters');
-    console.log('Example: abcd1234...(64-66 chars total)');
-    console.log('Current length:', privateKey.length);
-    process.exit(1);
-  }
+  console.log(`\nDeploying ${contractName} to ${options.network}...\n`);
   
-  console.log('🚀 Deploying sprintfund-logger to mainnet...\n');
   const txOptions = {
-    contractName: 'sprintfund-logger',
+    contractName,
     codeBody: contractCode,
     senderKey: privateKey,
-    network: STACKS_MAINNET,
+    network,
     anchorMode: AnchorMode.Any,
   };
 
-  const transaction = await makeContractDeploy(txOptions);
-  const result = await broadcastTransaction(transaction, STACKS_MAINNET);
-  
-  console.log('✅ Deployment TX:', result.txid);
-  console.log('Explorer:', `https://explorer.hiro.so/txid/${result.txid}?chain=mainnet`);
-  
-  const logEntry = `DEPLOY_LOGGER: ${result.txid} - Deploy Logger Contract\n`;
-  fs.appendFileSync('../transactions.log', logEntry);
-  
-  return result.txid;
+  if (options.dryRun) {
+    logDryRun({
+      action: 'Deploy Contract',
+      network: options.network,
+      contract: contractName,
+      args: {
+        codeSize: `${contractCode.length} bytes`
+      }
+    });
+    return;
+  }
+
+  if (options.network === 'mainnet' && !options.skipConfirm) {
+    const confirmed = await confirmMainnetTransaction({
+      action: 'Deploy Contract',
+      contract: contractName
+    });
+    if (!confirmed) {
+      console.log('Transaction cancelled.\n');
+      process.exit(0);
+    }
+  }
+
+  try {
+    const transaction = await makeContractDeploy(txOptions);
+    const result = await broadcastTransaction(transaction, network);
+    
+    if (result.error) {
+      console.error('ERROR:', result.error);
+      if (result.reason) {
+        console.error('Reason:', result.reason);
+      }
+      process.exit(1);
+    }
+    
+    console.log('Deployment TX:', result.txid);
+    console.log('Explorer:', getExplorerUrl(options.network, result.txid));
+    
+    const logEntry = `DEPLOY_LOGGER: ${result.txid} - Deploy Logger Contract (${options.network})\n`;
+    fs.appendFileSync('../transactions.log', logEntry);
+    
+    return result.txid;
+  } catch (error) {
+    console.error('ERROR:', error.message);
+    process.exit(1);
+  }
 }
 
-deployLogger().catch(console.error);
+deployLogger();
