@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { UserSession, UserData } from '@stacks/connect';
+import { CONTRACT_PRINCIPAL } from '@/config';
 import SprintFundHero from '@/components/ui/SprintFundHero';
 import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
@@ -13,8 +14,6 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { LoadingSpinner, LoadingOverlay } from '@/components/LoadingIndicators';
 import { createLoadingState, updateLoadingState } from '@/lib/loading-state';
 import type { LoadingState } from '@/lib/loading-state';
-
-const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core';
 
 type StacksUserData = UserData;
 
@@ -98,7 +97,7 @@ export default function Home() {
 
   const copyContractAddress = async () => {
     try {
-      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+      await navigator.clipboard.writeText(CONTRACT_PRINCIPAL);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch (error) {
@@ -131,7 +130,7 @@ export default function Home() {
             <div className="inline-block bg-slate-800 rounded-lg px-6 py-3 border border-slate-700">
               <p className="text-sm text-slate-300 mb-1">Contract Address</p>
               <code className="text-white font-mono text-sm break-all">
-                {CONTRACT_ADDRESS}
+                {CONTRACT_PRINCIPAL}
               </code>
             </div>
           </div>
@@ -205,7 +204,7 @@ export default function Home() {
                 <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Contract</h4>
                 <div className="rounded-lg border border-slate-700 bg-slate-900/70 p-3">
                   <p className="text-[11px] text-slate-400 mb-1">Mainnet Contract Address</p>
-                  <code className="text-xs text-slate-200 break-all">{CONTRACT_ADDRESS}</code>
+                  <code className="text-xs text-slate-200 break-all">{CONTRACT_PRINCIPAL}</code>
                   <button
                     type="button"
                     onClick={copyContractAddress}

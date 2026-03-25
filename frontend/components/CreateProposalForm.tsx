@@ -9,6 +9,7 @@ import {
 } from '@stacks/transactions';
 import { toMicroSTX } from '@/utils/formatSTX';
 import { STACKS_MAINNET } from '@stacks/network';
+import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import CategoryTags from './CategoryTags';
@@ -16,8 +17,6 @@ import { predictProposalSuccess } from '@/utils/successPredictor';
 import { Target, AlertCircle, Sparkles, Brain, CheckCircle2 } from 'lucide-react';
 import { useTransaction } from '@/hooks/useTransaction';
 
-const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-const CONTRACT_NAME = 'sprintfund-core';
 const NETWORK = STACKS_MAINNET;
 
 interface CreateProposalFormProps {

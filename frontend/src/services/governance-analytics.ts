@@ -5,9 +5,8 @@ import {
   principalCV,
 } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
+import { CONTRACT_ADDRESS, CONTRACT_NAME } from '../config';
 
-const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-const CONTRACT_NAME = 'sprintfund-core-v3';
 const NETWORK = STACKS_MAINNET;
 
 interface Proposal {

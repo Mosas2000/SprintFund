@@ -1,7 +1,7 @@
 /* ── Contract ─────────────────────────────────── */
 
 export const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-export const CONTRACT_NAME = 'sprintfund-core-v3';
+export const CONTRACT_NAME = 'sprintfund-core';
 export const CONTRACT_PRINCIPAL = `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`;
 export const NETWORK = 'mainnet' as const;
 
