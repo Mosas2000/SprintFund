@@ -1,0 +1,28 @@
+[network]
+name = "mainnet"
+stacks_node_rpc_address = "https://api.hiro.so"
+deployment_fee_rate = 10
+
+# ==========================================
+# IMPORTANT SECURITY NOTICE
+# ==========================================
+# 
+# Copy this file to settings/Mainnet.toml.local before adding mnemonics.
+# The .local file is gitignored and will NOT be committed.
+#
+# NEVER commit wallet mnemonics to version control!
+#
+# For production deployments:
+# 1. Use environment variables: export DEPLOYER_MNEMONIC="your phrase"
+# 2. Or use Clarinet's secure credential management
+# 3. Or copy this to Mainnet.toml.local and add mnemonics there
+#
+# ==========================================
+
+[accounts.deployer]
+# Replace with your actual mnemonic in Mainnet.toml.local
+mnemonic = "REPLACE_WITH_YOUR_MNEMONIC"
+
+# Add additional accounts as needed:
+# [accounts.wallet2]
+# mnemonic = "your second wallet mnemonic"
