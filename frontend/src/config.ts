@@ -1,14 +1,24 @@
 /* ── Contract ─────────────────────────────────── */
 
-export const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-export const CONTRACT_NAME = 'sprintfund-core';
+export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK || 'mainnet') as 'mainnet' | 'testnet';
+export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
+export const CONTRACT_NAME = process.env.NEXT_PUBLIC_CONTRACT_NAME || 'sprintfund-core';
 export const CONTRACT_PRINCIPAL = `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`;
-export const NETWORK = 'mainnet' as const;
 
 /* ── API ──────────────────────────────────────── */
 
-export const API_URL = 'https://api.mainnet.hiro.so';
-export const EXPLORER_URL = 'https://explorer.hiro.so';
+const API_URLS = {
+  mainnet: 'https://api.mainnet.hiro.so',
+  testnet: 'https://api.testnet.hiro.so',
+} as const;
+
+const EXPLORER_URLS = {
+  mainnet: 'https://explorer.hiro.so',
+  testnet: 'https://explorer.hiro.so', 
+} as const;
+
+export const API_URL = process.env.NEXT_PUBLIC_STACKS_API_URL || API_URLS[NETWORK];
+export const EXPLORER_URL = EXPLORER_URLS[NETWORK];
 
 /* ── STX conversions ──────────────────────────── */
 
