@@ -210,6 +210,13 @@ export default function VoteDelegation({ userAddress }: VoteDelegationProps) {
                   </div>
                 </div>
 
+                <div className="mb-6 p-4 bg-amber-500/20 border border-amber-500/30 rounded-lg">
+                  <h4 className="font-semibold text-amber-400 mb-2">⚠️ Preview Feature</h4>
+                  <p className="text-sm text-amber-300/80">
+                    Delegation is stored locally in your browser only. On-chain delegation requires a contract upgrade and is planned for a future version.
+                  </p>
+                </div>
+
                 <div className="mb-6 p-4 bg-blue-500/20 rounded-lg">
                   <h4 className="font-semibold text-white mb-2">ℹ️ About Delegation</h4>
                   <ul className="text-sm text-white/70 space-y-1">
