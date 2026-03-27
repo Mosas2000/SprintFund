@@ -13,6 +13,10 @@ epoch = "latest"
 path = "contracts/sprintfund-logger.clar"
 epoch = "latest"
 
+[contracts.sprintfund-core-v2]
+path = "contracts/sprintfund-core-v2.clar"
+epoch = "latest"
+
 # [contracts.counter]
 # path = "contracts/counter.clar"
 # epoch = "latest"
