@@ -1,17 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { buildRootMetadata } from "@/lib/metadata-builder";
 import { SITE_THEME_COLOR } from "@/types/seo";
 
-const geistSans = Geist({
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  weight: "100 900",
+  fallback: ["system-ui", "sans-serif"],
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: "100 900",
+  fallback: ["monospace"],
 });
 
 export const metadata: Metadata = buildRootMetadata();
@@ -24,8 +28,8 @@ export const viewport: Viewport = {
 };
 
 import { Providers } from "@/components/Providers";
-import GlassBackground from "@/components/GlassBackground";
-import ToastProvider from "@/components/ToastProvider";
+import GlassBackground from "@/components/common/GlassBackground";
+import ToastProvider from "@/components/common/ToastProvider";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 
 export default function RootLayout({

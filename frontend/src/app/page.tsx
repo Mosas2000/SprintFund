@@ -6,7 +6,7 @@ import { CONTRACT_PRINCIPAL } from '@/config';
 import SprintFundHero from '@/components/ui/SprintFundHero';
 import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
-import UserDashboard from '@/components/UserDashboard';
+import UserDashboard from '@/components/dashboard/UserDashboard';
 import Stats from '@/components/Stats';
 import Header from '@/components/Header';
 import Link from 'next/link';

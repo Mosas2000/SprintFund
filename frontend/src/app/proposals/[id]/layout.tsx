@@ -2,17 +2,17 @@ import type { Metadata } from 'next';
 
 interface ProposalDetailLayoutProps {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const id = params.id;
+  const { id } = await params;
 
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/proposals/${id}`, {
@@ -45,6 +45,6 @@ export async function generateMetadata({
   }
 }
 
-export default function ProposalDetailLayout({ children, params }: ProposalDetailLayoutProps) {
+export default async function ProposalDetailLayout({ children, params }: ProposalDetailLayoutProps) {
   return children;
 }

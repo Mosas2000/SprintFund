@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@stacks/connect-react';
+import { useConnect } from '@stacks/connect-react';
 import { Send } from 'lucide-react';
 
 interface CommentInputProps {
@@ -19,7 +19,7 @@ export function CommentInput({
   onCancel,
   loading = false,
 }: CommentInputProps) {
-  const { userSession } = useWallet();
+  const { userSession } = useConnect();
   const [content, setContent] = useState('');
   const [error, setError] = useState<string | null>(null);
 

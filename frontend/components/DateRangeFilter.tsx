@@ -5,7 +5,7 @@ import { Calendar } from 'lucide-react';
 
 export interface DateRangeFilterProps {
   onRangeChange: (startDate: Date, endDate: Date) => void;
-  defaultRange?: 'week' | 'month' | 'all';
+  defaultRange?: 'week' | 'month' | 'quarter' | 'all';
 }
 
 const presets = {

@@ -33,9 +33,9 @@ const MOCK_PROPOSALS: Record<string, any> = {
   },
 };
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const proposalId = params.id;
+    const { id: proposalId } = await params;
     const proposal = MOCK_PROPOSALS[proposalId];
 
     if (!proposal) {

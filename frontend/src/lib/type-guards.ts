@@ -93,7 +93,7 @@ export function isValidVoteRecord(vote: unknown): vote is VoteRecord {
  */
 export function isValidPrincipal(address: unknown): address is string {
   if (typeof address !== 'string') return false;
-  return /^S[PT][A-Z0-9]{38}$/.test(address);
+  return /^S[PT][A-Z0-9]{39}$/.test(address);
 }
 
 /**

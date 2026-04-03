@@ -58,7 +58,7 @@ describe('validateRawProposal', () => {
   });
 
   it('returns null if required fields are missing or invalid', () => {
-    const invalid = { ...validRawProposal, proposer: 'not-wrapped' };
+    const invalid = { ...validRawProposal, proposer: null };
     expect(validateRawProposal(invalid)).toBeNull();
   });
 

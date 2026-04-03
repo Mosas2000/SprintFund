@@ -2,19 +2,19 @@
 
 import { useState } from 'react';
 import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
-import CategoryChart from './CategoryChart';
-import SuccessRateChart from './SuccessRateChart';
-import VotingTrendsChart from './VotingTrendsChart';
+import CategoryChart from './charts/CategoryChart';
+import SuccessRateChart from './charts/SuccessRateChart';
+import VotingTrendsChart from './charts/VotingTrendsChart';
 import STXDistributionChart from './STXDistributionChart';
 import VotingPowerConcentrationChart from './VotingPowerConcentrationChart';
-import ProposerActivityChart from './ProposerActivityChart';
-import { AnalyticsKPIPanel } from './AnalyticsKPIPanel';
+import ProposerActivityChart from './charts/ProposerActivityChart';
+import { AnalyticsKPIPanel } from './dashboard/AnalyticsKPIPanel';
 import { AnalyticsExportPanel } from './AnalyticsExportPanel';
-import { PerformanceMetricsPanel } from './PerformanceMetricsPanel';
+import { PerformanceMetricsPanel } from './dashboard/PerformanceMetricsPanel';
 import FundingMetricsChart from './FundingMetricsChart';
-import TreasuryBalanceChart from './TreasuryBalanceChart';
+import TreasuryBalanceChart from './charts/TreasuryBalanceChart';
 import VoterParticipationTrendChart from './VoterParticipationTrendChart';
-import { DataRefreshIndicator } from './DataRefreshIndicator';
+import { DataRefreshIndicator } from './common/DataRefreshIndicator';
 import { RefreshCw } from 'lucide-react';
 
 export default function GovernanceAnalyticsDashboard() {

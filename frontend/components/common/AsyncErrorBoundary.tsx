@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { AsyncError, ErrorCode, getErrorMessage, isRetryableError } from '../lib/async-errors';
+import { AsyncError, ErrorCode, getErrorMessage, isRetryableError } from '../../src/lib/async-errors';
 
 interface AsyncErrorBoundaryProps {
   children: ReactNode;

@@ -1,34 +1,35 @@
 import { describe, it, expect } from 'vitest';
+import { renderHook } from '@testing-library/react';
 import { useBlockHeight, useProposalBlockHeight } from './useBlockHeight';
 import type { Proposal } from '../types';
 
 describe('useBlockHeight hook', () => {
   describe('useBlockHeight', () => {
     it('should format block height with all results', () => {
-      const result = useBlockHeight(12345);
-      expect(result.formattedFull).toBeTruthy();
-      expect(result.formattedShort).toBeTruthy();
-      expect(result.displayedTime).toBe(result.formattedFull);
-      expect(result.estimatedTimestamp).toBeTruthy();
+      const { result } = renderHook(() => useBlockHeight(12345));
+      expect(result.current.formattedFull).toBeTruthy();
+      expect(result.current.formattedShort).toBeTruthy();
+      expect(result.current.displayedTime).toBe(result.current.formattedFull);
+      expect(result.current.estimatedTimestamp).toBeTruthy();
     });
 
     it('should handle null', () => {
-      const result = useBlockHeight(null);
-      expect(result.formattedFull).toBe('Block #0');
-      expect(result.formattedShort).toBe('Block #0');
-      expect(result.estimatedTimestamp).toBeNull();
+      const { result } = renderHook(() => useBlockHeight(null));
+      expect(result.current.formattedFull).toBe('Block #0');
+      expect(result.current.formattedShort).toBe('Block #0');
+      expect(result.current.estimatedTimestamp).toBeNull();
     });
 
     it('should handle undefined', () => {
-      const result = useBlockHeight(undefined);
-      expect(result.formattedFull).toBe('Block #0');
-      expect(result.estimatedTimestamp).toBeNull();
+      const { result } = renderHook(() => useBlockHeight(undefined));
+      expect(result.current.formattedFull).toBe('Block #0');
+      expect(result.current.estimatedTimestamp).toBeNull();
     });
 
     it('should handle zero', () => {
-      const result = useBlockHeight(0);
-      expect(result.formattedShort).toBe('Block #0');
-      expect(result.estimatedTimestamp).toBeTruthy();
+      const { result } = renderHook(() => useBlockHeight(0));
+      expect(result.current.formattedShort).toBe('Block #0');
+      expect(result.current.estimatedTimestamp).toBeTruthy();
     });
   });
 
@@ -46,15 +47,15 @@ describe('useBlockHeight hook', () => {
         createdAt: 50000,
       };
 
-      const result = useProposalBlockHeight(mockProposal);
-      expect(result.formattedFull).toContain('Block #50,000');
-      expect(result.estimatedTimestamp).toBeTruthy();
+      const { result } = renderHook(() => useProposalBlockHeight(mockProposal));
+      expect(result.current.formattedFull).toContain('Block #50,000');
+      expect(result.current.estimatedTimestamp).toBeTruthy();
     });
 
     it('should handle null proposal', () => {
-      const result = useProposalBlockHeight(null);
-      expect(result.formattedFull).toBe('Block #0');
-      expect(result.estimatedTimestamp).toBeNull();
+      const { result } = renderHook(() => useProposalBlockHeight(null));
+      expect(result.current.formattedFull).toBe('Block #0');
+      expect(result.current.estimatedTimestamp).toBeNull();
     });
   });
 });
