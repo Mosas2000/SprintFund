@@ -12,7 +12,7 @@ import { STACKS_MAINNET } from '@stacks/network';
 import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import CategoryTags from './CategoryTags';
+import CategoryTags from './common/CategoryTags';
 import { predictProposalSuccess } from '@/utils/successPredictor';
 import { Target, AlertCircle, Sparkles, Brain, CheckCircle2 } from 'lucide-react';
 import { useTransaction } from '@/hooks/useTransaction';
@@ -106,16 +106,20 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
         const { openContractCall } = await import('@stacks/connect');
         await execute(async () => {
             return new Promise<string>((resolve, reject) => {
-                openContractCall({
-                    ...options,
-                    onFinish: (data: { txId: string }) => {
-                        console.log('Transaction submitted:', data);
-                        resolve(data.txId);
-                    },
-                    onCancel: () => {
-                        reject(new Error('Transaction was cancelled'));
-                    },
-                }).catch(reject);
+                try {
+                    openContractCall({
+                        ...options,
+                        onFinish: (data: { txId: string }) => {
+                            console.log('Transaction submitted:', data);
+                            resolve(data.txId);
+                        },
+                        onCancel: () => {
+                            reject(new Error('Transaction was cancelled'));
+                        },
+                    });
+                } catch (err) {
+                    reject(err);
+                }
             });
         });
     };

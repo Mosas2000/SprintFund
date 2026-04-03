@@ -6,6 +6,6 @@ export { default as UserInsights } from './UserInsights';
 export { default as UserNetwork } from './UserNetwork';
 export { default as ActivityFeed } from './ActivityFeed';
 export { default as AuditTrail } from './AuditTrail';
-export { default as PerformanceMetricsPanel } from './PerformanceMetricsPanel';
-export { default as AnalyticsKPIPanel } from './AnalyticsKPIPanel';
+export { PerformanceMetricsPanel } from './PerformanceMetricsPanel';
+export { AnalyticsKPIPanel } from './AnalyticsKPIPanel';
 export { default as ImpactAssessment } from './ImpactAssessment';

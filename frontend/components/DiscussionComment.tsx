@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@stacks/connect-react';
+import { useConnect } from '@stacks/connect-react';
 import { useProposalDiscussion } from '@/hooks/useProposalDiscussion';
 import { Heart, MessageCircle, MoreVertical } from 'lucide-react';
 
@@ -22,7 +22,7 @@ export function DiscussionComment({
   canDelete,
   onDelete,
 }: DiscussionCommentProps) {
-  const { userSession } = useWallet();
+  const { userSession } = useConnect();
   const { likeComment } = useProposalDiscussion(proposalId);
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

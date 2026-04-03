@@ -15,14 +15,15 @@ export type GetProposalResponse<T extends boolean> = T extends true
 /**
  * Generic result with type-safe error fields.
  */
-export interface TypedResult<T, E extends Error = Error> {
-  ok: true;
-  data: T;
-}  
-| {
-  ok: false;
-  error: E;
-};
+export type TypedResult<T, E extends Error = Error> =
+  | {
+      ok: true;
+      data: T;
+    }
+  | {
+      ok: false;
+      error: E;
+    };
 
 /**
  * Utility to create typed results.
@@ -136,7 +137,7 @@ export class TypedEventEmitter<T extends Record<string, any[]>>
  */
 export interface ProposalEvents {
   'proposal:created': [proposal: Proposal];
-  'proposal:voted': [proposalId: number; support: boolean; weight: number];
+  'proposal:voted': [proposalId: number, support: boolean, weight: number];
   'proposal:executed': [proposalId: number];
 }
 

@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Navigation from './Navigation';
 import NotificationHub from './NotificationHub';
-import DarkModeToggle from './DarkModeToggle';
+import DarkModeToggle from './common/DarkModeToggle';
 import { Sparkles } from 'lucide-react';
 
 export default function Header() {

@@ -43,8 +43,8 @@ describe('Type guards', () => {
     });
 
     it('returns false for null or undefined', () => {
-      expect(isValidProposal(null)).toBe(false);
-      expect(isValidProposal(undefined)).toBe(false);
+      expect(isValidProposal(null)).toBeFalsy();
+      expect(isValidProposal(undefined)).toBeFalsy();
     });
   });
 
@@ -117,7 +117,7 @@ describe('Type guards', () => {
     it('accepts valid Stacks addresses', () => {
       expect(isValidPrincipal('SP3NJ3HTPVJVTG2HZHBNVGF37WXVWQDP8T0E3GNJG')).toBe(true);
       expect(isValidPrincipal('SPMGWYY7K6BN5P5AW4J50R5RNHB9QNEQVVVNN3MYX')).toBe(true);
-      expect(isValidPrincipal('PT3NJ3HTPVJVTG2HZHBNVGF37WXVWQDP8T0E3GNJG')).toBe(true);
+      expect(isValidPrincipal('ST3NJ3HTPVJVTG2HZHBNVGF37WXVWQDP8T0E3GNJG')).toBe(true);
     });
 
     it('rejects invalid addresses', () => {

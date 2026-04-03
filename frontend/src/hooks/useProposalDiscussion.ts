@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useWallet } from '@stacks/connect-react';
+import { useConnect } from '@stacks/connect-react';
 import { proposalDiscussionService } from '@/services/proposal-discussion';
 import { ProposalDiscussionThread, ProposalDiscussionComment } from '@/types/proposal-detail';
 
 export function useProposalDiscussion(proposalId: string) {
-  const { userSession } = useWallet();
+  const { userSession } = useConnect();
   const [thread, setThread] = useState<ProposalDiscussionThread | null>(null);
   const [loading, setLoading] = useState(false);
 

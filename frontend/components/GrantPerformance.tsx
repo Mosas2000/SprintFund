@@ -57,7 +57,7 @@ interface CategoryPerformance {
 }
 
 export default function GrantPerformance() {
-  const [grants, setGrants] = useState<Grant[]>([
+  const [grants, setGrants] = useState<Grant[]>(() => [
     {
       id: 1,
       proposalId: 42,

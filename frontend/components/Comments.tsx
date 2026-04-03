@@ -20,16 +20,16 @@ export default function Comments({ proposalId, userAddress }: CommentsProps) {
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        loadComments();
-    }, [proposalId]);
-
     const loadComments = () => {
         const stored = localStorage.getItem(`comments-${proposalId}`);
         if (stored) {
             setComments(JSON.parse(stored));
         }
     };
+
+    useEffect(() => {
+        loadComments();
+    }, [proposalId]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AsyncError, getErrorMessage, isRetryableError } from '../lib/async-errors';
+import { AsyncError, getErrorMessage, isRetryableError } from '../../src/lib/async-errors';
 
 interface ErrorMessageProps {
   error: AsyncError | null;

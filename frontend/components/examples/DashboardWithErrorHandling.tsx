@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getStxBalance, getTxStatus } from '../lib/api';
 import { useAsyncError } from '../hooks/useAsyncError';
 import { ErrorMessage } from './common/ErrorMessage';
-import { AsyncError } from '../lib/async-errors';
+import { AsyncError } from '../../src/lib/async-errors';
 
 interface DashboardErrorProps {
   title: string;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllProposals, getProposalsPage } from '../lib/stacks';
 import { useAsyncError } from '../hooks/useAsyncError';
 import { ErrorMessage } from './common/ErrorMessage';
-import { AsyncError } from '../lib/async-errors';
+import { AsyncError } from '../../src/lib/async-errors';
 import type { Proposal, ProposalPage } from '../types';
 
 interface ProposalListErrorProps {

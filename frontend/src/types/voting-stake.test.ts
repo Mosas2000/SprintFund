@@ -81,7 +81,8 @@ describe('Voting Types', () => {
       };
 
       expect(stats.totalVoters).toBeGreaterThan(0);
-      expect(stats.participationRate).toBeBetween(0, 100);
+      expect(stats.participationRate).toBeGreaterThanOrEqual(0);
+      expect(stats.participationRate).toBeLessThanOrEqual(100);
     });
   });
 });

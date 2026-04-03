@@ -171,7 +171,7 @@ describe('Voting utilities', () => {
     });
 
     it('formats large amounts with K suffix', () => {
-      expect(formatStxAmount(5000000000)).toBe('5000.00K STX');
+      expect(formatStxAmount(5000000000)).toBe('5.00K STX');
     });
 
     it('formats very large amounts with M suffix', () => {

@@ -20,7 +20,7 @@ import {
 import { TrendingUp, ArrowUpRight, ArrowDownRight, Clock, Award, Activity, Sparkles, Shield } from 'lucide-react';
 import { InsightsFeed } from './index';
 import TreasuryTransparency from '../TreasuryTransparency';
-import EcosystemBenchmarks from '../EcosystemBenchmarks';
+import EcosystemBenchmarks from '../charts/EcosystemBenchmarks';
 import type { KPICardProps } from '../../src/types';
 
 const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];

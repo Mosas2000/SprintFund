@@ -113,6 +113,7 @@ const useAnalyticsStore = create<AnalyticsState>((set, get) => ({
 export const useFilteredProposals = (): ProposalMetrics[] => {
   const proposals = useAnalyticsStore(state => state.proposals);
   const filters = useAnalyticsStore(state => state.filters);
+  const now = Date.now();
 
   return proposals.filter(proposal => {
     const proposalDate = new Date(proposal.createdAt * 10 * 60 * 1000);
@@ -130,7 +131,6 @@ export const useFilteredProposals = (): ProposalMetrics[] => {
         return false;
       }
       if (filters.statusFilter === 'failed') {
-        const now = Date.now();
         const deadline = proposal.deadline * 10 * 60 * 1000;
         if (proposal.executed || deadline > now) {
           return false;
@@ -141,7 +141,6 @@ export const useFilteredProposals = (): ProposalMetrics[] => {
         return false;
       }
       if (filters.statusFilter === 'active') {
-        const now = Date.now();
         const deadline = proposal.deadline * 10 * 60 * 1000;
         if (proposal.executed || deadline < now) {
           return false;
@@ -159,6 +158,7 @@ export const useFilteredProposals = (): ProposalMetrics[] => {
 
 export const useAggregateStats = (): AggregateStats => {
   const filteredProposals = useFilteredProposals();
+  const now = Date.now();
 
   const totalFunded = filteredProposals
     .filter(p => p.executed)
@@ -174,7 +174,6 @@ export const useAggregateStats = (): AggregateStats => {
     ? proposalsWithTimeToFunding.reduce((sum, p) => sum + (p.timeToFunding || 0), 0) / proposalsWithTimeToFunding.length
     : 0;
 
-  const now = Date.now();
   const activeProposals = filteredProposals.filter(p => {
     if (p.executed) return false;
     const deadline = p.deadline * 10 * 60 * 1000;
