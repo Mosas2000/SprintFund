@@ -1,3 +1,15 @@
+/**
+ * Example: Dashboard with Error Handling
+ * 
+ * Demonstrates the useAsyncError hook for managing multiple async operations
+ * with individual error states, retry functionality, and loading states.
+ * 
+ * This example shows best practices for:
+ * - Handling multiple independent data fetches
+ * - Providing retry functionality per section
+ * - Showing loading states while data is being fetched
+ * - Graceful error recovery
+ */
 import React, { useEffect, useState } from 'react';
 import { getStxBalance, getTxStatus } from '../../src/lib/api';
 import { useAsyncError } from '../../src/hooks/useAsyncError';
