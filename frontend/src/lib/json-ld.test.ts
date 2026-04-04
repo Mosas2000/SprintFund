@@ -50,15 +50,15 @@ describe('buildOrganizationJsonLd', () => {
   it('lists social profiles in sameAs', () => {
     const org = buildOrganizationJsonLd();
     expect(org.sameAs).toBeInstanceOf(Array);
-    expect(org.sameAs.length).toBeGreaterThan(0);
-    org.sameAs.forEach((url: string) => {
+    expect(org.sameAs!.length).toBeGreaterThan(0);
+    org.sameAs!.forEach((url: string) => {
       expect(url.startsWith('https://')).toBe(true);
     });
   });
 
   it('includes the GitHub repository URL', () => {
     const org = buildOrganizationJsonLd();
-    expect(org.sameAs.some((u: string) => u.includes('github.com'))).toBe(true);
+    expect(org.sameAs!.some((u: string) => u.includes('github.com'))).toBe(true);
   });
 });
 
@@ -79,17 +79,17 @@ describe('buildWebSiteJsonLd', () => {
   it('includes a SearchAction potential action', () => {
     const site = buildWebSiteJsonLd();
     expect(site.potentialAction).toBeDefined();
-    expect(site.potentialAction['@type']).toBe('SearchAction');
+    expect(site.potentialAction!['@type']).toBe('SearchAction');
   });
 
   it('has a target URL with search term placeholder', () => {
     const site = buildWebSiteJsonLd();
-    expect(site.potentialAction.target).toContain('{search_term_string}');
+    expect(site.potentialAction!.target).toContain('{search_term_string}');
   });
 
   it('declares the search term input as required', () => {
     const site = buildWebSiteJsonLd();
-    expect(site.potentialAction['query-input']).toContain('required');
+    expect(site.potentialAction!['query-input']).toContain('required');
   });
 });
 
@@ -125,7 +125,7 @@ describe('buildWebPageJsonLd', () => {
   it('includes an about reference for the topic', () => {
     const page = buildWebPageJsonLd(MOCK_PAGE);
     expect(page.about).toBeDefined();
-    expect(page.about['@type']).toBe('Thing');
+    expect(page.about!['@type']).toBe('Thing');
   });
 
   it('includes an image URL', () => {
