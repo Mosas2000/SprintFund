@@ -1,7 +1,19 @@
+/**
+ * Example: Dashboard with Error Handling
+ * 
+ * Demonstrates the useAsyncError hook for managing multiple async operations
+ * with individual error states, retry functionality, and loading states.
+ * 
+ * This example shows best practices for:
+ * - Handling multiple independent data fetches
+ * - Providing retry functionality per section
+ * - Showing loading states while data is being fetched
+ * - Graceful error recovery
+ */
 import React, { useEffect, useState } from 'react';
-import { getStxBalance, getTxStatus } from '../lib/api';
-import { useAsyncError } from '../hooks/useAsyncError';
-import { ErrorMessage } from './common/ErrorMessage';
+import { getStxBalance, getTxStatus } from '../../src/lib/api';
+import { useAsyncError } from '../../src/hooks/useAsyncError';
+import { ErrorMessage } from '../common/ErrorMessage';
 import { AsyncError } from '../../src/lib/async-errors';
 
 interface DashboardErrorProps {
@@ -24,34 +36,45 @@ const SectionError: React.FC<DashboardErrorProps> = ({
 );
 
 interface DashboardProps {
+  /** Stacks address to fetch data for */
   address: string;
 }
 
+/**
+ * Dashboard component demonstrating error handling patterns.
+ * Shows two independent data fetches with separate error states.
+ */
 export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
   address,
 }) => {
+  // Separate error handlers for each section
   const balanceHandler = useAsyncError();
   const txStatusHandler = useAsyncError();
 
   const [balance, setBalance] = useState<number | null>(null);
   const [txStatus, setTxStatus] = useState<string | null>(null);
 
+  // Fetch balance when address changes
   useEffect(() => {
     balanceHandler.execute(async () => {
       const bal = await getStxBalance(address);
       setBalance(bal);
       return bal;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
+  // Fetch transaction status on mount
   useEffect(() => {
     txStatusHandler.execute(async () => {
       const status = await getTxStatus('recent-tx-id');
       setTxStatus(status);
       return status;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /** Retry balance fetch on error */
   const handleBalanceRetry = async () => {
     balanceHandler.clearError();
     await balanceHandler.retry(async () => {
@@ -61,6 +84,7 @@ export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
     });
   };
 
+  /** Retry transaction status fetch on error */
   const handleTxStatusRetry = async () => {
     txStatusHandler.clearError();
     await txStatusHandler.retry(async () => {
@@ -74,7 +98,9 @@ export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
     <div className="space-y-6 p-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
 
+      {/* Grid layout with two columns on medium+ screens */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Balance Section */}
         <div className="p-4 border rounded-lg border-gray-200">
           <h3 className="font-semibold text-lg mb-3">STX Balance</h3>
 
@@ -96,6 +122,7 @@ export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
           )}
         </div>
 
+        {/* Transaction Status Section */}
         <div className="p-4 border rounded-lg border-gray-200">
           <h3 className="font-semibold text-lg mb-3">Transaction Status</h3>
 
