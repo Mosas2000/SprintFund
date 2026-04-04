@@ -1,3 +1,13 @@
+/**
+ * Example: Proposal List with Error Handling
+ * 
+ * Demonstrates paginated data fetching with error handling using
+ * the useAsyncError hook. Shows patterns for:
+ * - Paginated data loading
+ * - Error recovery with retry functionality
+ * - Empty state handling
+ * - Loading state management
+ */
 import React, { useEffect, useState } from 'react';
 import { getAllProposals, getProposalsPage } from '../../src/lib/stacks';
 import { useAsyncError } from '../../src/hooks/useAsyncError';
