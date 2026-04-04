@@ -41,19 +41,19 @@ export function isValidProposal(proposal: unknown): proposal is Proposal {
  * Predicate: is this a valid ProposalPage?
  */
 export function isValidProposalPage(page: unknown): page is ProposalPage {
+  if (!page || typeof page !== 'object') return false;
+  const p = page as Record<string, unknown>;
   return (
-    page &&
-    typeof page === 'object' &&
-    Array.isArray((page as Record<string, unknown>).proposals) &&
-    ((page as Record<string, unknown>).proposals as unknown[]).every(isValidProposal) &&
-    typeof (page as Record<string, unknown>).totalCount === 'number' &&
-    (page as Record<string, unknown>).totalCount >= 0 &&
-    typeof (page as Record<string, unknown>).page === 'number' &&
-    (page as Record<string, unknown>).page >= 1 &&
-    typeof (page as Record<string, unknown>).pageSize === 'number' &&
-    (page as Record<string, unknown>).pageSize >= 1 &&
-    typeof (page as Record<string, unknown>).totalPages === 'number' &&
-    (page as Record<string, unknown>).totalPages >= 1
+    Array.isArray(p.proposals) &&
+    (p.proposals as unknown[]).every(isValidProposal) &&
+    typeof p.totalCount === 'number' &&
+    (p.totalCount as number) >= 0 &&
+    typeof p.page === 'number' &&
+    (p.page as number) >= 1 &&
+    typeof p.pageSize === 'number' &&
+    (p.pageSize as number) >= 1 &&
+    typeof p.totalPages === 'number' &&
+    (p.totalPages as number) >= 1
   );
 }
 
