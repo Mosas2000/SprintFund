@@ -29,6 +29,13 @@ export interface Proposal {
  * Contains aggregate voting metrics for a proposal or set of proposals.
  */
 export interface VotingData {
+  proposalId?: number;
+  title?: string;
+  category?: string;
+  amount?: number;
+  proposerReputation?: number;
+  historicalSuccessRate?: number;
+  communitySupport?: number;
   totalVotes: number;
   votesFor: number;
   votesAgainst: number;
