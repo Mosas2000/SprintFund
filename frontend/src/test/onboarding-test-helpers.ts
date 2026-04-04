@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useOnboardingStore } from '../store/onboarding';
 
 export function resetOnboardingForTesting() {
@@ -29,14 +30,14 @@ export function mockOnboardingState(overrides = {}) {
     showModal: false,
     showChecklist: false,
     steps: [],
-    setIsFirstTime: jest.fn(),
-    setCurrentStep: jest.fn(),
-    markStepComplete: jest.fn(),
-    setShowModal: jest.fn(),
-    setShowChecklist: jest.fn(),
-    shouldShowOnboarding: jest.fn(() => true),
-    resetOnboarding: jest.fn(),
-    initialize: jest.fn(),
+    setIsFirstTime: vi.fn(),
+    setCurrentStep: vi.fn(),
+    markStepComplete: vi.fn(),
+    setShowModal: vi.fn(),
+    setShowChecklist: vi.fn(),
+    shouldShowOnboarding: vi.fn(() => true),
+    resetOnboarding: vi.fn(),
+    initialize: vi.fn(),
     ...overrides,
   };
 }
