@@ -61,13 +61,13 @@ export function isValidProposalPage(page: unknown): page is ProposalPage {
  * Predicate: is this a valid StakeInfo?
  */
 export function isValidStakeInfo(stake: unknown): stake is StakeInfo {
+  if (!stake || typeof stake !== 'object') return false;
+  const s = stake as Record<string, unknown>;
   return (
-    stake &&
-    typeof stake === 'object' &&
-    typeof (stake as Record<string, unknown>).address === 'string' &&
-    (stake as Record<string, unknown>).address.length > 0 &&
-    typeof (stake as Record<string, unknown>).amount === 'number' &&
-    (stake as Record<string, unknown>).amount >= 0
+    typeof s.address === 'string' &&
+    (s.address as string).length > 0 &&
+    typeof s.amount === 'number' &&
+    (s.amount as number) >= 0
   );
 }
 
