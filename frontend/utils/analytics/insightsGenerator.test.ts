@@ -5,9 +5,9 @@ import {
   generateRecommendations,
   prioritizeInsights,
   generateAllInsights,
-} from '../../../utils/analytics/insightsGenerator';
-import type { ProposalMetrics } from '../../../utils/analytics/dataCollector';
-import type { TimeSeriesData } from '../../../utils/analytics/dataProcessor';
+} from './insightsGenerator';
+import type { ProposalMetrics } from './dataCollector';
+import type { TimeSeriesData } from './dataProcessor';
 
 const createProposal = (overrides: Partial<ProposalMetrics> = {}): ProposalMetrics => ({
   proposalId: 1,
