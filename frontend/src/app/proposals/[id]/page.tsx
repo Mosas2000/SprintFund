@@ -151,7 +151,7 @@ export default function ProposalDetailPage() {
           <div className="col-span-2 space-y-6">
             {executionStatus && (
               <ExecutionStatus
-                status={executionStatus.status}
+                status={executionStatus.status === 'confirmed' ? 'completed' : executionStatus.status}
                 transactionId={executionStatus.transactionId}
                 blockHeight={executionStatus.blockHeight}
                 executedAt={executionStatus.timestamp}
@@ -159,7 +159,7 @@ export default function ProposalDetailPage() {
               />
             )}
 
-            <VotingHistory votes={proposal.votes || []} />
+            <VotingHistory votes={[]} />
 
             <ProposalDiscussionSection proposalId={proposalId} />
           </div>
