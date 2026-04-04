@@ -15,25 +15,25 @@ import type {
  * Predicate: is this a valid Proposal?
  */
 export function isValidProposal(proposal: unknown): proposal is Proposal {
+  if (!proposal || typeof proposal !== 'object') return false;
+  const p = proposal as Record<string, unknown>;
   return (
-    proposal &&
-    typeof proposal === 'object' &&
-    typeof (proposal as Record<string, unknown>).id === 'number' &&
-    (proposal as Record<string, unknown>).id > 0 &&
-    typeof (proposal as Record<string, unknown>).proposer === 'string' &&
-    (proposal as Record<string, unknown>).proposer.length > 0 &&
-    typeof (proposal as Record<string, unknown>).amount === 'number' &&
-    (proposal as Record<string, unknown>).amount >= 0 &&
-    typeof (proposal as Record<string, unknown>).title === 'string' &&
-    (proposal as Record<string, unknown>).title.length > 0 &&
-    typeof (proposal as Record<string, unknown>).description === 'string' &&
-    typeof (proposal as Record<string, unknown>).votesFor === 'number' &&
-    (proposal as Record<string, unknown>).votesFor >= 0 &&
-    typeof (proposal as Record<string, unknown>).votesAgainst === 'number' &&
-    (proposal as Record<string, unknown>).votesAgainst >= 0 &&
-    typeof (proposal as Record<string, unknown>).executed === 'boolean' &&
-    typeof (proposal as Record<string, unknown>).createdAt === 'number' &&
-    (proposal as Record<string, unknown>).createdAt > 0
+    typeof p.id === 'number' &&
+    (p.id as number) > 0 &&
+    typeof p.proposer === 'string' &&
+    (p.proposer as string).length > 0 &&
+    typeof p.amount === 'number' &&
+    (p.amount as number) >= 0 &&
+    typeof p.title === 'string' &&
+    (p.title as string).length > 0 &&
+    typeof p.description === 'string' &&
+    typeof p.votesFor === 'number' &&
+    (p.votesFor as number) >= 0 &&
+    typeof p.votesAgainst === 'number' &&
+    (p.votesAgainst as number) >= 0 &&
+    typeof p.executed === 'boolean' &&
+    typeof p.createdAt === 'number' &&
+    (p.createdAt as number) > 0
   );
 }
 
