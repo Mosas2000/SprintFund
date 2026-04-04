@@ -98,12 +98,18 @@ function recalculateCategoryStats(proposals: AnalyticsProposal[]): CategoryStats
     .sort((a, b) => b.proposals - a.proposals);
 }
 
-function recalculateVoterStats(proposals: any[]) {
+interface VoteEntry {
+  voter: string;
+  support: boolean;
+  amount?: number;
+}
+
+function recalculateVoterStats(proposals: AnalyticsProposal[]) {
   const voterMap = new Map<string, number>();
 
-  proposals.forEach((p) => {
+  proposals.forEach((p: AnalyticsProposal) => {
     if (p.votes && Array.isArray(p.votes)) {
-      p.votes.forEach((vote: any) => {
+      p.votes.forEach((vote: VoteEntry) => {
         voterMap.set(vote.voter, (voterMap.get(vote.voter) || 0) + 1);
       });
     }
@@ -121,12 +127,12 @@ function recalculateVoterStats(proposals: any[]) {
   };
 }
 
-function recalculateVotingPower(proposals: any[]) {
+function recalculateVotingPower(proposals: AnalyticsProposal[]) {
   const stakeMap = new Map<string, number>();
 
-  proposals.forEach((p) => {
+  proposals.forEach((p: AnalyticsProposal) => {
     if (p.votes && Array.isArray(p.votes)) {
-      p.votes.forEach((vote: any) => {
+      (p.votes as VoteEntry[]).forEach((vote: VoteEntry) => {
         const stake = vote.amount || 0;
         stakeMap.set(vote.voter, (stakeMap.get(vote.voter) || 0) + stake);
       });
