@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { ProposalSortOptions } from '@/services/proposal-pagination';
 
+/**
+ * Filter state for proposal queries.
+ * All fields are optional to allow partial filtering.
+ */
 interface FilterState {
   status?: string;
   proposer?: string;
@@ -12,6 +16,21 @@ interface FilterState {
 /** Filter value types mapped by key */
 type FilterValue<K extends keyof FilterState> = FilterState[K];
 
+/**
+ * Hook for managing proposal filter and sort state.
+ * Provides state management and query parameter building for proposal lists.
+ * 
+ * @example
+ * ```tsx
+ * const { filters, sort, updateFilter, updateSort } = useProposalFilters();
+ * 
+ * // Update a filter
+ * updateFilter('category', 'infrastructure');
+ * 
+ * // Update sort
+ * updateSort('createdAt', 'desc');
+ * ```
+ */
 export const useProposalFilters = () => {
   const [filters, setFilters] = useState<FilterState>({});
   const [sort, setSort] = useState<ProposalSortOptions>({
