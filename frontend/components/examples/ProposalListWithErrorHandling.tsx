@@ -32,10 +32,16 @@ const ProposalListErrorDisplay: React.FC<ProposalListErrorProps> = ({
 );
 
 interface ProposalListProps {
+  /** Page number (1-indexed) */
   page?: number;
+  /** Number of proposals per page */
   pageSize?: number;
 }
 
+/**
+ * Proposal list component with pagination and error handling.
+ * Demonstrates loading, error, empty, and success states.
+ */
 export const ProposalListWithErrorHandling: React.FC<ProposalListProps> = ({
   page = 1,
   pageSize = 10,
@@ -44,6 +50,7 @@ export const ProposalListWithErrorHandling: React.FC<ProposalListProps> = ({
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [pageInfo, setPageInfo] = useState<ProposalPage | null>(null);
 
+  /** Load proposals for current page */
   const loadProposals = async () => {
     try {
       const pageData = await execute(async () =>
@@ -55,15 +62,19 @@ export const ProposalListWithErrorHandling: React.FC<ProposalListProps> = ({
         setProposals(pageData.proposals);
       }
     } catch {
+      // Errors are handled by useAsyncError
       setProposals([]);
       setPageInfo(null);
     }
   };
 
+  // Reload when page or pageSize changes
   useEffect(() => {
     loadProposals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize]);
 
+  /** Retry loading proposals after error */
   const handleRetry = async () => {
     clearError();
     await retry(async () => {
