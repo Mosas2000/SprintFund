@@ -77,7 +77,11 @@ export default function ProposalDetailPage() {
     approved: 'bg-green-500/20 text-green-400 border-green-500/30',
     rejected: 'bg-red-500/20 text-red-400 border-red-500/30',
     pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    executed: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
   };
+
+  // Derive status from proposal data
+  const proposalStatus = proposal.executed ? 'executed' : 'pending';
 
   return (
     <main className="min-h-screen py-8">
@@ -99,10 +103,10 @@ export default function ProposalDetailPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                      statusColor[proposal.status as keyof typeof statusColor]
+                      statusColor[proposalStatus as keyof typeof statusColor]
                     }`}
                   >
-                    {proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1)}
+                    {proposalStatus.charAt(0).toUpperCase() + proposalStatus.slice(1)}
                   </span>
 
                   <span className="text-sm text-white/60">
