@@ -74,6 +74,7 @@ export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /** Retry balance fetch on error */
   const handleBalanceRetry = async () => {
     balanceHandler.clearError();
     await balanceHandler.retry(async () => {
@@ -83,6 +84,7 @@ export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
     });
   };
 
+  /** Retry transaction status fetch on error */
   const handleTxStatusRetry = async () => {
     txStatusHandler.clearError();
     await txStatusHandler.retry(async () => {
