@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { WalletState } from '../../store/wallet';
+import type { WalletState } from '../store/wallet';
 
 /**
  * TypeScript type safety tests for wallet state management.
