@@ -36,32 +36,42 @@ const SectionError: React.FC<DashboardErrorProps> = ({
 );
 
 interface DashboardProps {
+  /** Stacks address to fetch data for */
   address: string;
 }
 
+/**
+ * Dashboard component demonstrating error handling patterns.
+ * Shows two independent data fetches with separate error states.
+ */
 export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
   address,
 }) => {
+  // Separate error handlers for each section
   const balanceHandler = useAsyncError();
   const txStatusHandler = useAsyncError();
 
   const [balance, setBalance] = useState<number | null>(null);
   const [txStatus, setTxStatus] = useState<string | null>(null);
 
+  // Fetch balance when address changes
   useEffect(() => {
     balanceHandler.execute(async () => {
       const bal = await getStxBalance(address);
       setBalance(bal);
       return bal;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
+  // Fetch transaction status on mount
   useEffect(() => {
     txStatusHandler.execute(async () => {
       const status = await getTxStatus('recent-tx-id');
       setTxStatus(status);
       return status;
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBalanceRetry = async () => {
