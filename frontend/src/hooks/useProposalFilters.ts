@@ -30,7 +30,7 @@ export const useProposalFilters = () => {
     setFilters({});
   };
 
-  const updateSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
+  const updateSort = (sortBy: ProposalSortOptions['sortBy'], sortOrder: 'asc' | 'desc') => {
     setSort({ sortBy, sortOrder });
   };
 
