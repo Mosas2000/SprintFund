@@ -169,10 +169,6 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                             reject(new Error('Vote was cancelled'));
                         },
                     });
-                    // Handle both Promise and void returns
-                    if (result && typeof result.catch === 'function') {
-                        result.catch(reject);
-                    }
                 });
             });
         };
