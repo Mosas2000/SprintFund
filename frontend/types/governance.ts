@@ -50,7 +50,9 @@ export interface VotingData {
  */
 export interface SentimentResult {
   score: number;
-  verdict: string;
+  verdict?: string;
+  label?: string;
+  confidence?: number;
 }
 
 /**
