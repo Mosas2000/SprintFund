@@ -98,7 +98,9 @@ export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
     <div className="space-y-6 p-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
 
+      {/* Grid layout with two columns on medium+ screens */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Balance Section */}
         <div className="p-4 border rounded-lg border-gray-200">
           <h3 className="font-semibold text-lg mb-3">STX Balance</h3>
 
@@ -120,6 +122,7 @@ export const DashboardWithErrorHandling: React.FC<DashboardProps> = ({
           )}
         </div>
 
+        {/* Transaction Status Section */}
         <div className="p-4 border rounded-lg border-gray-200">
           <h3 className="font-semibold text-lg mb-3">Transaction Status</h3>
 
