@@ -35,6 +35,13 @@ describe('Governance types', () => {
       proposerReputation: 91,
       historicalSuccessRate: 72,
       communitySupport: 84,
+      totalVotes: 204,
+      votesFor: 180,
+      votesAgainst: 24,
+      uniqueVoters: 150,
+      whaleVotePercentage: 15,
+      averageWeight: 1.36,
+      votingPeriodProgress: 0.75,
     };
 
     expect(votingData.proposalId).toBe(42);
