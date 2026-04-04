@@ -87,6 +87,7 @@ export const ProposalListWithErrorHandling: React.FC<ProposalListProps> = ({
 
   return (
     <div>
+      {/* Error State: Display error with retry option */}
       {error && (
         <ProposalListErrorDisplay
           error={error}
@@ -95,14 +96,17 @@ export const ProposalListWithErrorHandling: React.FC<ProposalListProps> = ({
         />
       )}
 
+      {/* Loading State: Show when no cached proposals available */}
       {isLoading && !proposals.length && (
         <div className="text-center py-8">Loading proposals...</div>
       )}
 
+      {/* Empty State: Show when no proposals found and not loading */}
       {!isLoading && proposals.length === 0 && !error && (
         <div className="text-center py-8 text-gray-500">No proposals found</div>
       )}
 
+      {/* Success State: Display proposals list */}
       {proposals.length > 0 && (
         <div>
           <div className="space-y-4">
