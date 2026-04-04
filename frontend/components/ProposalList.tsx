@@ -159,7 +159,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
             const { openContractCall } = await import('@stacks/connect');
             await execute(async () => {
                 return new Promise<string>((resolve, reject) => {
-                    openContractCall({
+                    const result = openContractCall({
                         ...options,
                         onFinish: (data: { txId: string }) => {
                             console.log('Vote transaction submitted:', data);
@@ -168,7 +168,11 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                         onCancel: () => {
                             reject(new Error('Vote was cancelled'));
                         },
-                    }).catch(reject);
+                    });
+                    // Handle both Promise and void returns
+                    if (result && typeof result.catch === 'function') {
+                        result.catch(reject);
+                    }
                 });
             });
         };
