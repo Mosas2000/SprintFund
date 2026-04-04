@@ -126,22 +126,22 @@ export default function ProposalDetailPage() {
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <p className="text-white/60 text-sm mb-2">Requested Amount</p>
                 <p className="text-2xl font-bold text-white">
-                  {((proposal.requestedAmount || 0) / 1_000_000).toFixed(2)}
+                  {((proposal.amount || 0) / 1_000_000).toFixed(2)}
                 </p>
                 <p className="text-xs text-white/40 mt-1">STX</p>
               </div>
 
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <p className="text-white/60 text-sm mb-2">Total Votes</p>
-                <p className="text-2xl font-bold text-white">{proposal.votes?.length || 0}</p>
+                <p className="text-2xl font-bold text-white">{proposal.votesFor + proposal.votesAgainst}</p>
               </div>
 
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                <p className="text-white/60 text-sm mb-2">Duration</p>
+                <p className="text-white/60 text-sm mb-2">Votes For / Against</p>
                 <p className="text-2xl font-bold text-white">
-                  {proposal.votingEnd ? Math.ceil((new Date(proposal.votingEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0}
+                  {proposal.votesFor} / {proposal.votesAgainst}
                 </p>
-                <p className="text-xs text-white/40 mt-1">days remaining</p>
+                <p className="text-xs text-white/40 mt-1">for / against</p>
               </div>
             </div>
           </div>
