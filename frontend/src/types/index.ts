@@ -17,63 +17,8 @@ export type {
   ProposalCountResult,
 } from './proposal';
 
-// Governance types
+// Re-export governance types from types directory
 export type {
   VotingData,
   SentimentResult,
-  ProposalSummary,
 } from '../../types/governance';
-
-// Analytics types
-export type {
-  AnalyticsData,
-  ChartDataPoint,
-} from './analytics';
-
-// API types
-export type {
-  ApiResponse,
-  ApiError,
-} from './api';
-
-// Contract types
-export type {
-  ContractCallOptions,
-  TransactionResult,
-} from './contract';
-
-// Notification types
-export type {
-  Notification,
-  NotificationSettings,
-} from './notification';
-
-// Profile types
-export type {
-  UserProfile,
-  ProfileStats,
-} from './profile';
-
-// Comment types
-export type {
-  Comment,
-  CommentThread,
-} from './comment';
-
-// Transaction types
-export type {
-  Transaction,
-  TransactionStatus,
-} from './transaction';
-
-// Voting types
-export type {
-  Vote,
-  VoteHistory,
-} from './voting';
-
-// Balance types
-export type {
-  Balance,
-  BalanceHistory,
-} from './balance';
