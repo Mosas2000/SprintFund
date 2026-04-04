@@ -58,9 +58,18 @@ export interface SentimentResult {
 /**
  * Result of AI proposal summarization.
  */
-export type ProposalSummary = string;
+export interface ProposalSummary {
+  proposalId: number;
+  totalVotes: number;
+  approvalRate: number;
+  participationRate: number;
+}
 
 /**
  * Result of AI consensus risk analysis.
  */
-export type ConsensusRisk = string;
+export interface ConsensusRisk {
+  level: string;
+  reason: string;
+  concentrationIndex: number;
+}
