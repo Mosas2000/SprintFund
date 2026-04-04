@@ -20,8 +20,9 @@ export default defineConfig({
   root: configDir,
   test: {
     environment: 'jsdom',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
     exclude: ['node_modules/**'],
     setupFiles: [resolve(configDir, 'src/test/vitest.setup.ts')],
+    globals: true,
   },
 });
