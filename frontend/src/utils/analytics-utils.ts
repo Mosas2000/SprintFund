@@ -1,4 +1,4 @@
-import { AnalyticsData, CategoryStats } from '@/types/analytics';
+import { AnalyticsData, CategoryStats, AnalyticsProposal } from '@/types/analytics';
 
 export interface DateRange {
   startDate: Date;
@@ -11,7 +11,7 @@ export function filterAnalyticsByDateRange(
 ): AnalyticsData {
   const filtered = {
     ...data,
-    proposals: data.proposals.filter((p) => {
+    proposals: data.proposals.filter((p: AnalyticsProposal) => {
       const createdAt = new Date(p.createdAt);
       return createdAt >= dateRange.startDate && createdAt <= dateRange.endDate;
     }),
@@ -31,7 +31,7 @@ export function filterAnalyticsByDateRange(
   };
 }
 
-function recalculateStats(proposals: any[]) {
+function recalculateStats(proposals: AnalyticsProposal[]) {
   const total = proposals.length;
   const approved = proposals.filter((p) => p.status === 'approved').length;
   const rejected = proposals.filter((p) => p.status === 'rejected').length;
@@ -51,10 +51,19 @@ function recalculateStats(proposals: any[]) {
   };
 }
 
-function recalculateCategoryStats(proposals: any[]): CategoryStats[] {
-  const categoryMap = new Map<string, any>();
+interface CategoryAccumulator {
+  category: string;
+  proposals: number;
+  approved: number;
+  rejected: number;
+  pending: number;
+  totalFunded: number;
+}
 
-  proposals.forEach((p) => {
+function recalculateCategoryStats(proposals: AnalyticsProposal[]): CategoryStats[] {
+  const categoryMap = new Map<string, CategoryAccumulator>();
+
+  proposals.forEach((p: AnalyticsProposal) => {
     const cat = p.category || 'Other';
     if (!categoryMap.has(cat)) {
       categoryMap.set(cat, {
