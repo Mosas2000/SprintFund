@@ -9,22 +9,15 @@ import { SocialSharing } from '@/components/SocialSharing';
 import { ExecutionStatus } from '@/components/ExecutionStatus';
 import { VotingHistory } from '@/components/VotingHistory';
 import { RelatedProposals } from '@/components/RelatedProposals';
-import { proposalExecutionService } from '@/services/proposal-execution';
+import { proposalExecutionService, type ExecutionHistoryEntry } from '@/services/proposal-execution';
 import type { Proposal } from '@/types';
-
-/** Execution status returned from proposal execution service */
-interface ExecutionStatusData {
-  status: 'pending' | 'confirmed' | 'failed';
-  txId?: string;
-  timestamp: number;
-}
 
 export default function ProposalDetailPage() {
   const params = useParams();
   const proposalId = params.id as string;
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const [relatedProposals, setRelatedProposals] = useState<Proposal[]>([]);
-  const [executionStatus, setExecutionStatus] = useState<ExecutionStatusData | null>(null);
+  const [executionStatus, setExecutionStatus] = useState<ExecutionHistoryEntry | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
