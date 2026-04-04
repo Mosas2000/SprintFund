@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getAllProposals, getProposalsPage } from '../lib/stacks';
-import { useAsyncError } from '../hooks/useAsyncError';
-import { ErrorMessage } from './common/ErrorMessage';
+import { getAllProposals, getProposalsPage } from '../../src/lib/stacks';
+import { useAsyncError } from '../../src/hooks/useAsyncError';
+import { ErrorMessage } from '../common/ErrorMessage';
 import { AsyncError } from '../../src/lib/async-errors';
-import type { Proposal, ProposalPage } from '../types';
+import type { Proposal, ProposalPage } from '../../src/types';
 
 interface ProposalListErrorProps {
   error: AsyncError | null;
