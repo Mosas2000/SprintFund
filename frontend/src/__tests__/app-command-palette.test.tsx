@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from './App';
-import * as wallet from './store/wallet';
+import App from '../App';
+import * as wallet from '../store/wallet';
 
 vi.mock('./store/wallet', () => ({
   useWalletStore: vi.fn(() => ({
     hydrate: vi.fn(),
   })),
 }));
-vi.mock('./components/OfflineBanner', () => ({
+vi.mock('../components/OfflineBanner', () => ({
   OfflineBanner: () => <div data-testid="offline-banner" />,
 }));
 
