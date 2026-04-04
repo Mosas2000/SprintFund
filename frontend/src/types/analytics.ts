@@ -316,3 +316,88 @@ export interface HealthScoreProps {
   status: string;
   color: string;
 }
+
+/* ═══════════════════════════════════════════════
+   Analytics data container types
+   ═══════════════════════════════════════════════ */
+
+/**
+ * Proposal data shape used by analytics-utils.
+ */
+export interface AnalyticsProposal {
+  id: number;
+  title: string;
+  status: string;
+  category?: string;
+  createdAt: string | number;
+  updatedAt?: string | number;
+  requestedAmount?: number;
+  votes?: Array<{ voter: string; support: boolean }>;
+}
+
+/**
+ * Timeline entry for analytics data.
+ */
+export interface AnalyticsTimelineEntry {
+  date: string;
+  proposals: number;
+  votes: number;
+}
+
+/**
+ * Statistics for a single category.
+ */
+export interface CategoryStats {
+  name: string;
+  count: number;
+  percentage: number;
+  approved: number;
+  rejected: number;
+  pending: number;
+  totalAmount: number;
+}
+
+/**
+ * Proposal statistics summary.
+ */
+export interface ProposalStats {
+  total: number;
+  approved: number;
+  rejected: number;
+  pending: number;
+  successRate: number;
+  totalAmount: number;
+  averageAmount: number;
+}
+
+/**
+ * Voter statistics summary.
+ */
+export interface VoterStats {
+  totalVoters: number;
+  totalVotes: number;
+  averageVotesPerVoter: number;
+  participationRate: number;
+}
+
+/**
+ * Voting power distribution.
+ */
+export interface VotingPowerStats {
+  distribution: Array<{ range: string; count: number }>;
+  gini: number;
+  topHoldersPercentage: number;
+}
+
+/**
+ * Complete analytics data container.
+ * Used by analytics-utils for filtering, export, and display.
+ */
+export interface AnalyticsData {
+  proposals: AnalyticsProposal[];
+  proposalStats: ProposalStats;
+  categoryStats: CategoryStats[];
+  voterStats: VoterStats;
+  votingPower: VotingPowerStats;
+  timeline: AnalyticsTimelineEntry[];
+}
