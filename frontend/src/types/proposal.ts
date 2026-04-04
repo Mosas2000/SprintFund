@@ -22,6 +22,7 @@ export interface Proposal {
   votesAgainst: number;
   executed: boolean;
   createdAt: number;
+  category?: string; // Optional category for filtering/display
 }
 
 /**
