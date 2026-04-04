@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { boolCV, uintCV } from '@stacks/transactions';
+import { boolCV, uintCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { getAllProposals, getStake, callVote } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
+import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
+import { getStacksNetwork } from '@/src/config/stacks-network';
 import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './ui/LoadingSkeleton';
 import toast from 'react-hot-toast';
@@ -17,6 +19,9 @@ import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
 import type { Proposal } from '@/types';
+
+// Get network configuration
+const NETWORK = getStacksNetwork();
 
 interface ProposalListProps {
     userAddress?: string;
