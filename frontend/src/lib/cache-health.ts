@@ -62,26 +62,28 @@ export class CacheHealthCheck {
       };
     }
 
-    if (stats.hitRate >= 60) {
+    const hitRate = stats.hitRate ?? 0;
+
+    if (hitRate >= 60) {
       return {
         name: 'In-Memory Cache',
         status: 'pass',
-        message: `Cache operating normally (${stats.hitRate.toFixed(1)}% hit rate)`,
+        message: `Cache operating normally (${hitRate.toFixed(1)}% hit rate)`,
       };
     }
 
-    if (stats.hitRate >= 40) {
+    if (hitRate >= 40) {
       return {
         name: 'In-Memory Cache',
         status: 'pass',
-        message: `Cache working but hit rate low (${stats.hitRate.toFixed(1)}%)`,
+        message: `Cache working but hit rate low (${hitRate.toFixed(1)}%)`,
       };
     }
 
     return {
       name: 'In-Memory Cache',
       status: 'fail',
-      message: `Cache hit rate critically low (${stats.hitRate.toFixed(1)}%)`,
+      message: `Cache hit rate critically low (${hitRate.toFixed(1)}%)`,
     };
   }
 
@@ -155,7 +157,7 @@ export class CacheHealthCheck {
       };
     }
 
-    if (isNaN(stats.hitRate) && stats.hits + stats.misses > 0) {
+    if (isNaN(stats.hitRate ?? 0) && stats.hits + stats.misses > 0) {
       return {
         name: 'Metrics Integrity',
         status: 'fail',
@@ -183,11 +185,13 @@ export class CacheHealthCheck {
       return 'INITIALIZED';
     }
 
-    if (stats.hitRate >= 70) {
+    const hitRate = stats.hitRate ?? 0;
+
+    if (hitRate >= 70) {
       return 'HEALTHY';
     }
 
-    if (stats.hitRate >= 40) {
+    if (hitRate >= 40) {
       return 'DEGRADED';
     }
 
@@ -199,7 +203,7 @@ export class CacheHealthCheck {
     const stats = blockchainCache.getStats();
 
     console.log(`[Cache Health] Status: ${status}`);
-    console.log(`[Cache Health] Hit Rate: ${stats.hitRate.toFixed(1)}%`);
+    console.log(`[Cache Health] Hit Rate: ${(stats.hitRate ?? 0).toFixed(1)}%`);
     console.log(`[Cache Health] Size: ${blockchainCache.getSize()} entries`);
   }
 }

@@ -15,25 +15,25 @@ import type {
  * Predicate: is this a valid Proposal?
  */
 export function isValidProposal(proposal: unknown): proposal is Proposal {
+  if (!proposal || typeof proposal !== 'object') return false;
+  const p = proposal as Record<string, unknown>;
   return (
-    proposal &&
-    typeof proposal === 'object' &&
-    typeof (proposal as Record<string, unknown>).id === 'number' &&
-    (proposal as Record<string, unknown>).id > 0 &&
-    typeof (proposal as Record<string, unknown>).proposer === 'string' &&
-    (proposal as Record<string, unknown>).proposer.length > 0 &&
-    typeof (proposal as Record<string, unknown>).amount === 'number' &&
-    (proposal as Record<string, unknown>).amount >= 0 &&
-    typeof (proposal as Record<string, unknown>).title === 'string' &&
-    (proposal as Record<string, unknown>).title.length > 0 &&
-    typeof (proposal as Record<string, unknown>).description === 'string' &&
-    typeof (proposal as Record<string, unknown>).votesFor === 'number' &&
-    (proposal as Record<string, unknown>).votesFor >= 0 &&
-    typeof (proposal as Record<string, unknown>).votesAgainst === 'number' &&
-    (proposal as Record<string, unknown>).votesAgainst >= 0 &&
-    typeof (proposal as Record<string, unknown>).executed === 'boolean' &&
-    typeof (proposal as Record<string, unknown>).createdAt === 'number' &&
-    (proposal as Record<string, unknown>).createdAt > 0
+    typeof p.id === 'number' &&
+    (p.id as number) > 0 &&
+    typeof p.proposer === 'string' &&
+    (p.proposer as string).length > 0 &&
+    typeof p.amount === 'number' &&
+    (p.amount as number) >= 0 &&
+    typeof p.title === 'string' &&
+    (p.title as string).length > 0 &&
+    typeof p.description === 'string' &&
+    typeof p.votesFor === 'number' &&
+    (p.votesFor as number) >= 0 &&
+    typeof p.votesAgainst === 'number' &&
+    (p.votesAgainst as number) >= 0 &&
+    typeof p.executed === 'boolean' &&
+    typeof p.createdAt === 'number' &&
+    (p.createdAt as number) > 0
   );
 }
 
@@ -41,19 +41,19 @@ export function isValidProposal(proposal: unknown): proposal is Proposal {
  * Predicate: is this a valid ProposalPage?
  */
 export function isValidProposalPage(page: unknown): page is ProposalPage {
+  if (!page || typeof page !== 'object') return false;
+  const p = page as Record<string, unknown>;
   return (
-    page &&
-    typeof page === 'object' &&
-    Array.isArray((page as Record<string, unknown>).proposals) &&
-    ((page as Record<string, unknown>).proposals as unknown[]).every(isValidProposal) &&
-    typeof (page as Record<string, unknown>).totalCount === 'number' &&
-    (page as Record<string, unknown>).totalCount >= 0 &&
-    typeof (page as Record<string, unknown>).page === 'number' &&
-    (page as Record<string, unknown>).page >= 1 &&
-    typeof (page as Record<string, unknown>).pageSize === 'number' &&
-    (page as Record<string, unknown>).pageSize >= 1 &&
-    typeof (page as Record<string, unknown>).totalPages === 'number' &&
-    (page as Record<string, unknown>).totalPages >= 1
+    Array.isArray(p.proposals) &&
+    (p.proposals as unknown[]).every(isValidProposal) &&
+    typeof p.totalCount === 'number' &&
+    (p.totalCount as number) >= 0 &&
+    typeof p.page === 'number' &&
+    (p.page as number) >= 1 &&
+    typeof p.pageSize === 'number' &&
+    (p.pageSize as number) >= 1 &&
+    typeof p.totalPages === 'number' &&
+    (p.totalPages as number) >= 1
   );
 }
 
@@ -61,13 +61,13 @@ export function isValidProposalPage(page: unknown): page is ProposalPage {
  * Predicate: is this a valid StakeInfo?
  */
 export function isValidStakeInfo(stake: unknown): stake is StakeInfo {
+  if (!stake || typeof stake !== 'object') return false;
+  const s = stake as Record<string, unknown>;
   return (
-    stake &&
-    typeof stake === 'object' &&
-    typeof (stake as Record<string, unknown>).address === 'string' &&
-    (stake as Record<string, unknown>).address.length > 0 &&
-    typeof (stake as Record<string, unknown>).amount === 'number' &&
-    (stake as Record<string, unknown>).amount >= 0
+    typeof s.address === 'string' &&
+    (s.address as string).length > 0 &&
+    typeof s.amount === 'number' &&
+    (s.amount as number) >= 0
   );
 }
 
@@ -75,16 +75,16 @@ export function isValidStakeInfo(stake: unknown): stake is StakeInfo {
  * Predicate: is this a valid VoteRecord?
  */
 export function isValidVoteRecord(vote: unknown): vote is VoteRecord {
+  if (!vote || typeof vote !== 'object') return false;
+  const v = vote as Record<string, unknown>;
   return (
-    vote &&
-    typeof vote === 'object' &&
-    typeof (vote as Record<string, unknown>).proposalId === 'number' &&
-    (vote as Record<string, unknown>).proposalId > 0 &&
-    typeof (vote as Record<string, unknown>).voter === 'string' &&
-    (vote as Record<string, unknown>).voter.length > 0 &&
-    typeof (vote as Record<string, unknown>).support === 'boolean' &&
-    typeof (vote as Record<string, unknown>).weight === 'number' &&
-    (vote as Record<string, unknown>).weight > 0
+    typeof v.proposalId === 'number' &&
+    (v.proposalId as number) > 0 &&
+    typeof v.voter === 'string' &&
+    (v.voter as string).length > 0 &&
+    typeof v.support === 'boolean' &&
+    typeof v.weight === 'number' &&
+    (v.weight as number) > 0
   );
 }
 

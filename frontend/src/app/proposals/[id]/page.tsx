@@ -9,22 +9,15 @@ import { SocialSharing } from '@/components/SocialSharing';
 import { ExecutionStatus } from '@/components/ExecutionStatus';
 import { VotingHistory } from '@/components/VotingHistory';
 import { RelatedProposals } from '@/components/RelatedProposals';
-import { proposalExecutionService } from '@/services/proposal-execution';
+import { proposalExecutionService, type ExecutionHistoryEntry } from '@/services/proposal-execution';
 import type { Proposal } from '@/types';
-
-/** Execution status returned from proposal execution service */
-interface ExecutionStatusData {
-  status: 'pending' | 'confirmed' | 'failed';
-  txId?: string;
-  timestamp: number;
-}
 
 export default function ProposalDetailPage() {
   const params = useParams();
   const proposalId = params.id as string;
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const [relatedProposals, setRelatedProposals] = useState<Proposal[]>([]);
-  const [executionStatus, setExecutionStatus] = useState<ExecutionStatusData | null>(null);
+  const [executionStatus, setExecutionStatus] = useState<ExecutionHistoryEntry | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -84,7 +77,11 @@ export default function ProposalDetailPage() {
     approved: 'bg-green-500/20 text-green-400 border-green-500/30',
     rejected: 'bg-red-500/20 text-red-400 border-red-500/30',
     pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    executed: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
   };
+
+  // Derive status from proposal data
+  const proposalStatus = proposal.executed ? 'executed' : 'pending';
 
   return (
     <main className="min-h-screen py-8">
@@ -106,10 +103,10 @@ export default function ProposalDetailPage() {
                 <div className="flex flex-wrap items-center gap-3">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                      statusColor[proposal.status as keyof typeof statusColor]
+                      statusColor[proposalStatus as keyof typeof statusColor]
                     }`}
                   >
-                    {proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1)}
+                    {proposalStatus.charAt(0).toUpperCase() + proposalStatus.slice(1)}
                   </span>
 
                   <span className="text-sm text-white/60">
@@ -129,22 +126,22 @@ export default function ProposalDetailPage() {
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <p className="text-white/60 text-sm mb-2">Requested Amount</p>
                 <p className="text-2xl font-bold text-white">
-                  {((proposal.requestedAmount || 0) / 1_000_000).toFixed(2)}
+                  {((proposal.amount || 0) / 1_000_000).toFixed(2)}
                 </p>
                 <p className="text-xs text-white/40 mt-1">STX</p>
               </div>
 
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <p className="text-white/60 text-sm mb-2">Total Votes</p>
-                <p className="text-2xl font-bold text-white">{proposal.votes?.length || 0}</p>
+                <p className="text-2xl font-bold text-white">{proposal.votesFor + proposal.votesAgainst}</p>
               </div>
 
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                <p className="text-white/60 text-sm mb-2">Duration</p>
+                <p className="text-white/60 text-sm mb-2">Votes For / Against</p>
                 <p className="text-2xl font-bold text-white">
-                  {proposal.votingEnd ? Math.ceil((new Date(proposal.votingEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0}
+                  {proposal.votesFor} / {proposal.votesAgainst}
                 </p>
-                <p className="text-xs text-white/40 mt-1">days remaining</p>
+                <p className="text-xs text-white/40 mt-1">for / against</p>
               </div>
             </div>
           </div>
@@ -154,7 +151,7 @@ export default function ProposalDetailPage() {
           <div className="col-span-2 space-y-6">
             {executionStatus && (
               <ExecutionStatus
-                status={executionStatus.status}
+                status={executionStatus.status === 'confirmed' ? 'completed' : executionStatus.status}
                 transactionId={executionStatus.transactionId}
                 blockHeight={executionStatus.blockHeight}
                 executedAt={executionStatus.timestamp}
@@ -162,7 +159,7 @@ export default function ProposalDetailPage() {
               />
             )}
 
-            <VotingHistory votes={proposal.votes || []} />
+            <VotingHistory votes={[]} />
 
             <ProposalDiscussionSection proposalId={proposalId} />
           </div>
