@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ProposalSortOptions } from '@/services/proposal-pagination';
 
 interface FilterState {
   status?: string;
@@ -8,17 +9,12 @@ interface FilterState {
   searchText?: string;
 }
 
-interface SortState {
-  sortBy: string;
-  sortOrder: 'asc' | 'desc';
-}
-
 /** Filter value types mapped by key */
 type FilterValue<K extends keyof FilterState> = FilterState[K];
 
 export const useProposalFilters = () => {
   const [filters, setFilters] = useState<FilterState>({});
-  const [sort, setSort] = useState<SortState>({
+  const [sort, setSort] = useState<ProposalSortOptions>({
     sortBy: 'createdAt',
     sortOrder: 'desc',
   });
