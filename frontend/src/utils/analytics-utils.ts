@@ -41,6 +41,8 @@ function recalculateStats(proposals: AnalyticsProposal[]) {
     .filter((p) => p.status === 'approved')
     .reduce((sum, p) => sum + (p.requestedAmount || 0), 0);
 
+  const averageAmount = approved > 0 ? totalAmount / approved : 0;
+
   return {
     total,
     approved,
@@ -48,6 +50,7 @@ function recalculateStats(proposals: AnalyticsProposal[]) {
     pending,
     successRate: total > 0 ? (approved / total) * 100 : 0,
     totalAmount,
+    averageAmount,
   };
 }
 
@@ -77,6 +80,7 @@ function recalculateCategoryStats(proposals: AnalyticsProposal[]): CategoryStats
     }
 
     const stats = categoryMap.get(cat);
+    if (!stats) return;
     stats.proposals += 1;
 
     if (p.status === 'approved') {
@@ -89,13 +93,18 @@ function recalculateCategoryStats(proposals: AnalyticsProposal[]): CategoryStats
     }
   });
 
+  const total = proposals.length;
   return Array.from(categoryMap.values())
     .map((stats) => ({
-      ...stats,
-      successRate:
-        stats.proposals > 0 ? (stats.approved / stats.proposals) * 100 : 0,
+      name: stats.category,
+      count: stats.proposals,
+      percentage: total > 0 ? (stats.proposals / total) * 100 : 0,
+      approved: stats.approved,
+      rejected: stats.rejected,
+      pending: stats.pending,
+      totalAmount: stats.totalFunded,
     }))
-    .sort((a, b) => b.proposals - a.proposals);
+    .sort((a, b) => b.count - a.count);
 }
 
 interface VoteEntry {
@@ -123,7 +132,7 @@ function recalculateVoterStats(proposals: AnalyticsProposal[]) {
     totalVotes,
     averageVotesPerVoter:
       totalVoters > 0 ? totalVotes / totalVoters : 0,
-    uniqueVoters: Array.from(voterMap.keys()),
+    participationRate: 0, // Would need total eligible voters to calculate
   };
 }
 
@@ -143,13 +152,25 @@ function recalculateVotingPower(proposals: AnalyticsProposal[]) {
   const totalStake = stakes.reduce((a, b) => a + b, 0);
   const top10Stake = stakes.slice(0, 10).reduce((a, b) => a + b, 0);
 
+  // Calculate Gini coefficient for stake distribution
+  const n = stakes.length;
+  let gini = 0;
+  if (n > 0 && totalStake > 0) {
+    const cumulative = stakes.reduce((acc, val, i) => {
+      acc.push((acc[i - 1] || 0) + val);
+      return acc;
+    }, [] as number[]);
+    const sumCumulative = cumulative.reduce((a, b) => a + b, 0);
+    gini = 1 - (2 * sumCumulative) / (n * totalStake) + 1 / n;
+  }
+
   return {
-    totalStake,
-    uniqueStakers: stakeMap.size,
-    top10Stake,
-    whaleConcentration:
-      totalStake > 0 ? (top10Stake / totalStake) * 100 : 0,
-    distribution: stakes,
+    distribution: stakes.slice(0, 10).map((stake, i) => ({
+      range: `Top ${i + 1}`,
+      count: stake,
+    })),
+    gini: Math.max(0, Math.min(1, gini)),
+    topHoldersPercentage: totalStake > 0 ? (top10Stake / totalStake) * 100 : 0,
   };
 }
 
