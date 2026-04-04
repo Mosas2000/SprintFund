@@ -160,9 +160,15 @@ describe('UserProfile', () => {
 });
 
 describe('ProfileLoadingState', () => {
-  it('accepts all valid loading states', () => {
-    const states: ProfileLoadingState[] = ['idle', 'loading', 'error', 'success'];
-    expect(states).toHaveLength(4);
+  it('tracks loading state for each data section', () => {
+    const state: ProfileLoadingState = {
+      stats: true,
+      proposals: false,
+      votes: false,
+      activity: false,
+    };
+    expect(state.stats).toBe(true);
+    expect(state.proposals).toBe(false);
   });
 });
 
