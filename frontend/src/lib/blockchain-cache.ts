@@ -10,6 +10,7 @@ interface CacheStats {
   hits: number;
   misses: number;
   lastReset: number;
+  hitRate?: number;
 }
 
 class BlockchainDataCache {
