@@ -75,16 +75,16 @@ export function isValidStakeInfo(stake: unknown): stake is StakeInfo {
  * Predicate: is this a valid VoteRecord?
  */
 export function isValidVoteRecord(vote: unknown): vote is VoteRecord {
+  if (!vote || typeof vote !== 'object') return false;
+  const v = vote as Record<string, unknown>;
   return (
-    vote &&
-    typeof vote === 'object' &&
-    typeof (vote as Record<string, unknown>).proposalId === 'number' &&
-    (vote as Record<string, unknown>).proposalId > 0 &&
-    typeof (vote as Record<string, unknown>).voter === 'string' &&
-    (vote as Record<string, unknown>).voter.length > 0 &&
-    typeof (vote as Record<string, unknown>).support === 'boolean' &&
-    typeof (vote as Record<string, unknown>).weight === 'number' &&
-    (vote as Record<string, unknown>).weight > 0
+    typeof v.proposalId === 'number' &&
+    (v.proposalId as number) > 0 &&
+    typeof v.voter === 'string' &&
+    (v.voter as string).length > 0 &&
+    typeof v.support === 'boolean' &&
+    typeof v.weight === 'number' &&
+    (v.weight as number) > 0
   );
 }
 
