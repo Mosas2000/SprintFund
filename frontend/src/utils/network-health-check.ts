@@ -1,5 +1,9 @@
 import { STACKS_MAINNET } from '@stacks/network';
 
+// API URL for mainnet
+const MAINNET_API_URL = 'https://api.mainnet.hiro.so';
+const MAINNET_BNS_URL = 'https://api.mainnet.hiro.so';
+
 export interface StacksNetworkHealthCheck {
   status: 'healthy' | 'degraded' | 'unhealthy';
   apiUrl: string;
@@ -13,26 +17,35 @@ export const checkStacksNetworkHealth = async (): Promise<StacksNetworkHealthChe
   const errors: string[] = [];
   let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
 
-  if (!STACKS_MAINNET.coreApiUrl) {
+  const apiUrl = MAINNET_API_URL;
+  const bnsUrl = MAINNET_BNS_URL;
+  const chainId = STACKS_MAINNET.chainId;
+
+  if (!apiUrl) {
     errors.push('Core API URL not configured');
     status = 'unhealthy';
   }
 
-  if (!STACKS_MAINNET.chainId) {
+  if (!chainId) {
     errors.push('Chain ID not configured');
     status = 'unhealthy';
   }
 
-  if (!STACKS_MAINNET.bnsLookupUrl) {
+  if (!bnsUrl) {
     errors.push('BNS lookup URL not configured');
     status = 'degraded';
   }
 
   try {
-    const response = await fetch(`${STACKS_MAINNET.coreApiUrl}/v2/info`, {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch(`${apiUrl}/v2/info`, {
       method: 'GET',
-      timeout: 5000,
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       errors.push(`API health check failed: ${response.status}`);
@@ -45,9 +58,9 @@ export const checkStacksNetworkHealth = async (): Promise<StacksNetworkHealthChe
 
   return {
     status,
-    apiUrl: STACKS_MAINNET.coreApiUrl,
-    chainId: STACKS_MAINNET.chainId,
-    bnsUrl: STACKS_MAINNET.bnsLookupUrl,
+    apiUrl,
+    chainId,
+    bnsUrl,
     timestamp: new Date().toISOString(),
     errors,
   };
