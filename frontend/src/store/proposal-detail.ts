@@ -1,4 +1,4 @@
-import Zustand from 'zustand';
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ProposalDiscussionThread } from '@/types/proposal-detail';
 
@@ -21,14 +21,14 @@ interface ProposalDetailStore {
   clearAll: () => void;
 }
 
-export const useProposalDetailStore = Zustand<ProposalDetailStore>(
+export const useProposalDetailStore = create<ProposalDetailStore>()(
   persist(
     (set, get) => ({
       discussions: {},
       executionHistory: {},
 
       addDiscussion: (proposalId: string, thread: ProposalDiscussionThread) => {
-        set((state) => ({
+        set((state: ProposalDetailStore) => ({
           discussions: {
             ...state.discussions,
             [proposalId]: thread,
@@ -37,7 +37,7 @@ export const useProposalDetailStore = Zustand<ProposalDetailStore>(
       },
 
       updateDiscussion: (proposalId: string, thread: ProposalDiscussionThread) => {
-        set((state) => ({
+        set((state: ProposalDetailStore) => ({
           discussions: {
             ...state.discussions,
             [proposalId]: thread,
@@ -50,7 +50,7 @@ export const useProposalDetailStore = Zustand<ProposalDetailStore>(
       },
 
       addExecutionHistory: (proposalId: string, entry: ExecutionHistoryEntry) => {
-        set((state) => ({
+        set((state: ProposalDetailStore) => ({
           executionHistory: {
             ...state.executionHistory,
             [proposalId]: [...(state.executionHistory[proposalId] || []), entry],

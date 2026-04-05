@@ -23,9 +23,9 @@ const initialState: PaginationState = {
   hasPreviousPage: false,
 };
 
-export const usePaginationStore = create<PaginationStore>(
+export const usePaginationStore = create<PaginationStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       setPage: (page: number) =>

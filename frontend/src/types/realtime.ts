@@ -2,7 +2,9 @@
  * Types for real-time and WebSocket communication.
  */
 
-import type { Proposal, VoteRecord, StakeInfo } from './proposal';
+import type { Proposal } from './proposal';
+import type { VoteRecord } from './voting';
+import type { StakeInfo } from './stake';
 
 /**
  * WebSocket message types from Stacks API.

@@ -134,7 +134,7 @@ export type {
   ActivityEventType,
   ActivityEvent,
   ProfileStats,
-  VoteRecord,
+  VoteRecord as ProfileVoteRecord,
   UserProfile,
   ProfileLoadingState,
   ProfileTab,
