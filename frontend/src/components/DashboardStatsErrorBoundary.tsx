@@ -25,7 +25,7 @@ export const DashboardStatsErrorBoundary: React.FC<
     <SectionErrorBoundary
       componentName="DashboardStats"
       onError={handleError}
-      fallback={<DashboardStatsErrorFallback error={error} onRetry={handleRetry} />}
+      fallback={<DashboardStatsErrorFallback error={error ?? undefined} onRetry={handleRetry} />}
     >
       {children}
     </SectionErrorBoundary>

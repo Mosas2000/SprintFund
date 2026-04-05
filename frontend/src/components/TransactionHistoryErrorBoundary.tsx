@@ -26,7 +26,7 @@ export const TransactionHistoryErrorBoundary: React.FC<
       componentName="TransactionHistory"
       onError={handleError}
       fallback={
-        <TransactionHistoryErrorFallback error={error} onRetry={handleRetry} />
+        <TransactionHistoryErrorFallback error={error ?? undefined} onRetry={handleRetry} />
       }
     >
       {children}

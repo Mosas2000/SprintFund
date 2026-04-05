@@ -1,6 +1,6 @@
 import React from 'react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
-import { ProposalListErrorFallback } from '@/components/ProposalListErrorFallback';
+import { ProposalListError } from '@/components/ProposalListErrorFallback';
 
 interface ProposalListErrorBoundaryProps {
   children: React.ReactNode;
@@ -25,7 +25,7 @@ export const ProposalListErrorBoundary: React.FC<
     <SectionErrorBoundary
       componentName="ProposalList"
       onError={handleError}
-      fallback={<ProposalListErrorFallback error={error} onRetry={handleRetry} />}
+      fallback={<ProposalListError error={error ?? undefined} onRetry={handleRetry} />}
     >
       {children}
     </SectionErrorBoundary>

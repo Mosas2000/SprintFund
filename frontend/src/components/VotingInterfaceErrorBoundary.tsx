@@ -26,7 +26,7 @@ export const VotingInterfaceErrorBoundary: React.FC<
       componentName="VotingInterface"
       onError={handleError}
       fallback={
-        <VotingInterfaceErrorFallback error={error} onRetry={handleRetry} />
+        <VotingInterfaceErrorFallback error={error ?? undefined} onRetry={handleRetry} />
       }
     >
       {children}

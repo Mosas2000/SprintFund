@@ -25,7 +25,7 @@ export const PaginationErrorBoundary: React.FC<
     <SectionErrorBoundary
       componentName="Pagination"
       onError={handleError}
-      fallback={<PaginationErrorFallback error={error} onRetry={handleRetry} />}
+      fallback={<PaginationErrorFallback error={error ?? undefined} onRetry={handleRetry} />}
     >
       {children}
     </SectionErrorBoundary>
