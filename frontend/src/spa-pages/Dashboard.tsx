@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, memo } from 'react';
+import React, { useEffect, useState, useCallback, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useWalletAddress, useWalletConnected, useWalletConnect, useWalletLoading } from '../store/wallet-selectors';
 import { getStake, getAllProposals, getProposalCount } from '../lib/stacks';
@@ -28,7 +28,7 @@ import type { Proposal } from '../types';
  * Dashboard provides user overview of stakes, balances, and proposals.
  * Users can stake/unstake tokens and manage their governance participation.
  */
-export function DashboardPage(): JSX.Element {
+export function DashboardPage(): React.JSX.Element {
   const walletLoading = useWalletLoading();
   const connected = useWalletConnected();
   const address = useWalletAddress();

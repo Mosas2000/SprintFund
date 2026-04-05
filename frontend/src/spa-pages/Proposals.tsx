@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, RefObject } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, RefObject } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getProposalsPage } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
@@ -20,7 +20,7 @@ import type { Proposal } from '../types';
  * ProposalsPage displays all proposals with pagination and filters.
  * Users can browse, search, and vote on proposals.
  */
-export function ProposalsPage(): JSX.Element {
+export function ProposalsPage(): React.JSX.Element {
   const PAGE_SIZE = 10;
   const navigate = useNavigate();
   const [proposals, setProposals] = useState<Proposal[]>([]);

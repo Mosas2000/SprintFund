@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { formatStx } from '../config';
 import { truncateAddress } from '../lib/api';
@@ -20,7 +20,7 @@ interface ProposalCardProps {
  * ProposalCard displays a proposal in list view with voting stats.
  * Shows title, description, vote distribution, and proposal status.
  */
-export const ProposalCard = memo(function ProposalCard({ proposal, selected }: ProposalCardProps): JSX.Element {
+export const ProposalCard = memo(function ProposalCard({ proposal, selected }: ProposalCardProps): React.JSX.Element {
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
   const commentCount = useCommentCount(proposal.id);
