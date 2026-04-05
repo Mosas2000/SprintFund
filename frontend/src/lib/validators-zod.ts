@@ -33,14 +33,14 @@ export const RawProposalSchema = z.object({
   'votes-against': ClarityValueSchema,
   executed: ClarityValueSchema,
   'created-at': ClarityValueSchema,
-}) satisfies z.ZodType<RawProposal>;
+});
 
 /**
  * Schema for raw stake data from contract.
  */
 export const RawStakeSchema = z.object({
   amount: ClarityValueSchema,
-}) satisfies z.ZodType<RawStake>;
+});
 
 /**
  * Schema for raw vote data from contract.
@@ -48,7 +48,7 @@ export const RawStakeSchema = z.object({
 export const RawVoteSchema = z.object({
   weight: ClarityValueSchema,
   support: ClarityValueSchema,
-}) satisfies z.ZodType<RawVote>;
+});
 
 /**
  * Schema for normalized proposal.
@@ -89,7 +89,7 @@ export const ProposalCountSchema = z.number().int().nonnegative();
  */
 export function validateRawProposalZod(data: unknown): RawProposal | null {
   try {
-    return RawProposalSchema.parse(data);
+    return RawProposalSchema.parse(data) as RawProposal;
   } catch (err) {
     console.error('Raw proposal validation error:', err);
     return null;

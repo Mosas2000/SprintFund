@@ -19,7 +19,7 @@ export function useDebouncedSearch<T>(
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
   const [results, setResults] = useState<T[]>([]);
   const [error, setError] = useState<Error | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const performSearch = useCallback(
