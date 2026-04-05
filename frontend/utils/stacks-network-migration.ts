@@ -1,4 +1,5 @@
-import { NetworkType } from '@stacks/network';
+// NetworkType is a string literal type in newer @stacks/network versions
+type NetworkType = 'mainnet' | 'testnet' | 'devnet' | 'mocknet';
 
 export interface StacksNetworkConfig {
   type: NetworkType;

@@ -1,5 +1,7 @@
 import { STACKS_MAINNET } from '@stacks/network';
 
+const MAINNET_API_URL = 'https://api.mainnet.hiro.so';
+
 export const initializeStacksNetwork = () => {
   if (!STACKS_MAINNET) {
     throw new Error('STACKS_MAINNET is not available. Check @stacks/network package');
@@ -8,7 +10,7 @@ export const initializeStacksNetwork = () => {
 };
 
 export const getNetworkUrl = () => {
-  return STACKS_MAINNET?.coreApiUrl || 'https://stacks-node-api.mainnet.stacks.co';
+  return MAINNET_API_URL;
 };
 
 export const getNetworkChainId = () => {
@@ -16,7 +18,7 @@ export const getNetworkChainId = () => {
 };
 
 export const validateNetworkConfig = () => {
-  const requiredProperties = ['coreApiUrl', 'chainId', 'bnsLookupUrl'];
+  const requiredProperties = ['chainId'];
   const missingProperties = requiredProperties.filter(
     (prop) => !(prop in STACKS_MAINNET)
   );

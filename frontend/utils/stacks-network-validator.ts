@@ -1,5 +1,8 @@
 import { STACKS_MAINNET } from '@stacks/network';
 
+const MAINNET_API_URL = 'https://api.mainnet.hiro.so';
+const MAINNET_BNS_URL = 'https://api.mainnet.hiro.so';
+
 export interface StacksNetworkValidation {
   isValid: boolean;
   errors: string[];
@@ -15,16 +18,16 @@ export const validateStacksNetwork = (): StacksNetworkValidation => {
     return { isValid: false, errors, warnings };
   }
 
-  if (!STACKS_MAINNET.coreApiUrl) {
-    errors.push('STACKS_MAINNET.coreApiUrl is missing');
+  if (!MAINNET_API_URL) {
+    errors.push('API URL is not configured');
   }
 
   if (!STACKS_MAINNET.chainId) {
     errors.push('STACKS_MAINNET.chainId is missing');
   }
 
-  if (!STACKS_MAINNET.bnsLookupUrl) {
-    warnings.push('STACKS_MAINNET.bnsLookupUrl is not available');
+  if (!MAINNET_BNS_URL) {
+    warnings.push('BNS lookup URL is not configured');
   }
 
   return {

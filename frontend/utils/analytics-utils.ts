@@ -1,4 +1,4 @@
-import { AnalyticsData, CategoryStats } from '@/types/analytics';
+import { AnalyticsData, CategoryStats, AnalyticsProposal } from '@/types/analytics';
 
 export interface DateRange {
   startDate: Date;
@@ -11,7 +11,7 @@ export function filterAnalyticsByDateRange(
 ): AnalyticsData {
   const filtered = {
     ...data,
-    proposals: data.proposals.filter((p) => {
+    proposals: data.proposals.filter((p: AnalyticsProposal) => {
       const createdAt = new Date(p.createdAt);
       return createdAt >= dateRange.startDate && createdAt <= dateRange.endDate;
     }),
@@ -31,7 +31,7 @@ export function filterAnalyticsByDateRange(
   };
 }
 
-function recalculateStats(proposals: any[]) {
+function recalculateStats(proposals: AnalyticsProposal[]) {
   const total = proposals.length;
   const approved = proposals.filter((p) => p.status === 'approved').length;
   const rejected = proposals.filter((p) => p.status === 'rejected').length;
@@ -41,6 +41,8 @@ function recalculateStats(proposals: any[]) {
     .filter((p) => p.status === 'approved')
     .reduce((sum, p) => sum + (p.requestedAmount || 0), 0);
 
+  const averageAmount = approved > 0 ? totalAmount / approved : 0;
+
   return {
     total,
     approved,
@@ -48,13 +50,23 @@ function recalculateStats(proposals: any[]) {
     pending,
     successRate: total > 0 ? (approved / total) * 100 : 0,
     totalAmount,
+    averageAmount,
   };
 }
 
-function recalculateCategoryStats(proposals: any[]): CategoryStats[] {
-  const categoryMap = new Map<string, any>();
+interface CategoryAccumulator {
+  category: string;
+  proposals: number;
+  approved: number;
+  rejected: number;
+  pending: number;
+  totalFunded: number;
+}
 
-  proposals.forEach((p) => {
+function recalculateCategoryStats(proposals: AnalyticsProposal[]): CategoryStats[] {
+  const categoryMap = new Map<string, CategoryAccumulator>();
+
+  proposals.forEach((p: AnalyticsProposal) => {
     const cat = p.category || 'Other';
     if (!categoryMap.has(cat)) {
       categoryMap.set(cat, {
@@ -68,6 +80,7 @@ function recalculateCategoryStats(proposals: any[]): CategoryStats[] {
     }
 
     const stats = categoryMap.get(cat);
+    if (!stats) return;
     stats.proposals += 1;
 
     if (p.status === 'approved') {
@@ -80,21 +93,32 @@ function recalculateCategoryStats(proposals: any[]): CategoryStats[] {
     }
   });
 
+  const total = proposals.length;
   return Array.from(categoryMap.values())
     .map((stats) => ({
-      ...stats,
-      successRate:
-        stats.proposals > 0 ? (stats.approved / stats.proposals) * 100 : 0,
+      name: stats.category,
+      count: stats.proposals,
+      percentage: total > 0 ? (stats.proposals / total) * 100 : 0,
+      approved: stats.approved,
+      rejected: stats.rejected,
+      pending: stats.pending,
+      totalAmount: stats.totalFunded,
     }))
-    .sort((a, b) => b.proposals - a.proposals);
+    .sort((a, b) => b.count - a.count);
 }
 
-function recalculateVoterStats(proposals: any[]) {
+interface VoteEntry {
+  voter: string;
+  support: boolean;
+  amount?: number;
+}
+
+function recalculateVoterStats(proposals: AnalyticsProposal[]) {
   const voterMap = new Map<string, number>();
 
-  proposals.forEach((p) => {
+  proposals.forEach((p: AnalyticsProposal) => {
     if (p.votes && Array.isArray(p.votes)) {
-      p.votes.forEach((vote: any) => {
+      p.votes.forEach((vote: VoteEntry) => {
         voterMap.set(vote.voter, (voterMap.get(vote.voter) || 0) + 1);
       });
     }
@@ -108,16 +132,16 @@ function recalculateVoterStats(proposals: any[]) {
     totalVotes,
     averageVotesPerVoter:
       totalVoters > 0 ? totalVotes / totalVoters : 0,
-    uniqueVoters: Array.from(voterMap.keys()),
+    participationRate: 0, // Would need total eligible voters to calculate
   };
 }
 
-function recalculateVotingPower(proposals: any[]) {
+function recalculateVotingPower(proposals: AnalyticsProposal[]) {
   const stakeMap = new Map<string, number>();
 
-  proposals.forEach((p) => {
+  proposals.forEach((p: AnalyticsProposal) => {
     if (p.votes && Array.isArray(p.votes)) {
-      p.votes.forEach((vote: any) => {
+      (p.votes as VoteEntry[]).forEach((vote: VoteEntry) => {
         const stake = vote.amount || 0;
         stakeMap.set(vote.voter, (stakeMap.get(vote.voter) || 0) + stake);
       });
@@ -128,13 +152,25 @@ function recalculateVotingPower(proposals: any[]) {
   const totalStake = stakes.reduce((a, b) => a + b, 0);
   const top10Stake = stakes.slice(0, 10).reduce((a, b) => a + b, 0);
 
+  // Calculate Gini coefficient for stake distribution
+  const n = stakes.length;
+  let gini = 0;
+  if (n > 0 && totalStake > 0) {
+    const cumulative = stakes.reduce((acc, val, i) => {
+      acc.push((acc[i - 1] || 0) + val);
+      return acc;
+    }, [] as number[]);
+    const sumCumulative = cumulative.reduce((a, b) => a + b, 0);
+    gini = 1 - (2 * sumCumulative) / (n * totalStake) + 1 / n;
+  }
+
   return {
-    totalStake,
-    uniqueStakers: stakeMap.size,
-    top10Stake,
-    whaleConcentration:
-      totalStake > 0 ? (top10Stake / totalStake) * 100 : 0,
-    distribution: stakes,
+    distribution: stakes.slice(0, 10).map((stake, i) => ({
+      range: `Top ${i + 1}`,
+      count: stake,
+    })),
+    gini: Math.max(0, Math.min(1, gini)),
+    topHoldersPercentage: totalStake > 0 ? (top10Stake / totalStake) * 100 : 0,
   };
 }
 

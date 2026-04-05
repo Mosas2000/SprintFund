@@ -1,11 +1,17 @@
-import { ONBOARDING_TOUR_STEPS } from '../config/onboarding-tour';
+import { ONBOARDING_TOUR_STEPS } from '../src/config/onboarding-tour';
 
-export function getStepById(stepId: string) {
-  return ONBOARDING_TOUR_STEPS.find((step) => step.id === stepId);
+interface OnboardingStep {
+  id: string;
+  title?: string;
+  description?: string;
+}
+
+export function getStepById(stepId: string): OnboardingStep | undefined {
+  return ONBOARDING_TOUR_STEPS.find((step: OnboardingStep) => step.id === stepId);
 }
 
 export function getStepIndex(stepId: string): number {
-  return ONBOARDING_TOUR_STEPS.findIndex((step) => step.id === stepId);
+  return ONBOARDING_TOUR_STEPS.findIndex((step: OnboardingStep) => step.id === stepId);
 }
 
 export function getNextStepId(currentStepId: string): string | null {
@@ -36,12 +42,12 @@ export function isOnboardingComplete(completedSteps: string[]): boolean {
 
 export function getRemainingSteps(completedSteps: string[]): string[] {
   return ONBOARDING_TOUR_STEPS.filter(
-    (step) => !completedSteps.includes(step.id)
-  ).map((step) => step.id);
+    (step: OnboardingStep) => !completedSteps.includes(step.id)
+  ).map((step: OnboardingStep) => step.id);
 }
 
 export function getCompletedStepsCount(completedSteps: string[]): number {
-  return completedSteps.filter((stepId) =>
-    ONBOARDING_TOUR_STEPS.some((step) => step.id === stepId)
+  return completedSteps.filter((stepId: string) =>
+    ONBOARDING_TOUR_STEPS.some((step: OnboardingStep) => step.id === stepId)
   ).length;
 }
