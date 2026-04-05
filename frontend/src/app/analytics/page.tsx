@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GovernanceAnalyticsDashboard from '@/components/GovernanceAnalyticsDashboard';
-import { AnalyticsKPIPanel } from '@/components/AnalyticsKPIPanel';
+import { AnalyticsKPIPanel } from '@/components/dashboard/AnalyticsKPIPanel';
 import { AnalyticsExportPanel } from '@/components/AnalyticsExportPanel';
 import FundingMetricsChart from '@/components/FundingMetricsChart';
 
