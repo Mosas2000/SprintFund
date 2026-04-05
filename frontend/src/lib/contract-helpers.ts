@@ -29,7 +29,7 @@ export class ContractResponseHandler {
    */
   static extractStakeAmount(response: StakeResponse | null): number {
     if (!response || typeof response !== 'object') return 0;
-    const obj = response as Record<string, unknown>;
+    const obj = response as unknown as Record<string, unknown>;
     const amount = obj.amount;
     if (typeof amount === 'number') return Math.max(0, amount);
     if (typeof amount === 'object' && amount !== null && 'value' in amount) {

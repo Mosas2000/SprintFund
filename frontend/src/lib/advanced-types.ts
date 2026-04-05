@@ -206,9 +206,9 @@ export type DeepPartial<T> = T extends object
  */
 export function hasKey<T extends object>(
   obj: T,
-  key: unknown
+  key: PropertyKey
 ): key is keyof T {
-  return key != null && Object.prototype.hasOwnProperty.call(obj, key);
+  return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
 /**

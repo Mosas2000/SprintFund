@@ -8,8 +8,8 @@ import type {
   RawProposal,
   RawStake,
   RawVote,
-} from './contract';
-import type { Proposal } from './proposal';
+} from '../types/contract';
+import type { Proposal } from '../types/proposal';
 
 /**
  * Zod schema for Clarity wrapped values.

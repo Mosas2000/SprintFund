@@ -9,4 +9,4 @@
  * import { validateRawProposal } from '@/lib/validators';
  */
 
-export * from './all-types';
+export * from './lib/all-types';
