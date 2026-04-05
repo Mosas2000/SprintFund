@@ -5,7 +5,7 @@ export interface TourStep {
   tooltip: string;
   action: string;
   targetElement: string;
-  position?: 'top' | 'bottom' | 'left' | 'right';
+  position?: 'top' | 'bottom' | 'left' | 'right' | 'center';
   concepts?: DaoConcept[];
 }
 

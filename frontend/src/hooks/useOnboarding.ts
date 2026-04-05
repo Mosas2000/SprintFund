@@ -74,5 +74,6 @@ export function useOnboarding() {
     isStepCompleted,
     getCompletionPercentage,
     resetOnboarding,
+    setShowModal,
   };
 }
