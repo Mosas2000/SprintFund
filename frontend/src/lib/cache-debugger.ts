@@ -64,7 +64,8 @@ export class CacheDebugger {
     const errors: string[] = [];
 
     const stats = blockchainCache.getStats();
-    if (stats.hitRate < 0 || stats.hitRate > 100) {
+    const hitRate = stats.hitRate ?? 0;
+    if (hitRate < 0 || hitRate > 100) {
       errors.push('Invalid hit rate calculated');
     }
 
