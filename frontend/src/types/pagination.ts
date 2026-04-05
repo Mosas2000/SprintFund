@@ -21,6 +21,7 @@ export interface PaginationState {
   page: number;
   pageSize: number;
   total: number;
+  totalItems: number;
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;

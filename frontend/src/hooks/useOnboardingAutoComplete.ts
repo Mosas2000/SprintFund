@@ -8,7 +8,7 @@ export function useOnboardingAutoComplete() {
     isStepCompleted,
   } = useOnboarding();
 
-  const isWalletConnected = useWalletStore((s) => s.isConnected);
+  const isWalletConnected = useWalletStore((s) => s.connected);
 
   useEffect(() => {
     if (isWalletConnected && !isStepCompleted('wallet-connect')) {

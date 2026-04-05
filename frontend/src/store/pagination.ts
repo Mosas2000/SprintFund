@@ -5,6 +5,7 @@ import { PaginationState } from '@/types/pagination';
 interface PaginationStore extends PaginationState {
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
+  setTotalItems: (totalItems: number) => void;
   setPaginationState: (state: Partial<PaginationState>) => void;
   nextPage: () => void;
   previousPage: () => void;
@@ -16,6 +17,7 @@ const initialState: PaginationState = {
   page: 1,
   pageSize: 15,
   total: 0,
+  totalItems: 0,
   totalPages: 0,
   hasNextPage: false,
   hasPreviousPage: false,
@@ -33,6 +35,18 @@ export const usePaginationStore = create<PaginationStore>(
 
       setPageSize: (pageSize: number) =>
         set({ pageSize: Math.max(5, Math.min(pageSize, 100)), page: 1 }),
+
+      setTotalItems: (totalItems: number) =>
+        set((state) => {
+          const totalPages = Math.ceil(totalItems / state.pageSize);
+          return {
+            totalItems,
+            total: totalItems,
+            totalPages,
+            hasNextPage: state.page < totalPages,
+            hasPreviousPage: state.page > 1,
+          };
+        }),
 
       setPaginationState: (state: Partial<PaginationState>) => set(state),
 
