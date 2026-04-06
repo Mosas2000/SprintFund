@@ -87,11 +87,11 @@ describe('VotingHistory behaviour', () => {
 
   describe('sort toggle behaviour', () => {
     it('toggling same field reverses direction', () => {
-      let sortField: SortField = 'timestamp';
-      let sortDir: SortDir = 'desc';
+      const sortField: SortField = 'timestamp';
+      let sortDir: SortDir = 'desc' as SortDir;
 
       // Toggle same field
-      sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      sortDir = sortDir === ('asc' as SortDir) ? 'desc' : 'asc';
       expect(sortDir).toBe('asc');
     });
 

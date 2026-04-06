@@ -105,7 +105,7 @@ describe('WalletState type safety', () => {
     };
 
     const result = state.connect();
-    expect(result instanceof Promise).toBe(true);
+    expect(result).toBeInstanceOf(Promise);
   });
 
   it('disconnect method is synchronous', () => {

@@ -70,11 +70,11 @@ describe('HTTP client', () => {
 
     it('handles timeout', async () => {
       global.fetch = vi.fn(
-        async () =>
+        async (): Promise<Response> =>
           new Promise(() => {
             // Never resolves
           }),
-      );
+      ) as unknown as typeof fetch;
 
       const result = await httpRequest('/api/test', { timeout: 10 });
       // Note: This test would need fake timers to work properly

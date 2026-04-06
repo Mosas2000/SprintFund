@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useCommandPalette, filterCommands, type CommandItem } from './useCommandPalette';
+import { useCommandPalette, filterCommands, type SearchCommand } from './useCommandPalette';
 
 describe('useCommandPalette', () => {
   beforeEach(() => {
@@ -9,7 +9,7 @@ describe('useCommandPalette', () => {
 
   it('calls onOpen when Ctrl+K is pressed on non-Mac', () => {
     const onOpen = vi.fn();
-    const commands: CommandItem[] = [];
+    const commands: SearchCommand[] = [];
     
     renderHook(() => useCommandPalette(commands, onOpen, false));
 
@@ -24,7 +24,7 @@ describe('useCommandPalette', () => {
 
   it('calls onOpen when Cmd+K is pressed on Mac', () => {
     const onOpen = vi.fn();
-    const commands: CommandItem[] = [];
+    const commands: SearchCommand[] = [];
     
     Object.defineProperty(navigator, 'platform', {
       value: 'MacIntel',

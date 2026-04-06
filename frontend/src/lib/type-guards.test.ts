@@ -150,8 +150,8 @@ describe('Type guards', () => {
     });
 
     it('returns empty array for non-array input', () => {
-      expect(filterValidProposals(null)).toEqual([]);
-      expect(filterValidProposals('not-array')).toEqual([]);
+      expect(filterValidProposals(null as unknown as unknown[])).toEqual([]);
+      expect(filterValidProposals('not-array' as unknown as unknown[])).toEqual([]);
     });
   });
 
