@@ -113,7 +113,8 @@ export function validateProposalZod(data: unknown): Proposal | null {
  */
 export function validateRawStakeZod(data: unknown): RawStake | null {
   try {
-    return RawStakeSchema.parse(data);
+    const parsed = RawStakeSchema.parse(data);
+    return parsed as unknown as RawStake;
   } catch (err) {
     console.error('Raw stake validation error:', err);
     return null;
@@ -125,7 +126,8 @@ export function validateRawStakeZod(data: unknown): RawStake | null {
  */
 export function validateRawVoteZod(data: unknown): RawVote | null {
   try {
-    return RawVoteSchema.parse(data);
+    const parsed = RawVoteSchema.parse(data);
+    return parsed as unknown as RawVote;
   } catch (err) {
     console.error('Raw vote validation error:', err);
     return null;
