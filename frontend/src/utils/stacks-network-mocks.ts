@@ -1,7 +1,13 @@
 import { STACKS_MAINNET } from '@stacks/network';
-import { mockDeep } from 'jest-mock-extended';
 
-export const createMockStacksNetwork = () => {
+// Mock network config type for testing
+export interface MockStacksNetworkConfig {
+  coreApiUrl: string;
+  chainId: number;
+  bnsLookupUrl: string;
+}
+
+export const createMockStacksNetwork = (): MockStacksNetworkConfig => {
   return {
     coreApiUrl: 'http://localhost:3999',
     chainId: 1,
@@ -9,9 +15,11 @@ export const createMockStacksNetwork = () => {
   };
 };
 
-export const mockStacksMainnet = (overrides = {}) => {
+export const mockStacksMainnet = (overrides: Partial<MockStacksNetworkConfig> = {}): MockStacksNetworkConfig => {
   return {
-    ...STACKS_MAINNET,
+    coreApiUrl: 'https://api.mainnet.hiro.so',
+    chainId: STACKS_MAINNET.chainId,
+    bnsLookupUrl: 'https://api.mainnet.hiro.so',
     ...overrides,
   };
 };

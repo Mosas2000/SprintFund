@@ -1,4 +1,6 @@
-import { NetworkType } from '@stacks/network';
+// NetworkType is no longer exported in @stacks/network v7+
+// Define the type locally for migration documentation purposes
+type NetworkType = 'mainnet' | 'testnet' | 'devnet' | 'mocknet';
 
 export interface StacksNetworkConfig {
   type: NetworkType;

@@ -1,5 +1,9 @@
 import { STACKS_MAINNET } from '@stacks/network';
 
+// Constants for API URLs (not available on network object in @stacks/network v7+)
+export const MAINNET_API_URL = 'https://api.mainnet.hiro.so';
+export const MAINNET_BNS_URL = 'https://api.mainnet.hiro.so';
+
 export interface StacksNetworkValidation {
   isValid: boolean;
   errors: string[];
@@ -15,16 +19,15 @@ export const validateStacksNetwork = (): StacksNetworkValidation => {
     return { isValid: false, errors, warnings };
   }
 
-  if (!STACKS_MAINNET.coreApiUrl) {
-    errors.push('STACKS_MAINNET.coreApiUrl is missing');
+  // In @stacks/network v7+, only chainId is available on the network object
+  // API URLs are now constants, not properties
+  if (typeof STACKS_MAINNET.chainId !== 'number') {
+    errors.push('STACKS_MAINNET.chainId is missing or invalid');
   }
 
-  if (!STACKS_MAINNET.chainId) {
-    errors.push('STACKS_MAINNET.chainId is missing');
-  }
-
-  if (!STACKS_MAINNET.bnsLookupUrl) {
-    warnings.push('STACKS_MAINNET.bnsLookupUrl is not available');
+  // Validate our constants are defined (informational)
+  if (!MAINNET_API_URL) {
+    warnings.push('MAINNET_API_URL constant should be defined');
   }
 
   return {
