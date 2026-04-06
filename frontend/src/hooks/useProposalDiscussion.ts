@@ -3,6 +3,28 @@ import { useConnect } from '@stacks/connect-react';
 import { proposalDiscussionService } from '@/services/proposal-discussion';
 import { ProposalDiscussionThread, ProposalDiscussionComment } from '@/types/proposal-detail';
 
+// Helper to safely get user address from UserSession
+function getUserAddress(userSession: any): string | null {
+  if (!userSession) return null;
+  try {
+    const userData = userSession.loadUserData?.();
+    return userData?.profile?.stxAddress?.mainnet || null;
+  } catch {
+    return null;
+  }
+}
+
+// Helper to safely get user name from UserSession
+function getUserName(userSession: any): string | undefined {
+  if (!userSession) return undefined;
+  try {
+    const userData = userSession.loadUserData?.();
+    return userData?.profile?.name;
+  } catch {
+    return undefined;
+  }
+}
+
 export function useProposalDiscussion(proposalId: string) {
   const { userSession } = useConnect();
   const [thread, setThread] = useState<ProposalDiscussionThread | null>(null);
@@ -17,14 +39,14 @@ export function useProposalDiscussion(proposalId: string) {
 
   const addComment = useCallback(
     (content: string) => {
-      if (!userSession) return null;
+      const address = getUserAddress(userSession);
+      if (!address) return null;
 
-      const address = userSession.addresses.mainnet;
       const comment = proposalDiscussionService.addComment(
         proposalId,
         address,
         content,
-        userSession.profile?.name
+        getUserName(userSession)
       );
 
       const updated = proposalDiscussionService.getDiscussionThread(proposalId);
@@ -37,15 +59,15 @@ export function useProposalDiscussion(proposalId: string) {
 
   const addReply = useCallback(
     (parentCommentId: string, content: string) => {
-      if (!userSession) return null;
+      const address = getUserAddress(userSession);
+      if (!address) return null;
 
-      const address = userSession.addresses.mainnet;
       const reply = proposalDiscussionService.addReply(
         proposalId,
         parentCommentId,
         address,
         content,
-        userSession.profile?.name
+        getUserName(userSession)
       );
 
       const updated = proposalDiscussionService.getDiscussionThread(proposalId);

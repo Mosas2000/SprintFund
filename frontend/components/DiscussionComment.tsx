@@ -5,6 +5,17 @@ import { useConnect } from '@stacks/connect-react';
 import { useProposalDiscussion } from '@/hooks/useProposalDiscussion';
 import { Heart, MessageCircle, MoreVertical } from 'lucide-react';
 
+// Helper to safely get user address from UserSession
+function getUserAddress(userSession: any): string | null {
+  if (!userSession) return null;
+  try {
+    const userData = userSession.loadUserData?.();
+    return userData?.profile?.stxAddress?.mainnet || null;
+  } catch {
+    return null;
+  }
+}
+
 interface DiscussionCommentProps {
   comment: any;
   proposalId: string;
@@ -35,7 +46,8 @@ export function DiscussionComment({
     );
   }
 
-  const isAuthor = userSession?.addresses.mainnet === comment.authorAddress;
+  const userAddress = getUserAddress(userSession);
+  const isAuthor = userAddress === comment.authorAddress;
   const formatAddress = (addr: string) => `${addr.slice(0, 8)}...${addr.slice(-6)}`;
 
   return (

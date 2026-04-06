@@ -66,7 +66,7 @@ export class ProposalDiscussionService {
     authorAddress: string,
     content: string,
     authorName?: string
-  ): ProposalDiscussionComment {
+  ): ProposalDiscussionComment | null {
     const storage = this.getStorage();
     const thread = storage[proposalId];
 
