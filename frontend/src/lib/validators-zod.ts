@@ -8,8 +8,8 @@ import type {
   RawProposal,
   RawStake,
   RawVote,
-} from './contract';
-import type { Proposal } from './proposal';
+} from '../types/contract';
+import type { Proposal } from '../types/proposal';
 
 /**
  * Zod schema for Clarity wrapped values.
@@ -33,14 +33,14 @@ export const RawProposalSchema = z.object({
   'votes-against': ClarityValueSchema,
   executed: ClarityValueSchema,
   'created-at': ClarityValueSchema,
-}) satisfies z.ZodType<RawProposal>;
+});
 
 /**
  * Schema for raw stake data from contract.
  */
 export const RawStakeSchema = z.object({
   amount: ClarityValueSchema,
-}) satisfies z.ZodType<RawStake>;
+});
 
 /**
  * Schema for raw vote data from contract.
@@ -48,7 +48,7 @@ export const RawStakeSchema = z.object({
 export const RawVoteSchema = z.object({
   weight: ClarityValueSchema,
   support: ClarityValueSchema,
-}) satisfies z.ZodType<RawVote>;
+});
 
 /**
  * Schema for normalized proposal.
@@ -89,7 +89,7 @@ export const ProposalCountSchema = z.number().int().nonnegative();
  */
 export function validateRawProposalZod(data: unknown): RawProposal | null {
   try {
-    return RawProposalSchema.parse(data);
+    return RawProposalSchema.parse(data) as RawProposal;
   } catch (err) {
     console.error('Raw proposal validation error:', err);
     return null;
@@ -113,7 +113,8 @@ export function validateProposalZod(data: unknown): Proposal | null {
  */
 export function validateRawStakeZod(data: unknown): RawStake | null {
   try {
-    return RawStakeSchema.parse(data);
+    const parsed = RawStakeSchema.parse(data);
+    return parsed as unknown as RawStake;
   } catch (err) {
     console.error('Raw stake validation error:', err);
     return null;
@@ -125,7 +126,8 @@ export function validateRawStakeZod(data: unknown): RawStake | null {
  */
 export function validateRawVoteZod(data: unknown): RawVote | null {
   try {
-    return RawVoteSchema.parse(data);
+    const parsed = RawVoteSchema.parse(data);
+    return parsed as unknown as RawVote;
   } catch (err) {
     console.error('Raw vote validation error:', err);
     return null;

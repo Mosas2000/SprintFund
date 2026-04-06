@@ -137,13 +137,14 @@ class BlockchainDataCache {
   }
 
   getStats(): CacheStats {
-    const hitRate = this.stats.hits + this.stats.misses > 0
-      ? (this.stats.hits / (this.stats.hits + this.stats.misses) * 100).toFixed(2)
+    const total = this.stats.hits + this.stats.misses;
+    const hitRate = total > 0
+      ? parseFloat((this.stats.hits / total * 100).toFixed(2))
       : 0;
 
     return {
       ...this.stats,
-      hitRate: parseFloat(hitRate as any),
+      hitRate,
     };
   }
 

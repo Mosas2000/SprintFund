@@ -1,4 +1,4 @@
-import type { BlockchainDataCache } from './blockchain-cache';
+import { blockchainCache } from './blockchain-cache';
 
 export interface CacheMetrics {
   totalHits: number;
@@ -9,6 +9,8 @@ export interface CacheMetrics {
   totalRequests: number;
   timestamp: number;
 }
+
+type BlockchainCacheType = typeof blockchainCache;
 
 class CacheMetricsCollector {
   private responseTimes: number[] = [];
@@ -32,7 +34,7 @@ class CacheMetricsCollector {
     this.peakMemory = Math.max(this.peakMemory, bytes);
   }
 
-  getMetrics(cache: BlockchainDataCache): CacheMetrics {
+  getMetrics(cache: BlockchainCacheType): CacheMetrics {
     const stats = cache.getStats();
     return {
       totalHits: stats.hits,
@@ -51,7 +53,7 @@ class CacheMetricsCollector {
     this.sessionStartTime = Date.now();
   }
 
-  getSummary(cache: BlockchainDataCache): string {
+  getSummary(cache: BlockchainCacheType): string {
     const metrics = this.getMetrics(cache);
     return `
 Cache Metrics Summary:

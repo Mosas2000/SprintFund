@@ -1,5 +1,8 @@
 import { STACKS_MAINNET } from '@stacks/network';
 
+// Constants for API URLs (not available on network object in @stacks/network v7+)
+const MAINNET_API_URL = 'https://api.mainnet.hiro.so';
+
 export const initializeStacksNetwork = () => {
   if (!STACKS_MAINNET) {
     throw new Error('STACKS_MAINNET is not available. Check @stacks/network package');
@@ -8,7 +11,7 @@ export const initializeStacksNetwork = () => {
 };
 
 export const getNetworkUrl = () => {
-  return STACKS_MAINNET?.coreApiUrl || 'https://stacks-node-api.mainnet.stacks.co';
+  return MAINNET_API_URL;
 };
 
 export const getNetworkChainId = () => {
@@ -16,15 +19,10 @@ export const getNetworkChainId = () => {
 };
 
 export const validateNetworkConfig = () => {
-  const requiredProperties = ['coreApiUrl', 'chainId', 'bnsLookupUrl'];
-  const missingProperties = requiredProperties.filter(
-    (prop) => !(prop in STACKS_MAINNET)
-  );
-  
-  if (missingProperties.length > 0) {
-    console.warn(
-      `Warning: STACKS_MAINNET missing properties: ${missingProperties.join(', ')}`
-    );
+  // In @stacks/network v7+, only chainId is available on the network object
+  // API URLs are now constants, not properties of the network
+  if (!STACKS_MAINNET || typeof STACKS_MAINNET.chainId !== 'number') {
+    console.warn('Warning: STACKS_MAINNET.chainId is missing');
     return false;
   }
   

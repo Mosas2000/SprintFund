@@ -50,7 +50,7 @@ export default function STXDistributionChart() {
               borderRadius: '8px',
               color: '#fff',
             }}
-            formatter={(value) => [value.toFixed(2), 'STX']}
+            formatter={(value) => [typeof value === 'number' ? value.toFixed(2) : String(value), 'STX']}
           />
           <Bar dataKey="amount" fill="#8b5cf6" name="Amount (STX)" />
         </BarChart>

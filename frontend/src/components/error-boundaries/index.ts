@@ -7,7 +7,7 @@ export { TransactionHistoryErrorBoundary } from '../TransactionHistoryErrorBound
 export { FormComponentErrorBoundary } from '../FormComponentErrorBoundary';
 export { PaginationErrorBoundary } from '../PaginationErrorBoundary';
 
-export { ProposalListErrorFallback } from '../ProposalListErrorFallback';
+export { ProposalListError } from '../ProposalListErrorFallback';
 export { AnalyticsErrorFallback } from '../AnalyticsErrorFallback';
 export { DashboardStatsErrorFallback } from '../DashboardStatsErrorFallback';
 export { VotingInterfaceErrorFallback } from '../VotingInterfaceErrorFallback';

@@ -61,17 +61,17 @@ export function getErrorMessage(error: AsyncError): string {
 }
 
 export function isRetryableError(error: AsyncError): boolean {
-  return [
+  return ([
     ErrorCode.NETWORK_ERROR,
     ErrorCode.TIMEOUT_ERROR,
     ErrorCode.RATE_LIMIT,
     ErrorCode.SERVER_ERROR,
-  ].includes(error.code);
+  ] as string[]).includes(error.code);
 }
 
 export function shouldThrowError(error: AsyncError): boolean {
-  return [
+  return ([
     ErrorCode.UNAUTHORIZED,
     ErrorCode.VALIDATION_FAILED,
-  ].includes(error.code);
+  ] as string[]).includes(error.code);
 }

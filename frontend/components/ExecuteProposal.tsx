@@ -91,16 +91,20 @@ export default function ExecuteProposal({
         const { openContractCall } = await import('@stacks/connect');
         await execute(async () => {
             return new Promise<string>((resolve, reject) => {
-                openContractCall({
-                    ...options,
-                    onFinish: (data: { txId: string }) => {
-                        console.log('Proposal execution submitted:', data);
-                        resolve(data.txId);
-                    },
-                    onCancel: () => {
-                        reject(new Error('Execution was cancelled'));
-                    },
-                }).catch(reject);
+                try {
+                    openContractCall({
+                        ...options,
+                        onFinish: (data: { txId: string }) => {
+                            console.log('Proposal execution submitted:', data);
+                            resolve(data.txId);
+                        },
+                        onCancel: () => {
+                            reject(new Error('Execution was cancelled'));
+                        },
+                    });
+                } catch (error) {
+                    reject(error);
+                }
             });
         });
     };

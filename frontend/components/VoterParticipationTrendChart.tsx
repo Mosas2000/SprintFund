@@ -22,8 +22,8 @@ export default function VoterParticipationTrendChart() {
       month: 'short',
       day: 'numeric',
     }),
-    voters: item.votes?.length || 0,
-    proposals: (item.created?.length || 0) + (item.approved?.length || 0),
+    voters: item.created + item.approved + item.rejected, // Use counts as proxy for activity
+    proposals: item.created + item.approved,
   }));
 
   return (

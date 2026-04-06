@@ -20,7 +20,14 @@ describe('Wallet Hydration Integration Flow', () => {
   it('prevents race condition: loading blocks render before hydration', () => {
     const renderSequence: string[] = [];
 
-    const mockStore = {
+    const mockStore: {
+      loading: boolean;
+      connected: boolean;
+      address: string | null;
+      hydrate: () => void;
+      connect: ReturnType<typeof vi.fn>;
+      disconnect: ReturnType<typeof vi.fn>;
+    } = {
       loading: true,
       connected: false,
       address: null,
@@ -78,7 +85,12 @@ describe('Wallet Hydration Integration Flow', () => {
   it('ensures hydration completes before showing wallet state', () => {
     const stateChanges: Array<{ stage: string; loading: boolean; connected: boolean }> = [];
 
-    const mockStore = {
+    const mockStore: {
+      loading: boolean;
+      connected: boolean;
+      address: string | null;
+      hydrate: () => void;
+    } = {
       loading: true,
       connected: false,
       address: null,
@@ -113,7 +125,12 @@ describe('Wallet Hydration Integration Flow', () => {
   it('handles connection flow with proper loading state', () => {
     const connectionFlow: string[] = [];
 
-    const mockStore = {
+    const mockStore: {
+      loading: boolean;
+      connected: boolean;
+      address: string | null;
+      connect: () => Promise<void>;
+    } = {
       loading: false,
       connected: false,
       address: null,

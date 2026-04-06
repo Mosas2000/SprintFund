@@ -1,4 +1,4 @@
-import type { Transaction, TransactionStatus, TransactionType } from '../types/transaction';
+import type { Transaction, TransactionStatus, TransactionType } from '../src/types/transaction';
 
 export function exportTransactionsAsCSV(transactions: Transaction[]): string {
   if (transactions.length === 0) {

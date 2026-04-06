@@ -1,27 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { ProposalsPage } from './Proposals';
-import * as stacksLib from '../lib/stacks';
+import { ProposalsPage } from '../Proposals';
+import * as stacksLib from '../../lib/stacks';
 
-vi.mock('../lib/stacks');
-vi.mock('../hooks/useToast', () => ({
+vi.mock('../../lib/stacks');
+vi.mock('../../hooks/useToast', () => ({
   useToast: () => ({
     error: vi.fn(),
     success: vi.fn(),
   }),
 }));
-vi.mock('../hooks/useNetworkStatus', () => ({
+vi.mock('../../hooks/useNetworkStatus', () => ({
   useNetworkStatus: () => true,
 }));
-vi.mock('../store/comment-selectors', () => ({
+vi.mock('../../store/comment-selectors', () => ({
   useLoadComments: () => vi.fn(),
 }));
 
 describe('ProposalsPage - Keyboard Navigation', () => {
   const mockProposals = [
     {
-      id: 'p1',
+      id: 1,
       title: 'Proposal 1',
       description: 'Description 1',
       proposer: 'address1',
@@ -29,9 +29,10 @@ describe('ProposalsPage - Keyboard Navigation', () => {
       votesFor: 100,
       votesAgainst: 50,
       executed: false,
+      createdAt: Date.now(),
     },
     {
-      id: 'p2',
+      id: 2,
       title: 'Proposal 2',
       description: 'Description 2',
       proposer: 'address2',
@@ -39,9 +40,10 @@ describe('ProposalsPage - Keyboard Navigation', () => {
       votesFor: 200,
       votesAgainst: 100,
       executed: false,
+      createdAt: Date.now(),
     },
     {
-      id: 'p3',
+      id: 3,
       title: 'Proposal 3',
       description: 'Description 3',
       proposer: 'address3',
@@ -49,6 +51,7 @@ describe('ProposalsPage - Keyboard Navigation', () => {
       votesFor: 150,
       votesAgainst: 75,
       executed: false,
+      createdAt: Date.now(),
     },
   ];
 
@@ -57,6 +60,8 @@ describe('ProposalsPage - Keyboard Navigation', () => {
       proposals: mockProposals,
       totalPages: 1,
       totalCount: 3,
+      page: 1,
+      pageSize: 10,
     });
   });
 

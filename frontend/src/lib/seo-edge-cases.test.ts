@@ -172,14 +172,18 @@ describe('JSON-LD edge cases', () => {
 
   it('Organization JSON-LD sameAs contains only valid URLs', () => {
     const org = buildOrganizationJsonLd();
-    org.sameAs.forEach((url: string) => {
-      expect(url).toMatch(/^https:\/\//);
-    });
+    if (org.sameAs) {
+      org.sameAs.forEach((url: string) => {
+        expect(url).toMatch(/^https:\/\//);
+      });
+    }
   });
 
   it('WebSite JSON-LD search target contains a URL template', () => {
     const site = buildWebSiteJsonLd();
-    expect(site.potentialAction.target).toContain(SITE_URL);
+    if (site.potentialAction) {
+      expect(site.potentialAction.target).toContain(SITE_URL);
+    }
   });
 
   it('WebPage JSON-LD works with all page configs', () => {

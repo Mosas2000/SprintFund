@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { httpGet, httpPost, httpRequest } from './http-client';
 import type { Result } from './type-helpers';
 
@@ -70,11 +70,11 @@ describe('HTTP client', () => {
 
     it('handles timeout', async () => {
       global.fetch = vi.fn(
-        async () =>
+        async (): Promise<Response> =>
           new Promise(() => {
             // Never resolves
           }),
-      );
+      ) as unknown as typeof fetch;
 
       const result = await httpRequest('/api/test', { timeout: 10 });
       // Note: This test would need fake timers to work properly

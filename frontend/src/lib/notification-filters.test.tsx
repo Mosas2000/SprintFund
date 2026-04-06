@@ -77,6 +77,7 @@ describe('filterByPreferences', () => {
       vote_milestone: true,
       stake_change: false,
       vote_received: true,
+      quorum_reached: true,
     };
     const list = [
       makeNotification({ type: 'proposal_created' }),
@@ -97,6 +98,7 @@ describe('filterByPreferences', () => {
       vote_milestone: true,
       stake_change: true,
       vote_received: true,
+      quorum_reached: true,
     };
     const list = [makeNotification(), makeNotification()];
     expect(filterByPreferences(list, prefs)).toHaveLength(2);

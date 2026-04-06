@@ -1,10 +1,10 @@
 import { useOnboarding } from '../hooks/useOnboarding';
 import { useCallback, useEffect } from 'react';
-import { useWalletStore } from './wallet';
+import { useWalletStore } from '../store/wallet';
 
 export function useOnboardingActions() {
   const { completeStep, isStepCompleted } = useOnboarding();
-  const isConnected = useWalletStore((s) => s.isConnected);
+  const isConnected = useWalletStore((s) => s.connected);
 
   useEffect(() => {
     if (isConnected && !isStepCompleted('wallet-connect')) {

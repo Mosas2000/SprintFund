@@ -8,6 +8,8 @@ interface ProposalDashboardProps {
   onProposalSelect?: (proposalId: string) => void;
 }
 
+type ValidSortBy = 'title' | 'createdAt' | 'votes' | 'requestedAmount';
+
 export const ProposalDashboard: React.FC<ProposalDashboardProps> = ({
   onProposalSelect,
 }) => {
@@ -17,16 +19,20 @@ export const ProposalDashboard: React.FC<ProposalDashboardProps> = ({
 
   const handleStatusChange = (status: string | null) => {
     setSelectedStatus(status);
-    updateFilter('status', status);
+    updateFilter('status', status ?? undefined);
   };
 
   const handleCategoryChange = (category: string | null) => {
     setSelectedCategory(category);
-    updateFilter('category', category);
+    updateFilter('category', category ?? undefined);
   };
 
   const handleSortChange = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    updateSort(sortBy, sortOrder);
+    // Validate sortBy is one of the allowed values
+    const validSortBy: ValidSortBy[] = ['title', 'createdAt', 'votes', 'requestedAmount'];
+    if (validSortBy.includes(sortBy as ValidSortBy)) {
+      updateSort(sortBy as ValidSortBy, sortOrder);
+    }
   };
 
   return (

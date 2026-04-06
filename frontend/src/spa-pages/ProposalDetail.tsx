@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
@@ -34,7 +34,7 @@ interface VoteStats {
  * ProposalDetailPage displays full proposal information with voting interface.
  * Users can vote, execute approved proposals, and discuss in comments.
  */
-export function ProposalDetailPage(): JSX.Element {
+export function ProposalDetailPage(): React.JSX.Element {
   const { id } = useParams<{ id: string }>();
   const proposalId = Number(id);
 

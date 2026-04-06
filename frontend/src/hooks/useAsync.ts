@@ -99,7 +99,7 @@ export function useDebouncedAsync<T>(
   const [state, setState] = useState<LoadingState & { data?: T }>(
     createLoadingState('idle'),
   );
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const execute = useCallback(async () => {
     if (timeoutRef.current) {

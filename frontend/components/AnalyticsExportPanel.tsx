@@ -13,13 +13,48 @@ export function AnalyticsExportPanel() {
   const handleExportCSV = async () => {
     setIsExporting(true);
     try {
+      // Provide defaults for nullable fields to satisfy AnalyticsData interface
       const data = {
         proposals,
-        proposalStats,
-        categoryStats,
-        voterStats,
-        votingPower,
-        timeline,
+        proposalStats: proposalStats ?? {
+          total: 0,
+          approved: 0,
+          rejected: 0,
+          pending: 0,
+          successRate: 0,
+          totalAmount: 0,
+          averageAmount: 0,
+        },
+        categoryStats: categoryStats.map((c) => ({
+          name: c.category,
+          count: c.proposals,
+          percentage: 0,
+          approved: c.approved,
+          rejected: c.rejected,
+          pending: 0,
+          totalAmount: c.totalFunded,
+        })),
+        voterStats: {
+          totalVoters: voterStats?.totalVoters ?? 0,
+          totalVotes: voterStats?.totalVotes ?? 0,
+          averageVotesPerVoter: voterStats?.averageVotesPerVoter ?? 0,
+          participationRate: 0,
+        },
+        votingPower: votingPower
+          ? {
+              distribution: votingPower.topVoters.map((v, i) => ({
+                range: `Top ${i + 1}`,
+                count: v.amount,
+              })),
+              gini: 0,
+              topHoldersPercentage: votingPower.whaleConcentration,
+            }
+          : { distribution: [], gini: 0, topHoldersPercentage: 0 },
+        timeline: timeline.map((t) => ({
+          date: t.date,
+          proposals: t.created + t.approved + t.rejected,
+          votes: 0,
+        })),
       };
       exportAnalyticsToCSV(
         data,
@@ -33,13 +68,48 @@ export function AnalyticsExportPanel() {
   const handleExportJSON = async () => {
     setIsExporting(true);
     try {
+      // Provide defaults for nullable fields to satisfy AnalyticsData interface
       const data = {
         proposals,
-        proposalStats,
-        categoryStats,
-        voterStats,
-        votingPower,
-        timeline,
+        proposalStats: proposalStats ?? {
+          total: 0,
+          approved: 0,
+          rejected: 0,
+          pending: 0,
+          successRate: 0,
+          totalAmount: 0,
+          averageAmount: 0,
+        },
+        categoryStats: categoryStats.map((c) => ({
+          name: c.category,
+          count: c.proposals,
+          percentage: 0,
+          approved: c.approved,
+          rejected: c.rejected,
+          pending: 0,
+          totalAmount: c.totalFunded,
+        })),
+        voterStats: {
+          totalVoters: voterStats?.totalVoters ?? 0,
+          totalVotes: voterStats?.totalVotes ?? 0,
+          averageVotesPerVoter: voterStats?.averageVotesPerVoter ?? 0,
+          participationRate: 0,
+        },
+        votingPower: votingPower
+          ? {
+              distribution: votingPower.topVoters.map((v, i) => ({
+                range: `Top ${i + 1}`,
+                count: v.amount,
+              })),
+              gini: 0,
+              topHoldersPercentage: votingPower.whaleConcentration,
+            }
+          : { distribution: [], gini: 0, topHoldersPercentage: 0 },
+        timeline: timeline.map((t) => ({
+          date: t.date,
+          proposals: t.created + t.approved + t.rejected,
+          votes: 0,
+        })),
         exportedAt: new Date().toISOString(),
       };
       exportAnalyticsToJSON(
