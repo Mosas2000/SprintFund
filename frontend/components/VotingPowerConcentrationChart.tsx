@@ -74,7 +74,7 @@ export default function VotingPowerConcentrationChart() {
                 borderRadius: '8px',
                 color: '#fff',
               }}
-              formatter={(value) => [value.toFixed(2), 'STX']}
+              formatter={(value) => [typeof value === 'number' ? value.toFixed(2) : String(value), 'STX']}
             />
           </PieChart>
         </ResponsiveContainer>
