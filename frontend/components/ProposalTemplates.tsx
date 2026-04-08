@@ -183,7 +183,7 @@ interface ProposalTemplatesProps {
 export default function ProposalTemplates({ onTemplateSelect }: ProposalTemplatesProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
-  const [customTemplates, setCustomTemplates] = useState<Template[]>([]);
+  const [customTemplates, _setCustomTemplates] = useState<Template[]>([]);
 
   const categories = ['all', 'Funding', 'Governance', 'Technical', 'Community'];
 

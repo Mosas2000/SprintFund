@@ -107,8 +107,8 @@ export default function MultiSigTreasury() {
     }
   ]);
 
-  const [, setShowNewTxModal] = useState(false);
-  const [, setShowConfigModal] = useState(false);
+  const [showNewTxModal, setShowNewTxModal] = useState(false);
+  const [showConfigModal, setShowConfigModal] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'all' | Transaction['status']>('all');
 
