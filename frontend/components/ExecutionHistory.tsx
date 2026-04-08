@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface ExecutionHistoryProps {
