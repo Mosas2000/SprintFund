@@ -47,7 +47,7 @@ interface EmergencyProcedure {
 }
 
 export default function TreasuryGovernance() {
-  const [spendingLimits, setSpendingLimits] = useState<SpendingLimit[]>([
+  const [spendingLimits] = useState<SpendingLimit[]>([
     {
       id: 1,
       category: 'DeFi',
@@ -125,7 +125,7 @@ export default function TreasuryGovernance() {
     }
   ]);
 
-  const [auditLog, setAuditLog] = useState<AuditEntry[]>([
+  const [auditLog] = useState<AuditEntry[]>([
     {
       id: 1,
       timestamp: Date.now() - 2 * 60 * 60 * 1000,
@@ -175,7 +175,7 @@ export default function TreasuryGovernance() {
     }
   ]);
 
-  const [emergencyProcedures, setEmergencyProcedures] = useState<EmergencyProcedure[]>([
+  const [emergencyProcedures] = useState<EmergencyProcedure[]>([
     {
       id: 1,
       name: 'Treasury Freeze',
@@ -206,9 +206,9 @@ export default function TreasuryGovernance() {
     }
   ]);
 
-  const [showLimitModal, setShowLimitModal] = useState(false);
-  const [showParameterModal, setShowParameterModal] = useState(false);
-  const [selectedParameter, setSelectedParameter] = useState<TreasuryParameter | null>(null);
+  const [, setShowLimitModal] = useState(false);
+  const [, setShowParameterModal] = useState(false);
+  const [, setSelectedParameter] = useState<TreasuryParameter | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
   const filteredAuditLog = auditLog.filter(entry =>
