@@ -13,7 +13,7 @@ export const PaginatedProposalList: React.FC<PaginatedProposalListProps> = ({
   onProposalSelect,
   className = '',
 }) => {
-  const { filters, sort, updateFilter, updateSort, clearFilters } = useProposalFilters();
+  const { filters, sort, updateFilter, clearFilters } = useProposalFilters();
   const {
     proposals,
     loading,
@@ -24,7 +24,6 @@ export const PaginatedProposalList: React.FC<PaginatedProposalListProps> = ({
     totalItems,
     setPage,
     setPageSize,
-    refetch,
   } = useProposalPagination({
     filters,
     sort,
