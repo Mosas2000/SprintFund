@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Flag, Check, Zap, Rocket, Globe } from 'lucide-react';
+import { Flag, Check, Rocket } from 'lucide-react';
 
 const roadmap = [
     { q: 'Q4 2023', title: 'Genesis Alpha', status: 'completed', desc: 'Mainnet launch of the core quadratic engine.' },
