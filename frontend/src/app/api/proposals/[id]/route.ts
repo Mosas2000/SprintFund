@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const MOCK_PROPOSALS: Record<string, any> = {
+interface MockVote {
+  id: string;
+  voterAddress: string;
+  type: 'approve' | 'reject';
+  timestamp: string;
+}
+
+interface MockProposal {
+  id: string;
+  title: string;
+  description: string;
+  proposer: string;
+  createdAt: string;
+  votingEnd: string;
+  requestedAmount: number;
+  status: 'pending' | 'approved' | 'rejected';
+  votes: MockVote[];
+}
+
+const MOCK_PROPOSALS: Record<string, MockProposal> = {
   'prop_1': {
     id: 'prop_1',
     title: 'Increase Marketing Budget for Q2',

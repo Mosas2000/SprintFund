@@ -13,9 +13,19 @@ export function AnalyticsExportPanel() {
   const handleExportCSV = async () => {
     setIsExporting(true);
     try {
+      // Transform proposals to match AnalyticsProposal interface
+      const analyticsProposals = proposals.map((p) => ({
+        id: p.id,
+        title: p.title,
+        status: p.executed ? 'approved' : 'pending',
+        category: p.category,
+        createdAt: p.createdAt,
+        requestedAmount: p.amount,
+      }));
+      
       // Provide defaults for nullable fields to satisfy AnalyticsData interface
       const data = {
-        proposals,
+        proposals: analyticsProposals,
         proposalStats: proposalStats ?? {
           total: 0,
           approved: 0,
@@ -68,9 +78,19 @@ export function AnalyticsExportPanel() {
   const handleExportJSON = async () => {
     setIsExporting(true);
     try {
+      // Transform proposals to match AnalyticsProposal interface
+      const analyticsProposals = proposals.map((p) => ({
+        id: p.id,
+        title: p.title,
+        status: p.executed ? 'approved' : 'pending',
+        category: p.category,
+        createdAt: p.createdAt,
+        requestedAmount: p.amount,
+      }));
+      
       // Provide defaults for nullable fields to satisfy AnalyticsData interface
       const data = {
-        proposals,
+        proposals: analyticsProposals,
         proposalStats: proposalStats ?? {
           total: 0,
           approved: 0,

@@ -1,5 +1,10 @@
 type NetworkType = 'slow-2g' | '2g' | '3g' | '4g' | 'unknown';
 
+interface NetworkInformation extends EventTarget {
+  effectiveType?: string;
+  addEventListener(type: 'change', listener: () => void): void;
+}
+
 interface NetworkAwareCacheTTLs {
   slowNetwork: Record<string, number>;
   fastNetwork: Record<string, number>;
@@ -24,7 +29,7 @@ const NETWORK_AWARE_TTLS: NetworkAwareCacheTTLs = {
 
 export class NetworkAwareCaching {
   private currentNetworkType: NetworkType = 'unknown';
-  private connectionType: any;
+  private connectionType: NetworkInformation | null = null;
 
   constructor() {
     this.detectNetworkConnection();
@@ -32,14 +37,14 @@ export class NetworkAwareCaching {
   }
 
   private detectNetworkConnection(): void {
-    if (typeof navigator !== 'undefined' && (navigator as any).connection) {
-      this.connectionType = (navigator as any).connection;
+    if (typeof navigator !== 'undefined' && 'connection' in navigator) {
+      this.connectionType = (navigator as unknown as { connection: NetworkInformation }).connection;
       this.currentNetworkType = this.getNetworkTypeFromConnection();
     }
   }
 
   private setupNetworkListener(): void {
-    if (typeof navigator !== 'undefined' && (navigator as any).connection) {
+    if (this.connectionType) {
       this.connectionType.addEventListener('change', () => {
         this.currentNetworkType = this.getNetworkTypeFromConnection();
       });

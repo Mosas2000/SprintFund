@@ -1,3 +1,10 @@
+import type { ProposalDiscussionComment } from '../types/proposal-detail';
+
+interface ProposalWithVotingEnd {
+  status?: 'approved' | 'rejected' | 'pending';
+  votingEnd?: string;
+}
+
 export class ProposalDetailUtils {
   static formatAddress(address: string): string {
     return `${address.slice(0, 12)}...${address.slice(-6)}`;
@@ -13,12 +20,14 @@ export class ProposalDetailUtils {
     return (votes / total) * 100;
   }
 
-  static getVotingStatus(proposal: any): 'active' | 'ended' | 'approved' | 'rejected' {
+  static getVotingStatus(proposal: ProposalWithVotingEnd): 'active' | 'ended' | 'approved' | 'rejected' {
     if (proposal.status === 'approved') return 'approved';
     if (proposal.status === 'rejected') return 'rejected';
 
-    const votingEnd = new Date(proposal.votingEnd);
-    if (votingEnd < new Date()) return 'ended';
+    if (proposal.votingEnd) {
+      const votingEnd = new Date(proposal.votingEnd);
+      if (votingEnd < new Date()) return 'ended';
+    }
 
     return 'active';
   }
@@ -58,7 +67,7 @@ export class ProposalDetailUtils {
     }
   }
 
-  static sortCommentsByDate(comments: any[], order: 'asc' | 'desc' = 'desc'): any[] {
+  static sortCommentsByDate(comments: ProposalDiscussionComment[], order: 'asc' | 'desc' = 'desc'): ProposalDiscussionComment[] {
     return comments.sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
@@ -66,7 +75,7 @@ export class ProposalDetailUtils {
     });
   }
 
-  static filterCommentsByContent(comments: any[], query: string): any[] {
+  static filterCommentsByContent(comments: ProposalDiscussionComment[], query: string): ProposalDiscussionComment[] {
     const lowerQuery = query.toLowerCase();
     return comments.filter((c) =>
       c.content.toLowerCase().includes(lowerQuery) ||

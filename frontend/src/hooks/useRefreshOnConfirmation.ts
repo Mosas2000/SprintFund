@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useTransactionStore } from '../store/transactions';
+import type { Transaction } from '../types/transaction';
 
 export function useRefreshOnConfirmation(refreshCallback: () => void) {
   const { transactions } = useTransactionStore();
-  const previousTransactionsRef = useRef<Record<string, any>>({});
+  const previousTransactionsRef = useRef<Record<string, Transaction>>({});
 
   useEffect(() => {
     const currentTransactions = transactions;

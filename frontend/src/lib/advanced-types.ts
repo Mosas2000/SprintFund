@@ -109,21 +109,21 @@ export function getProposalState(proposal: Proposal): ProposalState {
 /**
  * Type-safe event handler registration.
  */
-export interface EventEmitter<T extends Record<string, any[]>> {
+export interface EventEmitter<T extends Record<string, unknown[]>> {
   on<K extends keyof T>(event: K, handler: (...args: T[K]) => void): void;
   emit<K extends keyof T>(event: K, ...args: T[K]): void;
 }
 
-export class TypedEventEmitter<T extends Record<string, any[]>>
+export class TypedEventEmitter<T extends Record<string, unknown[]>>
   implements EventEmitter<T>
 {
-  private handlers: Map<keyof T, ((...args: any[]) => void)[]> = new Map();
+  private handlers: Map<keyof T, ((...args: unknown[]) => void)[]> = new Map();
 
   on<K extends keyof T>(event: K, handler: (...args: T[K]) => void): void {
     if (!this.handlers.has(event)) {
       this.handlers.set(event, []);
     }
-    this.handlers.get(event)!.push(handler);
+    this.handlers.get(event)!.push(handler as (...args: unknown[]) => void);
   }
 
   emit<K extends keyof T>(event: K, ...args: T[K]): void {

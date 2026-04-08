@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const errorLogs: any[] = [];
+interface ErrorLog {
+  component?: string;
+  error?: string;
+  severity?: string;
+  timestamp: string;
+  [key: string]: unknown;
+}
+
+const errorLogs: ErrorLog[] = [];
 const MAX_LOGS = 1000;
 
 export async function POST(request: NextRequest) {
