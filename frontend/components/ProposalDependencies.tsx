@@ -14,7 +14,7 @@ interface ProposalDependenciesProps {
   currentProposalTitle: string;
 }
 
-export default function ProposalDependencies({ proposalId, currentProposalTitle }: ProposalDependenciesProps) {
+export default function ProposalDependencies({ proposalId: _proposalId, currentProposalTitle: _currentProposalTitle }: ProposalDependenciesProps) {
   const [dependencies, setDependencies] = useState<Dependency[]>([
     {
       proposalId: 12,
