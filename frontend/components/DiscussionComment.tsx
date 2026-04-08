@@ -37,7 +37,7 @@ export function DiscussionComment({
   const { userSession } = useConnect();
   const { likeComment } = useProposalDiscussion(proposalId);
   const [showMenu, setShowMenu] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [, setIsEditing] = useState(false);
 
   if (comment.isDeleted) {
     return (
