@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Shield, Check, Clock, UserCheck, AlertTriangle } from 'lucide-react';
+import { Shield, Check, Clock, UserCheck } from 'lucide-react';
 
 const signers = [
     { id: '1', name: 'Treasury Guardian', status: 'signed', address: 'SP12...ABCD' },
@@ -12,7 +11,7 @@ const signers = [
 
 export default function MultisigFlow() {
     const signedCount = signers.filter(s => s.status === 'signed').length;
-    const isComplete = signedCount === signers.length;
+    const _isComplete = signedCount === signers.length;
 
     return (
         <div className="p-8 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-[40px] overflow-hidden">
@@ -25,7 +24,7 @@ export default function MultisigFlow() {
             </div>
 
             <div className="space-y-6 mb-10">
-                {signers.map((s, i) => (
+                {signers.map((s, _i) => (
                     <div key={s.id} className="flex items-center gap-4 group">
                         <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-all ${s.status === 'signed' ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-slate-950 border-white/5 text-slate-600'
                             }`}>
