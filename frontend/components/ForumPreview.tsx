@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MessageSquare, Users, Clock, ArrowRight, TrendingUp } from 'lucide-react';
+import { MessageSquare, Clock, ArrowRight, TrendingUp } from 'lucide-react';
 
 const threads = [
     { id: '1', title: 'Should we introduce a 1.5x matching multiplier for Education?', author: 'Mosa', replies: 45, activity: '2 mins ago' },
