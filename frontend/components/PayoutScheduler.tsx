@@ -80,7 +80,7 @@ export default function PayoutScheduler() {
     }
   ]);
 
-  const [batches, setBatches] = useState<PaymentBatch[]>([
+  const [batches, _setBatches] = useState<PaymentBatch[]>([
     {
       id: 'BATCH-001',
       payments: [1, 2],
@@ -94,7 +94,7 @@ export default function PayoutScheduler() {
   const [filterStatus, setFilterStatus] = useState<'all' | Payment['status']>('all');
   const [filterType, setFilterType] = useState<'all' | Payment['type']>('all');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
-  const [showBatchModal, setShowBatchModal] = useState(false);
+  const [_showBatchModal, setShowBatchModal] = useState(false);
 
   const [newPayment, setNewPayment] = useState({
     grantee: '',
