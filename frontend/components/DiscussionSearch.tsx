@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Search, X } from 'lucide-react';
-import { DiscussionComment } from './DiscussionComment';
 import { ProposalDiscussionComment } from '@/types/proposal-detail';
 
 interface DiscussionSearchProps {
