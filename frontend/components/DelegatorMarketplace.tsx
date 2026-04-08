@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import DelegatorCard from './DelegatorCard';
-import { motion } from 'framer-motion';
 
 const MOCK_DELEGATORS = [
     { name: 'Hiro Protagonist', handle: '@hiro.btc', weight: '240K', votingRate: '98', successRate: '92', tags: ['Core Developer', 'Security'] },
