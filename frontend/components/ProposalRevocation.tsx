@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { RotateCcw, AlertTriangle, ArrowLeft, Shield } from 'lucide-react';
+import { RotateCcw, AlertTriangle } from 'lucide-react';
 
 export default function ProposalRevocation() {
     const [isConfirming, setIsConfirming] = useState(false);

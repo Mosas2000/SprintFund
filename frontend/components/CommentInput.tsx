@@ -13,7 +13,7 @@ interface CommentInputProps {
 }
 
 export function CommentInput({
-  proposalId,
+  proposalId: _proposalId,
   onSubmit,
   isReply = false,
   onCancel,

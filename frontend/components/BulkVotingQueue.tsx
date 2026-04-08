@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Layers, X, ArrowRight, Zap, ListChecks } from 'lucide-react';
+import { Layers, X, Zap, ListChecks } from 'lucide-react';
 
 interface QueuedVote {
     id: string;

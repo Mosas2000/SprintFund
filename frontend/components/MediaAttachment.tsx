@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Paperclip, X, Image as ImageIcon, FileText, Globe, Check } from 'lucide-react';
+import { Paperclip, X, Image as ImageIcon, FileText, Globe } from 'lucide-react';
 
 interface Attachment {
     id: string;

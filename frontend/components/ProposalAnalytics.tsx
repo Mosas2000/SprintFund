@@ -41,7 +41,7 @@ export default function ProposalAnalytics() {
     return ((stat.approved / stat.total) * 100).toFixed(1);
   };
 
-  const predictSuccess = (category: string, amount: number, timeline: number) => {
+  const _predictSuccess = (category: string, amount: number, timeline: number) => {
     const stat = categoryStats.find((s) => s.category === category);
     if (!stat) return 50;
 

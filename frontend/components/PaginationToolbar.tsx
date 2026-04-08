@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { usePaginationState } from '@/hooks/usePaginationState';
 
 interface PaginationToolbarProps {
   currentPage: number;

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Brain, Check, Plus, Tag } from 'lucide-react';
 
 const CATEGORIES = ['DeFi', 'NFT', 'DAO', 'Infrastructure', 'Community', 'Gaming', 'Education', 'Security'];

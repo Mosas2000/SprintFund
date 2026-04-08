@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, Check, Info, AlertTriangle, Zap } from 'lucide-react';
+import { Bell, Check, Info, Zap } from 'lucide-react';
 
 interface Notification {
     id: string;
