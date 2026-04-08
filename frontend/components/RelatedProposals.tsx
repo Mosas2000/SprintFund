@@ -3,8 +3,16 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 
+interface RelatedProposal {
+  id: string | number;
+  title: string;
+  description: string;
+  status?: 'approved' | 'rejected' | 'pending';
+  votes?: { length: number } | unknown[];
+}
+
 interface RelatedProposalsProps {
-  proposals: any[];
+  proposals: RelatedProposal[];
   currentProposalId: string;
 }
 
@@ -13,7 +21,7 @@ export function RelatedProposals({ proposals, currentProposalId }: RelatedPropos
     return null;
   }
 
-  const filtered = proposals.filter((p) => p.id !== currentProposalId).slice(0, 3);
+  const filtered = proposals.filter((p) => String(p.id) !== currentProposalId).slice(0, 3);
 
   if (filtered.length === 0) {
     return null;
@@ -26,7 +34,7 @@ export function RelatedProposals({ proposals, currentProposalId }: RelatedPropos
       <div className="space-y-3">
         {filtered.map((proposal) => (
           <Link
-            key={proposal.id}
+            key={String(proposal.id)}
             href={`/proposals/${proposal.id}`}
             className="block p-4 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 hover:border-purple-500/30 transition-all group"
           >
@@ -53,11 +61,11 @@ export function RelatedProposals({ proposals, currentProposalId }: RelatedPropos
                       : 'bg-yellow-500/20 text-yellow-400'
                 }`}
               >
-                {proposal.status}
+                {proposal.status || 'pending'}
               </span>
 
               <span className="text-xs text-white/60">
-                {proposal.votes?.length || 0} votes
+                {Array.isArray(proposal.votes) ? proposal.votes.length : 0} votes
               </span>
             </div>
           </Link>

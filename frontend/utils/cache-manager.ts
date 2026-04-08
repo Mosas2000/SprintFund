@@ -88,4 +88,4 @@ export class CacheManager<T> {
   }
 }
 
-export const analyticsCacheManager = new CacheManager<any>(300);
+export const analyticsCacheManager = new CacheManager<unknown>(300);

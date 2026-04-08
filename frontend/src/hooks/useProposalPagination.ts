@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { usePaginationStore } from '@/store/pagination';
 import { ProposalPaginationService, ProposalFilterOptions, ProposalSortOptions } from '@/services/proposal-pagination';
+import type { Proposal } from '@/types/proposal';
 
 interface UseProposalPaginationOptions {
   initialPageSize?: number;
@@ -23,7 +24,7 @@ export function useProposalPagination({
     totalItems,
   } = usePaginationStore();
 
-  const [proposals, setProposals] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

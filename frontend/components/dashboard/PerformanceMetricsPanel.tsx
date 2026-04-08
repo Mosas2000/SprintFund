@@ -9,31 +9,29 @@ export function PerformanceMetricsPanel() {
   const calculateApprovalVelocity = () => {
     if (!proposals || proposals.length === 0) return 0;
 
-    const approvedProposals = proposals.filter((p) => p.status === 'approved');
-    if (approvedProposals.length === 0) return 0;
+    const executedProposals = proposals.filter((p) => p.executed);
+    if (executedProposals.length === 0) return 0;
 
-    const recentApprovals = approvedProposals.slice(0, 10);
-    const dates = recentApprovals.map((p) => new Date(p.updatedAt).getTime());
+    const recentExecuted = executedProposals.slice(0, 10);
+    const dates = recentExecuted.map((p) => p.createdAt);
     const firstDate = Math.min(...dates);
     const lastDate = Math.max(...dates);
     const days = (lastDate - firstDate) / (1000 * 60 * 60 * 24) || 1;
 
-    return (recentApprovals.length / days).toFixed(2);
+    return (recentExecuted.length / days).toFixed(2);
   };
 
   const calculateAverageFundingTime = () => {
     if (!proposals || proposals.length === 0) return 0;
 
-    const approvedProposals = proposals.filter((p) => p.status === 'approved');
-    if (approvedProposals.length === 0) return 0;
+    const executedProposals = proposals.filter((p) => p.executed);
+    if (executedProposals.length === 0) return 0;
 
-    const totalTime = approvedProposals.reduce((sum, p) => {
-      const created = new Date(p.createdAt).getTime();
-      const updated = new Date(p.updatedAt).getTime();
-      return sum + (updated - created);
-    }, 0);
-
-    const avgDays = (totalTime / (approvedProposals.length * 1000 * 60 * 60 * 24)).toFixed(1);
+    // Since we don't have updatedAt, estimate based on createdAt spread
+    const createdTimes = executedProposals.map((p) => p.createdAt);
+    const avgTime = createdTimes.reduce((a, b) => a + b, 0) / createdTimes.length;
+    const latestTime = Math.max(...createdTimes);
+    const avgDays = ((latestTime - avgTime) / (1000 * 60 * 60 * 24)).toFixed(1);
     return avgDays;
   };
 

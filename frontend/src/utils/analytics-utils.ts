@@ -199,7 +199,7 @@ export function exportAnalyticsToCSV(
     p.updatedAt,
     ((p.requestedAmount || 0) / 1_000_000).toFixed(2),
     p.votes?.length || 0,
-    new Set(p.votes?.map((v: any) => v.voter) || []).size,
+    new Set(p.votes?.map((v: { voter: string }) => v.voter) || []).size,
   ]);
 
   const csv = [

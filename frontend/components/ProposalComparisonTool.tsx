@@ -6,10 +6,10 @@ import { X } from 'lucide-react';
 
 export function ProposalComparisonTool() {
   const { proposals, loading } = useGovernanceAnalytics();
-  const [selectedProposals, setSelectedProposals] = useState<string[]>([]);
+  const [selectedProposals, setSelectedProposals] = useState<number[]>([]);
   const [showComparison, setShowComparison] = useState(false);
 
-  const handleSelectProposal = (id: string) => {
+  const handleSelectProposal = (id: number) => {
     if (selectedProposals.includes(id)) {
       setSelectedProposals(selectedProposals.filter((p) => p !== id));
     } else if (selectedProposals.length < 3) {
@@ -20,7 +20,7 @@ export function ProposalComparisonTool() {
   const getSelectedProposalDetails = () => {
     return selectedProposals
       .map((id) => proposals.find((p) => p.id === id))
-      .filter(Boolean);
+      .filter((p): p is NonNullable<typeof p> => p !== undefined);
   };
 
   if (loading) {
@@ -63,10 +63,10 @@ export function ProposalComparisonTool() {
               />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-white truncate">{p.title}</p>
-                <p className="text-xs text-white/40">{p.status}</p>
+                <p className="text-xs text-white/40">{p.executed ? 'Executed' : 'Pending'}</p>
               </div>
               <span className="text-xs text-purple-400">
-                {((p.requestedAmount || 0) / 1_000_000).toFixed(0)} STX
+                {((p.amount || 0) / 1_000_000).toFixed(0)} STX
               </span>
             </label>
           ))}
@@ -111,7 +111,7 @@ export function ProposalComparisonTool() {
                   <td className="py-2 px-4 text-white/60">Status</td>
                   {details.map((p) => (
                     <td key={p.id} className="py-2 px-4 text-center text-white">
-                      {p.status}
+                      {p.executed ? 'Executed' : 'Pending'}
                     </td>
                   ))}
                 </tr>
@@ -119,7 +119,7 @@ export function ProposalComparisonTool() {
                   <td className="py-2 px-4 text-white/60">Requested Amount</td>
                   {details.map((p) => (
                     <td key={p.id} className="py-2 px-4 text-center text-white">
-                      {((p.requestedAmount || 0) / 1_000_000).toFixed(2)} STX
+                      {((p.amount || 0) / 1_000_000).toFixed(2)} STX
                     </td>
                   ))}
                 </tr>
@@ -127,7 +127,7 @@ export function ProposalComparisonTool() {
                   <td className="py-2 px-4 text-white/60">Votes</td>
                   {details.map((p) => (
                     <td key={p.id} className="py-2 px-4 text-center text-white">
-                      {p.votes?.length || 0}
+                      {p.votesFor + p.votesAgainst}
                     </td>
                   ))}
                 </tr>

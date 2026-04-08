@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useMemo } from 'react';
 import { ProposalMetrics, VoterMetrics, fetchAllProposals, fetchVoterMetrics, clearAnalyticsCache } from '../utils/analytics/dataCollector';
 
 export interface AnalyticsFilters {
@@ -113,88 +114,90 @@ const useAnalyticsStore = create<AnalyticsState>((set, get) => ({
 export const useFilteredProposals = (): ProposalMetrics[] => {
   const proposals = useAnalyticsStore(state => state.proposals);
   const filters = useAnalyticsStore(state => state.filters);
-  const now = Date.now();
-
-  return proposals.filter(proposal => {
-    const proposalDate = new Date(proposal.createdAt * 10 * 60 * 1000);
-    
-    if (proposalDate < filters.dateRange.start || proposalDate > filters.dateRange.end) {
-      return false;
-    }
-
-    if (filters.categories.length > 0 && !filters.categories.includes(proposal.category)) {
-      return false;
-    }
-
-    if (filters.statusFilter !== 'all') {
-      if (filters.statusFilter === 'successful' && !proposal.executed) {
+  
+  return useMemo(() => {
+    const now = Date.now();
+    return proposals.filter(proposal => {
+      const proposalDate = new Date(proposal.createdAt * 10 * 60 * 1000);
+      
+      if (proposalDate < filters.dateRange.start || proposalDate > filters.dateRange.end) {
         return false;
       }
-      if (filters.statusFilter === 'failed') {
-        const deadline = proposal.deadline * 10 * 60 * 1000;
-        if (proposal.executed || deadline > now) {
-          return false;
-        }
-        if (proposal.votesFor <= proposal.votesAgainst) {
-          return true;
-        }
+
+      if (filters.categories.length > 0 && !filters.categories.includes(proposal.category)) {
         return false;
       }
-      if (filters.statusFilter === 'active') {
-        const deadline = proposal.deadline * 10 * 60 * 1000;
-        if (proposal.executed || deadline < now) {
+
+      if (filters.statusFilter !== 'all') {
+        if (filters.statusFilter === 'successful' && !proposal.executed) {
           return false;
         }
+        if (filters.statusFilter === 'failed') {
+          const deadline = proposal.deadline * 10 * 60 * 1000;
+          if (proposal.executed || deadline > now) {
+            return false;
+          }
+          if (proposal.votesFor <= proposal.votesAgainst) {
+            return true;
+          }
+          return false;
+        }
+        if (filters.statusFilter === 'active') {
+          const deadline = proposal.deadline * 10 * 60 * 1000;
+          if (proposal.executed || deadline < now) {
+            return false;
+          }
+        }
       }
-    }
 
-    if (proposal.amount < filters.amountRange.min || proposal.amount > filters.amountRange.max) {
-      return false;
-    }
+      if (proposal.amount < filters.amountRange.min || proposal.amount > filters.amountRange.max) {
+        return false;
+      }
 
-    return true;
-  });
+      return true;
+    });
+  }, [proposals, filters]);
 };
 
 export const useAggregateStats = (): AggregateStats => {
   const filteredProposals = useFilteredProposals();
-  const now = Date.now();
+  
+  return useMemo(() => {
+    const now = Date.now();
+    const totalFunded = filteredProposals
+      .filter(p => p.executed)
+      .reduce((sum, p) => sum + p.amount, 0);
 
-  const totalFunded = filteredProposals
-    .filter(p => p.executed)
-    .reduce((sum, p) => sum + p.amount, 0);
+    const successfulProposals = filteredProposals.filter(p => p.executed);
+    const successRate = filteredProposals.length > 0
+      ? (successfulProposals.length / filteredProposals.length) * 100
+      : 0;
 
-  const successfulProposals = filteredProposals.filter(p => p.executed);
-  const successRate = filteredProposals.length > 0
-    ? (successfulProposals.length / filteredProposals.length) * 100
-    : 0;
+    const proposalsWithTimeToFunding = successfulProposals.filter(p => p.timeToFunding !== undefined);
+    const avgTimeToFunding = proposalsWithTimeToFunding.length > 0
+      ? proposalsWithTimeToFunding.reduce((sum, p) => sum + (p.timeToFunding || 0), 0) / proposalsWithTimeToFunding.length
+      : 0;
 
-  const proposalsWithTimeToFunding = successfulProposals.filter(p => p.timeToFunding !== undefined);
-  const avgTimeToFunding = proposalsWithTimeToFunding.length > 0
-    ? proposalsWithTimeToFunding.reduce((sum, p) => sum + (p.timeToFunding || 0), 0) / proposalsWithTimeToFunding.length
-    : 0;
+    const activeProposals = filteredProposals.filter(p => {
+      if (p.executed) return false;
+      const deadline = p.deadline * 10 * 60 * 1000;
+      return deadline > now;
+    }).length;
 
-  const activeProposals = filteredProposals.filter(p => {
-    if (p.executed) return false;
-    const deadline = p.deadline * 10 * 60 * 1000;
-    return deadline > now;
-  }).length;
-
-  return {
-    totalFunded,
-    successRate,
-    avgTimeToFunding,
-    totalProposals: filteredProposals.length,
-    activeProposals
-  };
+    return {
+      totalFunded,
+      successRate,
+      avgTimeToFunding,
+      totalProposals: filteredProposals.length,
+      activeProposals
+    };
+  }, [filteredProposals]);
 };
 
 let refreshInterval: NodeJS.Timeout | null = null;
 
 export const startAutoRefresh = () => {
   if (refreshInterval) return;
-
-  const store = useAnalyticsStore.getState();
   
   refreshInterval = setInterval(() => {
     const state = useAnalyticsStore.getState();

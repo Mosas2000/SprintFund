@@ -2,7 +2,7 @@ export interface AnalyticsLog {
   timestamp: string;
   level: 'info' | 'warn' | 'error' | 'debug';
   message: string;
-  data?: any;
+  data?: unknown;
   component?: string;
 }
 
@@ -11,19 +11,19 @@ class AnalyticsLogger {
   private maxLogs: number = 100;
   private isDevelopment: boolean = process.env.NODE_ENV === 'development';
 
-  log(message: string, data?: any, component?: string): void {
+  log(message: string, data?: unknown, component?: string): void {
     this.addLog('info', message, data, component);
   }
 
-  warn(message: string, data?: any, component?: string): void {
+  warn(message: string, data?: unknown, component?: string): void {
     this.addLog('warn', message, data, component);
   }
 
-  error(message: string, data?: any, component?: string): void {
+  error(message: string, data?: unknown, component?: string): void {
     this.addLog('error', message, data, component);
   }
 
-  debug(message: string, data?: any, component?: string): void {
+  debug(message: string, data?: unknown, component?: string): void {
     if (this.isDevelopment) {
       this.addLog('debug', message, data, component);
     }
@@ -32,7 +32,7 @@ class AnalyticsLogger {
   private addLog(
     level: 'info' | 'warn' | 'error' | 'debug',
     message: string,
-    data?: any,
+    data?: unknown,
     component?: string
   ): void {
     const log: AnalyticsLog = {

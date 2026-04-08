@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { DiscussionComment } from './DiscussionComment';
+import { ProposalDiscussionComment } from '@/types/proposal-detail';
 
 interface DiscussionSearchProps {
-  comments: any[];
-  onFilter: (filtered: any[]) => void;
+  comments: ProposalDiscussionComment[];
+  onFilter: (filtered: ProposalDiscussionComment[]) => void;
 }
 
 export function DiscussionSearch({ comments, onFilter }: DiscussionSearchProps) {

@@ -43,7 +43,10 @@ export default function FundingMetricsChart() {
                 borderRadius: '8px',
                 color: '#fff',
               }}
-              formatter={(value: any) => `${value.toFixed(2)} STX`}
+              formatter={(value) => {
+                const numValue = typeof value === 'number' ? value : Number(value);
+                return `${numValue.toFixed(2)} STX`;
+              }}
             />
             <Bar dataKey="funded" fill="#8b5cf6" name="Total Funded (STX)" />
           </BarChart>

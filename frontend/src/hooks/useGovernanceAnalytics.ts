@@ -1,6 +1,20 @@
 import { useEffect, useState, useCallback } from 'react';
 import { governanceAnalytics } from '../services/governance-analytics';
 
+// Internal Proposal type from governance analytics service
+interface AnalyticsProposal {
+  id: number;
+  proposer: string;
+  amount: number;
+  title: string;
+  description: string;
+  votesFor: number;
+  votesAgainst: number;
+  executed: boolean;
+  createdAt: number;
+  category?: string;
+}
+
 interface ProposalStats {
   total: number;
   approved: number;
@@ -45,7 +59,7 @@ interface TimelineEntry {
 }
 
 export function useGovernanceAnalytics() {
-  const [proposals, setProposals] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<AnalyticsProposal[]>([]);
   const [proposalStats, setProposalStats] = useState<ProposalStats | null>(null);
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
   const [voterStats, setVoterStats] = useState<VoterStat | null>(null);

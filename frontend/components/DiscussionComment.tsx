@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useConnect } from '@stacks/connect-react';
+import { useConnect, UserSession } from '@stacks/connect-react';
 import { useProposalDiscussion } from '@/hooks/useProposalDiscussion';
 import { Heart, MessageCircle, MoreVertical } from 'lucide-react';
+import { ProposalDiscussionComment } from '@/types/proposal-detail';
 
 // Helper to safely get user address from UserSession
-function getUserAddress(userSession: any): string | null {
+function getUserAddress(userSession: UserSession | null): string | null {
   if (!userSession) return null;
   try {
     const userData = userSession.loadUserData?.();
@@ -17,7 +18,7 @@ function getUserAddress(userSession: any): string | null {
 }
 
 interface DiscussionCommentProps {
-  comment: any;
+  comment: ProposalDiscussionComment;
   proposalId: string;
   depth?: number;
   onReplyClick?: (commentId: string) => void;
@@ -125,7 +126,7 @@ export function DiscussionComment({
 
       {comment.replies && comment.replies.length > 0 && (
         <div className="space-y-3">
-          {comment.replies.map((reply: any) => (
+          {comment.replies.map((reply: ProposalDiscussionComment) => (
             <DiscussionComment
               key={reply.id}
               comment={reply}

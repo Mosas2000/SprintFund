@@ -21,13 +21,13 @@ export default function TreasuryBalanceChart() {
     if (!proposals) return [];
 
     const sorted = [...proposals].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      (a, b) => a.createdAt - b.createdAt
     );
 
     let cumulativeSpent = 0;
     return sorted.map((p) => {
-      if (p.status === 'approved') {
-        cumulativeSpent += (p.requestedAmount || 0) / 1_000_000;
+      if (p.executed) {
+        cumulativeSpent += (p.amount || 0) / 1_000_000;
       }
       return {
         date: new Date(p.createdAt).toLocaleDateString('en-US', {
@@ -61,7 +61,10 @@ export default function TreasuryBalanceChart() {
                 borderRadius: '8px',
                 color: '#fff',
               }}
-              formatter={(value: any) => `${value.toFixed(2)} STX`}
+              formatter={(value) => {
+                const numValue = typeof value === 'number' ? value : Number(value);
+                return `${numValue.toFixed(2)} STX`;
+              }}
             />
             <Area
               type="monotone"

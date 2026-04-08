@@ -5,7 +5,7 @@ import { ProposalSortbar } from './ProposalSortbar';
 import { useProposalFilters } from '@/hooks/useProposalFilters';
 
 interface ProposalDashboardProps {
-  onProposalSelect?: (proposalId: string) => void;
+  onProposalSelect?: (proposalId: number) => void;
 }
 
 type ValidSortBy = 'title' | 'createdAt' | 'votes' | 'requestedAmount';

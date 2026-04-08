@@ -1,3 +1,5 @@
+import type { Proposal } from './proposal';
+
 export interface ProposalDiscussionComment {
   id: string;
   authorAddress: string;
@@ -45,11 +47,24 @@ export interface ProposalVotingAnalytics {
   }>;
 }
 
+export interface HistoricalVote {
+  type: 'approve' | 'reject';
+  timestamp: string | number;
+  voterAddress?: string;
+}
+
+export interface RelatedProposal {
+  id: string | number;
+  title: string;
+  description: string;
+  status?: 'approved' | 'rejected' | 'pending';
+}
+
 export interface ProposalDetailData {
-  proposal: any;
-  votingHistory: any[];
+  proposal: Proposal;
+  votingHistory: HistoricalVote[];
   discussion: ProposalDiscussionThread;
   executionStatus: ProposalExecutionStatus;
-  relatedProposals: any[];
+  relatedProposals: RelatedProposal[];
   votingAnalytics: ProposalVotingAnalytics;
 }

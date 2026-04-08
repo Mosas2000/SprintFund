@@ -1,14 +1,21 @@
 import { blockchainCache } from './blockchain-cache';
 import { localStorageCache } from './persistent-cache';
-import { cacheMetricsCollector } from './cache-metrics';
-import { cacheConfigManager } from './cache-config';
+import { cacheMetricsCollector, CacheMetrics } from './cache-metrics';
+import { cacheConfigManager, CacheConfig } from './cache-config';
+
+interface CacheStats {
+  hits: number;
+  misses: number;
+  lastReset: number;
+  hitRate?: number;
+}
 
 interface CacheDebugInfo {
   inMemorySize: number;
   localStorageSize: number;
-  metrics: any;
-  config: any;
-  stats: any;
+  metrics: CacheMetrics;
+  config: CacheConfig;
+  stats: CacheStats;
 }
 
 export class CacheDebugger {
@@ -82,10 +89,10 @@ export class CacheDebugger {
   static setupDebugListener(): void {
     setInterval(() => {
       const info = this.getDebugInfo();
-      (window as any).__CACHE_DEBUG_INFO__ = info;
+      (window as unknown as Record<string, unknown>).__CACHE_DEBUG_INFO__ = info;
     }, 5000);
 
-    (window as any).__CACHE_DEBUG__ = {
+    (window as unknown as Record<string, unknown>).__CACHE_DEBUG__ = {
       status: () => this.logCacheStatus(),
       clear: () => this.clearAllCache(),
       info: () => this.getDebugInfo(),

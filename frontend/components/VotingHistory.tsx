@@ -2,8 +2,14 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+interface HistoricalVote {
+  type: 'approve' | 'reject';
+  timestamp: string | number;
+  voterAddress?: string;
+}
+
 interface VotingHistoryProps {
-  votes: any[];
+  votes: HistoricalVote[];
 }
 
 export function VotingHistory({ votes }: VotingHistoryProps) {

@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { usePaginationStore } from '@/store/pagination';
-import { PaginatedResponse } from '@/types/pagination';
 
-interface UsePaginatedDataOptions {
+interface UsePaginatedDataOptions<T> {
   initialPage?: number;
   initialPageSize?: number;
-  fetchFn: (page: number, pageSize: number) => Promise<any[]>;
+  fetchFn: (page: number, pageSize: number) => Promise<T[]>;
 }
 
-export function usePaginatedData({
+export function usePaginatedData<T>({
   initialPage = 1,
   initialPageSize = 15,
   fetchFn,
-}: UsePaginatedDataOptions) {
+}: UsePaginatedDataOptions<T>) {
   const {
     page,
     pageSize,
@@ -21,7 +20,7 @@ export function usePaginatedData({
     setPaginationState,
   } = usePaginationStore();
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

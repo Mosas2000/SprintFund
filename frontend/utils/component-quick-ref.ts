@@ -57,7 +57,12 @@ export const getComponentDescription = (componentName: string): string | null =>
   return ref?.description || null;
 };
 
-export const getAllComponentsByCategory = (category: string): Array<[string, any]> => {
+interface ComponentInfo {
+  category: string;
+  description: string;
+}
+
+export const getAllComponentsByCategory = (category: string): Array<[string, ComponentInfo]> => {
   return Object.entries(componentQuickRef).filter(([_, info]) => info.category === category);
 };
 
