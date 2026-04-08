@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Globe, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 export default function ParticipationHeatmap() {
     // Simulating 7 days x 12 intervals
