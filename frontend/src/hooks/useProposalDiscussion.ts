@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useConnect } from '@stacks/connect-react';
+import { useConnect, UserSession } from '@stacks/connect-react';
 import { proposalDiscussionService } from '@/services/proposal-discussion';
 import { ProposalDiscussionThread, ProposalDiscussionComment } from '@/types/proposal-detail';
 
 // Helper to safely get user address from UserSession
-function getUserAddress(userSession: any): string | null {
+function getUserAddress(userSession: UserSession | null): string | null {
   if (!userSession) return null;
   try {
     const userData = userSession.loadUserData?.();
@@ -15,7 +15,7 @@ function getUserAddress(userSession: any): string | null {
 }
 
 // Helper to safely get user name from UserSession
-function getUserName(userSession: any): string | undefined {
+function getUserName(userSession: UserSession | null): string | undefined {
   if (!userSession) return undefined;
   try {
     const userData = userSession.loadUserData?.();

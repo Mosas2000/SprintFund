@@ -2,8 +2,14 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
+interface Vote {
+  type: 'approve' | 'reject';
+  timestamp?: string;
+  voterAddress?: string;
+}
+
 interface ProposalVotingAnalyticsProps {
-  votes: any[];
+  votes: Vote[];
 }
 
 export function ProposalVotingAnalytics({ votes }: ProposalVotingAnalyticsProps) {
@@ -27,7 +33,7 @@ export function ProposalVotingAnalytics({ votes }: ProposalVotingAnalyticsProps)
 
   const topVoters = votes
     .slice()
-    .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+    .sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? ''))
     .slice(0, 5);
 
   return (

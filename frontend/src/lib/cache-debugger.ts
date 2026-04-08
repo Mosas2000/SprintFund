@@ -89,10 +89,10 @@ export class CacheDebugger {
   static setupDebugListener(): void {
     setInterval(() => {
       const info = this.getDebugInfo();
-      (window as any).__CACHE_DEBUG_INFO__ = info;
+      (window as unknown as Record<string, unknown>).__CACHE_DEBUG_INFO__ = info;
     }, 5000);
 
-    (window as any).__CACHE_DEBUG__ = {
+    (window as unknown as Record<string, unknown>).__CACHE_DEBUG__ = {
       status: () => this.logCacheStatus(),
       clear: () => this.clearAllCache(),
       info: () => this.getDebugInfo(),

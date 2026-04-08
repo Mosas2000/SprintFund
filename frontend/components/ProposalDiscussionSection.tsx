@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { DiscussionComment } from './DiscussionComment';
 import { CommentInput } from './CommentInput';
 import { useProposalDiscussion } from '@/hooks/useProposalDiscussion';
 import { MessageCircle } from 'lucide-react';
+import type { ProposalDiscussionComment } from '@/types/proposal-detail';
 
 interface ProposalDiscussionSectionProps {
   proposalId: string;
@@ -42,7 +43,7 @@ export function ProposalDiscussionSection({ proposalId }: ProposalDiscussionSect
     }
   };
 
-  const sortComments = (comments: any[]): any[] => {
+  const sortComments = (comments: ProposalDiscussionComment[]): ProposalDiscussionComment[] => {
     const sorted = [...comments];
     switch (sortBy) {
       case 'oldest':

@@ -164,11 +164,16 @@ describe('Wallet Hydration Edge Cases', () => {
       { symbol: 'ETH', address: 'eth-address' },
     ];
 
+    interface AddressEntry {
+      symbol: string;
+      address: string;
+    }
+
     const mockStore = {
       loading: true,
       connected: false,
-      address: null,
-      processAddresses: function(addresses: any[]) {
+      address: null as string | null,
+      processAddresses: function(addresses: AddressEntry[]) {
         const stxEntry = addresses.find(a => a.symbol === 'STX');
         this.address = stxEntry?.address ?? addresses[0]?.address ?? null;
         this.loading = false;
@@ -183,11 +188,15 @@ describe('Wallet Hydration Edge Cases', () => {
   });
 
   it('handles empty address array gracefully', () => {
+    interface AddressEntry {
+      address: string;
+    }
+
     const mockStore = {
       loading: true,
       connected: false,
-      address: null,
-      processAddresses: function(addresses: any[]) {
+      address: null as string | null,
+      processAddresses: function(addresses: AddressEntry[]) {
         this.address = addresses[0]?.address ?? null;
         this.loading = false;
         this.connected = !!this.address;

@@ -61,7 +61,10 @@ export default function TreasuryBalanceChart() {
                 borderRadius: '8px',
                 color: '#fff',
               }}
-              formatter={(value: any) => `${value.toFixed(2)} STX`}
+              formatter={(value) => {
+                const numValue = typeof value === 'number' ? value : Number(value);
+                return `${numValue.toFixed(2)} STX`;
+              }}
             />
             <Area
               type="monotone"

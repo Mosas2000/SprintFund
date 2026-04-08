@@ -5,7 +5,7 @@ import { PaginationToolbar } from './PaginationToolbar';
 import { ProposalListSkeleton } from './ProposalListSkeleton';
 
 interface PaginatedProposalListProps {
-  onProposalSelect?: (proposalId: string) => void;
+  onProposalSelect?: (proposalId: number) => void;
   className?: string;
 }
 
@@ -124,17 +124,15 @@ export const PaginatedProposalList: React.FC<PaginatedProposalListProps> = ({
                 <div className="flex flex-wrap gap-2 items-center">
                   <span
                     className={`px-2 py-1 rounded text-xs font-medium ${
-                      proposal.status === 'approved'
+                      proposal.executed
                         ? 'bg-green-100 text-green-800'
-                        : proposal.status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
+                        : 'bg-yellow-100 text-yellow-800'
                     }`}
                   >
-                    {proposal.status}
+                    {proposal.executed ? 'Executed' : 'Pending'}
                   </span>
                   <span className="text-xs text-gray-500">
-                    {proposal.votes?.length || 0} votes
+                    {proposal.votesFor + proposal.votesAgainst} votes
                   </span>
                 </div>
               </div>
