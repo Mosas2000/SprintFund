@@ -134,6 +134,7 @@ class BlockchainDataCache {
     this.proposalPages.clear();
     this.proposalCounts.clear();
     this.stakes.clear();
+    this.minStakeAmounts.clear();
   }
 
   getStats(): CacheStats {
