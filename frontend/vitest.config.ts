@@ -29,7 +29,6 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(configDir, '.'),
       '@/lib': resolve(configDir, 'src/lib'),
       '@/types': resolve(configDir, 'src/types'),
       '@/hooks': resolve(configDir, 'src/hooks'),
@@ -37,6 +36,7 @@ export default defineConfig({
       '@/services': resolve(configDir, 'src/services'),
       '@/components': resolve(configDir, 'components'),
       '@/utils': resolve(configDir, 'utils'),
+      '@': resolve(configDir, 'src'),
     },
   },
 });
