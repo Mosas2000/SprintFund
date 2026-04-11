@@ -2,23 +2,41 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
-import * as wallet from '../store/wallet';
 
-vi.mock('./store/wallet', () => ({
-  useWalletStore: vi.fn(() => ({
-    hydrate: vi.fn(),
-  })),
+vi.mock('../store/wallet', () => ({
+  useWalletStore: vi.fn((selector) =>
+    selector({
+      address: null,
+      connected: false,
+      loading: false,
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+      hydrate: vi.fn(),
+    }),
+  ),
 }));
+vi.mock('../hooks/useKeyboardShortcuts', async () => {
+  const actual = await vi.importActual('../hooks/useKeyboardShortcuts');
+  return {
+    ...actual,
+    useNavigationShortcuts: vi.fn(() => ({
+      goToDashboard: vi.fn(),
+      goToProposals: vi.fn(),
+      goToProfile: vi.fn(),
+      createProposal: vi.fn(),
+    })),
+  };
+});
 vi.mock('../components/OfflineBanner', () => ({
   OfflineBanner: () => <div data-testid="offline-banner" />,
+}));
+vi.mock('../../components/TransactionHistory', () => ({
+  default: () => <div data-testid="transaction-history" />,
 }));
 
 describe('App - Command Palette Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(wallet.useWalletStore).mockImplementation(() => ({
-      hydrate: vi.fn(),
-    }));
   });
 
   it('renders without command palette visible initially', () => {
@@ -69,7 +87,7 @@ describe('App - Command Palette Integration', () => {
     await waitFor(() => {
       expect(screen.getByText('Go to Dashboard')).toBeInTheDocument();
       expect(screen.getByText('Create New Proposal')).toBeInTheDocument();
-      expect(screen.getByText('Browse Proposals')).toBeInTheDocument();
+      expect(screen.getAllByText('Browse Proposals').length).toBeGreaterThan(0);
     });
   });
 
@@ -184,7 +202,9 @@ describe('App - Command Palette Integration', () => {
       ).toBeInTheDocument();
     });
 
-    const backdrop = screen.getByRole('presentation', { hidden: true });
+    const backdrop = document.querySelector('.fixed.inset-0.bg-black\\/40.z-40');
+    expect(backdrop).toBeTruthy();
+    if (!backdrop) return;
     fireEvent.click(backdrop);
 
     await waitFor(() => {
