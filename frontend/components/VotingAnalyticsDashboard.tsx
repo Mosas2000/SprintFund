@@ -12,6 +12,7 @@ interface VoteData {
 }
 
 export default function VotingAnalyticsDashboard() {
+  const now = Date.parse(new Date().toISOString());
   const [votes, setVotes] = useState<VoteData[]>([]);
   const [filterCategory, setFilterCategory] = useState('all');
   const [dateRange, setDateRange] = useState('all');
@@ -31,7 +32,6 @@ export default function VotingAnalyticsDashboard() {
     }
 
     if (dateRange !== 'all') {
-      const now = Date.now();
       const ranges: Record<string, number> = {
         '7d': 7 * 24 * 60 * 60 * 1000,
         '30d': 30 * 24 * 60 * 60 * 1000,
@@ -84,7 +84,7 @@ export default function VotingAnalyticsDashboard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `voting-analytics-${Date.now()}.csv`;
+    a.download = `voting-analytics-${now}.csv`;
     a.click();
   };
 

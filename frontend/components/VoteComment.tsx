@@ -37,12 +37,13 @@ export default function VoteComment({ proposalId, userAddress }: VoteCommentProp
 
   const addComment = () => {
     if (!newComment.trim()) return;
+    const timestamp = new Date().getTime();
 
     const comment: Comment = {
-      id: Date.now(),
+      id: timestamp,
       author: userAddress.slice(0, 8) + '...' + userAddress.slice(-4),
       text: newComment,
-      timestamp: Date.now(),
+      timestamp,
       vote: voteChoice,
       replies: []
     };
@@ -53,12 +54,13 @@ export default function VoteComment({ proposalId, userAddress }: VoteCommentProp
 
   const addReply = (commentId: number) => {
     if (!replyText.trim()) return;
+    const timestamp = new Date().getTime();
 
     const reply: Comment = {
-      id: Date.now(),
+      id: timestamp,
       author: userAddress.slice(0, 8) + '...' + userAddress.slice(-4),
       text: replyText,
-      timestamp: Date.now(),
+      timestamp,
       vote: 'abstain',
       replies: []
     };
