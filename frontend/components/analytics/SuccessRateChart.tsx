@@ -2,12 +2,10 @@
 
 import { useState, useMemo, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { format, subDays, subMonths, subYears, startOfDay } from 'date-fns';
+import { format, subDays, subYears, startOfDay } from 'date-fns';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { calculateMovingAverage, formatMetric } from '../../utils/analytics/helpers';
 import type {
-  RechartsLegendEntry,
-  RechartsLegendProps,
   RechartsTooltipEntry,
   RechartsTooltipProps,
 } from '../../src/types';
@@ -54,14 +52,13 @@ const CATEGORY_COLORS = [
 
 export default function SuccessRateChart({ proposals, height = 400 }: SuccessRateChartProps) {
   const [selectedRange, setSelectedRange] = useState<DateRangeOption>('30d');
-  const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const getFilteredProposals = (range: DateRangeOption): ProposalMetrics[] => {
+  const chartData = useMemo(() => {
     const now = new Date();
     let startDate: Date;
 
-    switch (range) {
+    switch (selectedRange) {
       case '7d':
         startDate = subDays(now, 7);
         break;
@@ -75,19 +72,17 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
         startDate = subYears(now, 1);
         break;
       case 'all':
-        return proposals;
+        startDate = new Date(0);
+        break;
       default:
         startDate = subDays(now, 30);
     }
 
-    return proposals.filter(p => {
+    const filteredProposals = proposals.filter(p => {
+      if (selectedRange === 'all') return true;
       const proposalDate = new Date(p.createdAt * 10 * 60 * 1000);
       return proposalDate >= startDate;
     });
-  };
-
-  const chartData = useMemo(() => {
-    const filteredProposals = getFilteredProposals(selectedRange);
     
     if (filteredProposals.length === 0) return [];
 
@@ -160,18 +155,6 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
       .map(([category]) => category);
   }, [proposals]);
 
-  const toggleSeries = (seriesKey: string) => {
-    setHiddenSeries(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(seriesKey)) {
-        newSet.delete(seriesKey);
-      } else {
-        newSet.add(seriesKey);
-      }
-      return newSet;
-    });
-  };
-
   const exportToPNG = () => {
     if (!chartRef.current) return;
 
@@ -241,7 +224,7 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
     URL.revokeObjectURL(url);
   };
 
-  const CustomTooltip = ({ active, payload, label }: SuccessRateTooltipProps) => {
+  const customTooltip = ({ active, payload, label }: SuccessRateTooltipProps) => {
     if (!active || !payload || payload.length === 0) return null;
     if (!label) return null;
 
@@ -296,32 +279,6 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
             </span>
           </div>
         </div>
-      </div>
-    );
-  };
-
-  const CustomLegend = ({ payload = [] }: RechartsLegendProps) => {
-    return (
-      <div className="flex flex-wrap gap-4 justify-center mt-4">
-        {payload.map((entry: RechartsLegendEntry, index: number) => (
-          <button
-            key={index}
-            onClick={() => toggleSeries(entry.dataKey)}
-            className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all ${
-              hiddenSeries.has(entry.dataKey)
-                ? 'opacity-40 hover:opacity-60'
-                : 'opacity-100 hover:opacity-80'
-            }`}
-          >
-            <span
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: entry.color }}
-            />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {entry.value}
-            </span>
-          </button>
-        ))}
       </div>
     );
   };
@@ -397,24 +354,21 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
               domain={[0, 100]}
             />
             
-            <Tooltip content={<CustomTooltip />} />
-            
-            <Legend content={<CustomLegend />} />
+            <Tooltip content={customTooltip} />
+            <Legend />
 
-            {!hiddenSeries.has('overallRate') && (
-              <Line
-                type="monotone"
-                dataKey="overallRate"
-                stroke="#10b981"
-                strokeWidth={3}
-                name="Overall Success Rate"
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-                fill="url(#overallGradient)"
-              />
-            )}
+            <Line
+              type="monotone"
+              dataKey="overallRate"
+              stroke="#10b981"
+              strokeWidth={3}
+              name="Overall Success Rate"
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
+              fill="url(#overallGradient)"
+            />
 
-            {!hiddenSeries.has('ma7') && chartData.length >= 7 && (
+            {chartData.length >= 7 && (
               <Line
                 type="monotone"
                 dataKey="ma7"
@@ -426,7 +380,7 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
               />
             )}
 
-            {!hiddenSeries.has('ma30') && chartData.length >= 30 && (
+            {chartData.length >= 30 && (
               <Line
                 type="monotone"
                 dataKey="ma30"
@@ -440,8 +394,6 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
 
             {topCategories.map((category, index) => {
               const seriesKey = `${category}Rate`;
-              if (hiddenSeries.has(seriesKey)) return null;
-
               return (
                 <Line
                   key={category}

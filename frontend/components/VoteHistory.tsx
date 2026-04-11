@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 
 interface Vote {
   proposalId: string;
@@ -17,38 +17,25 @@ interface VoteHistoryProps {
 }
 
 export default function VoteHistory({ userAddress }: VoteHistoryProps) {
-  const [votes, setVotes] = useState<Vote[]>([]);
+  const [votes] = useState<Vote[]>(() => {
+    if (typeof window === 'undefined' || !userAddress) return [];
+    const storedVotes = localStorage.getItem(`vote-history-${userAddress}`);
+    return storedVotes ? JSON.parse(storedVotes) : [];
+  });
   const [filter, setFilter] = useState<'ALL' | 'YES' | 'NO'>('ALL');
   const [dateRange, setDateRange] = useState('all');
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [categoryStats, setCategoryStats] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    loadVoteHistory();
-  }, [userAddress]);
-
-  const loadVoteHistory = () => {
-    if (!userAddress) return;
-
-    // Load votes from localStorage
-    const storedVotes = localStorage.getItem(`vote-history-${userAddress}`);
-    if (storedVotes) {
-      const parsedVotes: Vote[] = JSON.parse(storedVotes);
-      setVotes(parsedVotes);
-      
-      // Calculate total spent
-      const total = parsedVotes.reduce((sum, vote) => sum + vote.cost, 0);
-      setTotalSpent(total);
-
-      // Calculate category stats
-      const stats: Record<string, number> = {};
-      parsedVotes.forEach(vote => {
-        const category = vote.category || 'General';
-        stats[category] = (stats[category] || 0) + 1;
-      });
-      setCategoryStats(stats);
-    }
-  };
+  const totalSpent = useMemo(
+    () => votes.reduce((sum, vote) => sum + vote.cost, 0),
+    [votes]
+  );
+  const categoryStats = useMemo(() => {
+    const stats: Record<string, number> = {};
+    votes.forEach(vote => {
+      const category = vote.category || 'General';
+      stats[category] = (stats[category] || 0) + 1;
+    });
+    return stats;
+  }, [votes]);
 
   const filterVotes = () => {
     let filtered = votes;
@@ -59,7 +46,7 @@ export default function VoteHistory({ userAddress }: VoteHistoryProps) {
     }
 
     // Filter by date range
-    const now = Date.now();
+    const now = Date.parse(new Date().toISOString());
     const dayMs = 24 * 60 * 60 * 1000;
     
     switch(dateRange) {
