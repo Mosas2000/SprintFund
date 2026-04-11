@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 interface PageSizeDropdownProps {

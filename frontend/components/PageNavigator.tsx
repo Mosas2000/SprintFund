@@ -22,7 +22,7 @@ export const PageNavigator: React.FC<PageNavigatorProps> = ({
     const halfWindow = Math.floor(maxVisibleButtons / 2);
 
     let start = Math.max(1, currentPage - halfWindow);
-    let end = Math.min(totalPages, start + maxVisibleButtons - 1);
+    const end = Math.min(totalPages, start + maxVisibleButtons - 1);
 
     if (end - start + 1 < maxVisibleButtons) {
       start = Math.max(1, end - maxVisibleButtons + 1);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Milestone {
   id: number;
@@ -26,7 +26,7 @@ interface MilestoneTrackerProps {
 }
 
 export default function MilestoneTracker({ proposalId, totalFunding }: MilestoneTrackerProps) {
-  const [milestones, setMilestones] = useState<Milestone[]>([
+  const defaultMilestones: Milestone[] = [
     {
       id: 1,
       name: 'Project Kickoff',
@@ -67,17 +67,16 @@ export default function MilestoneTracker({ proposalId, totalFunding }: Milestone
       verifications: [],
       deliverables: ['Production deployment', 'Documentation']
     }
-  ]);
+  ];
+
+  const [milestones, setMilestones] = useState<Milestone[]>(() => {
+    if (typeof window === 'undefined') return defaultMilestones;
+    const stored = localStorage.getItem(`proposal-${proposalId}-milestones`);
+    return stored ? JSON.parse(stored) : defaultMilestones;
+  });
 
   const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
   const [verificationComment, setVerificationComment] = useState('');
-
-  useEffect(() => {
-    const stored = localStorage.getItem(`proposal-${proposalId}-milestones`);
-    if (stored) {
-      setMilestones(JSON.parse(stored));
-    }
-  }, [proposalId]);
 
   const saveMilestones = (updated: Milestone[]) => {
     localStorage.setItem(`proposal-${proposalId}-milestones`, JSON.stringify(updated));

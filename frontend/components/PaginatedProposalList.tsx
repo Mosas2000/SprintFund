@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useProposalPagination } from '@/hooks/useProposalPagination';
 import { useProposalFilters } from '@/hooks/useProposalFilters';
 import { PaginationToolbar } from './PaginationToolbar';
