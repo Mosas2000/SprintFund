@@ -69,7 +69,7 @@ export default function WithdrawVoteModal({
       
       toast.success(`Vote withdrawn! Refunded ${refund.amount.toFixed(2)} STX`);
       onClose();
-    } catch (error) {
+    } catch {
       toast.error('Failed to withdraw vote');
     } finally {
       setIsWithdrawing(false);

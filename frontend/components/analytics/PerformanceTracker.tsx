@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 export default function PerformanceTracker() {
     const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'learning'>('overview');

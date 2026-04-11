@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
-import { categorizeProposal, calculatePercentile } from '../../utils/analytics/helpers';
 import { CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 
 interface SuccessPredictorProps {
@@ -44,7 +43,7 @@ export default function SuccessPredictor({ historicalProposals }: SuccessPredict
       catStats.avgAmount += p.amount;
     });
 
-    stats.forEach((value, key) => {
+    stats.forEach((value) => {
       value.avgAmount /= value.total;
     });
 

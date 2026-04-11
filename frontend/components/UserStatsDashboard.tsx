@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Line, Doughnut, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -41,11 +41,7 @@ interface CategoryData {
   color: string;
 }
 
-interface UserStatsDashboardProps {
-  userAddress: string;
-}
-
-export default function UserStatsDashboard({ userAddress }: UserStatsDashboardProps) {
+export default function UserStatsDashboard() {
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
   const [votingData] = useState<VotingData[]>([
     { date: '2024-01-01', votes: 5, proposals: 3 },

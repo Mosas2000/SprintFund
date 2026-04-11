@@ -37,7 +37,7 @@ export function DashboardPage(): React.JSX.Element {
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle('Dashboard');
-  const { markDashboardPageViewed, markStakingStarted } = useOnboardingAutoComplete();
+  const { markDashboardPageViewed } = useOnboardingAutoComplete();
   const { price: stxPrice } = useStxPriceData();
 
   useEffect(() => {
