@@ -18,8 +18,27 @@ vi.mock('../store/wallet', () => ({
   }),
 }));
 
-vi.mock('../../components/Layout', () => ({
+vi.mock('../hooks/useKeyboardShortcuts', () => ({
+  useKeyboardShortcuts: vi.fn(),
+  useNavigationShortcuts: vi.fn(() => ({
+    goToDashboard: vi.fn(),
+    goToProposals: vi.fn(),
+    goToProfile: vi.fn(),
+    createProposal: vi.fn(),
+  })),
+}));
+vi.mock('../hooks/useCommandPalette', () => ({
+  useCommandPalette: vi.fn(),
+  filterCommands: (commands: unknown[]) => commands,
+}));
+vi.mock('../components/Layout', () => ({
   Layout: () => <div data-testid="layout">Layout</div>,
+}));
+vi.mock('../components/OfflineBanner', () => ({
+  OfflineBanner: () => <div data-testid="offline-banner" />,
+}));
+vi.mock('../../components/TransactionHistory', () => ({
+  default: () => <div data-testid="transaction-history" />,
 }));
 
 describe('App hydration initialization', () => {
