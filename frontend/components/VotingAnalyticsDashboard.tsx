@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface VoteData {
   proposalId: number;
@@ -13,16 +13,13 @@ interface VoteData {
 
 export default function VotingAnalyticsDashboard() {
   const now = Date.parse(new Date().toISOString());
-  const [votes, setVotes] = useState<VoteData[]>([]);
+  const [votes] = useState<VoteData[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const stored = localStorage.getItem('voteHistory');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [filterCategory, setFilterCategory] = useState('all');
   const [dateRange, setDateRange] = useState('all');
-
-  useEffect(() => {
-    const stored = localStorage.getItem('voteHistory');
-    if (stored) {
-      setVotes(JSON.parse(stored));
-    }
-  }, []);
 
   const filterVotes = () => {
     let filtered = votes;

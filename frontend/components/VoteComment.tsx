@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Comment {
   id: number;
@@ -17,18 +17,15 @@ interface VoteCommentProps {
 }
 
 export default function VoteComment({ proposalId, userAddress }: VoteCommentProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<Comment[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const stored = localStorage.getItem(`proposal-${proposalId}-comments`);
+    return stored ? JSON.parse(stored) : [];
+  });
   const [newComment, setNewComment] = useState('');
   const [voteChoice, setVoteChoice] = useState<'yes' | 'no' | 'abstain'>('yes');
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState('');
-
-  useEffect(() => {
-    const stored = localStorage.getItem(`proposal-${proposalId}-comments`);
-    if (stored) {
-      setComments(JSON.parse(stored));
-    }
-  }, [proposalId]);
 
   const saveComments = (updatedComments: Comment[]) => {
     localStorage.setItem(`proposal-${proposalId}-comments`, JSON.stringify(updatedComments));
