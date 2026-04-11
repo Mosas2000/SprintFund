@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Terminal, Database, Shield, Zap, Copy, ArrowRight } from 'lucide-react';
+import { Terminal, Zap, Copy } from 'lucide-react';
 
 const endpoints = [
     { method: 'GET', path: '/api/v1/proposals', desc: 'List all active micro-grants' },
@@ -10,6 +10,7 @@ const endpoints = [
     { method: 'GET', path: '/api/v1/users/:address', desc: 'Full reputation and history for a given wallet' },
     { method: 'POST', path: '/api/v1/simulate', desc: 'Dry-run a quadratic voting interaction' },
 ];
+const MOCK_TIMESTAMP = 1700000000000;
 
 export default function ApiDocs() {
     return (
@@ -67,7 +68,7 @@ export default function ApiDocs() {
                                 {`{
   "status": "success",
   "data": [...],
-  "timestamp": ${Date.now()}
+  "timestamp": ${MOCK_TIMESTAMP}
 }`}
                             </pre>
                         </div>

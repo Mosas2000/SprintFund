@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 interface Notification {
   id: number;
@@ -38,115 +38,109 @@ interface NotificationCenterProps {
 }
 
 export default function NotificationCenter({ userAddress }: NotificationCenterProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const now = useMemo(() => Date.parse(new Date().toISOString()), []);
+  const [notifications, setNotifications] = useState<Notification[]>(() => [
+    {
+      id: 1,
+      type: 'proposal',
+      title: 'New Proposal Submitted',
+      message: 'alice_dao created "DeFi Lending Protocol v2" proposal',
+      timestamp: Date.now() - 2 * 60 * 60 * 1000,
+      read: false,
+      priority: 'high',
+      actionUrl: '/proposals/42',
+      metadata: { proposalId: 42, userAddress: 'SP1ABC...DEF' }
+    },
+    {
+      id: 2,
+      type: 'vote',
+      title: 'Proposal Voting Ending Soon',
+      message: 'Only 6 hours left to vote on "Community NFT Marketplace"',
+      timestamp: Date.now() - 4 * 60 * 60 * 1000,
+      read: false,
+      priority: 'high',
+      actionUrl: '/proposals/28'
+    },
+    {
+      id: 3,
+      type: 'achievement',
+      title: 'New Achievement Unlocked!',
+      message: 'You earned the "Top Contributor" badge 🏆',
+      timestamp: Date.now() - 12 * 60 * 60 * 1000,
+      read: true,
+      priority: 'medium'
+    },
+    {
+      id: 4,
+      type: 'comment',
+      title: 'New Comment on Your Proposal',
+      message: 'bob_builder commented on your proposal #15',
+      timestamp: Date.now() - 24 * 60 * 60 * 1000,
+      read: false,
+      priority: 'medium',
+      actionUrl: '/proposals/15#comments'
+    },
+    {
+      id: 5,
+      type: 'mention',
+      title: 'You were mentioned',
+      message: 'carol_artist mentioned you in a comment',
+      timestamp: Date.now() - 36 * 60 * 60 * 1000,
+      read: true,
+      priority: 'low'
+    },
+    {
+      id: 6,
+      type: 'treasury',
+      title: 'Treasury Transaction',
+      message: '75,000 STX distributed to approved proposal',
+      timestamp: Date.now() - 48 * 60 * 60 * 1000,
+      read: true,
+      priority: 'medium',
+      metadata: { amount: 75000 }
+    },
+    {
+      id: 7,
+      type: 'delegation',
+      title: 'Voting Power Delegated',
+      message: 'dave_investor delegated 5,000 voting power to you',
+      timestamp: Date.now() - 72 * 60 * 60 * 1000,
+      read: true,
+      priority: 'medium',
+      metadata: { amount: 5000, userAddress: 'SP4STU...VWX' }
+    },
+    {
+      id: 8,
+      type: 'system',
+      title: 'System Update',
+      message: 'New features available: Dashboard customization and insights',
+      timestamp: Date.now() - 96 * 60 * 60 * 1000,
+      read: true,
+      priority: 'low'
+    }
+  ]);
   const [filter, setFilter] = useState<'all' | 'unread' | 'high'>('all');
   const [showSettings, setShowSettings] = useState(false);
-  const [preferences, setPreferences] = useState<NotificationPreferences>({
-    emailEnabled: true,
-    pushEnabled: false,
-    digestMode: 'instant',
-    categories: {
-      proposals: true,
-      votes: true,
-      comments: true,
-      mentions: true,
-      achievements: true,
-      treasury: true,
-      system: true
-    }
-  });
-
-  useEffect(() => {
-    // Load notifications
-    const mockNotifications: Notification[] = [
-      {
-        id: 1,
-        type: 'proposal',
-        title: 'New Proposal Submitted',
-        message: 'alice_dao created "DeFi Lending Protocol v2" proposal',
-        timestamp: Date.now() - 2 * 60 * 60 * 1000,
-        read: false,
-        priority: 'high',
-        actionUrl: '/proposals/42',
-        metadata: { proposalId: 42, userAddress: 'SP1ABC...DEF' }
-      },
-      {
-        id: 2,
-        type: 'vote',
-        title: 'Proposal Voting Ending Soon',
-        message: 'Only 6 hours left to vote on "Community NFT Marketplace"',
-        timestamp: Date.now() - 4 * 60 * 60 * 1000,
-        read: false,
-        priority: 'high',
-        actionUrl: '/proposals/28'
-      },
-      {
-        id: 3,
-        type: 'achievement',
-        title: 'New Achievement Unlocked!',
-        message: 'You earned the "Top Contributor" badge 🏆',
-        timestamp: Date.now() - 12 * 60 * 60 * 1000,
-        read: true,
-        priority: 'medium'
-      },
-      {
-        id: 4,
-        type: 'comment',
-        title: 'New Comment on Your Proposal',
-        message: 'bob_builder commented on your proposal #15',
-        timestamp: Date.now() - 24 * 60 * 60 * 1000,
-        read: false,
-        priority: 'medium',
-        actionUrl: '/proposals/15#comments'
-      },
-      {
-        id: 5,
-        type: 'mention',
-        title: 'You were mentioned',
-        message: 'carol_artist mentioned you in a comment',
-        timestamp: Date.now() - 36 * 60 * 60 * 1000,
-        read: true,
-        priority: 'low'
-      },
-      {
-        id: 6,
-        type: 'treasury',
-        title: 'Treasury Transaction',
-        message: '75,000 STX distributed to approved proposal',
-        timestamp: Date.now() - 48 * 60 * 60 * 1000,
-        read: true,
-        priority: 'medium',
-        metadata: { amount: 75000 }
-      },
-      {
-        id: 7,
-        type: 'delegation',
-        title: 'Voting Power Delegated',
-        message: 'dave_investor delegated 5,000 voting power to you',
-        timestamp: Date.now() - 72 * 60 * 60 * 1000,
-        read: true,
-        priority: 'medium',
-        metadata: { amount: 5000, userAddress: 'SP4STU...VWX' }
-      },
-      {
-        id: 8,
-        type: 'system',
-        title: 'System Update',
-        message: 'New features available: Dashboard customization and insights',
-        timestamp: Date.now() - 96 * 60 * 60 * 1000,
-        read: true,
-        priority: 'low'
+  const [preferences, setPreferences] = useState<NotificationPreferences>(() => {
+    const defaults: NotificationPreferences = {
+      emailEnabled: true,
+      pushEnabled: false,
+      digestMode: 'instant',
+      categories: {
+        proposals: true,
+        votes: true,
+        comments: true,
+        mentions: true,
+        achievements: true,
+        treasury: true,
+        system: true
       }
-    ];
+    };
 
-    setNotifications(mockNotifications);
-
-    // Load preferences
+    if (typeof window === 'undefined') return defaults;
     const savedPrefs = localStorage.getItem(`notification-prefs-${userAddress}`);
-    if (savedPrefs) {
-      setPreferences(JSON.parse(savedPrefs));
-    }
-  }, [userAddress]);
+    return savedPrefs ? JSON.parse(savedPrefs) : defaults;
+  });
 
   const markAsRead = (id: number) => {
     setNotifications(notifications.map(n => 
@@ -175,7 +169,7 @@ export default function NotificationCenter({ userAddress }: NotificationCenterPr
   };
 
   const formatTimeAgo = (timestamp: number) => {
-    const diff = Date.now() - timestamp;
+    const diff = now - timestamp;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     
