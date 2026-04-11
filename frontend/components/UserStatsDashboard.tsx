@@ -338,7 +338,7 @@ export default function UserStatsDashboard({ userAddress }: UserStatsDashboardPr
             <div className="text-2xl mb-2">🎯</div>
             <h4 className="font-semibold mb-1 text-sm">Expand Categories</h4>
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              You're most active in DeFi. Try voting on Infrastructure proposals to diversify!
+              You&apos;re most active in DeFi. Try voting on Infrastructure proposals to diversify!
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4">

@@ -139,7 +139,7 @@ export function OnboardingFAQ() {
 
       <div className="mt-12 rounded-lg border border-muted/20 bg-surface/30 p-8 text-center">
         <p className="text-muted mb-4">
-          Didn't find what you're looking for?
+          Didn&apos;t find what you're looking for?
         </p>
         <a
           href="/getting-started"

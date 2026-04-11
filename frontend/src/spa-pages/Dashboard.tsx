@@ -324,7 +324,7 @@ export function DashboardPage(): React.JSX.Element {
         <h2 className="mb-4 text-lg font-semibold text-text">Your Proposals</h2>
         {proposals.length === 0 ? (
           <div className="rounded-xl border border-border bg-card p-8 text-center">
-            <p className="text-sm text-muted">You haven't created any proposals yet.</p>
+            <p className="text-sm text-muted">You haven&apos;t created any proposals yet.</p>
           </div>
         ) : (
           <div className="space-y-3">

@@ -53,7 +53,7 @@ export default function InterestProfiler() {
                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">Active Filters</h4>
                 </div>
                 <p className="text-[11px] font-medium text-slate-400 leading-relaxed uppercase tracking-tighter">
-                    Your dashboard will prioritize <span className="text-white font-black">{selected.length} categories</span>. We'll alert you when high-impact proposals matching these tags are submitted.
+                    Your dashboard will prioritize <span className="text-white font-black">{selected.length} categories</span>. We&apos;ll alert you when high-impact proposals matching these tags are submitted.
                 </p>
             </div>
         </div>

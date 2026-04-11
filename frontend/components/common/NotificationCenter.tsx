@@ -369,7 +369,7 @@ export default function NotificationCenter({ userAddress }: NotificationCenterPr
           <div className="text-center py-12 text-gray-500 dark:text-gray-400">
             <div className="text-4xl mb-2">📭</div>
             <div>No notifications</div>
-            <div className="text-sm">You're all caught up!</div>
+            <div className="text-sm">You&apos;re all caught up!</div>
           </div>
         ) : (
           filteredNotifications.map(notification => (
