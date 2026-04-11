@@ -75,7 +75,7 @@ export default function GovernanceTimeline() {
                                 {event.title}
                             </h4>
                             <p className="text-xs font-medium text-slate-400 leading-relaxed italic">
-                                "{event.description}"
+                                &quot;{event.description}&quot;
                             </p>
                         </div>
                     </motion.div>

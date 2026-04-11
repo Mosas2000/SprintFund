@@ -26,7 +26,7 @@ export default function ApiDocs() {
                     <h3 className="text-xl font-black uppercase mb-1">Quick Start</h3>
                     <p className="text-[10px] font-bold uppercase opacity-80 mb-6">Authorize your terminal session</p>
                     <code className="block bg-black/20 p-4 rounded-xl font-mono text-xs mb-6">
-                        curl -H "X-API-KEY: demo" https://api.sprintfund.xyz/v1/stats
+                        curl -H &quot;X-API-KEY: demo&quot; https://api.sprintfund.xyz/v1/stats
                     </code>
                     <button className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-black hover:text-white transition-all">
                         Generate Production Key
@@ -55,7 +55,7 @@ export default function ApiDocs() {
                         </div>
 
                         <p className="text-sm font-medium text-slate-400 mb-8 italic">
-                            "{e.desc}"
+                            &quot;{e.desc}&quot;
                         </p>
 
                         <div className="p-6 bg-black/40 rounded-3xl border border-white/5 opacity-40 group-hover:opacity-100 transition-opacity">

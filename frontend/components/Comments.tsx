@@ -153,7 +153,7 @@ export default function Comments({ proposalId, userAddress }: CommentsProps) {
                                 </button>
                             </div>
                             <p className="text-sm font-medium text-slate-300 leading-relaxed italic border-l-2 border-orange-500/30 pl-6">
-                                "{comment.text}"
+                                &quot;{comment.text}&quot;
                             </p>
 
                             <div className="mt-6 flex items-center gap-6 opacity-40 group-hover:opacity-100 transition-opacity">

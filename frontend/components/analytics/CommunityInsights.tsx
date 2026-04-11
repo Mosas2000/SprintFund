@@ -73,7 +73,7 @@ export default function CommunityInsights() {
                             <h4 className="font-bold text-yellow-800 dark:text-yellow-400">Attention Required</h4>
                         </div>
                         <p className="text-sm text-yellow-700 dark:text-yellow-200/70 mb-4 font-medium">
-                            Voter engagement in the "Education" category has dropped 15% WoW. Platform reach is decreasing in this segment.
+                            Voter engagement in the &quot;Education&quot; category has dropped 15% WoW. Platform reach is decreasing in this segment.
                         </p>
                         <button className="text-xs font-black text-yellow-800 dark:text-yellow-400 hover:underline">
                             VIEW MITIGATION STRATEGY →

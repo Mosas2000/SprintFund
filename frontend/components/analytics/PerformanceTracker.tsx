@@ -146,7 +146,7 @@ export default function PerformanceTracker() {
 
                     <div className="mt-8 p-4 bg-white/10 rounded-xl border border-white/10">
                         <p className="text-xs italic opacity-90">
-                            "You are currently performing in the top 5% of active proposers this quarter. Keep focusing on technical documentation."
+                            &quot;You are currently performing in the top 5% of active proposers this quarter. Keep focusing on technical documentation.&quot;
                         </p>
                     </div>
                 </div>
