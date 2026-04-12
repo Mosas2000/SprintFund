@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useReducer } from 'react';
 import { useConnect, UserSession } from '@stacks/connect-react';
 import { proposalDiscussionService } from '@/services/proposal-discussion';
-import { ProposalDiscussionThread, ProposalDiscussionComment } from '@/types/proposal-detail';
+import { ProposalDiscussionThread } from '@/types/proposal-detail';
 
 // Helper to safely get user address from UserSession
 function getUserAddress(userSession: UserSession | null): string | null {
@@ -27,15 +27,12 @@ function getUserName(userSession: UserSession | null): string | undefined {
 
 export function useProposalDiscussion(proposalId: string) {
   const { userSession } = useConnect();
-  const [thread, setThread] = useState<ProposalDiscussionThread | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (proposalId) {
-      const discussion = proposalDiscussionService.getDiscussionThread(proposalId);
-      setThread(discussion);
-    }
-  }, [proposalId]);
+  const [refreshKey, triggerRefresh] = useReducer((value: number) => value + 1, 0);
+  void refreshKey;
+  const thread: ProposalDiscussionThread | null = (() => {
+    if (!proposalId) return null;
+    return proposalDiscussionService.getDiscussionThread(proposalId);
+  })();
 
   const addComment = useCallback(
     (content: string) => {
@@ -49,8 +46,7 @@ export function useProposalDiscussion(proposalId: string) {
         getUserName(userSession)
       );
 
-      const updated = proposalDiscussionService.getDiscussionThread(proposalId);
-      setThread(updated);
+      triggerRefresh();
 
       return comment;
     },
@@ -70,8 +66,7 @@ export function useProposalDiscussion(proposalId: string) {
         getUserName(userSession)
       );
 
-      const updated = proposalDiscussionService.getDiscussionThread(proposalId);
-      setThread(updated);
+      triggerRefresh();
 
       return reply;
     },
@@ -83,8 +78,7 @@ export function useProposalDiscussion(proposalId: string) {
       const success = proposalDiscussionService.editComment(proposalId, commentId, newContent);
 
       if (success) {
-        const updated = proposalDiscussionService.getDiscussionThread(proposalId);
-        setThread(updated);
+        triggerRefresh();
       }
 
       return success;
@@ -97,8 +91,7 @@ export function useProposalDiscussion(proposalId: string) {
       const success = proposalDiscussionService.deleteComment(proposalId, commentId);
 
       if (success) {
-        const updated = proposalDiscussionService.getDiscussionThread(proposalId);
-        setThread(updated);
+        triggerRefresh();
       }
 
       return success;
@@ -111,8 +104,7 @@ export function useProposalDiscussion(proposalId: string) {
       const success = proposalDiscussionService.likeComment(proposalId, commentId);
 
       if (success) {
-        const updated = proposalDiscussionService.getDiscussionThread(proposalId);
-        setThread(updated);
+        triggerRefresh();
       }
 
       return success;
@@ -122,7 +114,6 @@ export function useProposalDiscussion(proposalId: string) {
 
   return {
     thread,
-    loading,
     addComment,
     addReply,
     editComment,

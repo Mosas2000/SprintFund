@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 
 interface Achievement {
   id: string;
@@ -33,31 +33,31 @@ const ACHIEVEMENTS: Achievement[] = [
 ];
 
 export default function ReputationSystem({ userAddress, reputation }: ReputationSystemProps) {
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [unlockedCount, setUnlockedCount] = useState(0);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(`achievements-${userAddress}`);
-    if (stored) {
-      setAchievements(JSON.parse(stored));
-    } else {
-      // Simulate some unlocked achievements
-      const simulated = ACHIEVEMENTS.map(ach => {
-        const random = Math.random();
-        if (random > 0.7) {
-          return { ...ach, unlockedAt: Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000 };
-        } else if (random > 0.4) {
-          return { ...ach, progress: Math.floor(Math.random() * (ach.maxProgress || 1)) };
-        }
-        return ach;
-      });
-      setAchievements(simulated);
+  const now = Date.parse(new Date().toISOString());
+  const [achievements] = useState<Achievement[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(`achievements-${userAddress}`);
+      if (stored) return JSON.parse(stored);
     }
-  }, [userAddress]);
 
-  useEffect(() => {
-    setUnlockedCount(achievements.filter(a => a.unlockedAt).length);
-  }, [achievements]);
+    const seed = userAddress.split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+    return ACHIEVEMENTS.map((ach, index) => {
+      const max = ach.maxProgress || 1;
+      const score = (seed + index * 37) % 100;
+      if (score > 70) {
+        const daysAgo = (seed + index * 11) % 30;
+        return { ...ach, unlockedAt: now - daysAgo * 24 * 60 * 60 * 1000 };
+      }
+      if (score > 40) {
+        return { ...ach, progress: ((seed + index * 17) % max) + 1 };
+      }
+      return ach;
+    });
+  });
+  const unlockedCount = useMemo(
+    () => achievements.filter(a => a.unlockedAt).length,
+    [achievements]
+  );
 
   const getTier = (rep: number) => {
     if (rep >= 2000) return { name: 'Diamond', color: 'from-cyan-400 to-blue-500', icon: '💎', min: 2000, max: 999999 };

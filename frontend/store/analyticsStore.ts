@@ -114,9 +114,9 @@ const useAnalyticsStore = create<AnalyticsState>((set, get) => ({
 export const useFilteredProposals = (): ProposalMetrics[] => {
   const proposals = useAnalyticsStore(state => state.proposals);
   const filters = useAnalyticsStore(state => state.filters);
+  const currentTimestamp = Date.parse(new Date().toISOString());
   
   return useMemo(() => {
-    const now = Date.now();
     return proposals.filter(proposal => {
       const proposalDate = new Date(proposal.createdAt * 10 * 60 * 1000);
       
@@ -134,7 +134,7 @@ export const useFilteredProposals = (): ProposalMetrics[] => {
         }
         if (filters.statusFilter === 'failed') {
           const deadline = proposal.deadline * 10 * 60 * 1000;
-          if (proposal.executed || deadline > now) {
+          if (proposal.executed || deadline > currentTimestamp) {
             return false;
           }
           if (proposal.votesFor <= proposal.votesAgainst) {
@@ -144,7 +144,7 @@ export const useFilteredProposals = (): ProposalMetrics[] => {
         }
         if (filters.statusFilter === 'active') {
           const deadline = proposal.deadline * 10 * 60 * 1000;
-          if (proposal.executed || deadline < now) {
+          if (proposal.executed || deadline < currentTimestamp) {
             return false;
           }
         }
@@ -156,14 +156,14 @@ export const useFilteredProposals = (): ProposalMetrics[] => {
 
       return true;
     });
-  }, [proposals, filters]);
+  }, [proposals, filters, currentTimestamp]);
 };
 
 export const useAggregateStats = (): AggregateStats => {
   const filteredProposals = useFilteredProposals();
+  const currentTimestamp = Date.parse(new Date().toISOString());
   
   return useMemo(() => {
-    const now = Date.now();
     const totalFunded = filteredProposals
       .filter(p => p.executed)
       .reduce((sum, p) => sum + p.amount, 0);
@@ -181,7 +181,7 @@ export const useAggregateStats = (): AggregateStats => {
     const activeProposals = filteredProposals.filter(p => {
       if (p.executed) return false;
       const deadline = p.deadline * 10 * 60 * 1000;
-      return deadline > now;
+      return deadline > currentTimestamp;
     }).length;
 
     return {
@@ -191,7 +191,7 @@ export const useAggregateStats = (): AggregateStats => {
       totalProposals: filteredProposals.length,
       activeProposals
     };
-  }, [filteredProposals]);
+  }, [filteredProposals, currentTimestamp]);
 };
 
 let refreshInterval: NodeJS.Timeout | null = null;
