@@ -2,10 +2,10 @@
 
 import { useState, useMemo, useRef } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from 'recharts';
-import { format, startOfDay } from 'date-fns';
+import { format } from 'date-fns';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { formatMetric } from '../../utils/analytics/helpers';
-import { Play, Pause, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import type { RechartsTooltipEntry, RechartsTooltipProps } from '../../src/types';
 
 interface FundingTimelineProps {
@@ -41,10 +41,55 @@ const CATEGORY_COLORS: Record<string, string> = {
   other: '#6b7280'
 };
 
+function FundingTimelineTooltip({ active, payload }: TimelineTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  const data = payload[0].payload;
+  const proposal = data.proposal;
+
+  return (
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
+      <div className="space-y-2">
+        <p className="font-semibold text-gray-900 dark:text-white">
+          {proposal.title}
+        </p>
+        <div className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: CATEGORY_COLORS[proposal.category] }}
+          />
+          <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+            {proposal.category}
+          </span>
+        </div>
+        <div className="text-sm space-y-1">
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">Amount:</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {formatMetric(proposal.amount, 'currency')}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">Funded:</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {format(data.date, 'MMM dd, yyyy')}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">Time to Fund:</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {proposal.timeToFunding?.toFixed(1) || 'N/A'}h
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FundingTimeline({ proposals }: FundingTimelineProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [amountRange, setAmountRange] = useState<[number, number]>([0, Infinity]);
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [amountRange] = useState<[number, number]>([0, Infinity]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackIndex, setPlaybackIndex] = useState(0);
   const playbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -117,15 +162,15 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
 
   const cumulativeData = useMemo(() => {
     const sorted = [...timelineData].sort((a, b) => a.x - b.x);
-    let cumulative = 0;
-    
-    return sorted.map(point => {
-      cumulative += point.y;
-      return {
+    return sorted.reduce<{ date: string; cumulative: number }[]>((acc, point) => {
+      const previous = acc.length > 0 ? acc[acc.length - 1].cumulative : 0;
+      const cumulative = previous + point.y / 1_000_000;
+      acc.push({
         date: format(point.date, 'MMM dd'),
-        cumulative: cumulative / 1_000_000
-      };
-    });
+        cumulative
+      });
+      return acc;
+    }, []);
   }, [timelineData]);
 
   const toggleCategory = (category: string) => {
@@ -134,17 +179,6 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
         ? prev.filter(c => c !== category)
         : [...prev, category]
     );
-  };
-
-  const handleZoom = (direction: 'in' | 'out') => {
-    setZoomLevel(prev => {
-      if (direction === 'in') return Math.min(prev * 1.5, 5);
-      return Math.max(prev / 1.5, 0.5);
-    });
-  };
-
-  const resetZoom = () => {
-    setZoomLevel(1);
   };
 
   const togglePlayback = () => {
@@ -174,52 +208,6 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
     }
   };
 
-  const CustomTooltip = ({ active, payload }: TimelineTooltipProps) => {
-    if (!active || !payload || payload.length === 0) return null;
-
-    const data = payload[0].payload;
-    const proposal = data.proposal;
-
-    return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
-        <div className="space-y-2">
-          <p className="font-semibold text-gray-900 dark:text-white">
-            {proposal.title}
-          </p>
-          <div className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: CATEGORY_COLORS[proposal.category] }}
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">
-              {proposal.category}
-            </span>
-          </div>
-          <div className="text-sm space-y-1">
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600 dark:text-gray-400">Amount:</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {formatMetric(proposal.amount, 'currency')}
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600 dark:text-gray-400">Funded:</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {format(data.date, 'MMM dd, yyyy')}
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600 dark:text-gray-400">Time to Fund:</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {proposal.timeToFunding?.toFixed(1) || 'N/A'}h
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -237,27 +225,6 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-          </button>
-          <button
-            onClick={() => handleZoom('in')}
-            className="p-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
-            title="Zoom In"
-          >
-            <ZoomIn className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => handleZoom('out')}
-            className="p-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
-            title="Zoom Out"
-          >
-            <ZoomOut className="w-5 h-5" />
-          </button>
-          <button
-            onClick={resetZoom}
-            className="p-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
-            title="Reset Zoom"
-          >
-            <RotateCcw className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -331,7 +298,7 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
               style={{ fontSize: '12px' }}
             />
             <ZAxis type="number" dataKey="z" range={[50, 500]} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={<FundingTimelineTooltip />} />
             
             {categories.map(category => {
               const categoryData = timelineData.filter(d => d.category === category);
