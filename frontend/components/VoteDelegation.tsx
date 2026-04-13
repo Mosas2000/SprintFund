@@ -20,11 +20,7 @@ export default function VoteDelegation({ userAddress }: VoteDelegationProps) {
   const [delegatedToMe, setDelegatedToMe] = useState<string[]>([]);
   const [totalDelegatedVotes, setTotalDelegatedVotes] = useState(0);
 
-  useEffect(() => {
-    loadDelegationData();
-  }, [userAddress]);
-
-  const loadDelegationData = () => {
+  function loadDelegationData() {
     if (!userAddress) return;
 
     // Load current delegation
@@ -54,7 +50,14 @@ export default function VoteDelegation({ userAddress }: VoteDelegationProps) {
 
     setDelegatedToMe(delegators);
     setTotalDelegatedVotes(totalVotes);
-  };
+  }
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      loadDelegationData();
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [userAddress]);
 
   const handleDelegate = () => {
     if (!delegateTo.trim()) {
