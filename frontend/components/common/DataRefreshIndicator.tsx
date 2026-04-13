@@ -2,16 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
-import { Wifi } from 'lucide-react';
 
 export function DataRefreshIndicator() {
   const { loading } = useGovernanceAnalytics();
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [lastUpdated] = useState<Date>(new Date());
   const [timeSinceUpdate, setTimeSinceUpdate] = useState('now');
 
   useEffect(() => {
-    setLastUpdated(new Date());
-
     const interval = setInterval(() => {
       const now = new Date();
       const diffMs = now.getTime() - lastUpdated.getTime();
