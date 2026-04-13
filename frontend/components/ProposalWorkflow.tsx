@@ -79,7 +79,7 @@ export default function ProposalWorkflow({ proposalId, initialStage = 'Draft', o
     const data = JSON.parse(stored) as { currentStage?: Stage };
     return data.currentStage ?? initialStage;
   });
-  const [stageProgress, setStageProgress] = useState<Record<Stage, number>>(() => {
+  const [stageProgress] = useState<Record<Stage, number>>(() => {
     if (typeof window === 'undefined') {
       return {
         Draft: 0,
