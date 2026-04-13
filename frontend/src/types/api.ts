@@ -3,7 +3,6 @@
  */
 
 import type {
-  Proposal,
   ProposalPage,
   StakeInfo,
   VoteRecord,
@@ -35,7 +34,7 @@ export interface FetchProposalsResponse {
 /**
  * Request payload for creating a proposal.
  */
-export interface CreateProposalRequest extends CreateProposalInput {}
+export type CreateProposalRequest = CreateProposalInput;
 
 /**
  * Response from proposal creation.

@@ -93,7 +93,7 @@ export function CreateProposalPage() {
         }
       },
     });
-  }, [title, description, amount, duration, validation, dialog, toast, navigate]);
+  }, [title, description, amount, duration, validation, dialog, toast, navigate, stxPrice]);
 
   if (walletLoading) {
     return <LoadingSpinner />;
