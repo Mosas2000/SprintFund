@@ -2,9 +2,6 @@
  * Common patterns and reusable utilities for type-safe operations.
  */
 
-import type { Proposal, ProposalPage, StakeInfo, VoteRecord } from '../types';
-import { isValidProposal, isValidProposalPage } from './type-guards';
-
 /**
  * Safe operation result that either succeeds with data or fails with error.
  */

@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
 import {
     ResponsiveContainer,
     AreaChart,
@@ -11,7 +10,7 @@ import {
     CartesianGrid,
     Tooltip,
 } from 'recharts';
-import { TrendingUp, Sparkles, Brain, Zap, Target, AlertCircle, ArrowRight, BarChart3, Globe } from 'lucide-react';
+import { Brain, Zap, Target, BarChart3, Globe } from 'lucide-react';
 import ProbabilityCalculator from './ProbabilityCalculator';
 import OptimizationPanel from './OptimizationPanel';
 

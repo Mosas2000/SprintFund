@@ -1,24 +1,17 @@
-import { groupBy, meanBy, sumBy, orderBy, maxBy, minBy } from 'lodash';
+import { groupBy, meanBy, sumBy, orderBy, maxBy } from 'lodash';
 import { 
   startOfDay, 
   startOfWeek, 
   startOfMonth, 
   format, 
-  differenceInHours,
   getHours,
   getDay,
-  parseISO,
-  subDays,
-  subWeeks,
-  subMonths
 } from 'date-fns';
 import { 
   mean, 
   standardDeviation, 
-  median, 
   quantile,
-  linearRegression,
-  linearRegressionLine
+  linearRegression
 } from 'simple-statistics';
 import { ProposalMetrics } from './dataCollector';
 
@@ -111,7 +104,6 @@ function calculateSuccessRate(proposals: ProposalMetrics[]): number {
 
 export function calculateSuccessFactors(proposals: ProposalMetrics[]): SuccessFactors {
   const successfulProposals = proposals.filter(p => p.executed);
-  const failedProposals = proposals.filter(p => !p.executed);
 
   const amountRanges = [
     { min: 0, max: 50000000 },
