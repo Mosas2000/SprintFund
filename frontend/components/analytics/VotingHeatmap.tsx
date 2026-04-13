@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { ProposalMetrics, VoteData } from '../../utils/analytics/dataCollector';
-import { startOfDay, format, getDay, getHours, subDays, isSameDay } from 'date-fns';
+import { getDay, getHours, subDays } from 'date-fns';
 
 interface VotingHeatmapProps {
   proposals: ProposalMetrics[];
@@ -127,14 +127,14 @@ export default function VotingHeatmap({ proposals, votes }: VotingHeatmapProps) 
     const weekendDrop = weekdayAvg > 0 ? ((weekendAvg - weekdayAvg) / weekdayAvg) * 100 : 0;
 
     const lateNightHours = [23, 0, 1, 2, 3];
-    const lateNightCells = heatmapData.flatMap((dayRow, day) =>
+    const lateNightCells = heatmapData.flatMap((dayRow) =>
       dayRow.filter((_, hour) => lateNightHours.includes(hour))
     );
     const lateNightSuccess = lateNightCells.length > 0
       ? lateNightCells.reduce((sum, cell) => sum + cell.successRate, 0) / lateNightCells.length
       : 0;
 
-    const regularCells = heatmapData.flatMap((dayRow, day) =>
+    const regularCells = heatmapData.flatMap((dayRow) =>
       dayRow.filter((_, hour) => !lateNightHours.includes(hour))
     );
     const regularSuccess = regularCells.length > 0

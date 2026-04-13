@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { ChevronRight, ChevronLeft, X } from 'lucide-react';
+import React from 'react';
 import { ONBOARDING_TOUR_STEPS } from '../config/onboarding-tour';
 import { OnboardingTooltip } from './OnboardingTooltip';
 
@@ -34,10 +33,6 @@ export function OnboardingModal({
     } else {
       onNext();
     }
-  };
-
-  const handleFinish = () => {
-    onComplete();
   };
 
   return (
