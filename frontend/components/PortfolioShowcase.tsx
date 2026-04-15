@@ -33,93 +33,97 @@ interface PortfolioShowcaseProps {
 }
 
 export default function PortfolioShowcase({ userAddress }: PortfolioShowcaseProps) {
-  const [portfolioItems] = useState<PortfolioItem[]>([
-    {
-      proposalId: 42,
-      title: 'DeFi Lending Protocol Development',
-      description: 'Built a decentralized lending platform enabling users to lend and borrow assets with competitive rates.',
-      category: 'DeFi',
-      amount: 75000,
-      status: 'executed',
-      impact: {
-        stxDistributed: 75000,
-        communitySupport: 89,
-        completionRate: 100
+  const [portfolioItems] = useState<PortfolioItem[]>(() => {
+    const baseTime = Date.now();
+
+    return [
+      {
+        proposalId: 42,
+        title: 'DeFi Lending Protocol Development',
+        description: 'Built a decentralized lending platform enabling users to lend and borrow assets with competitive rates.',
+        category: 'DeFi',
+        amount: 75000,
+        status: 'executed',
+        impact: {
+          stxDistributed: 75000,
+          communitySupport: 89,
+          completionRate: 100
+        },
+        metrics: {
+          yesVotes: 450,
+          noVotes: 82,
+          participationRate: 76
+        },
+        timeline: {
+          created: baseTime - 120 * 24 * 60 * 60 * 1000,
+          approved: baseTime - 100 * 24 * 60 * 60 * 1000,
+          executed: baseTime - 30 * 24 * 60 * 60 * 1000
+        },
+        outcomes: [
+          '1,200+ active users',
+          '$2.5M in total value locked',
+          '98% uptime since launch',
+          'Featured in 3 major crypto publications'
+        ]
       },
-      metrics: {
-        yesVotes: 450,
-        noVotes: 82,
-        participationRate: 76
+      {
+        proposalId: 28,
+        title: 'Community NFT Marketplace',
+        description: 'Created a user-friendly NFT marketplace with low fees and advanced features for creators.',
+        category: 'NFT',
+        amount: 50000,
+        status: 'executed',
+        impact: {
+          stxDistributed: 50000,
+          communitySupport: 92,
+          completionRate: 100
+        },
+        metrics: {
+          yesVotes: 380,
+          noVotes: 45,
+          participationRate: 68
+        },
+        timeline: {
+          created: baseTime - 150 * 24 * 60 * 60 * 1000,
+          approved: baseTime - 130 * 24 * 60 * 60 * 1000,
+          executed: baseTime - 60 * 24 * 60 * 60 * 1000
+        },
+        outcomes: [
+          '500+ NFTs minted',
+          '250+ creators onboarded',
+          '$500K in trading volume',
+          'Integration with 5 major wallets'
+        ]
       },
-      timeline: {
-        created: Date.now() - 120 * 24 * 60 * 60 * 1000,
-        approved: Date.now() - 100 * 24 * 60 * 60 * 1000,
-        executed: Date.now() - 30 * 24 * 60 * 60 * 1000
-      },
-      outcomes: [
-        '1,200+ active users',
-        '$2.5M in total value locked',
-        '98% uptime since launch',
-        'Featured in 3 major crypto publications'
-      ]
-    },
-    {
-      proposalId: 28,
-      title: 'Community NFT Marketplace',
-      description: 'Created a user-friendly NFT marketplace with low fees and advanced features for creators.',
-      category: 'NFT',
-      amount: 50000,
-      status: 'executed',
-      impact: {
-        stxDistributed: 50000,
-        communitySupport: 92,
-        completionRate: 100
-      },
-      metrics: {
-        yesVotes: 380,
-        noVotes: 45,
-        participationRate: 68
-      },
-      timeline: {
-        created: Date.now() - 150 * 24 * 60 * 60 * 1000,
-        approved: Date.now() - 130 * 24 * 60 * 60 * 1000,
-        executed: Date.now() - 60 * 24 * 60 * 60 * 1000
-      },
-      outcomes: [
-        '500+ NFTs minted',
-        '250+ creators onboarded',
-        '$500K in trading volume',
-        'Integration with 5 major wallets'
-      ]
-    },
-    {
-      proposalId: 15,
-      title: 'DAO Governance Dashboard',
-      description: 'Developed a comprehensive dashboard for tracking proposals, votes, and treasury analytics.',
-      category: 'Infrastructure',
-      amount: 35000,
-      status: 'approved',
-      impact: {
-        stxDistributed: 35000,
-        communitySupport: 85,
-        completionRate: 75
-      },
-      metrics: {
-        yesVotes: 320,
-        noVotes: 58,
-        participationRate: 72
-      },
-      timeline: {
-        created: Date.now() - 90 * 24 * 60 * 60 * 1000,
-        approved: Date.now() - 70 * 24 * 60 * 60 * 1000
-      },
-      outcomes: [
-        '800+ daily active users',
-        '15 new features launched',
-        'Mobile app in development'
-      ]
-    }
-  ]);
+      {
+        proposalId: 15,
+        title: 'DAO Governance Dashboard',
+        description: 'Developed a comprehensive dashboard for tracking proposals, votes, and treasury analytics.',
+        category: 'Infrastructure',
+        amount: 35000,
+        status: 'approved',
+        impact: {
+          stxDistributed: 35000,
+          communitySupport: 85,
+          completionRate: 75
+        },
+        metrics: {
+          yesVotes: 320,
+          noVotes: 58,
+          participationRate: 72
+        },
+        timeline: {
+          created: baseTime - 90 * 24 * 60 * 60 * 1000,
+          approved: baseTime - 70 * 24 * 60 * 60 * 1000
+        },
+        outcomes: [
+          '800+ daily active users',
+          '15 new features launched',
+          'Mobile app in development'
+        ]
+      }
+    ];
+  });
 
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
 

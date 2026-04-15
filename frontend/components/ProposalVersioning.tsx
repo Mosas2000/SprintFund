@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Version {
   id: number;
@@ -23,32 +23,18 @@ interface ProposalVersioningProps {
   };
 }
 
-export default function ProposalVersioning({ proposalId, currentData }: ProposalVersioningProps) {
-  const [versions, setVersions] = useState<Version[]>([]);
+export default function ProposalVersioning({ proposalId }: ProposalVersioningProps) {
+  const [versions] = useState<Version[]>(() => {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
+    const stored = localStorage.getItem(`proposal-${proposalId}-versions`);
+    return stored ? JSON.parse(stored) : [];
+  });
   const [showHistory, setShowHistory] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<Version | null>(null);
   const [showDiff, setShowDiff] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(`proposal-${proposalId}-versions`);
-    if (stored) {
-      setVersions(JSON.parse(stored));
-    }
-  }, [proposalId]);
-
-  const saveVersion = (changes: Version['changes'], changeNote: string) => {
-    const newVersion: Version = {
-      id: versions.length + 1,
-      timestamp: Date.now(),
-      editor: 'SP1ABC...XYZ', // Would come from user context
-      changes,
-      changeNote
-    };
-
-    const updated = [...versions, newVersion];
-    localStorage.setItem(`proposal-${proposalId}-versions`, JSON.stringify(updated));
-    setVersions(updated);
-  };
 
   const revertToVersion = (version: Version) => {
     if (confirm(`Are you sure you want to revert to version ${version.id}?`)) {
@@ -61,7 +47,6 @@ export default function ProposalVersioning({ proposalId, currentData }: Proposal
   const renderDiff = (old: string, newText: string) => {
     const oldLines = old.split('\n');
     const newLines = newText.split('\n');
-    const maxLength = Math.max(oldLines.length, newLines.length);
 
     return (
       <div className="grid grid-cols-2 gap-4 text-sm">

@@ -15,37 +15,38 @@ interface Proposal {
   tags: string[];
 }
 
-// Mock data - would come from API/blockchain
-const MOCK_PROPOSALS: Proposal[] = [
-  {
-    id: 1,
-    title: 'DeFi Lending Protocol Development',
-    description: 'Build a decentralized lending platform on Stacks',
-    status: 'executed',
-    category: 'defi',
-    amount: 75000,
-    createdAt: Date.now() - 90 * 24 * 60 * 60 * 1000,
-    votes: { yes: 450, no: 120 },
-    author: 'SP1ABC...XYZ',
-    tags: ['defi', 'lending', 'smart-contracts']
-  },
-  {
-    id: 2,
-    title: 'NFT Marketplace Infrastructure',
-    description: 'Create marketplace for trading NFTs',
-    status: 'approved',
-    category: 'nft',
-    amount: 50000,
-    createdAt: Date.now() - 60 * 24 * 60 * 60 * 1000,
-    votes: { yes: 380, no: 95 },
-    author: 'SP2DEF...ABC',
-    tags: ['nft', 'marketplace']
-  }
-  // Add more mock data as needed
-];
-
 export default function ProposalArchive() {
-  const [proposals] = useState<Proposal[]>(MOCK_PROPOSALS);
+  const [now] = useState(() => Date.now());
+  const [proposals] = useState<Proposal[]>(() => {
+    const baseTime = Date.now();
+
+    return [
+      {
+        id: 1,
+        title: 'DeFi Lending Protocol Development',
+        description: 'Build a decentralized lending platform on Stacks',
+        status: 'executed',
+        category: 'defi',
+        amount: 75000,
+        createdAt: baseTime - 90 * 24 * 60 * 60 * 1000,
+        votes: { yes: 450, no: 120 },
+        author: 'SP1ABC...XYZ',
+        tags: ['defi', 'lending', 'smart-contracts']
+      },
+      {
+        id: 2,
+        title: 'NFT Marketplace Infrastructure',
+        description: 'Create marketplace for trading NFTs',
+        status: 'approved',
+        category: 'nft',
+        amount: 50000,
+        createdAt: baseTime - 60 * 24 * 60 * 60 * 1000,
+        votes: { yes: 380, no: 95 },
+        author: 'SP2DEF...ABC',
+        tags: ['nft', 'marketplace']
+      }
+    ];
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
     status: 'all',
@@ -86,7 +87,6 @@ export default function ProposalArchive() {
 
     // Date range
     if (filters.dateRange !== 'all') {
-      const now = Date.now();
       const ranges: Record<string, number> = {
         '7d': 7 * 24 * 60 * 60 * 1000,
         '30d': 30 * 24 * 60 * 60 * 1000,
