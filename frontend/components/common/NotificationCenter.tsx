@@ -37,116 +37,129 @@ interface NotificationCenterProps {
   userAddress: string;
 }
 
+const createMockNotifications = (baseTime: number): Notification[] => [
+  {
+    id: 1,
+    type: 'proposal',
+    title: 'New Proposal Submitted',
+    message: 'alice_dao created "DeFi Lending Protocol v2" proposal',
+    timestamp: baseTime - 2 * 60 * 60 * 1000,
+    read: false,
+    priority: 'high',
+    actionUrl: '/proposals/42',
+    metadata: { proposalId: 42, userAddress: 'SP1ABC...DEF' }
+  },
+  {
+    id: 2,
+    type: 'vote',
+    title: 'Proposal Voting Ending Soon',
+    message: 'Only 6 hours left to vote on "Community NFT Marketplace"',
+    timestamp: baseTime - 4 * 60 * 60 * 1000,
+    read: false,
+    priority: 'high',
+    actionUrl: '/proposals/28'
+  },
+  {
+    id: 3,
+    type: 'achievement',
+    title: 'New Achievement Unlocked!',
+    message: 'You earned the "Top Contributor" badge 🏆',
+    timestamp: baseTime - 12 * 60 * 60 * 1000,
+    read: true,
+    priority: 'medium'
+  },
+  {
+    id: 4,
+    type: 'comment',
+    title: 'New Comment on Your Proposal',
+    message: 'bob_builder commented on your proposal #15',
+    timestamp: baseTime - 24 * 60 * 60 * 1000,
+    read: false,
+    priority: 'medium',
+    actionUrl: '/proposals/15#comments'
+  },
+  {
+    id: 5,
+    type: 'mention',
+    title: 'You were mentioned',
+    message: 'carol_artist mentioned you in a comment',
+    timestamp: baseTime - 36 * 60 * 60 * 1000,
+    read: true,
+    priority: 'low'
+  },
+  {
+    id: 6,
+    type: 'treasury',
+    title: 'Treasury Transaction',
+    message: '75,000 STX distributed to approved proposal',
+    timestamp: baseTime - 48 * 60 * 60 * 1000,
+    read: true,
+    priority: 'medium',
+    metadata: { amount: 75000 }
+  },
+  {
+    id: 7,
+    type: 'delegation',
+    title: 'Voting Power Delegated',
+    message: 'dave_investor delegated 5,000 voting power to you',
+    timestamp: baseTime - 72 * 60 * 60 * 1000,
+    read: true,
+    priority: 'medium',
+    metadata: { amount: 5000, userAddress: 'SP4STU...VWX' }
+  },
+  {
+    id: 8,
+    type: 'system',
+    title: 'System Update',
+    message: 'New features available: Dashboard customization and insights',
+    timestamp: baseTime - 96 * 60 * 60 * 1000,
+    read: true,
+    priority: 'low'
+  }
+];
+
+const defaultNotificationPreferences = (): NotificationPreferences => ({
+  emailEnabled: true,
+  pushEnabled: false,
+  digestMode: 'instant',
+  categories: {
+    proposals: true,
+    votes: true,
+    comments: true,
+    mentions: true,
+    achievements: true,
+    treasury: true,
+    system: true
+  }
+});
+
+const loadNotificationPreferences = (userAddress: string): NotificationPreferences => {
+  if (typeof window === 'undefined') {
+    return defaultNotificationPreferences();
+  }
+
+  const savedPrefs = window.localStorage.getItem(`notification-prefs-${userAddress}`);
+  if (!savedPrefs) {
+    return defaultNotificationPreferences();
+  }
+
+  return JSON.parse(savedPrefs) as NotificationPreferences;
+};
+
 export default function NotificationCenter({ userAddress }: NotificationCenterProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
+  const [notifications, setNotifications] = useState<Notification[]>(() => createMockNotifications(currentTime));
   const [filter, setFilter] = useState<'all' | 'unread' | 'high'>('all');
   const [showSettings, setShowSettings] = useState(false);
-  const [preferences, setPreferences] = useState<NotificationPreferences>({
-    emailEnabled: true,
-    pushEnabled: false,
-    digestMode: 'instant',
-    categories: {
-      proposals: true,
-      votes: true,
-      comments: true,
-      mentions: true,
-      achievements: true,
-      treasury: true,
-      system: true
-    }
-  });
+  const [preferences, setPreferences] = useState<NotificationPreferences>(() => loadNotificationPreferences(userAddress));
 
   useEffect(() => {
-    // Load notifications
-    const mockNotifications: Notification[] = [
-      {
-        id: 1,
-        type: 'proposal',
-        title: 'New Proposal Submitted',
-        message: 'alice_dao created "DeFi Lending Protocol v2" proposal',
-        timestamp: Date.now() - 2 * 60 * 60 * 1000,
-        read: false,
-        priority: 'high',
-        actionUrl: '/proposals/42',
-        metadata: { proposalId: 42, userAddress: 'SP1ABC...DEF' }
-      },
-      {
-        id: 2,
-        type: 'vote',
-        title: 'Proposal Voting Ending Soon',
-        message: 'Only 6 hours left to vote on "Community NFT Marketplace"',
-        timestamp: Date.now() - 4 * 60 * 60 * 1000,
-        read: false,
-        priority: 'high',
-        actionUrl: '/proposals/28'
-      },
-      {
-        id: 3,
-        type: 'achievement',
-        title: 'New Achievement Unlocked!',
-        message: 'You earned the "Top Contributor" badge 🏆',
-        timestamp: Date.now() - 12 * 60 * 60 * 1000,
-        read: true,
-        priority: 'medium'
-      },
-      {
-        id: 4,
-        type: 'comment',
-        title: 'New Comment on Your Proposal',
-        message: 'bob_builder commented on your proposal #15',
-        timestamp: Date.now() - 24 * 60 * 60 * 1000,
-        read: false,
-        priority: 'medium',
-        actionUrl: '/proposals/15#comments'
-      },
-      {
-        id: 5,
-        type: 'mention',
-        title: 'You were mentioned',
-        message: 'carol_artist mentioned you in a comment',
-        timestamp: Date.now() - 36 * 60 * 60 * 1000,
-        read: true,
-        priority: 'low'
-      },
-      {
-        id: 6,
-        type: 'treasury',
-        title: 'Treasury Transaction',
-        message: '75,000 STX distributed to approved proposal',
-        timestamp: Date.now() - 48 * 60 * 60 * 1000,
-        read: true,
-        priority: 'medium',
-        metadata: { amount: 75000 }
-      },
-      {
-        id: 7,
-        type: 'delegation',
-        title: 'Voting Power Delegated',
-        message: 'dave_investor delegated 5,000 voting power to you',
-        timestamp: Date.now() - 72 * 60 * 60 * 1000,
-        read: true,
-        priority: 'medium',
-        metadata: { amount: 5000, userAddress: 'SP4STU...VWX' }
-      },
-      {
-        id: 8,
-        type: 'system',
-        title: 'System Update',
-        message: 'New features available: Dashboard customization and insights',
-        timestamp: Date.now() - 96 * 60 * 60 * 1000,
-        read: true,
-        priority: 'low'
-      }
-    ];
+    const timer = window.setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 60_000);
 
-    setNotifications(mockNotifications);
-
-    // Load preferences
-    const savedPrefs = localStorage.getItem(`notification-prefs-${userAddress}`);
-    if (savedPrefs) {
-      setPreferences(JSON.parse(savedPrefs));
-    }
-  }, [userAddress]);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const markAsRead = (id: number) => {
     setNotifications(notifications.map(n => 
@@ -175,7 +188,7 @@ export default function NotificationCenter({ userAddress }: NotificationCenterPr
   };
 
   const formatTimeAgo = (timestamp: number) => {
-    const diff = Date.now() - timestamp;
+    const diff = currentTime - timestamp;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     
@@ -369,7 +382,7 @@ export default function NotificationCenter({ userAddress }: NotificationCenterPr
           <div className="text-center py-12 text-gray-500 dark:text-gray-400">
             <div className="text-4xl mb-2">📭</div>
             <div>No notifications</div>
-            <div className="text-sm">You're all caught up!</div>
+            <div className="text-sm">You&apos;re all caught up!</div>
           </div>
         ) : (
           filteredNotifications.map(notification => (

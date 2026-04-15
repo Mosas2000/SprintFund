@@ -1,6 +1,4 @@
 'use client';
-
-import { useState, useEffect } from 'react';
 import {
     AreaChart,
     Area,
@@ -12,12 +10,10 @@ import {
     PieChart,
     Pie,
     Cell,
-    BarChart,
-    Bar,
     LineChart,
     Line
 } from 'recharts';
-import { TrendingUp, ArrowUpRight, ArrowDownRight, Clock, Award, Activity, Sparkles, Shield } from 'lucide-react';
+import { TrendingUp, ArrowUpRight, ArrowDownRight, Activity, Sparkles, Shield } from 'lucide-react';
 import { InsightsFeed } from './index';
 import TreasuryTransparency from '../TreasuryTransparency';
 import EcosystemBenchmarks from '../charts/EcosystemBenchmarks';
@@ -52,15 +48,6 @@ const recentActivity = [
 ];
 
 export default function OverviewTab() {
-    const [refreshCount, setRefreshCount] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setRefreshCount(prev => prev + 1);
-        }, 30000);
-        return () => clearInterval(interval);
-    }, []);
-
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
             {/* KPI Cards */}
