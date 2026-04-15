@@ -2,7 +2,6 @@
 
 import React from 'react';
 import LiveVoteStream from './LiveVoteStream';
-import { motion } from 'framer-motion';
 
 export default function WarRoom() {
     return (

@@ -9,7 +9,7 @@ export default function InsightsFeed() {
     const [insights, setInsights] = useState<Insight[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | Insight['type']>('all');
-    const [sortBy, setSortBy] = useState<'priority' | 'recency'>('priority');
+    const [sortBy] = useState<'priority' | 'recency'>('priority');
     const [search, setSearch] = useState('');
     const [dismissedIds, setDismissedIds] = useState<string[]>([]);
     const [selectedInsight, setSelectedInsight] = useState<Insight | null>(null);

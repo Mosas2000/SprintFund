@@ -1,6 +1,6 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
 
 const COLORS = ['#8b5cf6', '#06b6d4', '#f59e0b', '#10b981'];

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Line, Doughnut, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -41,11 +41,7 @@ interface CategoryData {
   color: string;
 }
 
-interface UserStatsDashboardProps {
-  userAddress: string;
-}
-
-export default function UserStatsDashboard({ userAddress }: UserStatsDashboardProps) {
+export default function UserStatsDashboard() {
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
   const [votingData] = useState<VotingData[]>([
     { date: '2024-01-01', votes: 5, proposals: 3 },
@@ -338,7 +334,7 @@ export default function UserStatsDashboard({ userAddress }: UserStatsDashboardPr
             <div className="text-2xl mb-2">🎯</div>
             <h4 className="font-semibold mb-1 text-sm">Expand Categories</h4>
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              You're most active in DeFi. Try voting on Infrastructure proposals to diversify!
+              You&apos;re most active in DeFi. Try voting on Infrastructure proposals to diversify!
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4">

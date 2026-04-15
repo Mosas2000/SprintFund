@@ -2,10 +2,9 @@
 
 interface TwitterShareButtonProps {
     proposalTitle: string;
-    proposalId: number;
 }
 
-export default function TwitterShareButton({ proposalTitle, proposalId }: TwitterShareButtonProps) {
+export default function TwitterShareButton({ proposalTitle }: TwitterShareButtonProps) {
     const handleShare = () => {
         const text = `Check out this proposal on SprintFund: "${proposalTitle}" 🚀\n\nVote now and help shape the future of decentralized funding!\n\n#SprintFund #StacksDAO #Web3`;
         const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;

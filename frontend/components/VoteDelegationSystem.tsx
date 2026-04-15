@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Shield, ArrowRight, Star, Search } from 'lucide-react';
+import { Shield, ArrowRight, Star, Search } from 'lucide-react';
 
 const delegates = [
     { address: 'SP12...ABCD', name: 'Mosa', reputation: 4.9, activeVotes: 156, categories: ['DeFi', 'Infrastructure'] },
