@@ -57,7 +57,7 @@ export default function TreasuryDashboard() {
     healthScore: 87
   });
 
-  const [balanceHistory, setBalanceHistory] = useState<TreasuryBalance[]>([
+  const [balanceHistory] = useState<TreasuryBalance[]>([
     { date: '2024-01-01', balance: 2400000, inflow: 50000, outflow: 30000 },
     { date: '2024-01-08', balance: 2450000, inflow: 60000, outflow: 35000 },
     { date: '2024-01-15', balance: 2500000, inflow: 55000, outflow: 40000 },

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Code, Layout, Palette, Terminal, Globe, Zap } from 'lucide-react';
+import { Code, Palette, Terminal, Globe } from 'lucide-react';
 
 const templates = [
     { id: 'tech', name: 'Open Source Tooling', icon: Code, color: 'text-blue-500', bg: 'bg-blue-500/10' },

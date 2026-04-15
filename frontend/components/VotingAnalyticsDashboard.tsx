@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface VoteData {
   proposalId: number;
@@ -12,16 +12,17 @@ interface VoteData {
 }
 
 export default function VotingAnalyticsDashboard() {
-  const [votes, setVotes] = useState<VoteData[]>([]);
+  const [baseTimestamp] = useState(() => Date.now());
+  const [votes] = useState<VoteData[]>(() => {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
+    const stored = localStorage.getItem('voteHistory');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [filterCategory, setFilterCategory] = useState('all');
   const [dateRange, setDateRange] = useState('all');
-
-  useEffect(() => {
-    const stored = localStorage.getItem('voteHistory');
-    if (stored) {
-      setVotes(JSON.parse(stored));
-    }
-  }, []);
 
   const filterVotes = () => {
     let filtered = votes;
@@ -31,13 +32,12 @@ export default function VotingAnalyticsDashboard() {
     }
 
     if (dateRange !== 'all') {
-      const now = Date.now();
       const ranges: Record<string, number> = {
         '7d': 7 * 24 * 60 * 60 * 1000,
         '30d': 30 * 24 * 60 * 60 * 1000,
         '90d': 90 * 24 * 60 * 60 * 1000
       };
-      filtered = filtered.filter(v => now - v.timestamp < ranges[dateRange]);
+      filtered = filtered.filter(v => baseTimestamp - v.timestamp < ranges[dateRange]);
     }
 
     return filtered;
@@ -84,7 +84,7 @@ export default function VotingAnalyticsDashboard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `voting-analytics-${Date.now()}.csv`;
+    a.download = `voting-analytics-${baseTimestamp}.csv`;
     a.click();
   };
 
