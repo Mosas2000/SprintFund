@@ -54,7 +54,7 @@ export default function EcosystemRoadmap() {
                                     {step.title}
                                 </h4>
                                 <p className="text-sm font-medium text-slate-400 leading-relaxed uppercase tracking-tighter italic">
-                                    "{step.desc}"
+                                    &quot;{step.desc}&quot;
                                 </p>
                             </div>
                         </motion.div>

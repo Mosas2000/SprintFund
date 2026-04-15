@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { PaginatedProposalList } from './PaginatedProposalList';
 import { ProposalFilterPanel } from './ProposalFilterPanel';
 import { ProposalSortbar } from './ProposalSortbar';
@@ -13,7 +13,7 @@ type ValidSortBy = 'title' | 'createdAt' | 'votes' | 'requestedAmount';
 export const ProposalDashboard: React.FC<ProposalDashboardProps> = ({
   onProposalSelect,
 }) => {
-  const { filters, sort, updateFilter, updateSort, clearFilters } = useProposalFilters();
+  const { sort, updateFilter, updateSort } = useProposalFilters();
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
 
