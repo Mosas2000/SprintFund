@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { getAllProposals, getProposalCount } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
-import type { Proposal } from '@/types';
 
 export default function Stats() {
     const [totalProposals, setTotalProposals] = useState(0);
@@ -11,10 +10,6 @@ export default function Stats() {
     const [totalDistributed, setTotalDistributed] = useState(0);
     const [topProposers, setTopProposers] = useState<{ address: string; count: number }[]>([]);
     const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchStats();
-    }, []);
 
     const fetchStats = async () => {
         try {
@@ -61,6 +56,14 @@ export default function Stats() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const loadStats = async () => {
+            await fetchStats();
+        };
+
+        void loadStats();
+    }, []);
 
     // Uses centralized formatSTX from utils/formatSTX
 

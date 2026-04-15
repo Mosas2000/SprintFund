@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Delegation {
@@ -14,17 +14,51 @@ interface VoteDelegationProps {
 }
 
 export default function VoteDelegation({ userAddress }: VoteDelegationProps) {
+  const [baseTimestamp] = useState(() => Date.now());
   const [delegateTo, setDelegateTo] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [currentDelegation, setCurrentDelegation] = useState<Delegation | null>(null);
-  const [delegatedToMe, setDelegatedToMe] = useState<string[]>([]);
-  const [totalDelegatedVotes, setTotalDelegatedVotes] = useState(0);
+  const [currentDelegation, setCurrentDelegation] = useState<Delegation | null>(() => {
+    if (!userAddress || typeof window === 'undefined') {
+      return null;
+    }
 
-  useEffect(() => {
-    loadDelegationData();
-  }, [userAddress]);
+    const stored = localStorage.getItem(`delegation-${userAddress}`);
+    return stored ? JSON.parse(stored) : null;
+  });
+  const [delegatedToMe, setDelegatedToMe] = useState<string[]>(() => {
+    if (!userAddress || typeof window === 'undefined') {
+      return [];
+    }
 
-  const loadDelegationData = () => {
+    return Object.keys(localStorage)
+      .filter((key) => key.startsWith('delegation-') && key !== `delegation-${userAddress}`)
+      .filter((key) => {
+        const data = localStorage.getItem(key);
+        if (!data) return false;
+
+        return JSON.parse(data).delegateTo === userAddress;
+      })
+      .map((key) => key.replace('delegation-', ''));
+  });
+  const [totalDelegatedVotes, setTotalDelegatedVotes] = useState(() => {
+    if (!userAddress || typeof window === 'undefined') {
+      return 0;
+    }
+
+    return Object.keys(localStorage).reduce((total, key) => {
+      if (!key.startsWith('delegation-') || key === `delegation-${userAddress}`) {
+        return total;
+      }
+
+      const data = localStorage.getItem(key);
+      if (!data) return total;
+
+      const delegation = JSON.parse(data);
+      return delegation.delegateTo === userAddress ? total + (delegation.voteCount || 1) : total;
+    }, 0);
+  });
+
+  const loadDelegationData = useCallback(() => {
     if (!userAddress) return;
 
     // Load current delegation
@@ -54,7 +88,7 @@ export default function VoteDelegation({ userAddress }: VoteDelegationProps) {
 
     setDelegatedToMe(delegators);
     setTotalDelegatedVotes(totalVotes);
-  };
+  }, [userAddress]);
 
   const handleDelegate = () => {
     if (!delegateTo.trim()) {
@@ -74,7 +108,7 @@ export default function VoteDelegation({ userAddress }: VoteDelegationProps) {
 
     const delegation: Delegation = {
       delegateTo,
-      delegatedAt: Date.now(),
+      delegatedAt: baseTimestamp,
       voteCount: 1
     };
 

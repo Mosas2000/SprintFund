@@ -44,6 +44,7 @@ interface SustainabilityMetric {
 }
 
 export default function TreasuryForecasting() {
+  const [currentTime] = useState(() => Date.now());
   const [currentBalance] = useState(650000);
   const [selectedScenario, setSelectedScenario] = useState<'optimistic' | 'realistic' | 'pessimistic'>('realistic');
   
@@ -312,7 +313,7 @@ export default function TreasuryForecasting() {
                 {selectedScenarioData.runway} months
               </div>
               <div className="text-sm text-gray-700 dark:text-gray-300">
-                Treasury depletes by {new Date(Date.now() + selectedScenarioData.runway * 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                Treasury depletes by {new Date(currentTime + selectedScenarioData.runway * 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
               </div>
             </div>
 
