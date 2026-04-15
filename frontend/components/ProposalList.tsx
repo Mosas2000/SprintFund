@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { boolCV, uintCV, AnchorMode, PostConditionMode } from '@stacks/transactions';
-import { getAllProposals, getStake, callVote } from '@/lib/stacks';
+import { getAllProposals, getStake } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
 import { CONTRACT_ADDRESS, CONTRACT_NAME } from '../config';
 import { getStacksNetwork } from '../src/config/stacks-network';
@@ -45,9 +45,25 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
         activeFilterCount,
     } = useNextProposalFilters();
 
+    const fetchProposals = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError('');
+
+            // Use centralized API with caching
+            const fetchedProposals = await getAllProposals();
+            setProposals(fetchedProposals);
+        } catch (err: unknown) {
+            console.error('Error fetching proposals:', err);
+            setError('Failed to load proposals. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
         fetchProposals();
-    }, []);
+    }, [fetchProposals]);
 
     useEffect(() => {
         const fetchStake = async () => {
@@ -70,22 +86,6 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
 
         fetchStake();
     }, [userAddress]);
-
-    const fetchProposals = useCallback(async () => {
-        try {
-            setLoading(true);
-            setError('');
-
-            // Use centralized API with caching
-            const fetchedProposals = await getAllProposals();
-            setProposals(fetchedProposals);
-            setLoading(false);
-        } catch (err: unknown) {
-            console.error('Error fetching proposals:', err);
-            setError('Failed to load proposals. Please try again.');
-            setLoading(false);
-        }
-    }, []);
 
     useRefreshOnConfirmation(fetchProposals);
 
@@ -159,7 +159,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
             const { openContractCall } = await import('@stacks/connect');
             await execute(async () => {
                 return new Promise<string>((resolve, reject) => {
-                    const result = openContractCall({
+                    openContractCall({
                         ...options,
                         onFinish: (data: { txId: string }) => {
                             console.log('Vote transaction submitted:', data);
