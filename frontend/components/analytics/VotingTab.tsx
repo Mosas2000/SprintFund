@@ -12,24 +12,15 @@ import {
     XAxis,
     YAxis,
     CartesianGrid,
-    LineChart,
-    Line,
     AreaChart,
     Area
 } from 'recharts';
 import {
-    Vote,
-    Users,
-    TrendingUp,
-    Zap,
-    Activity,
     ChevronUp,
     ChevronDown,
     Shield,
-    Target,
-    Globe
+    Zap
 } from 'lucide-react';
-import { VotingHeatmap, VoterNetworkGraph } from './index';
 import BulkVotingQueue from '../BulkVotingQueue';
 import type { StatsCardProps } from '../../src/types';
 
@@ -41,8 +32,6 @@ interface LiveVote {
     weight: number;
     time: string;
 }
-
-const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
 const segmentationData = [
     { name: 'Whales', value: 5, color: '#EA580C' },
@@ -69,18 +58,14 @@ const influenceRankings = [
 ];
 
 export default function VotingTab() {
-    const [liveVotes, setLiveVotes] = useState<LiveVote[]>([]);
+    const [liveVotes, setLiveVotes] = useState<LiveVote[]>(() => [
+        { id: 1, user: 'mosas.btc', proposal: 'Stacks Wallet v3', type: 'YES', weight: 450, time: 'Now' },
+        { id: 2, user: 'alice.stx', proposal: 'NFT Grant #42', type: 'YES', weight: 120, time: '2s ago' },
+        { id: 3, user: 'bob.btc', proposal: 'Governance SIP-12', type: 'NO', weight: 800, time: '5s ago' },
+        { id: 4, user: 'charlie.stx', proposal: 'Stacks Wallet v3', type: 'YES', weight: 25, time: '12s ago' },
+    ]);
 
     useEffect(() => {
-        // Mock live voting feed
-        const items: LiveVote[] = [
-            { id: 1, user: 'mosas.btc', proposal: 'Stacks Wallet v3', type: 'YES', weight: 450, time: 'Now' },
-            { id: 2, user: 'alice.stx', proposal: 'NFT Grant #42', type: 'YES', weight: 120, time: '2s ago' },
-            { id: 3, user: 'bob.btc', proposal: 'Governance SIP-12', type: 'NO', weight: 800, time: '5s ago' },
-            { id: 4, user: 'charlie.stx', proposal: 'Stacks Wallet v3', type: 'YES', weight: 25, time: '12s ago' },
-        ];
-        setLiveVotes(items);
-
         const interval = setInterval(() => {
             setLiveVotes(prev => {
                 const newVote: LiveVote = {

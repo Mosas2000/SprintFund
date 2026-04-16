@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface User {
   address: string;
@@ -27,17 +27,64 @@ interface SocialGraphProps {
   currentUser: string;
 }
 
-export default function SocialGraph({ currentUser }: SocialGraphProps) {
+export default function SocialGraph({ currentUser: _currentUser }: SocialGraphProps) {
+  void _currentUser;
+  const [now] = useState(() => Date.now());
   const [activeTab, setActiveTab] = useState<'following' | 'followers' | 'discover'>('following');
-  const [users, setUsers] = useState<User[]>([]);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterReputation, setFilterReputation] = useState<'all' | 'high' | 'medium'>('all');
-
-  useEffect(() => {
-    // Load mock data
-    const mockUsers: User[] = [
-      {
+  const [users, setUsers] = useState<User[]>(() => [
+    {
+      address: 'SP1ABC...DEF',
+      username: 'alice_dao',
+      avatar: '👩‍💼',
+      reputation: 8500,
+      followers: 342,
+      following: 89,
+      bio: 'DeFi enthusiast | Building the future of finance',
+      isFollowing: true,
+      mutualConnections: 12,
+      lastActive: now - 2 * 60 * 60 * 1000
+    },
+    {
+      address: 'SP2XYZ...GHI',
+      username: 'bob_builder',
+      avatar: '👨‍💻',
+      reputation: 6200,
+      followers: 215,
+      following: 156,
+      bio: 'Smart contract developer | Open source contributor',
+      isFollowing: true,
+      mutualConnections: 8,
+      lastActive: now - 5 * 60 * 60 * 1000
+    },
+    {
+      address: 'SP3MNO...PQR',
+      username: 'carol_artist',
+      avatar: '🎨',
+      reputation: 7800,
+      followers: 498,
+      following: 203,
+      bio: 'NFT creator | Community advocate',
+      isFollowing: false,
+      mutualConnections: 5,
+      lastActive: now - 24 * 60 * 60 * 1000
+    },
+    {
+      address: 'SP4STU...VWX',
+      username: 'dave_investor',
+      avatar: '💼',
+      reputation: 9200,
+      followers: 621,
+      following: 45,
+      bio: 'VC | Crypto investor | Supporting innovation',
+      isFollowing: false,
+      mutualConnections: 15,
+      lastActive: now - 1 * 60 * 60 * 1000
+    }
+  ]);
+  const [activities] = useState<Activity[]>(() => [
+    {
+      id: 1,
+      user: {
         address: 'SP1ABC...DEF',
         username: 'alice_dao',
         avatar: '👩‍💼',
@@ -47,9 +94,15 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
         bio: 'DeFi enthusiast | Building the future of finance',
         isFollowing: true,
         mutualConnections: 12,
-        lastActive: Date.now() - 2 * 60 * 60 * 1000
+        lastActive: now - 2 * 60 * 60 * 1000
       },
-      {
+      type: 'proposal',
+      content: 'Created proposal: DeFi Lending Protocol v2',
+      timestamp: now - 3 * 60 * 60 * 1000
+    },
+    {
+      id: 2,
+      user: {
         address: 'SP2XYZ...GHI',
         username: 'bob_builder',
         avatar: '👨‍💻',
@@ -59,68 +112,51 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
         bio: 'Smart contract developer | Open source contributor',
         isFollowing: true,
         mutualConnections: 8,
-        lastActive: Date.now() - 5 * 60 * 60 * 1000
+        lastActive: now - 5 * 60 * 60 * 1000
       },
-      {
-        address: 'SP3MNO...PQR',
-        username: 'carol_artist',
-        avatar: '🎨',
-        reputation: 7800,
-        followers: 498,
-        following: 203,
-        bio: 'NFT creator | Community advocate',
-        isFollowing: false,
-        mutualConnections: 5,
-        lastActive: Date.now() - 24 * 60 * 60 * 1000
+      type: 'vote',
+      content: 'Voted YES on "Community NFT Marketplace"',
+      timestamp: now - 5 * 60 * 60 * 1000
+    },
+    {
+      id: 3,
+      user: {
+        address: 'SP1ABC...DEF',
+        username: 'alice_dao',
+        avatar: '👩‍💼',
+        reputation: 8500,
+        followers: 342,
+        following: 89,
+        bio: 'DeFi enthusiast | Building the future of finance',
+        isFollowing: true,
+        mutualConnections: 12,
+        lastActive: now - 2 * 60 * 60 * 1000
       },
-      {
-        address: 'SP4STU...VWX',
-        username: 'dave_investor',
-        avatar: '💼',
-        reputation: 9200,
-        followers: 621,
-        following: 45,
-        bio: 'VC | Crypto investor | Supporting innovation',
-        isFollowing: false,
-        mutualConnections: 15,
-        lastActive: Date.now() - 1 * 60 * 60 * 1000
-      }
-    ];
-
-    const mockActivities: Activity[] = [
-      {
-        id: 1,
-        user: mockUsers[0],
-        type: 'proposal',
-        content: 'Created proposal: DeFi Lending Protocol v2',
-        timestamp: Date.now() - 3 * 60 * 60 * 1000
+      type: 'achievement',
+      content: 'Earned "Top Contributor" badge 🏆',
+      timestamp: now - 12 * 60 * 60 * 1000
+    },
+    {
+      id: 4,
+      user: {
+        address: 'SP2XYZ...GHI',
+        username: 'bob_builder',
+        avatar: '👨‍💻',
+        reputation: 6200,
+        followers: 215,
+        following: 156,
+        bio: 'Smart contract developer | Open source contributor',
+        isFollowing: true,
+        mutualConnections: 8,
+        lastActive: now - 5 * 60 * 60 * 1000
       },
-      {
-        id: 2,
-        user: mockUsers[1],
-        type: 'vote',
-        content: 'Voted YES on "Community NFT Marketplace"',
-        timestamp: Date.now() - 5 * 60 * 60 * 1000
-      },
-      {
-        id: 3,
-        user: mockUsers[0],
-        type: 'achievement',
-        content: 'Earned "Top Contributor" badge 🏆',
-        timestamp: Date.now() - 12 * 60 * 60 * 1000
-      },
-      {
-        id: 4,
-        user: mockUsers[1],
-        type: 'comment',
-        content: 'Commented on proposal #42',
-        timestamp: Date.now() - 18 * 60 * 60 * 1000
-      }
-    ];
-
-    setUsers(mockUsers);
-    setActivities(mockActivities);
-  }, []);
+      type: 'comment',
+      content: 'Commented on proposal #42',
+      timestamp: now - 18 * 60 * 60 * 1000
+    }
+  ]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterReputation, setFilterReputation] = useState<'all' | 'high' | 'medium'>('all');
 
   const followUser = (address: string) => {
     setUsers(users.map(user => 
@@ -139,7 +175,7 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
   };
 
   const formatTimeAgo = (timestamp: number) => {
-    const diff = Date.now() - timestamp;
+    const diff = now - timestamp;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     

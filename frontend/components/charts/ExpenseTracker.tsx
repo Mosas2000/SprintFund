@@ -20,19 +20,12 @@ interface Expense {
   proposalId?: number;
 }
 
-interface ExpenseApproval {
-  expenseId: number;
-  approver: string;
-  status: 'approved' | 'rejected';
-  reason?: string;
-  timestamp: number;
-}
-
 export default function ExpenseTracker() {
+  const [baseTime] = useState(() => Date.now());
   const [expenses, setExpenses] = useState<Expense[]>([
     {
       id: 1,
-      date: Date.now() - 2 * 24 * 60 * 60 * 1000,
+      date: baseTime - 2 * 24 * 60 * 60 * 1000,
       category: 'DeFi',
       description: 'Grant #42 - DeFi Protocol Development',
       amount: 75000,
@@ -47,7 +40,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 2,
-      date: Date.now() - 5 * 24 * 60 * 60 * 1000,
+      date: baseTime - 5 * 24 * 60 * 60 * 1000,
       category: 'Infrastructure',
       description: 'AWS Cloud Services',
       amount: 3500,
@@ -63,7 +56,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 3,
-      date: Date.now() - 7 * 24 * 60 * 60 * 1000,
+      date: baseTime - 7 * 24 * 60 * 60 * 1000,
       category: 'Marketing',
       description: 'Social Media Campaign - Q1',
       amount: 8000,
@@ -76,7 +69,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 4,
-      date: Date.now() - 10 * 24 * 60 * 60 * 1000,
+      date: baseTime - 10 * 24 * 60 * 60 * 1000,
       category: 'Operational',
       description: 'Legal & Compliance Consulting',
       amount: 12000,
@@ -91,7 +84,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 5,
-      date: Date.now() - 1 * 24 * 60 * 60 * 1000,
+      date: baseTime - 1 * 24 * 60 * 60 * 1000,
       category: 'Community',
       description: 'Community Event Sponsorship',
       amount: 5000,
@@ -105,7 +98,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 6,
-      date: Date.now() - 15 * 24 * 60 * 60 * 1000,
+      date: baseTime - 15 * 24 * 60 * 60 * 1000,
       category: 'NFT',
       description: 'Grant #38 - NFT Marketplace',
       amount: 45000,
@@ -120,7 +113,6 @@ export default function ExpenseTracker() {
     }
   ]);
 
-  const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [filterStatus, setFilterStatus] = useState<'all' | Expense['status']>('all');
@@ -162,7 +154,6 @@ export default function ExpenseTracker() {
 
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
   const pendingExpenses = expenses.filter(exp => exp.status === 'pending').reduce((sum, exp) => sum + exp.amount, 0);
-  const approvedExpenses = expenses.filter(exp => exp.status === 'approved').reduce((sum, exp) => sum + exp.amount, 0);
   const paidExpenses = expenses.filter(exp => exp.status === 'paid').reduce((sum, exp) => sum + exp.amount, 0);
 
   const recurringTotal = expenses.filter(exp => exp.recurring).reduce((sum, exp) => sum + exp.amount, 0);
