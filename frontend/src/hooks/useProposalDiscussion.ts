@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useConnect, UserSession } from '@stacks/connect-react';
 import { proposalDiscussionService } from '@/services/proposal-discussion';
-import { ProposalDiscussionThread, ProposalDiscussionComment } from '@/types/proposal-detail';
+import { ProposalDiscussionThread } from '@/types/proposal-detail';
 
 // Helper to safely get user address from UserSession
 function getUserAddress(userSession: UserSession | null): string | null {
@@ -27,14 +27,19 @@ function getUserName(userSession: UserSession | null): string | undefined {
 
 export function useProposalDiscussion(proposalId: string) {
   const { userSession } = useConnect();
-  const [thread, setThread] = useState<ProposalDiscussionThread | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [thread, setThread] = useState<ProposalDiscussionThread | null>(() =>
+    proposalId ? proposalDiscussionService.getDiscussionThread(proposalId) : null
+  );
+  const [loading] = useState(false);
 
   useEffect(() => {
-    if (proposalId) {
-      const discussion = proposalDiscussionService.getDiscussionThread(proposalId);
-      setThread(discussion);
-    }
+    const timeout = window.setTimeout(() => {
+      if (proposalId) {
+        setThread(proposalDiscussionService.getDiscussionThread(proposalId));
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [proposalId]);
 
   const addComment = useCallback(

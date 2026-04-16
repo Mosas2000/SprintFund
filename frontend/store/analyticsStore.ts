@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ProposalMetrics, VoterMetrics, fetchAllProposals, fetchVoterMetrics, clearAnalyticsCache } from '../utils/analytics/dataCollector';
 
 export interface AnalyticsFilters {
@@ -114,9 +114,9 @@ const useAnalyticsStore = create<AnalyticsState>((set, get) => ({
 export const useFilteredProposals = (): ProposalMetrics[] => {
   const proposals = useAnalyticsStore(state => state.proposals);
   const filters = useAnalyticsStore(state => state.filters);
+  const [now] = useState(() => Date.now());
   
   return useMemo(() => {
-    const now = Date.now();
     return proposals.filter(proposal => {
       const proposalDate = new Date(proposal.createdAt * 10 * 60 * 1000);
       
@@ -156,14 +156,14 @@ export const useFilteredProposals = (): ProposalMetrics[] => {
 
       return true;
     });
-  }, [proposals, filters]);
+  }, [proposals, filters, now]);
 };
 
 export const useAggregateStats = (): AggregateStats => {
   const filteredProposals = useFilteredProposals();
+  const [now] = useState(() => Date.now());
   
   return useMemo(() => {
-    const now = Date.now();
     const totalFunded = filteredProposals
       .filter(p => p.executed)
       .reduce((sum, p) => sum + p.amount, 0);
@@ -191,7 +191,7 @@ export const useAggregateStats = (): AggregateStats => {
       totalProposals: filteredProposals.length,
       activeProposals
     };
-  }, [filteredProposals]);
+  }, [filteredProposals, now]);
 };
 
 let refreshInterval: NodeJS.Timeout | null = null;

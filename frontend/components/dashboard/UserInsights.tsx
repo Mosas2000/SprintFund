@@ -39,10 +39,7 @@ interface OptimalStrategy {
   recommendedActions: string[];
 }
 
-interface UserInsightsProps {
-}
-
-export default function UserInsights(_props: UserInsightsProps) {
+export default function UserInsights() {
   const [activeTab, setActiveTab] = useState<'recommendations' | 'performance' | 'strategies'>('recommendations');
   const [filterImpact, setFilterImpact] = useState<'all' | 'high' | 'medium'>('all');
 

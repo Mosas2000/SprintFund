@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
     }
 
     proposals.sort((a, b) => {
-      let aVal = a[sortBy as keyof typeof a];
-      let bVal = b[sortBy as keyof typeof b];
+      const aVal = a[sortBy as keyof typeof a];
+      const bVal = b[sortBy as keyof typeof b];
 
       if (typeof aVal === 'string' && typeof bVal === 'string') {
         return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     const paginated = PaginationService.paginate(proposals, page, pageSize);
 
     return NextResponse.json(paginated);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch proposals' },
       { status: 500 }

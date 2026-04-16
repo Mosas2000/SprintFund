@@ -4,7 +4,7 @@ import { getProposal } from '../lib/stacks';
 import { callVote, callExecuteProposal } from '../lib/stacks';
 import { saveVoteRecord } from '../lib/profile-data';
 import { formatStx } from '../config';
-import { truncateAddress, explorerAddressUrl, explorerTxUrl } from '../lib/api';
+import { truncateAddress, explorerAddressUrl } from '../lib/api';
 import { sanitizeText, sanitizeMultilineText } from '../lib/sanitize';
 import { useWalletConnected, useWalletAddress } from '../store/wallet-selectors';
 import { useToast } from '../hooks/useToast';
@@ -69,7 +69,11 @@ export function ProposalDetailPage(): React.JSX.Element {
   }, [proposalId]);
 
   useEffect(() => {
-    fetchProposal();
+    const timeout = window.setTimeout(() => {
+      fetchProposal();
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [fetchProposal]);
 
   const handleVote = useCallback((support: boolean): void => {

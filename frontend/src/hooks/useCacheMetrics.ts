@@ -44,12 +44,16 @@ export function useCacheMetrics() {
 
   useEffect(() => {
     let cleanup: (() => void) | undefined;
+    let timeout: number | undefined;
 
     if (cacheConfigManager.metricsEnabled()) {
-      cleanup = startMonitoring();
+      timeout = window.setTimeout(() => {
+        cleanup = startMonitoring();
+      }, 0);
     }
 
     return () => {
+      if (timeout) window.clearTimeout(timeout);
       cleanup?.();
     };
   }, [startMonitoring]);

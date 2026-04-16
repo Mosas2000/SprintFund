@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo, RefObject } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getProposalsPage } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
@@ -120,7 +120,11 @@ export function ProposalsPage(): React.JSX.Element {
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setSelectedIndex(null);
+    const timeout = window.setTimeout(() => {
+      setSelectedIndex(null);
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [params.status, params.page]);
 
   return (
