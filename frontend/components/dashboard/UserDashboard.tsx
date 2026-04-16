@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getStake, getAllProposals } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
 import VoteDelegation from '../VoteDelegation';
@@ -14,13 +14,7 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
     const [myProposals, setMyProposals] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (userAddress) {
-            fetchUserData();
-        }
-    }, [userAddress]);
-
-    const fetchUserData = async () => {
+    const fetchUserData = useCallback(async () => {
         if (!userAddress) return;
 
         try {
@@ -45,7 +39,17 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
             console.error('Error fetching user data:', err);
             setLoading(false);
         }
-    };
+    }, [userAddress]);
+
+    useEffect(() => {
+        if (userAddress) {
+            const timeout = window.setTimeout(() => {
+                void fetchUserData();
+            }, 0);
+
+            return () => window.clearTimeout(timeout);
+        }
+    }, [userAddress, fetchUserData]);
 
     const shortenAddress = (address: string) => {
         return `${address.slice(0, 8)}...${address.slice(-6)}`;
