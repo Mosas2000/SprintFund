@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Widget {
   id: string;
@@ -30,17 +30,28 @@ interface DashboardCustomizerProps {
   userAddress: string;
 }
 
+const buildDefaultWidgets = (): Widget[] => [
+  { id: '1', title: 'Active Proposals', type: 'proposals', enabled: true, position: 0, size: 'large' },
+  { id: '2', title: 'Voting Power', type: 'voting', enabled: true, position: 1, size: 'medium' },
+  { id: '3', title: 'Treasury Overview', type: 'treasury', enabled: true, position: 2, size: 'medium' },
+  { id: '4', title: 'Recent Activity', type: 'activity', enabled: false, position: 3, size: 'small' },
+  { id: '5', title: 'Reputation Score', type: 'reputation', enabled: true, position: 4, size: 'small' },
+  { id: '6', title: 'Statistics', type: 'stats', enabled: false, position: 5, size: 'large' },
+  { id: '7', title: 'Notifications', type: 'notifications', enabled: true, position: 6, size: 'small' },
+  { id: '8', title: 'Trending Topics', type: 'trending', enabled: false, position: 7, size: 'medium' }
+];
+
+const buildDefaultLayouts = (widgets: Widget[]): Layout[] => [
+  {
+    id: 'default',
+    name: 'Default Layout',
+    widgets,
+    colorScheme: 'ocean'
+  }
+];
+
 export default function DashboardCustomizer({ userAddress }: DashboardCustomizerProps) {
-  const [widgets, setWidgets] = useState<Widget[]>([
-    { id: '1', title: 'Active Proposals', type: 'proposals', enabled: true, position: 0, size: 'large' },
-    { id: '2', title: 'Voting Power', type: 'voting', enabled: true, position: 1, size: 'medium' },
-    { id: '3', title: 'Treasury Overview', type: 'treasury', enabled: true, position: 2, size: 'medium' },
-    { id: '4', title: 'Recent Activity', type: 'activity', enabled: false, position: 3, size: 'small' },
-    { id: '5', title: 'Reputation Score', type: 'reputation', enabled: true, position: 4, size: 'small' },
-    { id: '6', title: 'Statistics', type: 'stats', enabled: false, position: 5, size: 'large' },
-    { id: '7', title: 'Notifications', type: 'notifications', enabled: true, position: 6, size: 'small' },
-    { id: '8', title: 'Trending Topics', type: 'trending', enabled: false, position: 7, size: 'medium' }
-  ]);
+  const [widgets, setWidgets] = useState<Widget[]>(() => buildDefaultWidgets());
 
   const [colorSchemes] = useState<ColorScheme[]>([
     { id: 'ocean', name: 'Ocean Blue', primary: '#3B82F6', secondary: '#1E40AF', accent: '#60A5FA' },
@@ -51,30 +62,11 @@ export default function DashboardCustomizer({ userAddress }: DashboardCustomizer
   ]);
 
   const [selectedColorScheme, setSelectedColorScheme] = useState('ocean');
-  const [layouts, setLayouts] = useState<Layout[]>([
-    {
-      id: 'default',
-      name: 'Default Layout',
-      widgets: widgets,
-      colorScheme: 'ocean'
-    }
-  ]);
+  const [layouts, setLayouts] = useState<Layout[]>(() => buildDefaultLayouts(buildDefaultWidgets()));
   const [currentLayout, setCurrentLayout] = useState('default');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [newLayoutName, setNewLayoutName] = useState('');
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Load saved customization from localStorage
-    const saved = localStorage.getItem(`dashboard-customization-${userAddress}`);
-    if (saved) {
-      const data = JSON.parse(saved);
-      setWidgets(data.widgets || widgets);
-      setSelectedColorScheme(data.colorScheme || 'ocean');
-      setLayouts(data.layouts || layouts);
-      setCurrentLayout(data.currentLayout || 'default');
-    }
-  }, [userAddress]);
 
   const saveCustomization = () => {
     const data = {
