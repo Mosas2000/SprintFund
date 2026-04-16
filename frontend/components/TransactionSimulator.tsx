@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Check, AlertTriangle, ArrowRight, ShieldCheck, Database } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, Check, ShieldCheck, Database } from 'lucide-react';
 
 interface SimulationStep {
     name: string;

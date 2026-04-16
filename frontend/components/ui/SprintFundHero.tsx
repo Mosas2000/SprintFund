@@ -1,21 +1,9 @@
 'use client';
 
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { Suspense } from 'react';
 import { ArrowRight } from 'lucide-react';
 
-// Lazy load the Dithering component for performance
-const Dithering = lazy(() =>
-  import('@paper-design/shaders-react').then((mod) => ({ default: mod.Dithering }))
-);
-
 export default function SprintFundHero() {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const scrollToProposalForm = () => {
     const proposalSection = document.querySelector('#create-proposal');
     if (proposalSection) {
@@ -26,8 +14,6 @@ export default function SprintFundHero() {
   return (
     <section
       className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center overflow-hidden rounded-[48px] mx-4 md:mx-8 my-8"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Dithering Shader Background */}
       <div className="absolute inset-0 z-0">

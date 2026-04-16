@@ -23,7 +23,7 @@ export default function ProbabilityCalculator() {
 
     const calculation = useMemo(() => {
         // Base probability
-        let prob = 60;
+        const prob = 60;
 
         // 1. Amount factor (Lower is better)
         const amountEffect = factors.amount > 100 ? -(factors.amount - 100) / 2 : (100 - factors.amount) / 4;
@@ -44,15 +44,6 @@ export default function ProbabilityCalculator() {
         const compEffect = -factors.competition / 4;
 
         const totalProb = Math.min(Math.max(prob + amountEffect + categoryEffect + descEffect + repEffect + timingEffect + compEffect, 5), 98);
-
-        // Monte Carlo simulation
-        const simulations = 1000;
-        const results = [];
-        for (let i = 0; i < simulations; i++) {
-            // Vary each factor slightly
-            const variance = (Math.random() - 0.5) * 10;
-            results.push(totalProb + variance);
-        }
 
         return {
             total: totalProb.toFixed(1),

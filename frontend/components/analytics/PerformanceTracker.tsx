@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 export default function PerformanceTracker() {
     const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'learning'>('overview');
@@ -146,7 +146,7 @@ export default function PerformanceTracker() {
 
                     <div className="mt-8 p-4 bg-white/10 rounded-xl border border-white/10">
                         <p className="text-xs italic opacity-90">
-                            "You are currently performing in the top 5% of active proposers this quarter. Keep focusing on technical documentation."
+                            &quot;You are currently performing in the top 5% of active proposers this quarter. Keep focusing on technical documentation.&quot;
                         </p>
                     </div>
                 </div>

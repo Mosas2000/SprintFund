@@ -33,6 +33,7 @@ interface PortfolioShowcaseProps {
 }
 
 export default function PortfolioShowcase({ userAddress }: PortfolioShowcaseProps) {
+  const now = Date.parse(new Date().toISOString());
   const [portfolioItems] = useState<PortfolioItem[]>([
     {
       proposalId: 42,
@@ -52,9 +53,9 @@ export default function PortfolioShowcase({ userAddress }: PortfolioShowcaseProp
         participationRate: 76
       },
       timeline: {
-        created: Date.now() - 120 * 24 * 60 * 60 * 1000,
-        approved: Date.now() - 100 * 24 * 60 * 60 * 1000,
-        executed: Date.now() - 30 * 24 * 60 * 60 * 1000
+        created: now - 120 * 24 * 60 * 60 * 1000,
+        approved: now - 100 * 24 * 60 * 60 * 1000,
+        executed: now - 30 * 24 * 60 * 60 * 1000
       },
       outcomes: [
         '1,200+ active users',
@@ -81,9 +82,9 @@ export default function PortfolioShowcase({ userAddress }: PortfolioShowcaseProp
         participationRate: 68
       },
       timeline: {
-        created: Date.now() - 150 * 24 * 60 * 60 * 1000,
-        approved: Date.now() - 130 * 24 * 60 * 60 * 1000,
-        executed: Date.now() - 60 * 24 * 60 * 60 * 1000
+        created: now - 150 * 24 * 60 * 60 * 1000,
+        approved: now - 130 * 24 * 60 * 60 * 1000,
+        executed: now - 60 * 24 * 60 * 60 * 1000
       },
       outcomes: [
         '500+ NFTs minted',
@@ -110,8 +111,8 @@ export default function PortfolioShowcase({ userAddress }: PortfolioShowcaseProp
         participationRate: 72
       },
       timeline: {
-        created: Date.now() - 90 * 24 * 60 * 60 * 1000,
-        approved: Date.now() - 70 * 24 * 60 * 60 * 1000
+        created: now - 90 * 24 * 60 * 60 * 1000,
+        approved: now - 70 * 24 * 60 * 60 * 1000
       },
       outcomes: [
         '800+ daily active users',

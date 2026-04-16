@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -46,7 +46,7 @@ interface RebalanceRecommendation {
 }
 
 export default function TreasuryDiversification() {
-  const [assets, setAssets] = useState<Asset[]>([
+  const [assets] = useState<Asset[]>([
     { name: 'STX', symbol: 'STX', amount: 1800000, value: 1800000, percentage: 72, risk: 'medium' },
     { name: 'BTC', symbol: 'BTC', amount: 2.5, value: 107500, percentage: 4.3, risk: 'low' },
     { name: 'USDC', symbol: 'USDC', amount: 300000, value: 300000, percentage: 12, risk: 'low' },
@@ -56,7 +56,7 @@ export default function TreasuryDiversification() {
     { name: 'Staked STX', symbol: 'stSTX', amount: 125000, value: 128750, percentage: 5.2, risk: 'low', apy: 8.5, protocol: 'StackingDAO' }
   ]);
 
-  const [defiPositions, setDefiPositions] = useState<DeFiPosition[]>([
+  const [defiPositions] = useState<DeFiPosition[]>([
     {
       protocol: 'StackingDAO',
       type: 'staking',
@@ -99,7 +99,7 @@ export default function TreasuryDiversification() {
     }
   ]);
 
-  const [recommendations, setRecommendations] = useState<RebalanceRecommendation[]>([
+  const [recommendations] = useState<RebalanceRecommendation[]>([
     {
       action: 'sell',
       asset: 'STX',
@@ -129,14 +129,6 @@ export default function TreasuryDiversification() {
       priority: 'medium'
     }
   ]);
-
-  const [targetAllocation, setTargetAllocation] = useState({
-    stx: 55,
-    btc: 12,
-    stablecoins: 18,
-    defi: 10,
-    other: 5
-  });
 
   const totalValue = assets.reduce((sum, asset) => sum + asset.value, 0);
   const defiTotalValue = defiPositions.reduce((sum, pos) => sum + pos.value, 0);

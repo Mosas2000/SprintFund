@@ -69,7 +69,7 @@ export default function WithdrawVoteModal({
       
       toast.success(`Vote withdrawn! Refunded ${refund.amount.toFixed(2)} STX`);
       onClose();
-    } catch (error) {
+    } catch {
       toast.error('Failed to withdraw vote');
     } finally {
       setIsWithdrawing(false);
@@ -142,7 +142,7 @@ export default function WithdrawVoteModal({
             </div>
             <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
               <div className="flex justify-between items-baseline">
-                <span className="text-sm text-blue-700 dark:text-blue-300">You'll receive:</span>
+                <span className="text-sm text-blue-700 dark:text-blue-300">You&apos;ll receive:</span>
                 <span className="text-2xl font-bold text-blue-900 dark:text-blue-100">
                   {refund.amount.toFixed(2)} STX
                 </span>

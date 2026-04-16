@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 type Stage = 'Draft' | 'Review' | 'Active' | 'Voting' | 'Executed';
 
@@ -72,23 +72,42 @@ const STAGES: StageConfig[] = [
 ];
 
 export default function ProposalWorkflow({ proposalId, initialStage = 'Draft', onStageChange }: ProposalWorkflowProps) {
-  const [currentStage, setCurrentStage] = useState<Stage>(initialStage);
-  const [stageProgress, setStageProgress] = useState<Record<Stage, number>>({
-    Draft: 0,
-    Review: 0,
-    Active: 0,
-    Voting: 0,
-    Executed: 0
-  });
-
-  useEffect(() => {
+  const [currentStage, setCurrentStage] = useState<Stage>(() => {
+    if (typeof window === 'undefined') return initialStage;
     const stored = localStorage.getItem(`proposal-${proposalId}-workflow`);
-    if (stored) {
-      const data = JSON.parse(stored);
-      setCurrentStage(data.currentStage);
-      setStageProgress(data.stageProgress);
+    if (!stored) return initialStage;
+    const data = JSON.parse(stored) as { currentStage?: Stage };
+    return data.currentStage ?? initialStage;
+  });
+  const [stageProgress] = useState<Record<Stage, number>>(() => {
+    if (typeof window === 'undefined') {
+      return {
+        Draft: 0,
+        Review: 0,
+        Active: 0,
+        Voting: 0,
+        Executed: 0
+      };
     }
-  }, [proposalId]);
+    const stored = localStorage.getItem(`proposal-${proposalId}-workflow`);
+    if (!stored) {
+      return {
+        Draft: 0,
+        Review: 0,
+        Active: 0,
+        Voting: 0,
+        Executed: 0
+      };
+    }
+    const data = JSON.parse(stored) as { stageProgress?: Record<Stage, number> };
+    return data.stageProgress ?? {
+      Draft: 0,
+      Review: 0,
+      Active: 0,
+      Voting: 0,
+      Executed: 0
+    };
+  });
 
   const updateStage = (newStage: Stage) => {
     setCurrentStage(newStage);
@@ -124,8 +143,6 @@ export default function ProposalWorkflow({ proposalId, initialStage = 'Draft', o
           {STAGES.map((stage, index) => {
             const isCompleted = index < getCurrentStageIndex();
             const isCurrent = stage.name === currentStage;
-            const isUpcoming = index > getCurrentStageIndex();
-
             return (
               <div key={stage.name} className="flex-1 flex items-center">
                 <div className="flex flex-col items-center flex-1">

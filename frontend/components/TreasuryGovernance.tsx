@@ -47,6 +47,7 @@ interface EmergencyProcedure {
 }
 
 export default function TreasuryGovernance() {
+  const now = Date.parse(new Date().toISOString());
   const [spendingLimits] = useState<SpendingLimit[]>([
     {
       id: 1,
@@ -86,13 +87,13 @@ export default function TreasuryGovernance() {
     }
   ]);
 
-  const [parameters, setParameters] = useState<TreasuryParameter[]>([
+  const [parameters] = useState<TreasuryParameter[]>([
     {
       id: 1,
       name: 'Min Proposal Threshold',
       description: 'Minimum STX required to create a funding proposal',
       currentValue: 10000,
-      lastUpdated: Date.now() - 30 * 24 * 60 * 60 * 1000,
+      lastUpdated: now - 30 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP9XYZ...123',
       requiresVote: true
     },
@@ -101,7 +102,7 @@ export default function TreasuryGovernance() {
       name: 'Vote Pass Percentage',
       description: 'Percentage of votes needed for proposal approval',
       currentValue: '60%',
-      lastUpdated: Date.now() - 60 * 24 * 60 * 60 * 1000,
+      lastUpdated: now - 60 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP8ABC...456',
       requiresVote: true
     },
@@ -110,7 +111,7 @@ export default function TreasuryGovernance() {
       name: 'Treasury Manager Multi-Sig',
       description: 'Number of signatures required for large withdrawals',
       currentValue: '3 of 5',
-      lastUpdated: Date.now() - 90 * 24 * 60 * 60 * 1000,
+      lastUpdated: now - 90 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP7DEF...789',
       requiresVote: true
     },
@@ -119,7 +120,7 @@ export default function TreasuryGovernance() {
       name: 'Emergency Pause Threshold',
       description: 'Amount that triggers emergency review',
       currentValue: 100000,
-      lastUpdated: Date.now() - 45 * 24 * 60 * 60 * 1000,
+      lastUpdated: now - 45 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP9XYZ...123',
       requiresVote: true
     }
@@ -128,7 +129,7 @@ export default function TreasuryGovernance() {
   const [auditLog] = useState<AuditEntry[]>([
     {
       id: 1,
-      timestamp: Date.now() - 2 * 60 * 60 * 1000,
+      timestamp: now - 2 * 60 * 60 * 1000,
       action: 'Grant Payout',
       actor: 'SP9XYZ...123',
       category: 'DeFi',
@@ -138,7 +139,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 2,
-      timestamp: Date.now() - 5 * 60 * 60 * 1000,
+      timestamp: now - 5 * 60 * 60 * 1000,
       action: 'Budget Increase',
       actor: 'SP8ABC...456',
       category: 'NFT',
@@ -148,7 +149,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 3,
-      timestamp: Date.now() - 12 * 60 * 60 * 1000,
+      timestamp: now - 12 * 60 * 60 * 1000,
       action: 'Parameter Update',
       actor: 'SP7DEF...789',
       category: 'Governance',
@@ -157,7 +158,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 4,
-      timestamp: Date.now() - 24 * 60 * 60 * 1000,
+      timestamp: now - 24 * 60 * 60 * 1000,
       action: 'Emergency Pause',
       actor: 'SP6GHI...012',
       category: 'Security',
@@ -166,7 +167,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 5,
-      timestamp: Date.now() - 30 * 60 * 60 * 1000,
+      timestamp: now - 30 * 60 * 60 * 1000,
       action: 'Spending Limit Set',
       actor: 'SP9XYZ...123',
       category: 'DeFi',
@@ -184,7 +185,7 @@ export default function TreasuryGovernance() {
       signaturesRequired: 2,
       cooldownPeriod: 48,
       status: 'active',
-      lastTriggered: Date.now() - 24 * 60 * 60 * 1000
+      lastTriggered: now - 24 * 60 * 60 * 1000
     },
     {
       id: 2,
@@ -208,7 +209,6 @@ export default function TreasuryGovernance() {
 
   const [, setShowLimitModal] = useState(false);
   const [, setShowParameterModal] = useState(false);
-  const [, setSelectedParameter] = useState<TreasuryParameter | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
   const filteredAuditLog = auditLog.filter(entry =>
@@ -241,14 +241,6 @@ export default function TreasuryGovernance() {
       return 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/20';
     }
     return 'text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-900/20';
-  };
-
-  const proposeParameterChange = (param: TreasuryParameter, newValue: string | number) => {
-    setParameters(parameters.map(p =>
-      p.id === param.id
-        ? { ...p, proposedValue: newValue }
-        : p
-    ));
   };
 
   return (

@@ -11,20 +11,20 @@ const signers = [
 
 export default function MultisigFlow() {
     const signedCount = signers.filter(s => s.status === 'signed').length;
-    const _isComplete = signedCount === signers.length;
+    const progressText = `${signedCount}/${signers.length} signatures collected`;
 
     return (
         <div className="p-8 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-[40px] overflow-hidden">
             <div className="flex justify-between items-start mb-10">
                 <div>
                     <h3 className="text-xl font-black uppercase tracking-tight text-white mb-1">Execution Guard</h3>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase">2/3 Multi-signature verification required</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase">{progressText}</p>
                 </div>
                 <Shield className="w-8 h-8 text-orange-600" />
             </div>
 
             <div className="space-y-6 mb-10">
-                {signers.map((s, _i) => (
+                {signers.map((s) => (
                     <div key={s.id} className="flex items-center gap-4 group">
                         <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-all ${s.status === 'signed' ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-slate-950 border-white/5 text-slate-600'
                             }`}>

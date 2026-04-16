@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo, RefObject } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getProposalsPage } from '../lib/stacks';
 import { ProposalCard } from '../components/ProposalCard';
@@ -29,7 +29,10 @@ export function ProposalsPage(): React.JSX.Element {
   const [retryCount, setRetryCount] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectionState, setSelectionState] = useState<{ key: string; index: number | null }>({
+    key: 'all:1',
+    index: null,
+  });
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -49,6 +52,8 @@ export function ProposalsPage(): React.JSX.Element {
     hasActiveFilters,
     activeFilterCount,
   } = useProposalUrlFilters();
+  const currentSelectionKey = useMemo(() => `${params.status}:${params.page}`, [params.status, params.page]);
+  const selectedIndex = selectionState.key === currentSelectionKey ? selectionState.index : null;
 
   const filtered: Proposal[] = useMemo(() => proposals.filter((p) => {
     if (params.status === 'active') return !p.executed;
@@ -57,16 +62,24 @@ export function ProposalsPage(): React.JSX.Element {
   }), [proposals, params.status]);
 
   const handleSelectUp = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev === null || prev === 0 ? filtered.length - 1 : prev - 1,
-    );
-  }, [filtered.length]);
+    setSelectionState((prev) => {
+      const activeIndex = prev.key === currentSelectionKey ? prev.index : null;
+      return {
+        key: currentSelectionKey,
+        index: activeIndex === null || activeIndex === 0 ? filtered.length - 1 : activeIndex - 1,
+      };
+    });
+  }, [filtered.length, currentSelectionKey]);
 
   const handleSelectDown = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev === null || prev === filtered.length - 1 ? 0 : prev + 1,
-    );
-  }, [filtered.length]);
+    setSelectionState((prev) => {
+      const activeIndex = prev.key === currentSelectionKey ? prev.index : null;
+      return {
+        key: currentSelectionKey,
+        index: activeIndex === null || activeIndex === filtered.length - 1 ? 0 : activeIndex + 1,
+      };
+    });
+  }, [filtered.length, currentSelectionKey]);
 
   const handleOpenSelected = useCallback(() => {
     if (selectedIndex !== null && filtered[selectedIndex]) {
@@ -118,10 +131,6 @@ export function ProposalsPage(): React.JSX.Element {
     }
     return undefined;
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    setSelectedIndex(null);
-  }, [params.status, params.page]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">

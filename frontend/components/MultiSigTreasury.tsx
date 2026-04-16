@@ -34,6 +34,7 @@ interface MultiSigConfig {
 }
 
 export default function MultiSigTreasury() {
+  const now = Date.parse(new Date().toISOString());
   const [config, setConfig] = useState<MultiSigConfig>({
     totalSigners: 5,
     requiredSignatures: 3,
@@ -53,16 +54,16 @@ export default function MultiSigTreasury() {
       requiredSignatures: 3,
       currentSignatures: 2,
       signers: [
-        { address: 'SP9XYZ...123', name: 'Alice (Treasury Manager)', signed: true, timestamp: Date.now() - 2 * 60 * 60 * 1000 },
-        { address: 'SP8ABC...456', name: 'Bob (Finance Lead)', signed: true, timestamp: Date.now() - 1 * 60 * 60 * 1000 },
+        { address: 'SP9XYZ...123', name: 'Alice (Treasury Manager)', signed: true, timestamp: now - 2 * 60 * 60 * 1000 },
+        { address: 'SP8ABC...456', name: 'Bob (Finance Lead)', signed: true, timestamp: now - 1 * 60 * 60 * 1000 },
         { address: 'SP7DEF...789', name: 'Carol (Admin)', signed: false },
         { address: 'SP6GHI...012', name: 'Dave (Auditor)', signed: false },
         { address: 'SP5JKL...345', name: 'Eve (Advisor)', signed: false }
       ],
       status: 'pending',
-      createdAt: Date.now() - 3 * 60 * 60 * 1000,
+      createdAt: now - 3 * 60 * 60 * 1000,
       threshold: 75000,
-      deadline: Date.now() + 45 * 60 * 60 * 1000
+      deadline: now + 45 * 60 * 60 * 1000
     },
     {
       id: 2,
@@ -74,15 +75,15 @@ export default function MultiSigTreasury() {
       currentSignatures: 1,
       signers: [
         { address: 'SP9XYZ...123', name: 'Alice (Treasury Manager)', signed: false },
-        { address: 'SP8ABC...456', name: 'Bob (Finance Lead)', signed: true, timestamp: Date.now() - 12 * 60 * 60 * 1000 },
+        { address: 'SP8ABC...456', name: 'Bob (Finance Lead)', signed: true, timestamp: now - 12 * 60 * 60 * 1000 },
         { address: 'SP7DEF...789', name: 'Carol (Admin)', signed: false },
         { address: 'SP6GHI...012', name: 'Dave (Auditor)', signed: false },
         { address: 'SP5JKL...345', name: 'Eve (Advisor)', signed: false }
       ],
       status: 'pending',
-      createdAt: Date.now() - 24 * 60 * 60 * 1000,
+      createdAt: now - 24 * 60 * 60 * 1000,
       threshold: 50000,
-      deadline: Date.now() + 24 * 60 * 60 * 1000
+      deadline: now + 24 * 60 * 60 * 1000
     },
     {
       id: 3,
@@ -94,20 +95,19 @@ export default function MultiSigTreasury() {
       requiredSignatures: 3,
       currentSignatures: 3,
       signers: [
-        { address: 'SP9XYZ...123', name: 'Alice (Treasury Manager)', signed: true, timestamp: Date.now() - 48 * 60 * 60 * 1000 },
-        { address: 'SP8ABC...456', name: 'Bob (Finance Lead)', signed: true, timestamp: Date.now() - 46 * 60 * 60 * 1000 },
-        { address: 'SP7DEF...789', name: 'Carol (Admin)', signed: true, timestamp: Date.now() - 45 * 60 * 60 * 1000 },
+        { address: 'SP9XYZ...123', name: 'Alice (Treasury Manager)', signed: true, timestamp: now - 48 * 60 * 60 * 1000 },
+        { address: 'SP8ABC...456', name: 'Bob (Finance Lead)', signed: true, timestamp: now - 46 * 60 * 60 * 1000 },
+        { address: 'SP7DEF...789', name: 'Carol (Admin)', signed: true, timestamp: now - 45 * 60 * 60 * 1000 },
         { address: 'SP6GHI...012', name: 'Dave (Auditor)', signed: false },
         { address: 'SP5JKL...345', name: 'Eve (Advisor)', signed: false }
       ],
       status: 'executed',
-      createdAt: Date.now() - 72 * 60 * 60 * 1000,
+      createdAt: now - 72 * 60 * 60 * 1000,
       threshold: 50000,
-      deadline: Date.now() - 24 * 60 * 60 * 1000
+      deadline: now - 24 * 60 * 60 * 1000
     }
   ]);
 
-  const [showNewTxModal, setShowNewTxModal] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'all' | Transaction['status']>('all');
@@ -180,7 +180,7 @@ export default function MultiSigTreasury() {
   };
 
   const formatTimeRemaining = (deadline: number) => {
-    const diff = deadline - Date.now();
+    const diff = deadline - now;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     
@@ -221,7 +221,6 @@ export default function MultiSigTreasury() {
             </button>
           )}
           <button
-            onClick={() => setShowNewTxModal(true)}
             disabled={isPaused}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 
                      disabled:bg-gray-400 disabled:cursor-not-allowed"

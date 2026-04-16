@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Comment {
     id: string;
@@ -16,20 +16,13 @@ interface CommentsProps {
 }
 
 export default function Comments({ proposalId, userAddress }: CommentsProps) {
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [comments, setComments] = useState<Comment[]>(() => {
+        if (typeof window === 'undefined') return [];
+        const stored = localStorage.getItem(`comments-${proposalId}`);
+        return stored ? JSON.parse(stored) : [];
+    });
     const [newComment, setNewComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const loadComments = () => {
-        const stored = localStorage.getItem(`comments-${proposalId}`);
-        if (stored) {
-            setComments(JSON.parse(stored));
-        }
-    };
-
-    useEffect(() => {
-        loadComments();
-    }, [proposalId]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -153,7 +146,7 @@ export default function Comments({ proposalId, userAddress }: CommentsProps) {
                                 </button>
                             </div>
                             <p className="text-sm font-medium text-slate-300 leading-relaxed italic border-l-2 border-orange-500/30 pl-6">
-                                "{comment.text}"
+                                &quot;{comment.text}&quot;
                             </p>
 
                             <div className="mt-6 flex items-center gap-6 opacity-40 group-hover:opacity-100 transition-opacity">

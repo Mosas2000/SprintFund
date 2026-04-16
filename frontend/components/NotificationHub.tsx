@@ -14,6 +14,7 @@ interface Notification {
 }
 
 export default function NotificationHub() {
+    const now = Date.parse(new Date().toISOString());
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([
         {
@@ -21,7 +22,7 @@ export default function NotificationHub() {
             title: 'Proposal Funded',
             message: 'Your proposal "Stacks Wallet Integration" has reached the funding threshold!',
             type: 'success',
-            timestamp: new Date(),
+            timestamp: new Date(now),
             read: false
         },
         {
@@ -29,7 +30,7 @@ export default function NotificationHub() {
             title: 'New Governance Vote',
             message: 'A new platform-wide vote on Treasury Allocation is live.',
             type: 'governance',
-            timestamp: new Date(Date.now() - 3600000),
+            timestamp: new Date(now - 3600000),
             read: false
         }
     ]);

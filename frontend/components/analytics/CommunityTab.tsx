@@ -1,22 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
-    AreaChart,
-    Area,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
     LineChart,
-    Line,
-    BarChart,
-    Bar,
-    PieChart,
-    Pie,
-    Cell
+    Line
 } from 'recharts';
 import {
     Users,
@@ -26,13 +17,9 @@ import {
     Globe,
     Heart,
     ChevronRight,
-    Zap,
     Star
 } from 'lucide-react';
 import { CommunityInsights } from './index';
-import type { HealthScoreProps } from '../../src/types';
-
-const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
 export default function CommunityTab() {
     return (
@@ -96,7 +83,7 @@ export default function CommunityTab() {
                             { label: 'Active Voters', value: '1.2K', width: '45%', color: 'from-green-600 to-green-700' },
                             { label: 'Proposers', value: '482', width: '25%', color: 'from-orange-600 to-orange-700' },
                             { label: 'Power Users', value: '124', width: '12%', color: 'from-purple-600 to-purple-700' },
-                        ].map((step, i) => (
+                        ].map((step) => (
                             <div key={step.label} className="relative">
                                 <div className="flex justify-between items-center mb-1.5 px-1">
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{step.label}</span>
@@ -279,25 +266,6 @@ export default function CommunityTab() {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    );
-}
-
-function HealthScore({ title, score, status, color }: HealthScoreProps) {
-    return (
-        <div>
-            <div className="flex justify-between items-center mb-2">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{title}</span>
-                <span className={`text-[10px] font-black ${status === 'OK' ? 'text-green-500' : 'text-orange-500'} uppercase`}>{score} / 100</span>
-            </div>
-            <div className="h-1.5 w-full bg-slate-950/50 rounded-full overflow-hidden border border-slate-800">
-                <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${score}%` }}
-                    transition={{ duration: 1.5 }}
-                    className={`h-full ${color} rounded-full`}
-                />
             </div>
         </div>
     );

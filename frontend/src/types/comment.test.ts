@@ -10,11 +10,6 @@ import type {
   NewCommentInput,
   EditCommentInput,
   CommentValidationError,
-  CommentFormProps,
-  CommentItemProps,
-  CommentListProps,
-  CommentSortToggleProps,
-  CommentSectionProps,
 } from '../types/comment';
 
 describe('Comment types', () => {

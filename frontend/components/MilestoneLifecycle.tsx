@@ -91,7 +91,7 @@ export default function MilestoneLifecycle() {
                         </div>
 
                         <p className="text-[11px] font-medium text-slate-400 leading-relaxed italic mb-4">
-                            "{ms.description}"
+                            &quot;{ms.description}&quot;
                         </p>
 
                         {ms.status === 'active' && (

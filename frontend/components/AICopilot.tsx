@@ -51,7 +51,7 @@ export default function AICopilot({ proposal }: AICopilotProps) {
                         className="p-4 rounded-lg bg-white/5 border border-white/10"
                     >
                         <p className="text-sm text-slate-300 leading-relaxed italic">
-                            "{analysis}"
+                            &quot;{analysis}&quot;
                         </p>
                         <div className="mt-4 pt-4 border-t border-white/5 flex gap-4">
                             <div className="text-center">

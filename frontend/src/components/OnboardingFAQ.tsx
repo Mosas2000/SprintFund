@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 
 interface FAQItem {
   question: string;
@@ -96,7 +97,7 @@ export function OnboardingFAQ() {
             <h2 className="text-xl font-bold text-green mb-4">{category}</h2>
 
             <div className="space-y-2">
-              {categoryItems.map((item, idx) => {
+              {categoryItems.map((item) => {
                 const itemId = FAQ_ITEMS.indexOf(item);
                 const isExpanded = expandedId === itemId;
 
@@ -139,14 +140,14 @@ export function OnboardingFAQ() {
 
       <div className="mt-12 rounded-lg border border-muted/20 bg-surface/30 p-8 text-center">
         <p className="text-muted mb-4">
-          Didn't find what you're looking for?
+          Didn&apos;t find what you&apos;re looking for?
         </p>
-        <a
+        <Link
           href="/getting-started"
           className="display inline-block rounded-lg bg-green px-6 py-3 font-semibold text-dark hover:bg-green-dim transition-colors"
         >
           View Full Getting Started Guide
-        </a>
+        </Link>
       </div>
     </div>
   );

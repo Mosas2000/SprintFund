@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 
 interface Activity {
   id: string;
@@ -21,94 +21,82 @@ interface ActivityFeedProps {
 }
 
 export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const now = Date.parse(new Date().toISOString());
+  const [activities] = useState<Activity[]>([
+    {
+      id: '1',
+      type: 'proposal',
+      title: 'Created New Proposal',
+      description: 'DeFi Lending Protocol Development',
+      timestamp: now - 2 * 60 * 60 * 1000,
+      metadata: { proposalId: 42, amount: 50000 }
+    },
+    {
+      id: '2',
+      type: 'vote',
+      title: 'Voted on Proposal',
+      description: 'NFT Marketplace Infrastructure (#38)',
+      timestamp: now - 5 * 60 * 60 * 1000,
+      metadata: { proposalId: 38, voteType: 'yes' }
+    },
+    {
+      id: '3',
+      type: 'comment',
+      title: 'Commented on Proposal',
+      description: 'Added feedback to Community Event Planning (#35)',
+      timestamp: now - 24 * 60 * 60 * 1000,
+      metadata: { proposalId: 35 }
+    },
+    {
+      id: '4',
+      type: 'achievement',
+      title: 'Achievement Unlocked',
+      description: 'Earned "Active Voter" badge',
+      timestamp: now - 2 * 24 * 60 * 60 * 1000,
+      metadata: { achievementIcon: '⭐' }
+    },
+    {
+      id: '5',
+      type: 'execution',
+      title: 'Proposal Executed',
+      description: 'Your proposal "Smart Contract Upgrade" was successfully executed',
+      timestamp: now - 3 * 24 * 60 * 60 * 1000,
+      metadata: { proposalId: 28, amount: 75000 }
+    },
+    {
+      id: '6',
+      type: 'collaboration',
+      title: 'Collaboration Invite',
+      description: 'Added as co-author to "DAO Treasury Diversification"',
+      timestamp: now - 4 * 24 * 60 * 60 * 1000,
+      metadata: { proposalId: 40 }
+    },
+    {
+      id: '7',
+      type: 'vote',
+      title: 'Voted on Proposal',
+      description: 'Marketing Campaign Q1 2026 (#36)',
+      timestamp: now - 5 * 24 * 60 * 60 * 1000,
+      metadata: { proposalId: 36, voteType: 'no' }
+    },
+    {
+      id: '8',
+      type: 'comment',
+      title: 'Commented on Proposal',
+      description: 'Shared thoughts on Developer Tools Enhancement (#33)',
+      timestamp: now - 6 * 24 * 60 * 60 * 1000,
+      metadata: { proposalId: 33 }
+    }
+  ]);
   const [filter, setFilter] = useState<string>('all');
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-
-  useEffect(() => {
-    loadActivities();
-  }, [userAddress, filter]);
-
-  const loadActivities = () => {
-    // Simulate activity data
-    const mockActivities: Activity[] = [
-      {
-        id: '1',
-        type: 'proposal',
-        title: 'Created New Proposal',
-        description: 'DeFi Lending Protocol Development',
-        timestamp: Date.now() - 2 * 60 * 60 * 1000,
-        metadata: { proposalId: 42, amount: 50000 }
-      },
-      {
-        id: '2',
-        type: 'vote',
-        title: 'Voted on Proposal',
-        description: 'NFT Marketplace Infrastructure (#38)',
-        timestamp: Date.now() - 5 * 60 * 60 * 1000,
-        metadata: { proposalId: 38, voteType: 'yes' }
-      },
-      {
-        id: '3',
-        type: 'comment',
-        title: 'Commented on Proposal',
-        description: 'Added feedback to Community Event Planning (#35)',
-        timestamp: Date.now() - 24 * 60 * 60 * 1000,
-        metadata: { proposalId: 35 }
-      },
-      {
-        id: '4',
-        type: 'achievement',
-        title: 'Achievement Unlocked',
-        description: 'Earned "Active Voter" badge',
-        timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
-        metadata: { achievementIcon: '⭐' }
-      },
-      {
-        id: '5',
-        type: 'execution',
-        title: 'Proposal Executed',
-        description: 'Your proposal "Smart Contract Upgrade" was successfully executed',
-        timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000,
-        metadata: { proposalId: 28, amount: 75000 }
-      },
-      {
-        id: '6',
-        type: 'collaboration',
-        title: 'Collaboration Invite',
-        description: 'Added as co-author to "DAO Treasury Diversification"',
-        timestamp: Date.now() - 4 * 24 * 60 * 60 * 1000,
-        metadata: { proposalId: 40 }
-      },
-      {
-        id: '7',
-        type: 'vote',
-        title: 'Voted on Proposal',
-        description: 'Marketing Campaign Q1 2026 (#36)',
-        timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000,
-        metadata: { proposalId: 36, voteType: 'no' }
-      },
-      {
-        id: '8',
-        type: 'comment',
-        title: 'Commented on Proposal',
-        description: 'Shared thoughts on Developer Tools Enhancement (#33)',
-        timestamp: Date.now() - 6 * 24 * 60 * 60 * 1000,
-        metadata: { proposalId: 33 }
-      }
-    ];
-
-    const filtered = filter === 'all' 
-      ? mockActivities 
-      : mockActivities.filter(a => a.type === filter);
-
-    setActivities(filtered);
-    setHasMore(filtered.length >= 8);
-  };
+  const filteredActivities = useMemo(
+    () => (filter === 'all' ? activities : activities.filter(a => a.type === filter)),
+    [activities, filter]
+  );
+  const hasMore = filteredActivities.length >= 8;
+  void userAddress;
 
   const loadMore = () => {
-    setPage(page + 1);
     // Would load more activities in real implementation
   };
 
@@ -137,7 +125,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
   };
 
   const getTimeAgo = (timestamp: number) => {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    const seconds = Math.floor((now - timestamp) / 1000);
     if (seconds < 60) return 'just now';
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ago`;
@@ -151,7 +139,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
   const exportActivities = () => {
     const csv = [
       ['Type', 'Title', 'Description', 'Date'].join(','),
-      ...activities.map(a => [
+      ...filteredActivities.map(a => [
         a.type,
         `"${a.title}"`,
         `"${a.description}"`,
@@ -163,12 +151,12 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `activity-log-${Date.now()}.csv`;
+    a.download = `activity-log-${now}.csv`;
     a.click();
   };
 
   const shareHighlights = () => {
-    const highlights = activities.slice(0, 5);
+    const highlights = filteredActivities.slice(0, 5);
     const text = `My recent DAO activity:\n${highlights.map(h => `• ${h.title}`).join('\n')}`;
     navigator.clipboard.writeText(text);
     alert('Activity highlights copied to clipboard!');
@@ -214,14 +202,14 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
 
       {/* Activity Timeline */}
       <div className="space-y-4">
-        {activities.map((activity, index) => {
+        {filteredActivities.map((activity, index) => {
           const color = getActivityColor(activity.type);
           const icon = activity.metadata?.achievementIcon || getActivityIcon(activity.type);
 
           return (
             <div key={activity.id} className="relative">
               {/* Timeline Line */}
-              {index < activities.length - 1 && (
+              {index < filteredActivities.length - 1 && (
                 <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700" />
               )}
 
@@ -288,7 +276,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         </button>
       )}
 
-      {activities.length === 0 && (
+      {filteredActivities.length === 0 && (
         <div className="text-center py-12 text-gray-500">
           <div className="text-4xl mb-2">📭</div>
           <p>No activities yet. Start participating in the DAO!</p>

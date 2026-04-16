@@ -21,16 +21,16 @@ interface VoteActivity {
 }
 
 export default function LiveAnalytics({ proposals, onRefresh }: LiveAnalyticsProps) {
+  const now = Date.parse(new Date().toISOString());
   const [isPaused, setIsPaused] = useState(false);
   const [updateFrequency, setUpdateFrequency] = useState(10);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  const [lastUpdate, setLastUpdate] = useState(now);
   const [networkStatus, setNetworkStatus] = useState<'online' | 'offline'>('online');
   const [voteFeed, setVoteFeed] = useState<VoteActivity[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const activeProposals = proposals.filter(p => {
-    const now = Date.now();
     const deadline = p.deadline * 10 * 60 * 1000;
     return !p.executed && deadline > now;
   });
@@ -45,17 +45,17 @@ export default function LiveAnalytics({ proposals, onRefresh }: LiveAnalyticsPro
 
   const last24HoursActivity = Array.from({ length: 24 }, (_, i) => ({
     hour: i,
-    votes: Math.floor(Math.random() * 50) + 10
+    votes: ((i * 17 + proposals.length * 13) % 50) + 10
   }));
 
   const last7DaysProposals = Array.from({ length: 7 }, (_, i) => ({
     day: i,
-    count: Math.floor(Math.random() * 10) + 2
+    count: ((i * 5 + activeProposals.length * 3) % 10) + 2
   }));
 
   const last30DaysFunding = Array.from({ length: 30 }, (_, i) => ({
     day: i,
-    amount: Math.floor(Math.random() * 100000) + 50000
+    amount: (((i * 7000) + (proposals.length * 13000)) % 100000) + 50000
   }));
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export default function LiveAnalytics({ proposals, onRefresh }: LiveAnalyticsPro
     };
   }, []);
 
-  const timeSinceUpdate = Math.floor((Date.now() - lastUpdate) / 1000);
+  const timeSinceUpdate = Math.floor((now - lastUpdate) / 1000);
 
   if (!isExpanded) {
     return (
