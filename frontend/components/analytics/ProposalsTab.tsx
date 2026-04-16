@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-    BarChart,
     Bar,
     XAxis,
     YAxis,
@@ -13,28 +12,14 @@ import {
     ScatterChart,
     Scatter,
     ZAxis,
-    Cell,
-    LineChart,
-    Line,
-    AreaChart,
-    Area,
-    PieChart,
-    Pie
+    BarChart
 } from 'recharts';
 import {
-    FileText,
     Filter,
     Search,
-    Download,
-    TrendingUp,
-    Clock,
-    DollarSign,
-    Zap,
     MoreVertical,
-    ChevronDown
+    TrendingUp
 } from 'lucide-react';
-
-const COLORS = ['#EA580C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
 
 export default function ProposalsTab() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -280,7 +265,7 @@ export default function ProposalsTab() {
                             <div key={day} className="text-[10px] font-black text-slate-600 text-center mb-2">{day}</div>
                         ))}
                         {Array.from({ length: 28 }).map((_, i) => {
-                            const intensity = Math.random();
+                            const intensity = ((i * 37) % 100) / 100;
                             return (
                                 <div
                                     key={i}

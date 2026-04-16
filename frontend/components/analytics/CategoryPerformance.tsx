@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { formatMetric, calculateGrowthRate } from '../../utils/analytics/helpers';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
@@ -38,6 +38,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function CategoryPerformance({ proposals, onCategoryClick }: CategoryPerformanceProps) {
+  const [baseTimestamp] = useState(() => Date.now());
   const [sortKey, setSortKey] = useState<SortKey>('totalDistributed');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
@@ -50,8 +51,7 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
       return acc;
     }, {} as Record<string, ProposalMetrics[]>);
 
-    const now = Date.now();
-    const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = baseTimestamp - (30 * 24 * 60 * 60 * 1000);
 
     return Object.entries(grouped).map(([category, categoryProposals]) => {
       const successful = categoryProposals.filter(p => p.executed);
@@ -95,7 +95,7 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
         trendValue
       };
     });
-  }, [proposals]);
+  }, [proposals, baseTimestamp]);
 
   const sortedStats = useMemo(() => {
     return [...categoryStats].sort((a, b) => {
@@ -147,12 +147,6 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
     if (rate > 70) return 'text-green-600 dark:text-green-400';
     if (rate >= 40) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
-  };
-
-  const getSuccessBgColor = (rate: number): string => {
-    if (rate > 70) return CATEGORY_COLORS.development;
-    if (rate >= 40) return CATEGORY_COLORS.community;
-    return '#ef4444';
   };
 
   const barChartData = sortedStats.map(stat => ({

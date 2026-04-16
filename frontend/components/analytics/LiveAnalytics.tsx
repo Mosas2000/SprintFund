@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { formatMetric } from '../../utils/analytics/helpers';
 import { Pause, Play, Activity, TrendingUp, Users, DollarSign } from 'lucide-react';
@@ -21,18 +21,18 @@ interface VoteActivity {
 }
 
 export default function LiveAnalytics({ proposals, onRefresh }: LiveAnalyticsProps) {
+  const [renderNow, setRenderNow] = useState(() => Date.now());
   const [isPaused, setIsPaused] = useState(false);
   const [updateFrequency, setUpdateFrequency] = useState(10);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  const [lastUpdate, setLastUpdate] = useState(() => Date.now());
   const [networkStatus, setNetworkStatus] = useState<'online' | 'offline'>('online');
   const [voteFeed, setVoteFeed] = useState<VoteActivity[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const activeProposals = proposals.filter(p => {
-    const now = Date.now();
     const deadline = p.deadline * 10 * 60 * 1000;
-    return !p.executed && deadline > now;
+    return !p.executed && deadline > renderNow;
   });
 
   const votesLastHour = 127;
@@ -43,25 +43,27 @@ export default function LiveAnalytics({ proposals, onRefresh }: LiveAnalyticsPro
   
   const totalStxBeingVoted = activeProposals.reduce((sum, p) => sum + p.amount, 0);
 
-  const last24HoursActivity = Array.from({ length: 24 }, (_, i) => ({
+  const last24HoursActivity = useMemo(() => Array.from({ length: 24 }, (_, i) => ({
     hour: i,
-    votes: Math.floor(Math.random() * 50) + 10
-  }));
+    votes: 10 + ((i * 17) % 50)
+  })), []);
 
-  const last7DaysProposals = Array.from({ length: 7 }, (_, i) => ({
+  const last7DaysProposals = useMemo(() => Array.from({ length: 7 }, (_, i) => ({
     day: i,
-    count: Math.floor(Math.random() * 10) + 2
-  }));
+    count: 2 + ((i * 5) % 10)
+  })), []);
 
-  const last30DaysFunding = Array.from({ length: 30 }, (_, i) => ({
+  const last30DaysFunding = useMemo(() => Array.from({ length: 30 }, (_, i) => ({
     day: i,
-    amount: Math.floor(Math.random() * 100000) + 50000
-  }));
+    amount: 50000 + ((i * 13750) % 100000)
+  })), []);
 
   useEffect(() => {
     if (!isPaused) {
       intervalRef.current = setInterval(() => {
-        setLastUpdate(Date.now());
+        const now = Date.now();
+        setLastUpdate(now);
+        setRenderNow(now);
         
         const newVote: VoteActivity = {
           id: Math.random().toString(36).substring(7),
@@ -70,7 +72,7 @@ export default function LiveAnalytics({ proposals, onRefresh }: LiveAnalyticsPro
           proposalTitle: 'Sample Proposal',
           support: Math.random() > 0.3,
           weight: Math.floor(Math.random() * 5) + 1,
-          timestamp: Date.now()
+          timestamp: now
         };
 
         setVoteFeed(prev => [newVote, ...prev].slice(0, 10));
@@ -101,7 +103,7 @@ export default function LiveAnalytics({ proposals, onRefresh }: LiveAnalyticsPro
     };
   }, []);
 
-  const timeSinceUpdate = Math.floor((Date.now() - lastUpdate) / 1000);
+  const timeSinceUpdate = Math.floor((renderNow - lastUpdate) / 1000);
 
   if (!isExpanded) {
     return (

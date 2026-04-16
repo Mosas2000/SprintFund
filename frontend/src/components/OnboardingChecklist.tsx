@@ -120,7 +120,7 @@ export function OnboardingChecklist({
           transition={{ type: 'spring', damping: 20 }}
         >
           <p className="text-sm font-semibold text-green">
-            Congratulations! You've completed the onboarding.
+            Congratulations! You&apos;ve completed the onboarding.
           </p>
           <button
             onClick={onDismiss}

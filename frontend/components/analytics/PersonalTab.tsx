@@ -6,7 +6,6 @@ import {
     ProbabilityCalculator
 } from './index';
 import {
-    User,
     Lock,
     ChevronRight,
     Zap,

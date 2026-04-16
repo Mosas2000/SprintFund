@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis } from 'recharts';
-import { format, startOfDay } from 'date-fns';
+import { format } from 'date-fns';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { formatMetric } from '../../utils/analytics/helpers';
 import { Play, Pause, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
@@ -41,10 +41,56 @@ const CATEGORY_COLORS: Record<string, string> = {
   other: '#6b7280'
 };
 
+function CustomTooltip({ active, payload }: TimelineTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  const data = payload[0].payload;
+  const proposal = data.proposal;
+
+  return (
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
+      <div className="space-y-2">
+        <p className="font-semibold text-gray-900 dark:text-white">
+          {proposal.title}
+        </p>
+        <div className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: CATEGORY_COLORS[proposal.category] }}
+          />
+          <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+            {proposal.category}
+          </span>
+        </div>
+        <div className="text-sm space-y-1">
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">Amount:</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {formatMetric(proposal.amount, 'currency')}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">Funded:</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {format(data.date, 'MMM dd, yyyy')}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-gray-600 dark:text-gray-400">Time to Fund:</span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {proposal.timeToFunding?.toFixed(1) || 'N/A'}h
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FundingTimeline({ proposals }: FundingTimelineProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [amountRange, setAmountRange] = useState<[number, number]>([0, Infinity]);
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [amountRange] = useState<[number, number]>([0, Infinity]);
+  const [, setZoomLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackIndex, setPlaybackIndex] = useState(0);
   const playbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -117,15 +163,14 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
 
   const cumulativeData = useMemo(() => {
     const sorted = [...timelineData].sort((a, b) => a.x - b.x);
-    let cumulative = 0;
-    
-    return sorted.map(point => {
-      cumulative += point.y;
-      return {
+    return sorted.reduce<{ date: string; cumulative: number }[]>((acc, point) => {
+      const nextCumulative = (acc.at(-1)?.cumulative ?? 0) + point.y / 1_000_000;
+      acc.push({
         date: format(point.date, 'MMM dd'),
-        cumulative: cumulative / 1_000_000
-      };
-    });
+        cumulative: nextCumulative
+      });
+      return acc;
+    }, []);
   }, [timelineData]);
 
   const toggleCategory = (category: string) => {
@@ -172,52 +217,6 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
         });
       }, 500);
     }
-  };
-
-  const CustomTooltip = ({ active, payload }: TimelineTooltipProps) => {
-    if (!active || !payload || payload.length === 0) return null;
-
-    const data = payload[0].payload;
-    const proposal = data.proposal;
-
-    return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
-        <div className="space-y-2">
-          <p className="font-semibold text-gray-900 dark:text-white">
-            {proposal.title}
-          </p>
-          <div className="flex items-center gap-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: CATEGORY_COLORS[proposal.category] }}
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">
-              {proposal.category}
-            </span>
-          </div>
-          <div className="text-sm space-y-1">
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600 dark:text-gray-400">Amount:</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {formatMetric(proposal.amount, 'currency')}
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600 dark:text-gray-400">Funded:</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {format(data.date, 'MMM dd, yyyy')}
-              </span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-600 dark:text-gray-400">Time to Fund:</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {proposal.timeToFunding?.toFixed(1) || 'N/A'}h
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   return (
