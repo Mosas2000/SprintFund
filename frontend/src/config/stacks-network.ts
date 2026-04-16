@@ -1,3 +1,5 @@
+import { STACKS_MAINNET, STACKS_TESTNET } from '@stacks/network';
+
 export const STACKS_NETWORK_CONFIG = {
   mainnet: {
     name: 'mainnet',
@@ -17,10 +19,8 @@ export const getStacksNetwork = () => {
   const env = process.env.REACT_APP_NETWORK || 'mainnet';
   
   if (env === 'testnet') {
-    const { STACKS_TESTNET } = require('@stacks/network');
     return STACKS_TESTNET;
   }
   
-  const { STACKS_MAINNET } = require('@stacks/network');
   return STACKS_MAINNET;
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 
 interface FAQItem {
   question: string;

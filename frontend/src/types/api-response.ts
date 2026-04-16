@@ -6,9 +6,6 @@
  */
 
 import type {
-  RawProposal,
-  RawStake,
-  RawVote,
   ProposalCountResponse,
   ProposalResponse,
   StakeResponse,
@@ -112,7 +109,7 @@ export type ReadOnlyResponse<T extends keyof ReadOnlyResponses> = ReadOnlyRespon
 /**
  * Validators for Response types.
  */
-export const isSuccessResponse = <T extends unknown>(
+export const isSuccessResponse = <T>(
   response: unknown
 ): response is SuccessResponse<T> => {
   if (typeof response !== 'object' || response === null) return false;
