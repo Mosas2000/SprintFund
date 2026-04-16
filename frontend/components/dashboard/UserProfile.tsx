@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useState } from 'react';
 
 interface UserProfileData {
   address: string;
@@ -29,44 +30,33 @@ interface UserProfileProps {
   isOwnProfile?: boolean;
 }
 
-export default function UserProfile({ userAddress, isOwnProfile = false }: UserProfileProps) {
-  const [profile, setProfile] = useState<UserProfileData>({
+const buildInitialProfile = (userAddress: string): UserProfileData => {
+  const memberSince = 1700000000000;
+  const seed = userAddress.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+  return {
     address: userAddress,
     bio: '',
-    reputation: 0,
-    totalProposals: 0,
-    votesCast: 0,
-    successRate: 0,
-    memberSince: Date.now(),
+    reputation: 200 + (seed % 1800),
+    totalProposals: seed % 25,
+    votesCast: 20 + (seed % 130),
+    successRate: 40 + (seed % 60),
+    memberSince,
     socialLinks: {},
     customization: {
       theme: 'default',
       accentColor: '#3B82F6'
     }
-  });
+  };
+};
+
+export default function UserProfile({ userAddress, isOwnProfile = false }: UserProfileProps) {
+  const [currentTime] = useState(() => Date.now());
+  const initialProfile = buildInitialProfile(userAddress);
+  const [profile, setProfile] = useState<UserProfileData>(initialProfile);
   
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState(profile);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(`user-profile-${userAddress}`);
-    if (stored) {
-      const data = JSON.parse(stored);
-      setProfile(data);
-      setEditForm(data);
-    } else {
-      // Generate initial data
-      const initial = {
-        ...profile,
-        reputation: Math.floor(Math.random() * 2000),
-        totalProposals: Math.floor(Math.random() * 25),
-        votesCast: Math.floor(Math.random() * 150),
-        successRate: Math.random() * 100
-      };
-      setProfile(initial);
-      setEditForm(initial);
-    }
-  }, [userAddress]);
 
   const saveProfile = () => {
     localStorage.setItem(`user-profile-${userAddress}`, JSON.stringify(editForm));
@@ -104,7 +94,7 @@ export default function UserProfile({ userAddress, isOwnProfile = false }: UserP
             style={{ backgroundColor: generateAvatar(profile.address) }}
           >
             {profile.avatar ? (
-              <img src={profile.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+              <Image src={profile.avatar} alt="Avatar" width={128} height={128} className="w-full h-full rounded-full object-cover" />
             ) : profile.bnsName ? (
               profile.bnsName.slice(0, 2).toUpperCase()
             ) : (
@@ -241,7 +231,7 @@ export default function UserProfile({ userAddress, isOwnProfile = false }: UserP
 
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-1">
-            {Math.floor((Date.now() - profile.memberSince) / (1000 * 60 * 60 * 24))}
+            {Math.floor((currentTime - profile.memberSince) / (1000 * 60 * 60 * 24))}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Days Active</div>
         </div>

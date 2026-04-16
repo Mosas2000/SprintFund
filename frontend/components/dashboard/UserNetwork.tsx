@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 interface Connection {
   address: string;
@@ -32,18 +32,14 @@ interface UserNetworkProps {
 }
 
 export default function UserNetwork({ currentUser }: UserNetworkProps) {
-  const [connections, setConnections] = useState<Connection[]>([]);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [now] = useState(() => Date.now());
   const [selectedConversation, setSelectedConversation] = useState<Connection | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'connections' | 'messages'>('connections');
   const [filterRelationship, setFilterRelationship] = useState<'all' | 'mutual' | 'following'>('all');
 
-  useEffect(() => {
-    // Load mock data
-    const mockConnections: Connection[] = [
+  const connections = useMemo<Connection[]>(() => [
       {
         address: 'SP1ABC...DEF',
         username: 'alice_dao',
@@ -80,15 +76,17 @@ export default function UserNetwork({ currentUser }: UserNetworkProps) {
         sharedInterests: ['Treasury', 'Strategy'],
         collaborations: 0
       }
-    ];
+    ], []);
 
-    const mockMessages: Message[] = [
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const baseTime = now;
+    return [
       {
         id: 1,
         from: 'SP1ABC...DEF',
         to: currentUser,
         content: 'Hey! Would love to collaborate on the DeFi proposal',
-        timestamp: Date.now() - 2 * 60 * 60 * 1000,
+        timestamp: baseTime - 2 * 60 * 60 * 1000,
         read: false
       },
       {
@@ -96,7 +94,7 @@ export default function UserNetwork({ currentUser }: UserNetworkProps) {
         from: currentUser,
         to: 'SP1ABC...DEF',
         content: 'Absolutely! Let\'s discuss the details',
-        timestamp: Date.now() - 1 * 60 * 60 * 1000,
+        timestamp: baseTime - 1 * 60 * 60 * 1000,
         read: true
       },
       {
@@ -104,28 +102,24 @@ export default function UserNetwork({ currentUser }: UserNetworkProps) {
         from: 'SP2XYZ...GHI',
         to: currentUser,
         content: 'Great work on your last proposal!',
-        timestamp: Date.now() - 12 * 60 * 60 * 1000,
+        timestamp: baseTime - 12 * 60 * 60 * 1000,
         read: false
       }
     ];
+  });
 
-    const mockConversations: Conversation[] = [
+  const conversations = useMemo<Conversation[]>(() => [
       {
-        user: mockConnections[0],
-        lastMessage: mockMessages[1],
+        user: connections[0],
+        lastMessage: messages[1],
         unreadCount: 1
       },
       {
-        user: mockConnections[1],
-        lastMessage: mockMessages[2],
+        user: connections[1],
+        lastMessage: messages[2],
         unreadCount: 1
       }
-    ];
-
-    setConnections(mockConnections);
-    setMessages(mockMessages);
-    setConversations(mockConversations);
-  }, [currentUser]);
+    ], [connections, messages]);
 
   const sendMessage = () => {
     if (!newMessage.trim() || !selectedConversation) return;
@@ -135,7 +129,7 @@ export default function UserNetwork({ currentUser }: UserNetworkProps) {
       from: currentUser,
       to: selectedConversation.address,
       content: newMessage,
-      timestamp: Date.now(),
+      timestamp: now,
       read: false
     };
 
@@ -144,7 +138,7 @@ export default function UserNetwork({ currentUser }: UserNetworkProps) {
   };
 
   const formatTimeAgo = (timestamp: number) => {
-    const diff = Date.now() - timestamp;
+    const diff = now - timestamp;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     

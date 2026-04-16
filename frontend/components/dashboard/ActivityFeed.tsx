@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 interface Activity {
   id: string;
@@ -21,24 +21,16 @@ interface ActivityFeedProps {
 }
 
 export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [currentTime] = useState(() => Date.now());
   const [filter, setFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-
-  useEffect(() => {
-    loadActivities();
-  }, [userAddress, filter]);
-
-  const loadActivities = () => {
-    // Simulate activity data
-    const mockActivities: Activity[] = [
+  const mockActivities = useMemo<Activity[]>(() => [
       {
         id: '1',
         type: 'proposal',
         title: 'Created New Proposal',
         description: 'DeFi Lending Protocol Development',
-        timestamp: Date.now() - 2 * 60 * 60 * 1000,
+        timestamp: 1700000000000 - 2 * 60 * 60 * 1000,
         metadata: { proposalId: 42, amount: 50000 }
       },
       {
@@ -46,7 +38,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         type: 'vote',
         title: 'Voted on Proposal',
         description: 'NFT Marketplace Infrastructure (#38)',
-        timestamp: Date.now() - 5 * 60 * 60 * 1000,
+        timestamp: currentTime - 5 * 60 * 60 * 1000,
         metadata: { proposalId: 38, voteType: 'yes' }
       },
       {
@@ -54,7 +46,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         type: 'comment',
         title: 'Commented on Proposal',
         description: 'Added feedback to Community Event Planning (#35)',
-        timestamp: Date.now() - 24 * 60 * 60 * 1000,
+        timestamp: currentTime - 24 * 60 * 60 * 1000,
         metadata: { proposalId: 35 }
       },
       {
@@ -62,7 +54,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         type: 'achievement',
         title: 'Achievement Unlocked',
         description: 'Earned "Active Voter" badge',
-        timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
+        timestamp: currentTime - 2 * 24 * 60 * 60 * 1000,
         metadata: { achievementIcon: '⭐' }
       },
       {
@@ -70,7 +62,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         type: 'execution',
         title: 'Proposal Executed',
         description: 'Your proposal "Smart Contract Upgrade" was successfully executed',
-        timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000,
+        timestamp: currentTime - 3 * 24 * 60 * 60 * 1000,
         metadata: { proposalId: 28, amount: 75000 }
       },
       {
@@ -78,7 +70,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         type: 'collaboration',
         title: 'Collaboration Invite',
         description: 'Added as co-author to "DAO Treasury Diversification"',
-        timestamp: Date.now() - 4 * 24 * 60 * 60 * 1000,
+        timestamp: currentTime - 4 * 24 * 60 * 60 * 1000,
         metadata: { proposalId: 40 }
       },
       {
@@ -86,7 +78,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         type: 'vote',
         title: 'Voted on Proposal',
         description: 'Marketing Campaign Q1 2026 (#36)',
-        timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000,
+        timestamp: currentTime - 5 * 24 * 60 * 60 * 1000,
         metadata: { proposalId: 36, voteType: 'no' }
       },
       {
@@ -94,18 +86,16 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
         type: 'comment',
         title: 'Commented on Proposal',
         description: 'Shared thoughts on Developer Tools Enhancement (#33)',
-        timestamp: Date.now() - 6 * 24 * 60 * 60 * 1000,
+        timestamp: 1700000000000 - 6 * 24 * 60 * 60 * 1000,
         metadata: { proposalId: 33 }
       }
-    ];
+  ], [currentTime]);
 
-    const filtered = filter === 'all' 
-      ? mockActivities 
-      : mockActivities.filter(a => a.type === filter);
-
-    setActivities(filtered);
-    setHasMore(filtered.length >= 8);
-  };
+  const activities = useMemo(
+    () => (filter === 'all' ? mockActivities : mockActivities.filter((a) => a.type === filter)),
+    [mockActivities, filter]
+  );
+  const hasMore = activities.length >= 8;
 
   const loadMore = () => {
     setPage(page + 1);
@@ -137,7 +127,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
   };
 
   const getTimeAgo = (timestamp: number) => {
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    const seconds = Math.floor((currentTime - timestamp) / 1000);
     if (seconds < 60) return 'just now';
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ago`;
@@ -163,7 +153,7 @@ export default function ActivityFeed({ userAddress }: ActivityFeedProps) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `activity-log-${Date.now()}.csv`;
+    a.download = `activity-log-${userAddress}.csv`;
     a.click();
   };
 
