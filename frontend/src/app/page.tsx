@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import type { UserSession, UserData } from '@stacks/connect';
+import { useState, useEffect } from 'react';
+import type { UserData } from '@stacks/connect';
 import { CONTRACT_PRINCIPAL } from '@/config';
 import SprintFundHero from '@/components/ui/SprintFundHero';
 import CreateProposalForm from '@/components/CreateProposalForm';
@@ -11,7 +11,7 @@ import Stats from '@/components/Stats';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { LoadingSpinner, LoadingOverlay } from '@/components/LoadingIndicators';
+import { LoadingSpinner } from '@/components/LoadingIndicators';
 import { createLoadingState, updateLoadingState } from '@/lib/loading-state';
 import type { LoadingState } from '@/lib/loading-state';
 
@@ -21,8 +21,6 @@ export default function Home() {
   const [userData, setUserData] = useState<StacksUserData | null>(null);
   const [copied, setCopied] = useState(false);
   const [walletLoading, setWalletLoading] = useState<LoadingState>(createLoadingState('loading'));
-  const [connectLoading, setConnectLoading] = useState<LoadingState>(createLoadingState('idle'));
-  const userSessionRef = useRef<UserSession | null>(null);
 
   useEffect(() => {
     let timeout: number | undefined;
@@ -31,69 +29,31 @@ export default function Home() {
         const { AppConfig, UserSession } = await import('@stacks/connect');
         const appConfig = new AppConfig(['store_write', 'publish_data']);
         const userSession = new UserSession({ appConfig });
-        userSessionRef.current = userSession;
 
         if (userSession.isSignInPending()) {
           userSession.handlePendingSignIn().then((data) => {
             timeout = window.setTimeout(() => {
               setUserData(data);
-              setWalletLoading(updateLoadingState(walletLoading, 'success'));
+              setWalletLoading((current) => updateLoadingState(current, 'success'));
             }, 0);
           });
         } else if (userSession.isUserSignedIn()) {
           timeout = window.setTimeout(() => {
             setUserData(userSession.loadUserData());
-            setWalletLoading(updateLoadingState(walletLoading, 'success'));
+            setWalletLoading((current) => updateLoadingState(current, 'success'));
           }, 0);
         } else {
-          setWalletLoading(updateLoadingState(walletLoading, 'success'));
+          setWalletLoading((current) => updateLoadingState(current, 'success'));
         }
       } catch (error) {
         console.error('Failed to initialize wallet:', error);
-        setWalletLoading(updateLoadingState(walletLoading, 'error'));
+        setWalletLoading((current) => updateLoadingState(current, 'error'));
       }
     })();
     return () => {
       if (timeout) window.clearTimeout(timeout);
     };
   }, []);
-
-  const connectWallet = () => {
-    setConnectLoading(updateLoadingState(connectLoading, 'loading'));
-    (async () => {
-      try {
-        const userSession = userSessionRef.current;
-        if (!userSession) {
-          setConnectLoading(updateLoadingState(connectLoading, 'error'));
-          return;
-        }
-
-        const { showConnect } = await import('@stacks/connect');
-        showConnect({
-          appDetails: {
-            name: 'SprintFund',
-            icon: '/icon.png',
-          },
-          redirectTo: '/',
-          onFinish: () => {
-            const data = userSession.loadUserData();
-            setUserData(data);
-            setConnectLoading(updateLoadingState(connectLoading, 'success'));
-          },
-          userSession,
-        });
-      } catch (error) {
-        console.error('Failed to connect wallet:', error);
-        setConnectLoading(updateLoadingState(connectLoading, 'error'));
-      }
-    })();
-  };
-
-  const disconnectWallet = () => {
-    userSessionRef.current?.signUserOut();
-    setUserData(null);
-    setConnectLoading(updateLoadingState(connectLoading, 'idle'));
-  };
 
   const copyContractAddress = async () => {
     try {
@@ -120,7 +80,6 @@ export default function Home() {
     <ErrorBoundary>
       <div className="min-h-screen bg-transparent">
         <Header />
-        <LoadingOverlay isVisible={connectLoading.isLoading} message="Connecting wallet..." />
 
         <SprintFundHero />
 
