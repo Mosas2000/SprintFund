@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { format, subDays, subMonths, subYears, startOfDay } from 'date-fns';
+import { format, subDays, subYears, startOfDay } from 'date-fns';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { calculateMovingAverage, formatMetric } from '../../utils/analytics/helpers';
 import type {
@@ -36,6 +36,11 @@ interface SuccessRateTooltipProps extends Omit<RechartsTooltipProps, 'payload' |
   label?: string;
 }
 
+interface SuccessRateLegendProps extends RechartsLegendProps {
+  hiddenSeries: Set<string>;
+  onToggleSeries: (seriesKey: string) => void;
+}
+
 const DATE_RANGE_OPTIONS: Array<{ value: DateRangeOption; label: string }> = [
   { value: '7d', label: '7 Days' },
   { value: '30d', label: '30 Days' },
@@ -52,16 +57,107 @@ const CATEGORY_COLORS = [
   '#ec4899'
 ];
 
+const SuccessRateTooltip = ({ active, payload, label, chartData }: SuccessRateTooltipProps & { chartData: SuccessRateDataPoint[] }) => {
+  if (!active || !payload || payload.length === 0) return null;
+  if (!label) return null;
+
+  const dataPoint = chartData.find(d => d.date === label);
+  if (!dataPoint) return null;
+
+  const currentIndex = chartData.indexOf(dataPoint);
+  const previousPoint = currentIndex > 0 ? chartData[currentIndex - 1] : null;
+
+  const trend = previousPoint
+    ? dataPoint.overallRate > previousPoint.overallRate
+      ? '↑'
+      : dataPoint.overallRate < previousPoint.overallRate
+        ? '↓'
+        : '→'
+    : '→';
+
+  return (
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
+      <p className="font-semibold text-gray-900 dark:text-white mb-2">
+        {format(new Date(label), 'MMM dd, yyyy')}
+      </p>
+      <div className="space-y-1">
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center justify-between gap-4 text-sm">
+            <span className="flex items-center gap-2">
+              <span
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-gray-700 dark:text-gray-300">{entry.name}:</span>
+            </span>
+            <span className="font-medium text-gray-900 dark:text-white">
+              {formatMetric(entry.value, 'percentage')}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-600 dark:text-gray-400">Proposals:</span>
+          <span className="font-medium text-gray-900 dark:text-white">
+            {dataPoint.proposalCount}
+          </span>
+        </div>
+        <div className="flex items-center justify-between text-sm mt-1">
+          <span className="text-gray-600 dark:text-gray-400">Trend:</span>
+          <span
+            className={`font-bold text-lg ${
+              trend === '↑'
+                ? 'text-green-500'
+                : trend === '↓'
+                  ? 'text-red-500'
+                  : 'text-gray-500'
+            }`}
+          >
+            {trend}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SuccessRateLegend = ({ payload = [], hiddenSeries, onToggleSeries }: SuccessRateLegendProps) => {
+  return (
+    <div className="flex flex-wrap gap-4 justify-center mt-4">
+      {payload.map((entry: RechartsLegendEntry, index: number) => (
+        <button
+          key={index}
+          onClick={() => onToggleSeries(entry.dataKey)}
+          className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all ${
+            hiddenSeries.has(entry.dataKey)
+              ? 'opacity-40 hover:opacity-60'
+              : 'opacity-100 hover:opacity-80'
+          }`}
+        >
+          <span
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {entry.value}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+};
+
 export default function SuccessRateChart({ proposals, height = 400 }: SuccessRateChartProps) {
   const [selectedRange, setSelectedRange] = useState<DateRangeOption>('30d');
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
   const chartRef = useRef<HTMLDivElement>(null);
 
-  const getFilteredProposals = (range: DateRangeOption): ProposalMetrics[] => {
+  const chartData = useMemo(() => {
     const now = new Date();
-    let startDate: Date;
+    let startDate: Date | null = null;
 
-    switch (range) {
+    switch (selectedRange) {
       case '7d':
         startDate = subDays(now, 7);
         break;
@@ -75,20 +171,19 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
         startDate = subYears(now, 1);
         break;
       case 'all':
-        return proposals;
+        break;
       default:
         startDate = subDays(now, 30);
     }
 
-    return proposals.filter(p => {
-      const proposalDate = new Date(p.createdAt * 10 * 60 * 1000);
-      return proposalDate >= startDate;
-    });
-  };
+    const filteredProposals =
+      startDate === null
+        ? proposals
+        : proposals.filter(p => {
+            const proposalDate = new Date(p.createdAt * 10 * 60 * 1000);
+            return proposalDate >= startDate;
+          });
 
-  const chartData = useMemo(() => {
-    const filteredProposals = getFilteredProposals(selectedRange);
-    
     if (filteredProposals.length === 0) return [];
 
     const grouped = new Map<string, ProposalMetrics[]>();
@@ -241,91 +336,6 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
     URL.revokeObjectURL(url);
   };
 
-  const CustomTooltip = ({ active, payload, label }: SuccessRateTooltipProps) => {
-    if (!active || !payload || payload.length === 0) return null;
-    if (!label) return null;
-
-    const dataPoint = chartData.find(d => d.date === label);
-    if (!dataPoint) return null;
-
-    const currentIndex = chartData.indexOf(dataPoint);
-    const previousPoint = currentIndex > 0 ? chartData[currentIndex - 1] : null;
-    
-    const trend = previousPoint 
-      ? dataPoint.overallRate > previousPoint.overallRate ? '↑' 
-        : dataPoint.overallRate < previousPoint.overallRate ? '↓' 
-        : '→'
-      : '→';
-
-    return (
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
-        <p className="font-semibold text-gray-900 dark:text-white mb-2">
-          {format(new Date(label), 'MMM dd, yyyy')}
-        </p>
-        <div className="space-y-1">
-          {payload.map((entry, index) => (
-            <div key={index} className="flex items-center justify-between gap-4 text-sm">
-              <span className="flex items-center gap-2">
-                <span
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: entry.color }}
-                />
-                <span className="text-gray-700 dark:text-gray-300">{entry.name}:</span>
-              </span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {formatMetric(entry.value, 'percentage')}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">Proposals:</span>
-            <span className="font-medium text-gray-900 dark:text-white">
-              {dataPoint.proposalCount}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm mt-1">
-            <span className="text-gray-600 dark:text-gray-400">Trend:</span>
-            <span className={`font-bold text-lg ${
-              trend === '↑' ? 'text-green-500' : 
-              trend === '↓' ? 'text-red-500' : 
-              'text-gray-500'
-            }`}>
-              {trend}
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const CustomLegend = ({ payload = [] }: RechartsLegendProps) => {
-    return (
-      <div className="flex flex-wrap gap-4 justify-center mt-4">
-        {payload.map((entry: RechartsLegendEntry, index: number) => (
-          <button
-            key={index}
-            onClick={() => toggleSeries(entry.dataKey)}
-            className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all ${
-              hiddenSeries.has(entry.dataKey)
-                ? 'opacity-40 hover:opacity-60'
-                : 'opacity-100 hover:opacity-80'
-            }`}
-          >
-            <span
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: entry.color }}
-            />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {entry.value}
-            </span>
-          </button>
-        ))}
-      </div>
-    );
-  };
-
   if (chartData.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 bg-gray-50 dark:bg-gray-900 rounded-lg">
@@ -397,9 +407,16 @@ export default function SuccessRateChart({ proposals, height = 400 }: SuccessRat
               domain={[0, 100]}
             />
             
-            <Tooltip content={<CustomTooltip />} />
-            
-            <Legend content={<CustomLegend />} />
+            <Tooltip content={<SuccessRateTooltip chartData={chartData} />} />
+
+            <Legend
+              content={
+                <SuccessRateLegend
+                  hiddenSeries={hiddenSeries}
+                  onToggleSeries={toggleSeries}
+                />
+              }
+            />
 
             {!hiddenSeries.has('overallRate') && (
               <Line
