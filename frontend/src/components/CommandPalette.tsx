@@ -16,14 +16,6 @@ export function CommandPalette({ isOpen, onClose, commands }: CommandPaletteProp
   const filtered = useMemo(() => filterCommands(commands, query), [commands, query]);
 
   useEffect(() => {
-    if (isOpen) {
-      setQuery('');
-      setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 0);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
 
@@ -82,6 +74,7 @@ export function CommandPalette({ isOpen, onClose, commands }: CommandPaletteProp
           <div className="p-3 border-b border-border">
             <input
               ref={inputRef}
+              autoFocus
               type="text"
               placeholder="Search commands..."
               value={query}
