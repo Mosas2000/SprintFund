@@ -183,14 +183,12 @@ interface ProposalTemplatesProps {
 export default function ProposalTemplates({ onTemplateSelect }: ProposalTemplatesProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
-  const [customTemplates, _setCustomTemplates] = useState<Template[]>([]);
 
   const categories = ['all', 'Funding', 'Governance', 'Technical', 'Community'];
 
-  const filteredTemplates = [
-    ...PREDEFINED_TEMPLATES,
-    ...customTemplates
-  ].filter(t => selectedCategory === 'all' || t.category === selectedCategory);
+  const filteredTemplates = PREDEFINED_TEMPLATES.filter(
+    (t) => selectedCategory === 'all' || t.category === selectedCategory
+  );
 
   const getCategoryColor = (category: string) => {
     switch (category) {

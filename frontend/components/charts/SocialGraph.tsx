@@ -27,11 +27,11 @@ interface SocialGraphProps {
   currentUser: string;
 }
 
-export default function SocialGraph({ currentUser }: SocialGraphProps) {
-  void currentUser;
-  const baselineTimestamp = Date.parse(new Date().toISOString());
+export default function SocialGraph({ currentUser: _currentUser }: SocialGraphProps) {
+  void _currentUser;
+  const [now] = useState(() => Date.now());
   const [activeTab, setActiveTab] = useState<'following' | 'followers' | 'discover'>('following');
-  const [users, setUsers] = useState<User[]>([
+  const [users, setUsers] = useState<User[]>(() => [
     {
       address: 'SP1ABC...DEF',
       username: 'alice_dao',
@@ -42,7 +42,7 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
       bio: 'DeFi enthusiast | Building the future of finance',
       isFollowing: true,
       mutualConnections: 12,
-      lastActive: baselineTimestamp - 2 * 60 * 60 * 1000
+      lastActive: now - 2 * 60 * 60 * 1000
     },
     {
       address: 'SP2XYZ...GHI',
@@ -54,7 +54,7 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
       bio: 'Smart contract developer | Open source contributor',
       isFollowing: true,
       mutualConnections: 8,
-      lastActive: baselineTimestamp - 5 * 60 * 60 * 1000
+      lastActive: now - 5 * 60 * 60 * 1000
     },
     {
       address: 'SP3MNO...PQR',
@@ -66,7 +66,7 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
       bio: 'NFT creator | Community advocate',
       isFollowing: false,
       mutualConnections: 5,
-      lastActive: baselineTimestamp - 24 * 60 * 60 * 1000
+      lastActive: now - 24 * 60 * 60 * 1000
     },
     {
       address: 'SP4STU...VWX',
@@ -78,10 +78,10 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
       bio: 'VC | Crypto investor | Supporting innovation',
       isFollowing: false,
       mutualConnections: 15,
-      lastActive: baselineTimestamp - 1 * 60 * 60 * 1000
+      lastActive: now - 1 * 60 * 60 * 1000
     }
   ]);
-  const [activities] = useState<Activity[]>([
+  const [activities] = useState<Activity[]>(() => [
     {
       id: 1,
       user: {
@@ -90,11 +90,15 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
         avatar: '👩‍💼',
         reputation: 8500,
         followers: 342,
-        following: 89
+        following: 89,
+        bio: 'DeFi enthusiast | Building the future of finance',
+        isFollowing: true,
+        mutualConnections: 12,
+        lastActive: now - 2 * 60 * 60 * 1000
       },
       type: 'proposal',
       content: 'Created proposal: DeFi Lending Protocol v2',
-      timestamp: baselineTimestamp - 3 * 60 * 60 * 1000
+      timestamp: now - 3 * 60 * 60 * 1000
     },
     {
       id: 2,
@@ -104,11 +108,15 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
         avatar: '👨‍💻',
         reputation: 6200,
         followers: 215,
-        following: 156
+        following: 156,
+        bio: 'Smart contract developer | Open source contributor',
+        isFollowing: true,
+        mutualConnections: 8,
+        lastActive: now - 5 * 60 * 60 * 1000
       },
       type: 'vote',
       content: 'Voted YES on "Community NFT Marketplace"',
-      timestamp: baselineTimestamp - 5 * 60 * 60 * 1000
+      timestamp: now - 5 * 60 * 60 * 1000
     },
     {
       id: 3,
@@ -118,11 +126,15 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
         avatar: '👩‍💼',
         reputation: 8500,
         followers: 342,
-        following: 89
+        following: 89,
+        bio: 'DeFi enthusiast | Building the future of finance',
+        isFollowing: true,
+        mutualConnections: 12,
+        lastActive: now - 2 * 60 * 60 * 1000
       },
       type: 'achievement',
       content: 'Earned "Top Contributor" badge 🏆',
-      timestamp: baselineTimestamp - 12 * 60 * 60 * 1000
+      timestamp: now - 12 * 60 * 60 * 1000
     },
     {
       id: 4,
@@ -132,16 +144,19 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
         avatar: '👨‍💻',
         reputation: 6200,
         followers: 215,
-        following: 156
+        following: 156,
+        bio: 'Smart contract developer | Open source contributor',
+        isFollowing: true,
+        mutualConnections: 8,
+        lastActive: now - 5 * 60 * 60 * 1000
       },
       type: 'comment',
       content: 'Commented on proposal #42',
-      timestamp: baselineTimestamp - 18 * 60 * 60 * 1000
+      timestamp: now - 18 * 60 * 60 * 1000
     }
   ]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterReputation, setFilterReputation] = useState<'all' | 'high' | 'medium'>('all');
-  const currentTimestamp = Date.parse(new Date().toISOString());
 
   const followUser = (address: string) => {
     setUsers(users.map(user => 
@@ -160,7 +175,7 @@ export default function SocialGraph({ currentUser }: SocialGraphProps) {
   };
 
   const formatTimeAgo = (timestamp: number) => {
-    const diff = currentTimestamp - timestamp;
+    const diff = now - timestamp;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
     

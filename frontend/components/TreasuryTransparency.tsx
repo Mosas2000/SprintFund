@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
+'use client';
+
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Database, ArrowUpRight, Shield, Globe } from 'lucide-react';
+import { ArrowUpRight, Globe } from 'lucide-react';
 
 const allocationData = [
     { name: 'Active Grants', value: 45000, color: '#EA580C' },

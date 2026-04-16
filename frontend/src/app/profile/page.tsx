@@ -6,7 +6,6 @@ import BadgeGallery from '@/components/common/BadgeGallery';
 import InterestProfiler from '@/components/InterestProfiler';
 import DelegationStats from '@/components/DelegationStats';
 import UserDashboard from '@/components/dashboard/UserDashboard';
-import { motion } from 'framer-motion';
 import { Settings, LogOut, Wallet } from 'lucide-react';
 
 export default function ProfilePage() {

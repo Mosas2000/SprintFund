@@ -19,7 +19,11 @@ export function useMobileMenu() {
 
   /* Close on route change */
   useEffect(() => {
-    setIsOpen(false);
+    const timeout = window.setTimeout(() => {
+      setIsOpen(false);
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
   }, [pathname]);
 
   /* Close when viewport passes mobile breakpoint */

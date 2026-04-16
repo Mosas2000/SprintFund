@@ -29,10 +29,7 @@ export function ProposalsPage(): React.JSX.Element {
   const [retryCount, setRetryCount] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [selectionState, setSelectionState] = useState<{ key: string; index: number | null }>({
-    key: 'all:1',
-    index: null,
-  });
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const toast = useToast();
   const online = useNetworkStatus();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
@@ -52,8 +49,6 @@ export function ProposalsPage(): React.JSX.Element {
     hasActiveFilters,
     activeFilterCount,
   } = useProposalUrlFilters();
-  const currentSelectionKey = useMemo(() => `${params.status}:${params.page}`, [params.status, params.page]);
-  const selectedIndex = selectionState.key === currentSelectionKey ? selectionState.index : null;
 
   const filtered: Proposal[] = useMemo(() => proposals.filter((p) => {
     if (params.status === 'active') return !p.executed;
@@ -62,24 +57,16 @@ export function ProposalsPage(): React.JSX.Element {
   }), [proposals, params.status]);
 
   const handleSelectUp = useCallback(() => {
-    setSelectionState((prev) => {
-      const activeIndex = prev.key === currentSelectionKey ? prev.index : null;
-      return {
-        key: currentSelectionKey,
-        index: activeIndex === null || activeIndex === 0 ? filtered.length - 1 : activeIndex - 1,
-      };
-    });
-  }, [filtered.length, currentSelectionKey]);
+    setSelectedIndex((prev) =>
+      prev === null || prev === 0 ? filtered.length - 1 : prev - 1,
+    );
+  }, [filtered.length]);
 
   const handleSelectDown = useCallback(() => {
-    setSelectionState((prev) => {
-      const activeIndex = prev.key === currentSelectionKey ? prev.index : null;
-      return {
-        key: currentSelectionKey,
-        index: activeIndex === null || activeIndex === filtered.length - 1 ? 0 : activeIndex + 1,
-      };
-    });
-  }, [filtered.length, currentSelectionKey]);
+    setSelectedIndex((prev) =>
+      prev === null || prev === filtered.length - 1 ? 0 : prev + 1,
+    );
+  }, [filtered.length]);
 
   const handleOpenSelected = useCallback(() => {
     if (selectedIndex !== null && filtered[selectedIndex]) {
@@ -131,6 +118,14 @@ export function ProposalsPage(): React.JSX.Element {
     }
     return undefined;
   }, [online]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setSelectedIndex(null);
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [params.status, params.page]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">

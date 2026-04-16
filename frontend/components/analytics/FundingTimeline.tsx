@@ -5,7 +5,7 @@ import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Responsive
 import { format } from 'date-fns';
 import { ProposalMetrics } from '../../utils/analytics/dataCollector';
 import { formatMetric } from '../../utils/analytics/helpers';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import type { RechartsTooltipEntry, RechartsTooltipProps } from '../../src/types';
 
 interface FundingTimelineProps {
@@ -41,7 +41,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   other: '#6b7280'
 };
 
-function FundingTimelineTooltip({ active, payload }: TimelineTooltipProps) {
+function CustomTooltip({ active, payload }: TimelineTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   const data = payload[0].payload;
@@ -90,6 +90,7 @@ function FundingTimelineTooltip({ active, payload }: TimelineTooltipProps) {
 export default function FundingTimeline({ proposals }: FundingTimelineProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [amountRange] = useState<[number, number]>([0, Infinity]);
+  const [, setZoomLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackIndex, setPlaybackIndex] = useState(0);
   const playbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -163,11 +164,10 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
   const cumulativeData = useMemo(() => {
     const sorted = [...timelineData].sort((a, b) => a.x - b.x);
     return sorted.reduce<{ date: string; cumulative: number }[]>((acc, point) => {
-      const previous = acc.length > 0 ? acc[acc.length - 1].cumulative : 0;
-      const cumulative = previous + point.y / 1_000_000;
+      const nextCumulative = (acc.at(-1)?.cumulative ?? 0) + point.y / 1_000_000;
       acc.push({
         date: format(point.date, 'MMM dd'),
-        cumulative
+        cumulative: nextCumulative
       });
       return acc;
     }, []);
@@ -179,6 +179,17 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
         ? prev.filter(c => c !== category)
         : [...prev, category]
     );
+  };
+
+  const handleZoom = (direction: 'in' | 'out') => {
+    setZoomLevel(prev => {
+      if (direction === 'in') return Math.min(prev * 1.5, 5);
+      return Math.max(prev / 1.5, 0.5);
+    });
+  };
+
+  const resetZoom = () => {
+    setZoomLevel(1);
   };
 
   const togglePlayback = () => {
@@ -225,6 +236,27 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+          </button>
+          <button
+            onClick={() => handleZoom('in')}
+            className="p-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
+            title="Zoom In"
+          >
+            <ZoomIn className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => handleZoom('out')}
+            className="p-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
+            title="Zoom Out"
+          >
+            <ZoomOut className="w-5 h-5" />
+          </button>
+          <button
+            onClick={resetZoom}
+            className="p-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
+            title="Reset Zoom"
+          >
+            <RotateCcw className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -298,7 +330,7 @@ export default function FundingTimeline({ proposals }: FundingTimelineProps) {
               style={{ fontSize: '12px' }}
             />
             <ZAxis type="number" dataKey="z" range={[50, 500]} />
-            <Tooltip content={<FundingTimelineTooltip />} />
+            <Tooltip content={<CustomTooltip />} />
             
             {categories.map(category => {
               const categoryData = timelineData.filter(d => d.category === category);

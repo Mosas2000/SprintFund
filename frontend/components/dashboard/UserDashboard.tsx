@@ -42,11 +42,13 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
     }, [userAddress]);
 
     useEffect(() => {
-        if (!userAddress) return;
-        const timeout = window.setTimeout(() => {
-            fetchUserData();
-        }, 0);
-        return () => window.clearTimeout(timeout);
+        if (userAddress) {
+            const timeout = window.setTimeout(() => {
+                void fetchUserData();
+            }, 0);
+
+            return () => window.clearTimeout(timeout);
+        }
     }, [userAddress, fetchUserData]);
 
     const shortenAddress = (address: string) => {

@@ -11,7 +11,7 @@ export default function Stats() {
     const [topProposers, setTopProposers] = useState<{ address: string; count: number }[]>([]);
     const [loading, setLoading] = useState(true);
 
-    async function fetchStats() {
+    const fetchStats = async () => {
         try {
             setLoading(true);
 
@@ -55,13 +55,14 @@ export default function Stats() {
             console.error('Error fetching stats:', err);
             setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
-        const timeout = window.setTimeout(() => {
-            fetchStats();
-        }, 0);
-        return () => window.clearTimeout(timeout);
+        const loadStats = async () => {
+            await fetchStats();
+        };
+
+        void loadStats();
     }, []);
 
     // Uses centralized formatSTX from utils/formatSTX

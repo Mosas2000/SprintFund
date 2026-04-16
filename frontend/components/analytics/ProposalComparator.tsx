@@ -59,34 +59,11 @@ export default function ProposalComparator({ proposals }: ProposalComparatorProp
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.download = `proposal-comparison-${Date.now()}.csv`;
+    const selectionLabel = selectedProposalData.map(p => p.proposalId).join('-') || 'empty';
+    link.download = `proposal-comparison-${selectionLabel}.csv`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
-  };
-
-  const getMetricComparison = (metric: keyof ProposalMetrics) => {
-    if (selectedProposalData.length === 0) return [];
-    
-    const values = selectedProposalData.map(p => {
-      const value = p[metric];
-      return typeof value === 'number' ? value : 0;
-    });
-
-    const max = Math.max(...values);
-    const min = Math.min(...values);
-
-    return selectedProposalData.map((p, index) => {
-      const value = typeof p[metric] === 'number' ? p[metric] : 0;
-      let comparison: 'better' | 'worse' | 'neutral' = 'neutral';
-      
-      if (max !== min) {
-        if (value === max) comparison = 'better';
-        else if (value === min) comparison = 'worse';
-      }
-
-      return { proposal: p, value, comparison };
-    });
   };
 
   const voterOverlap = useMemo(() => {

@@ -29,7 +29,7 @@ export function VotingHistory({ votes }: VotingHistoryProps) {
     let runningApprove = 0;
     let runningReject = 0;
 
-    return votes.map((vote, index) => {
+    return votes.map((vote) => {
       if (vote.type === 'approve') runningApprove += 1;
       else runningReject += 1;
 

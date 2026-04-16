@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Notification {
   id: number;
@@ -17,27 +17,31 @@ interface VoteNotificationProps {
 }
 
 export default function VoteNotification({ userAddress }: VoteNotificationProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [showPanel, setShowPanel] = useState(false);
-  const [settings, setSettings] = useState({
-    voteAlerts: true,
-    thresholdAlerts: true,
-    resultAlerts: true,
-    delegationAlerts: true,
-    emailNotifications: false
-  });
+  const [notifications, setNotifications] = useState<Notification[]>(() => {
+    if (typeof window === 'undefined') {
+      return [];
+    }
 
-  useEffect(() => {
     const stored = localStorage.getItem(`notifications-${userAddress}`);
-    if (stored) {
-      setNotifications(JSON.parse(stored));
+    return stored ? JSON.parse(stored) : [];
+  });
+  const [showPanel, setShowPanel] = useState(false);
+  const [settings, setSettings] = useState(() => {
+    const defaultSettings = {
+      voteAlerts: true,
+      thresholdAlerts: true,
+      resultAlerts: true,
+      delegationAlerts: true,
+      emailNotifications: false
+    };
+
+    if (typeof window === 'undefined') {
+      return defaultSettings;
     }
 
     const storedSettings = localStorage.getItem(`notification-settings-${userAddress}`);
-    if (storedSettings) {
-      setSettings(JSON.parse(storedSettings));
-    }
-  }, [userAddress]);
+    return storedSettings ? JSON.parse(storedSettings) : defaultSettings;
+  });
 
   const unreadCount = notifications.filter(n => !n.read).length;
 

@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useConnect, UserSession } from '@stacks/connect-react';
 import { proposalDiscussionService } from '@/services/proposal-discussion';
 import { ProposalDiscussionThread } from '@/types/proposal-detail';
@@ -27,12 +27,20 @@ function getUserName(userSession: UserSession | null): string | undefined {
 
 export function useProposalDiscussion(proposalId: string) {
   const { userSession } = useConnect();
-  const [refreshKey, triggerRefresh] = useReducer((value: number) => value + 1, 0);
-  void refreshKey;
-  const thread: ProposalDiscussionThread | null = (() => {
-    if (!proposalId) return null;
-    return proposalDiscussionService.getDiscussionThread(proposalId);
-  })();
+  const [thread, setThread] = useState<ProposalDiscussionThread | null>(() =>
+    proposalId ? proposalDiscussionService.getDiscussionThread(proposalId) : null
+  );
+  const [loading] = useState(false);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      if (proposalId) {
+        setThread(proposalDiscussionService.getDiscussionThread(proposalId));
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+  }, [proposalId]);
 
   const addComment = useCallback(
     (content: string) => {
@@ -46,7 +54,8 @@ export function useProposalDiscussion(proposalId: string) {
         getUserName(userSession)
       );
 
-      triggerRefresh();
+      const updated = proposalDiscussionService.getDiscussionThread(proposalId);
+      setThread(updated);
 
       return comment;
     },
@@ -66,7 +75,8 @@ export function useProposalDiscussion(proposalId: string) {
         getUserName(userSession)
       );
 
-      triggerRefresh();
+      const updated = proposalDiscussionService.getDiscussionThread(proposalId);
+      setThread(updated);
 
       return reply;
     },
@@ -78,7 +88,8 @@ export function useProposalDiscussion(proposalId: string) {
       const success = proposalDiscussionService.editComment(proposalId, commentId, newContent);
 
       if (success) {
-        triggerRefresh();
+        const updated = proposalDiscussionService.getDiscussionThread(proposalId);
+        setThread(updated);
       }
 
       return success;
@@ -91,7 +102,8 @@ export function useProposalDiscussion(proposalId: string) {
       const success = proposalDiscussionService.deleteComment(proposalId, commentId);
 
       if (success) {
-        triggerRefresh();
+        const updated = proposalDiscussionService.getDiscussionThread(proposalId);
+        setThread(updated);
       }
 
       return success;
@@ -104,7 +116,8 @@ export function useProposalDiscussion(proposalId: string) {
       const success = proposalDiscussionService.likeComment(proposalId, commentId);
 
       if (success) {
-        triggerRefresh();
+        const updated = proposalDiscussionService.getDiscussionThread(proposalId);
+        setThread(updated);
       }
 
       return success;
@@ -114,6 +127,7 @@ export function useProposalDiscussion(proposalId: string) {
 
   return {
     thread,
+    loading,
     addComment,
     addReply,
     editComment,

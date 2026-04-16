@@ -23,16 +23,18 @@ interface ProposalVersioningProps {
   };
 }
 
-export default function ProposalVersioning({ proposalId, currentData }: ProposalVersioningProps) {
+export default function ProposalVersioning({ proposalId }: ProposalVersioningProps) {
   const [versions] = useState<Version[]>(() => {
-    if (typeof window === 'undefined') return [];
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
     const stored = localStorage.getItem(`proposal-${proposalId}-versions`);
     return stored ? JSON.parse(stored) : [];
   });
   const [showHistory, setShowHistory] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<Version | null>(null);
   const [showDiff, setShowDiff] = useState(false);
-  void currentData;
 
   const revertToVersion = (version: Version) => {
     if (confirm(`Are you sure you want to revert to version ${version.id}?`)) {
@@ -45,6 +47,7 @@ export default function ProposalVersioning({ proposalId, currentData }: Proposal
   const renderDiff = (old: string, newText: string) => {
     const oldLines = old.split('\n');
     const newLines = newText.split('\n');
+
     return (
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div>

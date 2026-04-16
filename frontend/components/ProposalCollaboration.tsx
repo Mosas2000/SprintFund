@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface Contributor {
   address: string;
@@ -16,15 +16,34 @@ interface ProposalCollaborationProps {
 }
 
 export default function ProposalCollaboration({ proposalId, authorAddress }: ProposalCollaborationProps) {
-  const [contributors, setContributors] = useState<Contributor[]>([
-    {
-      address: authorAddress,
-      role: 'author',
-      contribution: 'Original proposal creator',
-      addedAt: Date.now(),
-      rewardShare: 60
+  const [contributors, setContributors] = useState<Contributor[]>(() => {
+    if (typeof window === 'undefined') {
+      return [
+        {
+          address: authorAddress,
+          role: 'author',
+          contribution: 'Original proposal creator',
+          addedAt: Date.now(),
+          rewardShare: 60
+        }
+      ];
     }
-  ]);
+
+    const stored = localStorage.getItem(`proposal-${proposalId}-contributors`);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+
+    return [
+      {
+        address: authorAddress,
+        role: 'author',
+        contribution: 'Original proposal creator',
+        addedAt: Date.now(),
+        rewardShare: 60
+      }
+    ];
+  });
   const [showAddForm, setShowAddForm] = useState(false);
   const [newContributor, setNewContributor] = useState({
     address: '',
@@ -32,13 +51,6 @@ export default function ProposalCollaboration({ proposalId, authorAddress }: Pro
     contribution: '',
     rewardShare: 10
   });
-
-  useEffect(() => {
-    const stored = localStorage.getItem(`proposal-${proposalId}-contributors`);
-    if (stored) {
-      setContributors(JSON.parse(stored));
-    }
-  }, [proposalId]);
 
   const saveContributors = (updated: Contributor[]) => {
     localStorage.setItem(`proposal-${proposalId}-contributors`, JSON.stringify(updated));

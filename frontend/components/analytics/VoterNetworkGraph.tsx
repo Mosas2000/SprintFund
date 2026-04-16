@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { VoterMetrics } from '../../utils/analytics/dataCollector';
 
 interface VoterNetworkGraphProps {
@@ -25,61 +25,73 @@ interface Edge {
   weight: number;
 }
 
+interface NetworkData {
+  nodes: Node[];
+  edges: Edge[];
+}
+
+const buildNetworkData = (voters: VoterMetrics[], minVoteCount: number): NetworkData => {
+  const filteredVoters = voters.filter(v => v.totalVotes >= minVoteCount);
+  const width = 800;
+  const height = 600;
+
+  const nodes: Node[] = filteredVoters.map((voter, index) => {
+    const angle = filteredVoters.length > 0 ? (index / filteredVoters.length) * 2 * Math.PI : 0;
+    const orbitRadius = Math.min(width, height) / 3;
+
+    return {
+      id: voter.address,
+      x: width / 2 + Math.cos(angle) * orbitRadius,
+      y: height / 2 + Math.sin(angle) * orbitRadius,
+      vx: 0,
+      vy: 0,
+      totalVotes: voter.totalVotes,
+      avgWeight: voter.averageWeight,
+      radius: Math.max(5, Math.min(20, Math.sqrt(voter.totalVotes) * 2)),
+    };
+  });
+
+  const edges: Edge[] = [];
+
+  for (let i = 0; i < filteredVoters.length; i++) {
+    for (let j = i + 1; j < filteredVoters.length; j++) {
+      const voter1 = filteredVoters[i];
+      const voter2 = filteredVoters[j];
+      const sharedCategories = voter1.categories.filter(c => voter2.categories.includes(c));
+
+      if (sharedCategories.length > 0) {
+        edges.push({
+          source: voter1.address,
+          target: voter2.address,
+          weight: sharedCategories.length,
+        });
+      }
+    }
+  }
+
+  return { nodes, edges };
+};
+
 export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNetworkGraphProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const animationRef = useRef<number | null>(null);
+  const nodesRef = useRef<Node[]>([]);
+  const edgesRef = useRef<Edge[]>([]);
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
   const [viewMode, setViewMode] = useState<'influence' | 'delegation' | 'specialization'>('influence');
-  const animationRef = useRef<number | null>(null);
 
   const filteredVoters = useMemo(() => {
     return voters.filter(v => v.totalVotes >= minVoteCount);
   }, [voters, minVoteCount]);
 
+  const networkData = useMemo(() => {
+    return buildNetworkData(voters, minVoteCount);
+  }, [voters, minVoteCount]);
+
   useEffect(() => {
-    const width = 800;
-    const height = 600;
-
-    const newNodes: Node[] = filteredVoters.map((voter, i) => {
-      const angle = (i / filteredVoters.length) * 2 * Math.PI;
-      const radius = Math.min(width, height) / 3;
-      
-      return {
-        id: voter.address,
-        x: width / 2 + Math.cos(angle) * radius,
-        y: height / 2 + Math.sin(angle) * radius,
-        vx: 0,
-        vy: 0,
-        totalVotes: voter.totalVotes,
-        avgWeight: voter.averageWeight,
-        radius: Math.max(5, Math.min(20, Math.sqrt(voter.totalVotes) * 2))
-      };
-    });
-
-    const newEdges: Edge[] = [];
-    for (let i = 0; i < filteredVoters.length; i++) {
-      for (let j = i + 1; j < filteredVoters.length; j++) {
-        const voter1 = filteredVoters[i];
-        const voter2 = filteredVoters[j];
-
-        const sharedCategories = voter1.categories.filter(c => 
-          voter2.categories.includes(c)
-        );
-
-        if (sharedCategories.length > 0) {
-          newEdges.push({
-            source: voter1.address,
-            target: voter2.address,
-            weight: sharedCategories.length
-          });
-        }
-      }
-    }
-
-    setNodes(newNodes);
-    setEdges(newEdges);
-  }, [filteredVoters]);
+    nodesRef.current = networkData.nodes.map(node => ({ ...node }));
+    edgesRef.current = networkData.edges;
+  }, [networkData]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -91,81 +103,81 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
     const width = canvas.width;
     const height = canvas.height;
 
-    const simulate = () => {
+    const drawFrame = () => {
+      const nodes = nodesRef.current;
+      const edges = edgesRef.current;
+
       ctx.clearRect(0, 0, width, height);
 
-      setNodes(prevNodes => {
-        const newNodes = [...prevNodes];
+      const nextNodes = nodes.map(node => ({ ...node }));
 
-        newNodes.forEach(node => {
-          let fx = 0;
-          let fy = 0;
+      nextNodes.forEach(node => {
+        let fx = 0;
+        let fy = 0;
 
-          newNodes.forEach(other => {
-            if (node.id === other.id) return;
+        nextNodes.forEach(other => {
+          if (node.id === other.id) return;
 
-            const dx = other.x - node.x;
-            const dy = other.y - node.y;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const dx = other.x - node.x;
+          const dy = other.y - node.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const repulsion = -100 / (dist * dist);
 
-            const repulsion = -100 / (dist * dist);
-            fx += (dx / dist) * repulsion;
-            fy += (dy / dist) * repulsion;
-          });
-
-          edges.forEach(edge => {
-            if (edge.source === node.id) {
-              const target = newNodes.find(n => n.id === edge.target);
-              if (target) {
-                const dx = target.x - node.x;
-                const dy = target.y - node.y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const attraction = (dist - 100) * 0.01 * edge.weight;
-                fx += (dx / dist) * attraction;
-                fy += (dy / dist) * attraction;
-              }
-            }
-            if (edge.target === node.id) {
-              const source = newNodes.find(n => n.id === edge.source);
-              if (source) {
-                const dx = source.x - node.x;
-                const dy = source.y - node.y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const attraction = (dist - 100) * 0.01 * edge.weight;
-                fx += (dx / dist) * attraction;
-                fy += (dy / dist) * attraction;
-              }
-            }
-          });
-
-          const centerX = width / 2;
-          const centerY = height / 2;
-          const toCenterX = centerX - node.x;
-          const toCenterY = centerY - node.y;
-          const distToCenter = Math.sqrt(toCenterX * toCenterX + toCenterY * toCenterY);
-          
-          if (distToCenter > width / 3) {
-            fx += toCenterX * 0.001;
-            fy += toCenterY * 0.001;
-          }
-
-          node.vx = (node.vx + fx) * 0.9;
-          node.vy = (node.vy + fy) * 0.9;
-
-          node.x += node.vx;
-          node.y += node.vy;
-
-          node.x = Math.max(node.radius, Math.min(width - node.radius, node.x));
-          node.y = Math.max(node.radius, Math.min(height - node.radius, node.y));
+          fx += (dx / dist) * repulsion;
+          fy += (dy / dist) * repulsion;
         });
 
-        return newNodes;
+        edges.forEach(edge => {
+          if (edge.source === node.id) {
+            const target = nextNodes.find(n => n.id === edge.target);
+            if (target) {
+              const dx = target.x - node.x;
+              const dy = target.y - node.y;
+              const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+              const attraction = (dist - 100) * 0.01 * edge.weight;
+              fx += (dx / dist) * attraction;
+              fy += (dy / dist) * attraction;
+            }
+          }
+
+          if (edge.target === node.id) {
+            const source = nextNodes.find(n => n.id === edge.source);
+            if (source) {
+              const dx = source.x - node.x;
+              const dy = source.y - node.y;
+              const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+              const attraction = (dist - 100) * 0.01 * edge.weight;
+              fx += (dx / dist) * attraction;
+              fy += (dy / dist) * attraction;
+            }
+          }
+        });
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const toCenterX = centerX - node.x;
+        const toCenterY = centerY - node.y;
+        const distToCenter = Math.sqrt(toCenterX * toCenterX + toCenterY * toCenterY);
+
+        if (distToCenter > width / 3) {
+          fx += toCenterX * 0.001;
+          fy += toCenterY * 0.001;
+        }
+
+        node.vx = (node.vx + fx) * 0.9;
+        node.vy = (node.vy + fy) * 0.9;
+        node.x += node.vx;
+        node.y += node.vy;
+        node.x = Math.max(node.radius, Math.min(width - node.radius, node.x));
+        node.y = Math.max(node.radius, Math.min(height - node.radius, node.y));
       });
 
+      nodesRef.current = nextNodes;
+
       edges.forEach(edge => {
-        const source = nodes.find(n => n.id === edge.source);
-        const target = nodes.find(n => n.id === edge.target);
-        
+        const source = nextNodes.find(n => n.id === edge.source);
+        const target = nextNodes.find(n => n.id === edge.target);
+
         if (source && target) {
           ctx.strokeStyle = '#374151';
           ctx.lineWidth = edge.weight * 0.5;
@@ -178,31 +190,33 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
         }
       });
 
-      nodes.forEach(node => {
-        const normalizedWeight = node.avgWeight / Math.max(...nodes.map(n => n.avgWeight));
+      const maxAvgWeight = Math.max(1, ...nextNodes.map(n => n.avgWeight));
+
+      nextNodes.forEach(node => {
+        const normalizedWeight = node.avgWeight / maxAvgWeight;
         const hue = normalizedWeight * 120;
         ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
-        
+
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
         ctx.fill();
-        
+
         ctx.strokeStyle = hoveredNode?.id === node.id ? '#fff' : '#1f2937';
         ctx.lineWidth = hoveredNode?.id === node.id ? 3 : 1;
         ctx.stroke();
       });
 
-      animationRef.current = requestAnimationFrame(simulate);
+      animationRef.current = requestAnimationFrame(drawFrame);
     };
 
-    simulate();
+    drawFrame();
 
     return () => {
       if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [nodes, edges, hoveredNode]);
+  }, [hoveredNode, networkData]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -212,7 +226,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const clickedNode = nodes.find(node => {
+    const clickedNode = nodesRef.current.find(node => {
       const dx = x - node.x;
       const dy = y - node.y;
       return Math.sqrt(dx * dx + dy * dy) <= node.radius;
@@ -234,13 +248,13 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    const hoveredNode = nodes.find(node => {
+    const hovered = nodesRef.current.find(node => {
       const dx = x - node.x;
       const dy = y - node.y;
       return Math.sqrt(dx * dx + dy * dy) <= node.radius;
     });
 
-    setHoveredNode(hoveredNode || null);
+    setHoveredNode(hovered || null);
   };
 
   const keyInfluencers = useMemo(() => {
@@ -251,14 +265,14 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
 
   const independentVoters = useMemo(() => {
     const voterConnections = new Map<string, number>();
-    
-    edges.forEach(edge => {
+
+    networkData.edges.forEach(edge => {
       voterConnections.set(edge.source, (voterConnections.get(edge.source) || 0) + 1);
       voterConnections.set(edge.target, (voterConnections.get(edge.target) || 0) + 1);
     });
 
     return filteredVoters.filter(v => (voterConnections.get(v.address) || 0) < 2);
-  }, [filteredVoters, edges]);
+  }, [filteredVoters, networkData.edges]);
 
   return (
     <div className="space-y-6">
@@ -274,7 +288,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
           {[
             { value: 'influence' as const, label: 'Influence Map' },
             { value: 'delegation' as const, label: 'Delegation Chains' },
-            { value: 'specialization' as const, label: 'Category Focus' }
+            { value: 'specialization' as const, label: 'Category Focus' },
           ].map(option => (
             <button
               key={option.value}
@@ -302,7 +316,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
             className="w-full cursor-pointer"
             style={{ maxWidth: '100%', height: 'auto' }}
           />
-          
+
           <div className="mt-4 flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">
               <span className="text-gray-600 dark:text-gray-400">Node size:</span>
@@ -332,9 +346,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
                       {voter.address.slice(0, 8)}...
                     </span>
                   </div>
-                  <span className="text-gray-700 dark:text-gray-300">
-                    {voter.totalVotes} votes
-                  </span>
+                  <span className="text-gray-700 dark:text-gray-300">{voter.totalVotes} votes</span>
                 </div>
               ))}
             </div>
@@ -345,11 +357,11 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Total Nodes:</span>
-                <span className="font-medium text-gray-900 dark:text-white">{nodes.length}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{networkData.nodes.length}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Total Edges:</span>
-                <span className="font-medium text-gray-900 dark:text-white">{edges.length}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{networkData.edges.length}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Independent Voters:</span>
@@ -360,9 +372,7 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
 
           {hoveredNode && (
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700 p-4">
-              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                Voter Details
-              </h4>
+              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Voter Details</h4>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Address:</span>
@@ -372,15 +382,11 @@ export default function VoterNetworkGraph({ voters, minVoteCount = 5 }: VoterNet
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Total Votes:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {hoveredNode.totalVotes}
-                  </span>
+                  <span className="font-medium text-gray-900 dark:text-white">{hoveredNode.totalVotes}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Avg Weight:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {hoveredNode.avgWeight.toFixed(2)}
-                  </span>
+                  <span className="font-medium text-gray-900 dark:text-white">{hoveredNode.avgWeight.toFixed(2)}</span>
                 </div>
               </div>
             </div>

@@ -14,26 +14,29 @@ interface Notification {
 }
 
 export default function NotificationHub() {
-    const now = Date.parse(new Date().toISOString());
     const [isOpen, setIsOpen] = useState(false);
-    const [notifications, setNotifications] = useState<Notification[]>([
-        {
-            id: '1',
-            title: 'Proposal Funded',
-            message: 'Your proposal "Stacks Wallet Integration" has reached the funding threshold!',
-            type: 'success',
-            timestamp: new Date(now),
-            read: false
-        },
-        {
-            id: '2',
-            title: 'New Governance Vote',
-            message: 'A new platform-wide vote on Treasury Allocation is live.',
-            type: 'governance',
-            timestamp: new Date(now - 3600000),
-            read: false
-        }
-    ]);
+    const [notifications, setNotifications] = useState<Notification[]>(() => {
+        const baseTime = Date.now();
+
+        return [
+            {
+                id: '1',
+                title: 'Proposal Funded',
+                message: 'Your proposal "Stacks Wallet Integration" has reached the funding threshold!',
+                type: 'success',
+                timestamp: new Date(baseTime),
+                read: false
+            },
+            {
+                id: '2',
+                title: 'New Governance Vote',
+                message: 'A new platform-wide vote on Treasury Allocation is live.',
+                type: 'governance',
+                timestamp: new Date(baseTime - 3600000),
+                read: false
+            }
+        ];
+    });
 
     const unreadCount = notifications.filter(n => !n.read).length;
 

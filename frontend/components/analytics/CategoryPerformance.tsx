@@ -38,9 +38,9 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function CategoryPerformance({ proposals, onCategoryClick }: CategoryPerformanceProps) {
+  const [baseTimestamp] = useState(() => Date.now());
   const [sortKey, setSortKey] = useState<SortKey>('totalDistributed');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-  const currentTimestamp = Date.parse(new Date().toISOString());
 
   const categoryStats = useMemo((): CategoryStats[] => {
     const grouped = proposals.reduce((acc, proposal) => {
@@ -51,7 +51,7 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
       return acc;
     }, {} as Record<string, ProposalMetrics[]>);
 
-    const thirtyDaysAgo = currentTimestamp - (30 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = baseTimestamp - (30 * 24 * 60 * 60 * 1000);
 
     return Object.entries(grouped).map(([category, categoryProposals]) => {
       const successful = categoryProposals.filter(p => p.executed);
@@ -95,7 +95,7 @@ export default function CategoryPerformance({ proposals, onCategoryClick }: Cate
         trendValue
       };
     });
-  }, [proposals, currentTimestamp]);
+  }, [proposals, baseTimestamp]);
 
   const sortedStats = useMemo(() => {
     return [...categoryStats].sort((a, b) => {

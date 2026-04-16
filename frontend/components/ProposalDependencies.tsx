@@ -14,7 +14,7 @@ interface ProposalDependenciesProps {
   currentProposalTitle: string;
 }
 
-export default function ProposalDependencies({ proposalId: _proposalId, currentProposalTitle: _currentProposalTitle }: ProposalDependenciesProps) {
+export default function ProposalDependencies({ proposalId, currentProposalTitle }: ProposalDependenciesProps) {
   const [dependencies, setDependencies] = useState<Dependency[]>([
     {
       proposalId: 12,
@@ -125,7 +125,12 @@ export default function ProposalDependencies({ proposalId: _proposalId, currentP
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold">🔗 Proposal Dependencies</h3>
+        <div>
+          <h3 className="text-xl font-bold">🔗 Proposal Dependencies</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Proposal #{proposalId}: {currentProposalTitle}
+          </p>
+        </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
@@ -273,7 +278,7 @@ export default function ProposalDependencies({ proposalId: _proposalId, currentP
           <div className="flex items-center gap-2 overflow-x-auto pb-2">
             {dependencies
               .filter((d) => d.type === 'requires')
-              .map((dep, idx) => (
+              .map((dep) => (
                 <div key={dep.proposalId} className="flex items-center gap-2">
                   <div className="px-3 py-2 bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-600 text-sm whitespace-nowrap">
                     #{dep.proposalId}

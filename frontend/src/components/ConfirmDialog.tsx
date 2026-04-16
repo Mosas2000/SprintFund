@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import type { ConfirmDialogProps } from '../types/confirm-dialog';
 import { VARIANT_CONFIG } from '../lib/dialog-variants';
 import { DialogIcon } from './DialogIcon';
@@ -24,24 +24,7 @@ export const ConfirmDialog = memo(function ConfirmDialog({ open, action, onClose
   useScrollLock(open);
   useEscapeKey(open, onClose);
 
-  /** Drive enter animation: set visible to true on next frame after mount */
-  const [visible, setVisible] = useState(false);
-  const prefersReducedMotion =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  useEffect(() => {
-    if (open) {
-      if (prefersReducedMotion) {
-        setVisible(true);
-        return;
-      }
-      // Delay by one frame so the initial opacity-0/scale-95 is painted first
-      const id = requestAnimationFrame(() => setVisible(true));
-      return () => cancelAnimationFrame(id);
-    }
-    setVisible(false);
-  }, [open, prefersReducedMotion]);
+  const visible = open;
 
   if (!open || !action) return null;
 

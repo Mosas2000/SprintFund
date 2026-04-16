@@ -5,11 +5,11 @@ import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
 
 export function DataRefreshIndicator() {
   const { loading } = useGovernanceAnalytics();
-  const [lastUpdated] = useState<Date>(new Date());
+  const [lastUpdated] = useState<Date>(() => new Date());
   const [timeSinceUpdate, setTimeSinceUpdate] = useState('now');
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const updateTimeSince = () => {
       const now = new Date();
       const diffMs = now.getTime() - lastUpdated.getTime();
       const diffMins = Math.floor(diffMs / 60000);
@@ -23,6 +23,11 @@ export function DataRefreshIndicator() {
         const diffHours = Math.floor(diffMins / 60);
         setTimeSinceUpdate(`${diffHours}h ago`);
       }
+    };
+
+    updateTimeSince();
+    const interval = setInterval(() => {
+      updateTimeSince();
     }, 10000);
 
     return () => clearInterval(interval);

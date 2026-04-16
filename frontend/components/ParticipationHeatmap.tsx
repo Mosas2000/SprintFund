@@ -5,7 +5,7 @@ import { Calendar } from 'lucide-react';
 
 export default function ParticipationHeatmap() {
     // Simulating 7 days x 12 intervals
-    const grid = Array.from({ length: 84 }).map(() => Math.random());
+    const grid = Array.from({ length: 84 }, (_, index) => ((index * 37) % 100) / 100);
 
     return (
         <div className="p-8 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-[40px] overflow-hidden">

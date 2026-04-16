@@ -16,10 +16,10 @@ import {
     Area
 } from 'recharts';
 import {
-    Zap,
     ChevronUp,
     ChevronDown,
-    Shield
+    Shield,
+    Zap
 } from 'lucide-react';
 import BulkVotingQueue from '../BulkVotingQueue';
 import type { StatsCardProps } from '../../src/types';
@@ -57,15 +57,13 @@ const influenceRankings = [
     { rank: 5, user: 'charlie.stx', votes: 54, successRate: '78%', weight: 'Medium' },
 ];
 
-const INITIAL_LIVE_VOTES: LiveVote[] = [
-    { id: 1, user: 'mosas.btc', proposal: 'Stacks Wallet v3', type: 'YES', weight: 450, time: 'Now' },
-    { id: 2, user: 'alice.stx', proposal: 'NFT Grant #42', type: 'YES', weight: 120, time: '2s ago' },
-    { id: 3, user: 'bob.btc', proposal: 'Governance SIP-12', type: 'NO', weight: 800, time: '5s ago' },
-    { id: 4, user: 'charlie.stx', proposal: 'Stacks Wallet v3', type: 'YES', weight: 25, time: '12s ago' },
-];
-
 export default function VotingTab() {
-    const [liveVotes, setLiveVotes] = useState<LiveVote[]>(INITIAL_LIVE_VOTES);
+    const [liveVotes, setLiveVotes] = useState<LiveVote[]>(() => [
+        { id: 1, user: 'mosas.btc', proposal: 'Stacks Wallet v3', type: 'YES', weight: 450, time: 'Now' },
+        { id: 2, user: 'alice.stx', proposal: 'NFT Grant #42', type: 'YES', weight: 120, time: '2s ago' },
+        { id: 3, user: 'bob.btc', proposal: 'Governance SIP-12', type: 'NO', weight: 800, time: '5s ago' },
+        { id: 4, user: 'charlie.stx', proposal: 'Stacks Wallet v3', type: 'YES', weight: 25, time: '12s ago' },
+    ]);
 
     useEffect(() => {
         const interval = setInterval(() => {

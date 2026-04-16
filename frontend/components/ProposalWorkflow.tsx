@@ -73,11 +73,16 @@ const STAGES: StageConfig[] = [
 
 export default function ProposalWorkflow({ proposalId, initialStage = 'Draft', onStageChange }: ProposalWorkflowProps) {
   const [currentStage, setCurrentStage] = useState<Stage>(() => {
-    if (typeof window === 'undefined') return initialStage;
+    if (typeof window === 'undefined') {
+      return initialStage;
+    }
+
     const stored = localStorage.getItem(`proposal-${proposalId}-workflow`);
-    if (!stored) return initialStage;
-    const data = JSON.parse(stored) as { currentStage?: Stage };
-    return data.currentStage ?? initialStage;
+    if (!stored) {
+      return initialStage;
+    }
+
+    return JSON.parse(stored).currentStage ?? initialStage;
   });
   const [stageProgress] = useState<Record<Stage, number>>(() => {
     if (typeof window === 'undefined') {
@@ -89,6 +94,7 @@ export default function ProposalWorkflow({ proposalId, initialStage = 'Draft', o
         Executed: 0
       };
     }
+
     const stored = localStorage.getItem(`proposal-${proposalId}-workflow`);
     if (!stored) {
       return {
@@ -99,8 +105,8 @@ export default function ProposalWorkflow({ proposalId, initialStage = 'Draft', o
         Executed: 0
       };
     }
-    const data = JSON.parse(stored) as { stageProgress?: Record<Stage, number> };
-    return data.stageProgress ?? {
+
+    return JSON.parse(stored).stageProgress ?? {
       Draft: 0,
       Review: 0,
       Active: 0,

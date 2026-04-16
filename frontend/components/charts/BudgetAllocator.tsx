@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -59,20 +59,20 @@ export default function BudgetAllocator() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryBudget | null>(null);
   const [newAllocation, setNewAllocation] = useState(0);
-  const [alerts, setAlerts] = useState<string[]>([]);
 
-  useEffect(() => {
-    // Check for budget alerts
-    const newAlerts: string[] = [];
-    budgets.forEach(budget => {
-      if (budget.percentage >= 90) {
-        newAlerts.push(`⚠️ ${budget.category} budget is at ${budget.percentage.toFixed(1)}% - Critical!`);
-      } else if (budget.percentage >= 75) {
-        newAlerts.push(`⚡ ${budget.category} budget is at ${budget.percentage.toFixed(1)}% - Warning`);
-      }
-    });
-    setAlerts(newAlerts);
-  }, [budgets]);
+  const alerts = useMemo(
+    () =>
+      budgets.flatMap((budget) => {
+        if (budget.percentage >= 90) {
+          return [`⚠️ ${budget.category} budget is at ${budget.percentage.toFixed(1)}% - Critical!`];
+        }
+        if (budget.percentage >= 75) {
+          return [`⚡ ${budget.category} budget is at ${budget.percentage.toFixed(1)}% - Warning`];
+        }
+        return [];
+      }),
+    [budgets]
+  );
 
   const totalAllocated = budgets.reduce((sum, b) => sum + b.allocated, 0);
   const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);

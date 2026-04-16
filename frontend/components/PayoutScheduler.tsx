@@ -30,71 +30,79 @@ interface PaymentBatch {
 }
 
 export default function PayoutScheduler() {
-  const now = Date.parse(new Date().toISOString());
-  const [payments, setPayments] = useState<Payment[]>([
-    {
-      id: 1,
-      grantee: 'SP1ABC...DEF',
-      proposalId: 42,
-      proposalTitle: 'DeFi Lending Protocol',
-      amount: 25000,
-      type: 'milestone',
-      status: 'scheduled',
-      scheduledDate: now + 2 * 24 * 60 * 60 * 1000,
-      milestone: 'Phase 1: Smart Contract Development'
-    },
-    {
-      id: 2,
-      grantee: 'SP2XYZ...GHI',
-      proposalId: 28,
-      proposalTitle: 'NFT Marketplace',
-      amount: 15000,
-      type: 'recurring',
-      status: 'scheduled',
-      scheduledDate: now + 5 * 24 * 60 * 60 * 1000,
-      recurringInterval: 'monthly',
-      nextPayment: now + 35 * 24 * 60 * 60 * 1000
-    },
-    {
-      id: 3,
-      grantee: 'SP1ABC...DEF',
-      proposalId: 42,
-      proposalTitle: 'DeFi Lending Protocol',
-      amount: 25000,
-      type: 'milestone',
-      status: 'completed',
-      scheduledDate: now - 10 * 24 * 60 * 60 * 1000,
-      completedDate: now - 10 * 24 * 60 * 60 * 1000,
-      milestone: 'Phase 0: Planning & Design',
-      receiptsUrl: '/receipts/payment-003.pdf'
-    },
-    {
-      id: 4,
-      grantee: 'SP3MNO...PQR',
-      proposalId: 15,
-      proposalTitle: 'DAO Governance Dashboard',
-      amount: 10000,
-      type: 'one-time',
-      status: 'failed',
-      scheduledDate: now - 2 * 24 * 60 * 60 * 1000,
-      retryCount: 2
-    }
-  ]);
+  const [payments, setPayments] = useState<Payment[]>(() => {
+    const baseTime = Date.now();
 
-  const [batches] = useState<PaymentBatch[]>([
-    {
-      id: 'BATCH-001',
-      payments: [1, 2],
-      totalAmount: 40000,
-      scheduledDate: now + 2 * 24 * 60 * 60 * 1000,
-      status: 'pending',
-      gasOptimization: 35
-    }
-  ]);
+    return [
+      {
+        id: 1,
+        grantee: 'SP1ABC...DEF',
+        proposalId: 42,
+        proposalTitle: 'DeFi Lending Protocol',
+        amount: 25000,
+        type: 'milestone',
+        status: 'scheduled',
+        scheduledDate: baseTime + 2 * 24 * 60 * 60 * 1000,
+        milestone: 'Phase 1: Smart Contract Development'
+      },
+      {
+        id: 2,
+        grantee: 'SP2XYZ...GHI',
+        proposalId: 28,
+        proposalTitle: 'NFT Marketplace',
+        amount: 15000,
+        type: 'recurring',
+        status: 'scheduled',
+        scheduledDate: baseTime + 5 * 24 * 60 * 60 * 1000,
+        recurringInterval: 'monthly',
+        nextPayment: baseTime + 35 * 24 * 60 * 60 * 1000
+      },
+      {
+        id: 3,
+        grantee: 'SP1ABC...DEF',
+        proposalId: 42,
+        proposalTitle: 'DeFi Lending Protocol',
+        amount: 25000,
+        type: 'milestone',
+        status: 'completed',
+        scheduledDate: baseTime - 10 * 24 * 60 * 60 * 1000,
+        completedDate: baseTime - 10 * 24 * 60 * 60 * 1000,
+        milestone: 'Phase 0: Planning & Design',
+        receiptsUrl: '/receipts/payment-003.pdf'
+      },
+      {
+        id: 4,
+        grantee: 'SP3MNO...PQR',
+        proposalId: 15,
+        proposalTitle: 'DAO Governance Dashboard',
+        amount: 10000,
+        type: 'one-time',
+        status: 'failed',
+        scheduledDate: baseTime - 2 * 24 * 60 * 60 * 1000,
+        retryCount: 2
+      }
+    ];
+  });
+
+  const [batches] = useState<PaymentBatch[]>(() => {
+    const baseTime = Date.now();
+
+    return [
+      {
+        id: 'BATCH-001',
+        payments: [1, 2],
+        totalAmount: 40000,
+        scheduledDate: baseTime + 2 * 24 * 60 * 60 * 1000,
+        status: 'pending',
+        gasOptimization: 35
+      }
+    ];
+  });
 
   const [filterStatus, setFilterStatus] = useState<'all' | Payment['status']>('all');
   const [filterType, setFilterType] = useState<'all' | Payment['type']>('all');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [, setShowBatchModal] = useState(false);
 
   const [newPayment, setNewPayment] = useState({
     grantee: '',
@@ -118,7 +126,7 @@ export default function PayoutScheduler() {
     setTimeout(() => {
       setPayments(payments.map(p => 
         p.id === paymentId 
-          ? { ...p, status: 'completed' as const, completedDate: Date.parse(new Date().toISOString()) }
+          ? { ...p, status: 'completed' as const, completedDate: Date.now() }
           : p
       ));
     }, 2000);
@@ -198,6 +206,7 @@ export default function PayoutScheduler() {
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => setShowBatchModal(true)}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium 
                      hover:bg-gray-50 dark:hover:bg-gray-700"
           >

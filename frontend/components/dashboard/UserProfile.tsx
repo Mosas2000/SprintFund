@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
 
 interface UserProfileData {
   address: string;
@@ -30,44 +30,33 @@ interface UserProfileProps {
   isOwnProfile?: boolean;
 }
 
-export default function UserProfile({ userAddress, isOwnProfile = false }: UserProfileProps) {
-  const now = Date.parse(new Date().toISOString());
-  const [profile, setProfile] = useState<UserProfileData>(() => {
-    const base: UserProfileData = {
-      address: userAddress,
-      bio: '',
-      reputation: 0,
-      totalProposals: 0,
-      votesCast: 0,
-      successRate: 0,
-      memberSince: now,
-      socialLinks: {},
-      customization: {
-        theme: 'default',
-        accentColor: '#3B82F6'
-      }
-    };
+const buildInitialProfile = (userAddress: string): UserProfileData => {
+  const memberSince = 1700000000000;
+  const seed = userAddress.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
 
-    if (typeof window === 'undefined') return base;
-    const stored = localStorage.getItem(`user-profile-${userAddress}`);
-    if (stored) return JSON.parse(stored);
-    const seed = userAddress.slice(-6).split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
-    return {
-      ...base,
-      reputation: (seed * 17) % 2000,
-      totalProposals: (seed * 7) % 25,
-      votesCast: (seed * 11) % 150,
-      successRate: ((seed * 13) % 10000) / 100
-    };
-  });
+  return {
+    address: userAddress,
+    bio: '',
+    reputation: 200 + (seed % 1800),
+    totalProposals: seed % 25,
+    votesCast: 20 + (seed % 130),
+    successRate: 40 + (seed % 60),
+    memberSince,
+    socialLinks: {},
+    customization: {
+      theme: 'default',
+      accentColor: '#3B82F6'
+    }
+  };
+};
+
+export default function UserProfile({ userAddress, isOwnProfile = false }: UserProfileProps) {
+  const [currentTime] = useState(() => Date.now());
+  const initialProfile = buildInitialProfile(userAddress);
+  const [profile, setProfile] = useState<UserProfileData>(initialProfile);
   
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState<UserProfileData>(profile);
-  const profileData = isEditing ? editForm : profile;
-  const daysActive = useMemo(
-    () => Math.floor((now - profileData.memberSince) / (1000 * 60 * 60 * 24)),
-    [now, profileData.memberSince]
-  );
+  const [editForm, setEditForm] = useState(profile);
 
   const saveProfile = () => {
     localStorage.setItem(`user-profile-${userAddress}`, JSON.stringify(editForm));
@@ -89,27 +78,27 @@ export default function UserProfile({ userAddress, isOwnProfile = false }: UserP
     return { name: 'Bronze', color: '#CD7F32', icon: '🥉' };
   };
 
-  const tier = getReputationTier(profileData.reputation);
+  const tier = getReputationTier(profile.reputation);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header Card */}
       <div
         className="rounded-lg p-8 text-white relative overflow-hidden"
-        style={{ background: `linear-gradient(135deg, ${profileData.customization.accentColor} 0%, ${profileData.customization.accentColor}99 100%)` }}
+        style={{ background: `linear-gradient(135deg, ${profile.customization.accentColor} 0%, ${profile.customization.accentColor}99 100%)` }}
       >
         <div className="relative z-10 flex items-start gap-6">
           {/* Avatar */}
           <div
             className="w-32 h-32 rounded-full flex items-center justify-center text-4xl font-bold border-4 border-white shadow-xl"
-            style={{ backgroundColor: generateAvatar(profileData.address) }}
+            style={{ backgroundColor: generateAvatar(profile.address) }}
           >
-            {profileData.avatar ? (
-              <Image src={profileData.avatar} alt="Avatar" width={128} height={128} className="w-full h-full rounded-full object-cover" />
-            ) : profileData.bnsName ? (
-              profileData.bnsName.slice(0, 2).toUpperCase()
+            {profile.avatar ? (
+              <Image src={profile.avatar} alt="Avatar" width={128} height={128} className="w-full h-full rounded-full object-cover" />
+            ) : profile.bnsName ? (
+              profile.bnsName.slice(0, 2).toUpperCase()
             ) : (
-              profileData.address.slice(0, 2).toUpperCase()
+              profile.address.slice(0, 2).toUpperCase()
             )}
           </div>
 
@@ -118,9 +107,9 @@ export default function UserProfile({ userAddress, isOwnProfile = false }: UserP
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h1 className="text-3xl font-bold mb-1">
-                  {profileData.bnsName || `${profileData.address.slice(0, 8)}...${profileData.address.slice(-6)}`}
+                  {profile.bnsName || `${profile.address.slice(0, 8)}...${profile.address.slice(-6)}`}
                 </h1>
-                <p className="text-white/80 text-sm font-mono">{profileData.address}</p>
+                <p className="text-white/80 text-sm font-mono">{profile.address}</p>
               </div>
               {isOwnProfile && (
                 <button
@@ -152,7 +141,7 @@ export default function UserProfile({ userAddress, isOwnProfile = false }: UserP
               />
             ) : (
               <p className="text-white/90 mb-4">
-                {profileData.bio || 'No bio yet. Share something about yourself!'}
+                {profile.bio || 'No bio yet. Share something about yourself!'}
               </p>
             )}
 
@@ -184,23 +173,23 @@ export default function UserProfile({ userAddress, isOwnProfile = false }: UserP
                 </div>
               ) : (
                 <>
-                   {profileData.socialLinks.twitter && (
-                     <a href={`https://twitter.com/${profileData.socialLinks.twitter}`} target="_blank" rel="noopener noreferrer"
+                  {profile.socialLinks.twitter && (
+                    <a href={`https://twitter.com/${profile.socialLinks.twitter}`} target="_blank" rel="noopener noreferrer"
                        className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg backdrop-blur-sm transition text-sm">
                       🐦 Twitter
                     </a>
                   )}
-                   {profileData.socialLinks.github && (
-                     <a href={`https://github.com/${profileData.socialLinks.github}`} target="_blank" rel="noopener noreferrer"
+                  {profile.socialLinks.github && (
+                    <a href={`https://github.com/${profile.socialLinks.github}`} target="_blank" rel="noopener noreferrer"
                        className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg backdrop-blur-sm transition text-sm">
                       💻 GitHub
                     </a>
                   )}
-                   {profileData.socialLinks.discord && (
-                     <span className="px-3 py-1 bg-white/20 rounded-lg backdrop-blur-sm text-sm">
-                       💬 {profileData.socialLinks.discord}
-                     </span>
-                   )}
+                  {profile.socialLinks.discord && (
+                    <span className="px-3 py-1 bg-white/20 rounded-lg backdrop-blur-sm text-sm">
+                      💬 {profile.socialLinks.discord}
+                    </span>
+                  )}
                 </>
               )}
             </div>
@@ -221,28 +210,28 @@ export default function UserProfile({ userAddress, isOwnProfile = false }: UserP
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
-            {profileData.totalProposals}
+            {profile.totalProposals}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Proposals Created</div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">
-            {profileData.votesCast}
+            {profile.votesCast}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Votes Cast</div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-1">
-            {profileData.successRate.toFixed(1)}%
+            {profile.successRate.toFixed(1)}%
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Success Rate</div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-1">
-            {daysActive}
+            {Math.floor((currentTime - profile.memberSince) / (1000 * 60 * 60 * 24))}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">Days Active</div>
         </div>

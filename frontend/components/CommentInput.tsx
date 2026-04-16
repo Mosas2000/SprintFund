@@ -13,7 +13,6 @@ interface CommentInputProps {
 }
 
 export function CommentInput({
-  proposalId,
   onSubmit,
   isReply = false,
   onCancel,
@@ -22,7 +21,6 @@ export function CommentInput({
   const { userSession } = useConnect();
   const [content, setContent] = useState('');
   const [error, setError] = useState<string | null>(null);
-  void proposalId;
 
   const handleSubmit = () => {
     if (!userSession) {

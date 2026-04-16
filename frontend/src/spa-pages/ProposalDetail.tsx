@@ -69,7 +69,10 @@ export function ProposalDetailPage(): React.JSX.Element {
   }, [proposalId]);
 
   useEffect(() => {
-    const timeout = window.setTimeout(fetchProposal, 0);
+    const timeout = window.setTimeout(() => {
+      fetchProposal();
+    }, 0);
+
     return () => window.clearTimeout(timeout);
   }, [fetchProposal]);
 

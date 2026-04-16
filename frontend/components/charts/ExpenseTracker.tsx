@@ -21,11 +21,11 @@ interface Expense {
 }
 
 export default function ExpenseTracker() {
-  const now = Date.parse(new Date().toISOString());
+  const [baseTime] = useState(() => Date.now());
   const [expenses, setExpenses] = useState<Expense[]>([
     {
       id: 1,
-      date: now - 2 * 24 * 60 * 60 * 1000,
+      date: baseTime - 2 * 24 * 60 * 60 * 1000,
       category: 'DeFi',
       description: 'Grant #42 - DeFi Protocol Development',
       amount: 75000,
@@ -40,7 +40,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 2,
-      date: now - 5 * 24 * 60 * 60 * 1000,
+      date: baseTime - 5 * 24 * 60 * 60 * 1000,
       category: 'Infrastructure',
       description: 'AWS Cloud Services',
       amount: 3500,
@@ -56,7 +56,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 3,
-      date: now - 7 * 24 * 60 * 60 * 1000,
+      date: baseTime - 7 * 24 * 60 * 60 * 1000,
       category: 'Marketing',
       description: 'Social Media Campaign - Q1',
       amount: 8000,
@@ -69,7 +69,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 4,
-      date: now - 10 * 24 * 60 * 60 * 1000,
+      date: baseTime - 10 * 24 * 60 * 60 * 1000,
       category: 'Operational',
       description: 'Legal & Compliance Consulting',
       amount: 12000,
@@ -84,7 +84,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 5,
-      date: now - 1 * 24 * 60 * 60 * 1000,
+      date: baseTime - 1 * 24 * 60 * 60 * 1000,
       category: 'Community',
       description: 'Community Event Sponsorship',
       amount: 5000,
@@ -98,7 +98,7 @@ export default function ExpenseTracker() {
     },
     {
       id: 6,
-      date: now - 15 * 24 * 60 * 60 * 1000,
+      date: baseTime - 15 * 24 * 60 * 60 * 1000,
       category: 'NFT',
       description: 'Grant #38 - NFT Marketplace',
       amount: 45000,
@@ -113,7 +113,6 @@ export default function ExpenseTracker() {
     }
   ]);
 
-  const [, setShowExpenseModal] = useState(false);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [filterStatus, setFilterStatus] = useState<'all' | Expense['status']>('all');

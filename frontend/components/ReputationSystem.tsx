@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 interface Achievement {
   id: string;
@@ -33,31 +33,28 @@ const ACHIEVEMENTS: Achievement[] = [
 ];
 
 export default function ReputationSystem({ userAddress, reputation }: ReputationSystemProps) {
-  const now = Date.parse(new Date().toISOString());
   const [achievements] = useState<Achievement[]>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(`achievements-${userAddress}`);
-      if (stored) return JSON.parse(stored);
+    if (typeof window === 'undefined') {
+      return ACHIEVEMENTS;
     }
 
-    const seed = userAddress.split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
-    return ACHIEVEMENTS.map((ach, index) => {
-      const max = ach.maxProgress || 1;
-      const score = (seed + index * 37) % 100;
-      if (score > 70) {
-        const daysAgo = (seed + index * 11) % 30;
-        return { ...ach, unlockedAt: now - daysAgo * 24 * 60 * 60 * 1000 };
+    const stored = localStorage.getItem(`achievements-${userAddress}`);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+
+    return ACHIEVEMENTS.map(ach => {
+      const random = Math.random();
+      if (random > 0.7) {
+        return { ...ach, unlockedAt: Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000 };
       }
-      if (score > 40) {
-        return { ...ach, progress: ((seed + index * 17) % max) + 1 };
+      if (random > 0.4) {
+        return { ...ach, progress: Math.floor(Math.random() * (ach.maxProgress || 1)) };
       }
       return ach;
     });
   });
-  const unlockedCount = useMemo(
-    () => achievements.filter(a => a.unlockedAt).length,
-    [achievements]
-  );
+  const unlockedCount = achievements.filter(a => a.unlockedAt).length;
 
   const getTier = (rep: number) => {
     if (rep >= 2000) return { name: 'Diamond', color: 'from-cyan-400 to-blue-500', icon: '💎', min: 2000, max: 999999 };

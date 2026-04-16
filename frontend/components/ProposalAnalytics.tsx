@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface ProposalStats {
   category: string;
@@ -39,23 +39,6 @@ export default function ProposalAnalytics() {
 
   const calculateSuccessRate = (stat: ProposalStats) => {
     return ((stat.approved / stat.total) * 100).toFixed(1);
-  };
-
-  const _predictSuccess = (category: string, amount: number, timeline: number) => {
-    const stat = categoryStats.find((s) => s.category === category);
-    if (!stat) return 50;
-
-    let score = parseFloat(calculateSuccessRate(stat));
-
-    // Adjust based on amount
-    if (amount > stat.avgAmount * 1.5) score -= 15;
-    else if (amount < stat.avgAmount * 0.5) score += 10;
-
-    // Adjust based on timeline
-    if (timeline > stat.avgTimeToExecution * 1.5) score -= 10;
-    else if (timeline < stat.avgTimeToExecution * 0.8) score += 5;
-
-    return Math.max(0, Math.min(100, score));
   };
 
   const totalProposals = categoryStats.reduce((sum, s) => sum + s.total, 0);

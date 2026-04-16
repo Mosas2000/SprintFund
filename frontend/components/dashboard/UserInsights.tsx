@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 interface AIRecommendationMetadata {
   relatedProposalId?: number;
@@ -39,19 +39,11 @@ interface OptimalStrategy {
   recommendedActions: string[];
 }
 
-interface UserInsightsProps {
-  userAddress: string;
-}
-
-export default function UserInsights({ userAddress }: UserInsightsProps) {
-  const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
-  const [performanceReport, setPerformanceReport] = useState<PerformanceReport | null>(null);
-  const [strategies, setStrategies] = useState<OptimalStrategy[]>([]);
+export default function UserInsights() {
   const [activeTab, setActiveTab] = useState<'recommendations' | 'performance' | 'strategies'>('recommendations');
   const [filterImpact, setFilterImpact] = useState<'all' | 'high' | 'medium'>('all');
 
-  useEffect(() => {
-    // Load AI-powered insights
+  const { recommendations, performanceReport, strategies } = useMemo(() => {
     const mockRecommendations: AIRecommendation[] = [
       {
         id: 1,
@@ -162,10 +154,12 @@ export default function UserInsights({ userAddress }: UserInsightsProps) {
       }
     ];
 
-    setRecommendations(mockRecommendations);
-    setPerformanceReport(mockPerformance);
-    setStrategies(mockStrategies);
-  }, [userAddress]);
+    return {
+      recommendations: mockRecommendations,
+      performanceReport: mockPerformance,
+      strategies: mockStrategies
+    };
+  }, []);
 
   const filteredRecommendations = recommendations.filter(rec => {
     if (filterImpact === 'all') return true;

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-    BarChart,
     Bar,
     XAxis,
     YAxis,
@@ -12,18 +11,18 @@ import {
     ResponsiveContainer,
     ScatterChart,
     Scatter,
-    ZAxis
+    ZAxis,
+    BarChart
 } from 'recharts';
 import {
     Filter,
     Search,
-    TrendingUp,
-    MoreVertical
+    MoreVertical,
+    TrendingUp
 } from 'lucide-react';
 
 export default function ProposalsTab() {
     const [searchTerm, setSearchTerm] = useState('');
-    const heatmapIntensities = [0.24, 0.51, 0.63, 0.38, 0.84, 0.43, 0.29, 0.72, 0.47, 0.58, 0.91, 0.44, 0.35, 0.68, 0.77, 0.41, 0.56, 0.32, 0.86, 0.27, 0.59, 0.74, 0.49, 0.65, 0.33, 0.81, 0.46, 0.54];
 
     return (
         <div className="p-8 space-y-12">
@@ -265,7 +264,8 @@ export default function ProposalsTab() {
                         {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(day => (
                             <div key={day} className="text-[10px] font-black text-slate-600 text-center mb-2">{day}</div>
                         ))}
-                        {heatmapIntensities.map((intensity, i) => {
+                        {Array.from({ length: 28 }).map((_, i) => {
+                            const intensity = ((i * 37) % 100) / 100;
                             return (
                                 <div
                                     key={i}

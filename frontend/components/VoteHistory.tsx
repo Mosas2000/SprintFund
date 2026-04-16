@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 interface Vote {
   proposalId: string;
@@ -17,25 +17,23 @@ interface VoteHistoryProps {
 }
 
 export default function VoteHistory({ userAddress }: VoteHistoryProps) {
+  const [baseTimestamp] = useState(() => Date.now());
   const [votes] = useState<Vote[]>(() => {
-    if (typeof window === 'undefined' || !userAddress) return [];
+    if (!userAddress || typeof window === 'undefined') {
+      return [];
+    }
+
     const storedVotes = localStorage.getItem(`vote-history-${userAddress}`);
     return storedVotes ? JSON.parse(storedVotes) : [];
   });
   const [filter, setFilter] = useState<'ALL' | 'YES' | 'NO'>('ALL');
   const [dateRange, setDateRange] = useState('all');
-  const totalSpent = useMemo(
-    () => votes.reduce((sum, vote) => sum + vote.cost, 0),
-    [votes]
-  );
-  const categoryStats = useMemo(() => {
-    const stats: Record<string, number> = {};
-    votes.forEach(vote => {
-      const category = vote.category || 'General';
-      stats[category] = (stats[category] || 0) + 1;
-    });
+  const totalSpent = votes.reduce((sum, vote) => sum + vote.cost, 0);
+  const categoryStats = votes.reduce<Record<string, number>>((stats, vote) => {
+    const category = vote.category || 'General';
+    stats[category] = (stats[category] || 0) + 1;
     return stats;
-  }, [votes]);
+  }, {});
 
   const filterVotes = () => {
     let filtered = votes;
@@ -46,18 +44,17 @@ export default function VoteHistory({ userAddress }: VoteHistoryProps) {
     }
 
     // Filter by date range
-    const now = Date.parse(new Date().toISOString());
     const dayMs = 24 * 60 * 60 * 1000;
     
     switch(dateRange) {
       case '7days':
-        filtered = filtered.filter(vote => now - vote.timestamp < 7 * dayMs);
+        filtered = filtered.filter(vote => baseTimestamp - vote.timestamp < 7 * dayMs);
         break;
       case '30days':
-        filtered = filtered.filter(vote => now - vote.timestamp < 30 * dayMs);
+        filtered = filtered.filter(vote => baseTimestamp - vote.timestamp < 30 * dayMs);
         break;
       case '90days':
-        filtered = filtered.filter(vote => now - vote.timestamp < 90 * dayMs);
+        filtered = filtered.filter(vote => baseTimestamp - vote.timestamp < 90 * dayMs);
         break;
     }
 

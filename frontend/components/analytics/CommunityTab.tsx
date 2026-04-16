@@ -1,5 +1,4 @@
 'use client';
-
 import {
     XAxis,
     YAxis,
@@ -7,7 +6,7 @@ import {
     Tooltip,
     ResponsiveContainer,
     LineChart,
-    Line
+    Line,
 } from 'recharts';
 import {
     Users,
@@ -17,7 +16,7 @@ import {
     Globe,
     Heart,
     ChevronRight,
-    Star
+    Star,
 } from 'lucide-react';
 import { CommunityInsights } from './index';
 

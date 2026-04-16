@@ -47,7 +47,7 @@ interface EmergencyProcedure {
 }
 
 export default function TreasuryGovernance() {
-  const now = Date.parse(new Date().toISOString());
+  const baseTime = useState(() => Date.now())[0];
   const [spendingLimits] = useState<SpendingLimit[]>([
     {
       id: 1,
@@ -93,7 +93,7 @@ export default function TreasuryGovernance() {
       name: 'Min Proposal Threshold',
       description: 'Minimum STX required to create a funding proposal',
       currentValue: 10000,
-      lastUpdated: now - 30 * 24 * 60 * 60 * 1000,
+      lastUpdated: baseTime - 30 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP9XYZ...123',
       requiresVote: true
     },
@@ -102,7 +102,7 @@ export default function TreasuryGovernance() {
       name: 'Vote Pass Percentage',
       description: 'Percentage of votes needed for proposal approval',
       currentValue: '60%',
-      lastUpdated: now - 60 * 24 * 60 * 60 * 1000,
+      lastUpdated: baseTime - 60 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP8ABC...456',
       requiresVote: true
     },
@@ -111,7 +111,7 @@ export default function TreasuryGovernance() {
       name: 'Treasury Manager Multi-Sig',
       description: 'Number of signatures required for large withdrawals',
       currentValue: '3 of 5',
-      lastUpdated: now - 90 * 24 * 60 * 60 * 1000,
+      lastUpdated: baseTime - 90 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP7DEF...789',
       requiresVote: true
     },
@@ -120,7 +120,7 @@ export default function TreasuryGovernance() {
       name: 'Emergency Pause Threshold',
       description: 'Amount that triggers emergency review',
       currentValue: 100000,
-      lastUpdated: now - 45 * 24 * 60 * 60 * 1000,
+      lastUpdated: baseTime - 45 * 24 * 60 * 60 * 1000,
       updatedBy: 'SP9XYZ...123',
       requiresVote: true
     }
@@ -129,7 +129,7 @@ export default function TreasuryGovernance() {
   const [auditLog] = useState<AuditEntry[]>([
     {
       id: 1,
-      timestamp: now - 2 * 60 * 60 * 1000,
+      timestamp: baseTime - 2 * 60 * 60 * 1000,
       action: 'Grant Payout',
       actor: 'SP9XYZ...123',
       category: 'DeFi',
@@ -139,7 +139,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 2,
-      timestamp: now - 5 * 60 * 60 * 1000,
+      timestamp: baseTime - 5 * 60 * 60 * 1000,
       action: 'Budget Increase',
       actor: 'SP8ABC...456',
       category: 'NFT',
@@ -149,7 +149,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 3,
-      timestamp: now - 12 * 60 * 60 * 1000,
+      timestamp: baseTime - 12 * 60 * 60 * 1000,
       action: 'Parameter Update',
       actor: 'SP7DEF...789',
       category: 'Governance',
@@ -158,7 +158,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 4,
-      timestamp: now - 24 * 60 * 60 * 1000,
+      timestamp: baseTime - 24 * 60 * 60 * 1000,
       action: 'Emergency Pause',
       actor: 'SP6GHI...012',
       category: 'Security',
@@ -167,7 +167,7 @@ export default function TreasuryGovernance() {
     },
     {
       id: 5,
-      timestamp: now - 30 * 60 * 60 * 1000,
+      timestamp: baseTime - 30 * 60 * 60 * 1000,
       action: 'Spending Limit Set',
       actor: 'SP9XYZ...123',
       category: 'DeFi',
@@ -185,7 +185,7 @@ export default function TreasuryGovernance() {
       signaturesRequired: 2,
       cooldownPeriod: 48,
       status: 'active',
-      lastTriggered: now - 24 * 60 * 60 * 1000
+      lastTriggered: baseTime - 24 * 60 * 60 * 1000
     },
     {
       id: 2,

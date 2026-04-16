@@ -12,9 +12,12 @@ interface VoteData {
 }
 
 export default function VotingAnalyticsDashboard() {
-  const now = Date.parse(new Date().toISOString());
+  const [baseTimestamp] = useState(() => Date.now());
   const [votes] = useState<VoteData[]>(() => {
-    if (typeof window === 'undefined') return [];
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
     const stored = localStorage.getItem('voteHistory');
     return stored ? JSON.parse(stored) : [];
   });
@@ -34,7 +37,7 @@ export default function VotingAnalyticsDashboard() {
         '30d': 30 * 24 * 60 * 60 * 1000,
         '90d': 90 * 24 * 60 * 60 * 1000
       };
-      filtered = filtered.filter(v => now - v.timestamp < ranges[dateRange]);
+      filtered = filtered.filter(v => baseTimestamp - v.timestamp < ranges[dateRange]);
     }
 
     return filtered;
@@ -81,7 +84,7 @@ export default function VotingAnalyticsDashboard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `voting-analytics-${now}.csv`;
+    a.download = `voting-analytics-${baseTimestamp}.csv`;
     a.click();
   };
 

@@ -17,8 +17,12 @@ interface VoteCommentProps {
 }
 
 export default function VoteComment({ proposalId, userAddress }: VoteCommentProps) {
+  const [baseTimestamp] = useState(() => Date.now());
   const [comments, setComments] = useState<Comment[]>(() => {
-    if (typeof window === 'undefined') return [];
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
     const stored = localStorage.getItem(`proposal-${proposalId}-comments`);
     return stored ? JSON.parse(stored) : [];
   });
@@ -34,13 +38,12 @@ export default function VoteComment({ proposalId, userAddress }: VoteCommentProp
 
   const addComment = () => {
     if (!newComment.trim()) return;
-    const timestamp = new Date().getTime();
 
     const comment: Comment = {
-      id: timestamp,
+      id: baseTimestamp + comments.length + 1,
       author: userAddress.slice(0, 8) + '...' + userAddress.slice(-4),
       text: newComment,
-      timestamp,
+      timestamp: baseTimestamp,
       vote: voteChoice,
       replies: []
     };
@@ -51,13 +54,12 @@ export default function VoteComment({ proposalId, userAddress }: VoteCommentProp
 
   const addReply = (commentId: number) => {
     if (!replyText.trim()) return;
-    const timestamp = new Date().getTime();
 
     const reply: Comment = {
-      id: timestamp,
+      id: baseTimestamp + comments.length + replyText.length + 1,
       author: userAddress.slice(0, 8) + '...' + userAddress.slice(-4),
       text: replyText,
-      timestamp,
+      timestamp: baseTimestamp,
       vote: 'abstain',
       replies: []
     };

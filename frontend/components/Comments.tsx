@@ -17,7 +17,10 @@ interface CommentsProps {
 
 export default function Comments({ proposalId, userAddress }: CommentsProps) {
     const [comments, setComments] = useState<Comment[]>(() => {
-        if (typeof window === 'undefined') return [];
+        if (typeof window === 'undefined') {
+            return [];
+        }
+
         const stored = localStorage.getItem(`comments-${proposalId}`);
         return stored ? JSON.parse(stored) : [];
     });

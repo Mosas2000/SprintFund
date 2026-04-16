@@ -43,9 +43,9 @@ export default function SuccessPredictor({ historicalProposals }: SuccessPredict
       catStats.avgAmount += p.amount;
     });
 
-    stats.forEach((value) => {
-      value.avgAmount /= value.total;
-    });
+     stats.forEach((value) => {
+       value.avgAmount /= value.total;
+     });
 
     return stats;
   }, [historicalProposals]);
@@ -182,11 +182,11 @@ export default function SuccessPredictor({ historicalProposals }: SuccessPredict
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
             <h4 className="font-semibold mb-3">Factor Breakdown</h4>
             <div className="space-y-3">
-              {Object.entries(prediction.factors).map(([key, value]) => (
-                <div key={key}>
+              {Object.entries(prediction.factors).map(([label, value]) => (
+                <div key={label}>
                   <div className="flex items-center justify-between text-sm mb-1">
                     <span className="capitalize text-gray-700 dark:text-gray-300">
-                      {key.replace('Score', '')}
+                      {label.replace('Score', '')}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
                       {value.toFixed(0)}%
