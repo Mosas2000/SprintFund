@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-orange-500/30`}
+        className={`${geistSans.variable} ${geistMono.variable} overflow-x-hidden antialiased selection:bg-orange-500/30`}
       >
         <Providers>
           <ToastProvider />

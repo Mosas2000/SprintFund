@@ -77,17 +77,16 @@ export default function WithdrawVoteModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-md w-full shadow-2xl">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-2 backdrop-blur-sm sm:items-center sm:p-4">
+      <div className="max-h-[calc(100dvh-1rem)] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl dark:bg-gray-800 sm:max-h-[calc(100dvh-2rem)] sm:p-6">
+        <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
           Withdraw Vote
         </h2>
 
-        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+        <div className="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-900/20">
           <div className="flex items-start gap-2">
-            <span className="text-2xl">⚠️</span>
             <div>
-              <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
+              <h3 className="mb-1 font-semibold text-yellow-800 dark:text-yellow-200">
                 Confirm Vote Withdrawal
               </h3>
               <p className="text-sm text-yellow-700 dark:text-yellow-300">
@@ -98,14 +97,14 @@ export default function WithdrawVoteModal({
         </div>
 
         {/* Current Vote Info */}
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+        <div className="mb-6 rounded-lg bg-gray-50 p-4 dark:bg-gray-900/50">
           <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">Current Vote</h3>
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
               <span className="text-gray-600 dark:text-gray-400">Proposal:</span>
               <span className="font-medium text-gray-900 dark:text-white">{proposalTitle}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
               <span className="text-gray-600 dark:text-gray-400">Direction:</span>
               <span className={`font-semibold ${
                 currentVote.direction === 'YES' ? 'text-green-600' : 'text-red-600'
@@ -113,11 +112,11 @@ export default function WithdrawVoteModal({
                 {currentVote.direction}
               </span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
               <span className="text-gray-600 dark:text-gray-400">Weight:</span>
               <span className="font-medium text-gray-900 dark:text-white">{currentVote.weight}</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
               <span className="text-gray-600 dark:text-gray-400">Cost:</span>
               <span className="font-medium text-gray-900 dark:text-white">{currentVote.cost} STX</span>
             </div>
@@ -125,11 +124,11 @@ export default function WithdrawVoteModal({
         </div>
 
         {/* Refund Calculation */}
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <h3 className="font-semibold mb-3 text-blue-900 dark:text-blue-200">Refund Amount</h3>
+        <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+          <h3 className="mb-3 font-semibold text-blue-900 dark:text-blue-200">Refund Amount</h3>
           <div className="space-y-3">
             <div>
-              <div className="flex justify-between text-sm mb-1">
+              <div className="mb-1 flex justify-between text-sm">
                 <span className="text-blue-700 dark:text-blue-300">Time Remaining</span>
                 <span className="font-medium text-blue-900 dark:text-blue-100">{refund.percentage.toFixed(1)}%</span>
               </div>
@@ -141,9 +140,9 @@ export default function WithdrawVoteModal({
               </div>
             </div>
             <div className="pt-2 border-t border-blue-200 dark:border-blue-800">
-              <div className="flex justify-between items-baseline">
+              <div className="flex items-baseline justify-between gap-3">
                 <span className="text-sm text-blue-700 dark:text-blue-300">You&apos;ll receive:</span>
-                <span className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                <span className="text-xl font-bold text-blue-900 dark:text-blue-100 sm:text-2xl">
                   {refund.amount.toFixed(2)} STX
                 </span>
               </div>
@@ -152,23 +151,23 @@ export default function WithdrawVoteModal({
         </div>
 
         {/* Info Box */}
-        <div className="mb-6 p-3 bg-gray-100 dark:bg-gray-900/50 rounded text-sm text-gray-600 dark:text-gray-400">
-          <p>💡 Refund decreases as the proposal deadline approaches. Withdraw early for maximum refund!</p>
+        <div className="mb-6 rounded bg-gray-100 p-3 text-sm text-gray-600 dark:bg-gray-900/50 dark:text-gray-400">
+          <p>Refund decreases as the proposal deadline approaches. Withdraw early for maximum refund.</p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={onClose}
             disabled={isWithdrawing}
-            className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg font-medium transition-all disabled:opacity-50"
+            className="flex-1 rounded-lg bg-gray-200 px-4 py-3 font-medium text-gray-900 transition-all hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
           >
             Cancel
           </button>
           <button
             onClick={handleWithdraw}
             disabled={isWithdrawing}
-            className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-medium text-white transition-all hover:bg-red-700 disabled:opacity-50"
           >
             {isWithdrawing ? (
               <>

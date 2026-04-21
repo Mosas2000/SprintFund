@@ -52,14 +52,14 @@ export function DiscussionComment({
   const formatAddress = (addr: string) => `${addr.slice(0, 8)}...${addr.slice(-6)}`;
 
   return (
-    <div className={`space-y-3 ${depth > 0 ? 'ml-6 mt-3' : ''}`}>
-      <div className="bg-white/5 rounded-lg p-4 border border-white/10 hover:border-purple-500/30 transition-colors">
-        <div className="flex items-start justify-between mb-2">
+    <div className={`space-y-3 ${depth > 0 ? 'ml-3 sm:ml-6 mt-3' : ''}`}>
+      <div className="rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:border-purple-500/30">
+        <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-sm font-medium text-white">
               {comment.authorName || formatAddress(comment.authorAddress)}
             </p>
-            <p className="text-xs text-white/40">
+            <p className="break-words text-xs text-white/40">
               {new Date(comment.createdAt).toLocaleDateString()} {new Date(comment.createdAt).toLocaleTimeString()}
               {comment.isEdited && <span className="ml-2">(edited)</span>}
             </p>
@@ -68,7 +68,7 @@ export function DiscussionComment({
             {(isAuthor || canDelete) && (
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-1 hover:bg-white/10 rounded transition-colors"
+                className="rounded p-2 transition-colors hover:bg-white/10"
               >
                 <MoreVertical className="h-4 w-4 text-white/60" />
               </button>
@@ -104,10 +104,10 @@ export function DiscussionComment({
 
         <p className="text-sm text-white mb-4 break-words">{comment.content}</p>
 
-        <div className="flex items-center gap-4 pt-2 border-t border-white/10">
+        <div className="flex flex-wrap items-center gap-4 border-t border-white/10 pt-2">
           <button
             onClick={() => likeComment(comment.id)}
-            className="flex items-center gap-1 text-xs text-white/60 hover:text-purple-400 transition-colors"
+            className="flex items-center gap-1 text-xs text-white/60 transition-colors hover:text-purple-400"
           >
             <Heart className="h-3 w-3" />
             <span>{comment.likes}</span>
@@ -115,7 +115,7 @@ export function DiscussionComment({
           {onReplyClick && depth < 2 && (
             <button
               onClick={() => onReplyClick(comment.id)}
-              className="flex items-center gap-1 text-xs text-white/60 hover:text-purple-400 transition-colors"
+              className="flex items-center gap-1 text-xs text-white/60 transition-colors hover:text-purple-400"
             >
               <MessageCircle className="h-3 w-3" />
               <span>Reply</span>

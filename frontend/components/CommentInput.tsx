@@ -45,14 +45,14 @@ export function CommentInput({
 
   if (!userSession) {
     return (
-      <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+      <div className="rounded-lg border border-white/10 bg-white/5 p-4">
         <p className="text-sm text-white/60">Please connect your wallet to participate in discussions</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <textarea
         value={content}
         onChange={(e) => {
@@ -60,20 +60,20 @@ export function CommentInput({
           setError(null);
         }}
         placeholder="Share your thoughts..."
-        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-purple-500/50 resize-none"
+        className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-purple-500/50"
         rows={3}
       />
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-white/40">{content.length} / 5000</p>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           {isReply && (
             <button
               onClick={onCancel}
-              className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-colors text-sm font-medium"
+              className="rounded-lg bg-white/5 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10 sm:py-2"
             >
               Cancel
             </button>
@@ -81,8 +81,8 @@ export function CommentInput({
 
           <button
             onClick={handleSubmit}
-            disabled={loading || content.length === 0}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg transition-colors text-sm font-medium"
+            disabled={loading || content.trim().length === 0}
+            className="flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-purple-700 disabled:opacity-50 sm:py-2"
           >
             <Send className="h-4 w-4" />
             {isReply ? 'Reply' : 'Comment'}

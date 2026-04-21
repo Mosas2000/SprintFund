@@ -38,18 +38,18 @@ export default function GovernanceAnalyticsDashboard() {
   };
 
   return (
-    <div className="space-y-8 p-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-white">Governance Analytics</h1>
-          <p className="text-white/60 mt-2">Real-time insights into SprintFund governance</p>
+          <h1 className="text-3xl font-bold text-white sm:text-4xl">Governance Analytics</h1>
+          <p className="mt-2 text-white/60">Real-time insights into SprintFund governance</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <DataRefreshIndicator />
           <button
             onClick={handleRefresh}
             disabled={isRefreshing || loading}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg transition-colors"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-3 text-white transition-colors hover:bg-purple-700 disabled:opacity-50 sm:w-auto sm:py-2"
           >
             <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
@@ -67,8 +67,8 @@ export default function GovernanceAnalyticsDashboard() {
 
       <ContractEventStream contractPrincipal="SP2ZNGJ85ENDY6QTHQ0YCWM1GRFX77YXF1W8F25J9.sprint-fund" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:p-6 backdrop-blur-sm">
           <p className="text-white/60 text-sm mb-2">Total Proposals</p>
           <p className="text-3xl font-bold text-white">
             {proposalStats?.total || 0}
@@ -78,7 +78,7 @@ export default function GovernanceAnalyticsDashboard() {
           </p>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:p-6 backdrop-blur-sm">
           <p className="text-white/60 text-sm mb-2">Total Funded</p>
           <p className="text-3xl font-bold text-white">
             {(proposalStats?.totalAmount || 0) / 1_000_000}
@@ -86,7 +86,7 @@ export default function GovernanceAnalyticsDashboard() {
           <p className="text-xs text-white/40 mt-2">STX</p>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:p-6 backdrop-blur-sm">
           <p className="text-white/60 text-sm mb-2">Unique Voters</p>
           <p className="text-3xl font-bold text-white">
             {voterStats?.totalVoters || 0}
@@ -96,7 +96,7 @@ export default function GovernanceAnalyticsDashboard() {
           </p>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:p-6 backdrop-blur-sm">
           <p className="text-white/60 text-sm mb-2">Whale Concentration</p>
           <p className="text-3xl font-bold text-white">
             {votingPower?.whaleConcentration?.toFixed(1) || 0}%

@@ -48,7 +48,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white transition-all shadow-md"
+                className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white shadow-md transition-all hover:bg-white/20 sm:w-auto sm:justify-start sm:py-2"
             >
                 <svg
                     className="w-4 h-4"
@@ -70,7 +70,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
             </button>
 
             {isOpen && (
-                <div className="absolute top-full mt-2 w-48 bg-gray-800 border border-white/20 rounded-lg shadow-md overflow-hidden z-10">
+                <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-lg border border-white/20 bg-gray-800 shadow-md sm:left-auto sm:right-0 sm:w-48">
                     {sortOptions.map((option) => (
                         <button
                             key={option.value}

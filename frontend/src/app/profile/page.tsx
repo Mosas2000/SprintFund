@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Header from '@/components/Header';
 import BadgeGallery from '@/components/common/BadgeGallery';
 import InterestProfiler from '@/components/InterestProfiler';
@@ -26,9 +26,9 @@ function shortenAddress(address: string): string {
 
 function TimelinePlaceholder({ onConnect }: { onConnect: () => void }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center">
-      <h3 className="text-lg font-semibold text-white mb-2">Wallet activity timeline</h3>
-      <p className="text-sm text-slate-400 mb-6">
+    <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-center sm:p-8">
+      <h3 className="mb-2 text-lg font-semibold text-white">Wallet activity timeline</h3>
+      <p className="mb-6 text-sm text-slate-400">
         Connect your wallet to see recent proposals, votes, and execution activity.
       </p>
       <button
@@ -44,7 +44,7 @@ function TimelinePlaceholder({ onConnect }: { onConnect: () => void }) {
 
 function TimelineLoading() {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/5 p-8">
+    <div className="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
       <div className="animate-pulse space-y-4">
         <div className="h-5 w-48 rounded bg-white/10" />
         <div className="h-4 w-72 rounded bg-white/10" />
@@ -66,9 +66,9 @@ function TimelineError({
   onRetry: () => void;
 }) {
   return (
-    <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-8">
-      <h3 className="text-lg font-semibold text-white mb-2">Unable to load activity</h3>
-      <p className="text-sm text-red-200 mb-6">{error}</p>
+    <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-6 sm:p-8">
+      <h3 className="mb-2 text-lg font-semibold text-white">Unable to load activity</h3>
+      <p className="mb-6 text-sm text-red-200">{error}</p>
       <button
         type="button"
         onClick={onRetry}
@@ -124,7 +124,7 @@ export default function ProfilePage() {
 
   if (walletLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -134,53 +134,53 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-transparent">
       <Header />
 
-      <main className="pt-32 pb-20 px-8 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
-          <div className="flex items-center gap-8">
-            <div className="w-32 h-32 rounded-[40px] bg-gradient-to-br from-orange-600 to-orange-500 flex items-center justify-center text-4xl font-black text-white shadow-2xl relative group">
+      <main className="mx-auto max-w-7xl px-4 pb-20 pt-28 sm:px-6 lg:px-8 lg:pt-32">
+        <div className="mb-16 flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
+            <div className="group relative flex h-24 w-24 items-center justify-center rounded-[32px] bg-gradient-to-br from-orange-600 to-orange-500 text-3xl font-black text-white shadow-2xl sm:h-32 sm:w-32 sm:rounded-[40px] sm:text-4xl">
               {avatarInitials}
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[40px] border border-white/20" />
+              <div className="absolute inset-0 rounded-[32px] border border-white/20 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100 sm:rounded-[40px]" />
             </div>
             <div>
-              <h2 className="text-5xl font-black text-white uppercase tracking-tighter mb-2">
+              <h2 className="mb-2 text-3xl font-black uppercase tracking-tighter text-white sm:text-5xl">
                 {address ? 'Wallet Profile' : 'Sprint Citizen'}
               </h2>
               <div className="flex items-center gap-3">
-                <Wallet className="w-4 h-4 text-slate-500" />
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest leading-relaxed">
+                <Wallet className="h-4 w-4 text-slate-500" />
+                <p className="text-sm font-bold uppercase tracking-widest leading-relaxed text-slate-500">
                   {address ? shortenAddress(address) : 'Connect a wallet to view your profile'}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <button className="p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all text-slate-400 hover:text-white">
-              <Settings className="w-5 h-5" />
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4">
+            <button className="flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-4 text-slate-400 transition-all hover:bg-white/10 hover:text-white">
+              <Settings className="h-5 w-5" />
             </button>
             {connected && address ? (
               <button
                 type="button"
                 onClick={disconnect}
-                className="flex items-center gap-3 px-8 py-4 bg-red-600/10 border border-red-500/20 rounded-2xl text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all"
+                className="flex items-center justify-center gap-3 rounded-2xl border border-red-500/20 bg-red-600/10 px-6 py-4 text-[10px] font-black uppercase tracking-widest text-red-500 transition-all hover:bg-red-600 hover:text-white sm:px-8"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="h-4 w-4" />
                 Disconnect
               </button>
             ) : (
               <button
                 type="button"
                 onClick={connect}
-                className="flex items-center gap-3 px-8 py-4 bg-orange-600/10 border border-orange-500/20 rounded-2xl text-orange-400 text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 hover:text-white transition-all"
+                className="flex items-center justify-center gap-3 rounded-2xl border border-orange-500/20 bg-orange-600/10 px-6 py-4 text-[10px] font-black uppercase tracking-widest text-orange-400 transition-all hover:bg-orange-600 hover:text-white sm:px-8"
               >
-                <Wallet className="w-4 h-4" />
+                <Wallet className="h-4 w-4" />
                 Connect Wallet
               </button>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <DelegationStats />
           </div>
@@ -189,15 +189,17 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
           <InterestProfiler />
           <UserDashboard userAddress={address} />
         </div>
 
-        <section className="rounded-[32px] border border-white/10 bg-white/5 p-8">
-          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-6">
+        <section className="rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8">
+          <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
-              <h3 className="text-2xl font-black text-white uppercase tracking-tight">Wallet activity timeline</h3>
+              <h3 className="text-2xl font-black uppercase tracking-tight text-white">
+                Wallet activity timeline
+              </h3>
               <p className="text-sm text-slate-400">
                 Recent proposal, voting, and execution activity for the connected wallet.
               </p>

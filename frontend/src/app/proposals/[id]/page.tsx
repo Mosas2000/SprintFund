@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Copy, Share2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { ProposalDiscussionSection } from '@/components/ProposalDiscussionSection';
 import { SocialSharing } from '@/components/SocialSharing';
@@ -84,8 +84,8 @@ export default function ProposalDetailPage() {
   const proposalStatus = proposal.executed ? 'executed' : 'pending';
 
   return (
-    <main className="min-h-screen py-8">
-      <div className="max-w-6xl mx-auto px-4 space-y-8">
+    <main className="min-h-screen py-4 sm:py-8">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 sm:space-y-8 sm:px-6">
         <Link
           href="/proposals"
           className="flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors"
@@ -96,9 +96,9 @@ export default function ProposalDetailPage() {
 
         <div className="space-y-6">
           <div className="space-y-4">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex-1">
-                <h1 className="text-4xl font-bold text-white mb-3">{proposal.title}</h1>
+                <h1 className="mb-3 text-3xl font-bold text-white sm:text-4xl">{proposal.title}</h1>
 
                 <div className="flex flex-wrap items-center gap-3">
                   <span
@@ -120,10 +120,10 @@ export default function ProposalDetailPage() {
               </div>
             </div>
 
-            <p className="text-white/70 text-lg leading-relaxed">{proposal.description}</p>
+              <p className="text-base leading-relaxed text-white/70 sm:text-lg">{proposal.description}</p>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+              <div className="rounded-lg border border-white/10 bg-white/5 p-4">
                 <p className="text-white/60 text-sm mb-2">Requested Amount</p>
                 <p className="text-2xl font-bold text-white">
                   {((proposal.amount || 0) / 1_000_000).toFixed(2)}
@@ -131,12 +131,12 @@ export default function ProposalDetailPage() {
                 <p className="text-xs text-white/40 mt-1">STX</p>
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+              <div className="rounded-lg border border-white/10 bg-white/5 p-4">
                 <p className="text-white/60 text-sm mb-2">Total Votes</p>
                 <p className="text-2xl font-bold text-white">{proposal.votesFor + proposal.votesAgainst}</p>
               </div>
 
-              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+              <div className="rounded-lg border border-white/10 bg-white/5 p-4">
                 <p className="text-white/60 text-sm mb-2">Votes For / Against</p>
                 <p className="text-2xl font-bold text-white">
                   {proposal.votesFor} / {proposal.votesAgainst}
@@ -147,8 +147,8 @@ export default function ProposalDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 space-y-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
             {executionStatus && (
               <ExecutionStatus
                 status={executionStatus.status === 'confirmed' ? 'completed' : executionStatus.status}
@@ -164,7 +164,7 @@ export default function ProposalDetailPage() {
             <ProposalDiscussionSection proposalId={proposalId} />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 lg:col-span-1">
             <SocialSharing proposalId={proposalId} proposalTitle={proposal.title} />
 
             {relatedProposals.length > 0 && (

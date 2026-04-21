@@ -10,4 +10,3 @@ export { default as AuditTrail } from './AuditTrail';
 export { PerformanceMetricsPanel } from './PerformanceMetricsPanel';
 export { AnalyticsKPIPanel } from './AnalyticsKPIPanel';
 export { default as ImpactAssessment } from './ImpactAssessment';
-export { default as ContractEventStream } from './ContractEventStream';
