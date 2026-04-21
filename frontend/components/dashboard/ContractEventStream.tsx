@@ -49,10 +49,7 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
       setError(null);
 
       try {
-        const fetchedEvents = await fetchContractEventStream(
-          contractPrincipal,
-          apiUrl
-        );
+        const fetchedEvents = await fetchContractEventStream(contractPrincipal, apiUrl);
         setEvents(fetchedEvents);
         setLastUpdated(Date.now());
       } catch (err) {
@@ -85,7 +82,7 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { 
+    return date.toLocaleTimeString([], {
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
@@ -163,16 +160,14 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
 
       <div className="max-h-96 divide-y divide-gray-200 overflow-y-auto">
         {error && (
-          <div className="p-4 bg-red-50 text-red-700 text-sm">
+          <div className="bg-red-50 p-4 text-sm text-red-700">
             {error.message}
           </div>
         )}
 
         {filteredEvents.length === 0 && !isLoading && (
           <div className="p-8 text-center text-gray-500">
-            {events.length === 0
-              ? 'No events found'
-              : 'No events match your filters'}
+            {events.length === 0 ? 'No events found' : 'No events match your filters'}
           </div>
         )}
 
@@ -186,9 +181,7 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-gray-900">
-                      {event.description}
-                    </span>
+                    <span className="font-medium text-gray-900">{event.description}</span>
                     {event.status === 'failed' && (
                       <span className="flex items-center gap-1 text-red-600 text-xs">
                         <X size={14} />
