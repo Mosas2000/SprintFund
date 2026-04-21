@@ -11,12 +11,12 @@ import ProposerActivityChart from './charts/ProposerActivityChart';
 import { AnalyticsKPIPanel } from './dashboard/AnalyticsKPIPanel';
 import { AnalyticsExportPanel } from './AnalyticsExportPanel';
 import { PerformanceMetricsPanel } from './dashboard/PerformanceMetricsPanel';
+import { ContractEventStream } from './dashboard/ContractEventStream';
 import FundingMetricsChart from './FundingMetricsChart';
 import TreasuryBalanceChart from './charts/TreasuryBalanceChart';
 import VoterParticipationTrendChart from './VoterParticipationTrendChart';
 import { DataRefreshIndicator } from './common/DataRefreshIndicator';
 import { RefreshCw } from 'lucide-react';
-import ContractEventStream from './dashboard/ContractEventStream';
 
 export default function GovernanceAnalyticsDashboard() {
   const {
@@ -65,7 +65,7 @@ export default function GovernanceAnalyticsDashboard() {
 
       <AnalyticsKPIPanel />
 
-      <ContractEventStream />
+      <ContractEventStream contractPrincipal="SP2ZNGJ85ENDY6QTHQ0YCWM1GRFX77YXF1W8F25J9.sprint-fund" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">

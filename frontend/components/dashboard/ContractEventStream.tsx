@@ -1,227 +1,212 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Activity,
-  Ban,
-  CheckCircle2,
-  ExternalLink,
-  FileText,
-  Filter,
-  Landmark,
-  Loader2,
-  RefreshCw,
-  ShieldCheck,
-  Vote,
-} from 'lucide-react';
-import type { ElementType } from 'react';
-import { fetchContractEventStream, type ContractEventCategory, type ContractEventRecord } from '@/lib/contract-event-stream';
-import { formatTimeAgo } from '@/lib/notification-time';
-import { truncateAddress } from '@/lib/api';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { ContractEvent, EventFilter } from '../types/contract-events';
+import { fetchContractEventStream } from '../lib/contract-events';
+import { Activity, AlertCircle, Check, X } from 'lucide-react';
 
-type FilterValue = ContractEventCategory | 'all';
+interface ContractEventStreamProps {
+  contractPrincipal: string;
+  apiUrl?: string;
+  pollInterval?: number;
+}
 
-const FILTERS: Array<{ value: FilterValue; label: string }> = [
-  { value: 'all', label: 'All events' },
-  { value: 'stake', label: 'Stake' },
-  { value: 'proposal', label: 'Proposal' },
-  { value: 'vote', label: 'Vote' },
-  { value: 'cancel', label: 'Cancel' },
-  { value: 'execute', label: 'Execute' },
-  { value: 'treasury', label: 'Treasury' },
-];
-
-const EVENT_META: Record<ContractEventCategory, { label: string; icon: ElementType; tone: string }> = {
-  stake: { label: 'Stake', icon: ShieldCheck, tone: 'text-emerald-300' },
-  proposal: { label: 'Proposal', icon: FileText, tone: 'text-sky-300' },
-  vote: { label: 'Vote', icon: Vote, tone: 'text-violet-300' },
-  cancel: { label: 'Cancel', icon: Ban, tone: 'text-rose-300' },
-  execute: { label: 'Execute', icon: CheckCircle2, tone: 'text-orange-300' },
-  treasury: { label: 'Treasury', icon: Landmark, tone: 'text-amber-300' },
-  other: { label: 'Other', icon: Activity, tone: 'text-slate-300' },
+const categoryIcons: Record<ContractEvent['category'], typeof Activity> = {
+  stake: Activity,
+  proposal: Activity,
+  vote: Activity,
+  cancel: AlertCircle,
+  execute: Check,
+  treasury: Activity,
 };
 
-const INITIAL_LIMIT = 12;
-const REFRESH_INTERVAL = 20_000;
+const categoryColors: Record<ContractEvent['category'], string> = {
+  stake: 'bg-blue-100 text-blue-800',
+  proposal: 'bg-purple-100 text-purple-800',
+  vote: 'bg-green-100 text-green-800',
+  cancel: 'bg-red-100 text-red-800',
+  execute: 'bg-emerald-100 text-emerald-800',
+  treasury: 'bg-amber-100 text-amber-800',
+};
 
-export default function ContractEventStream() {
-  const [events, setEvents] = useState<ContractEventRecord[]>([]);
-  const [filter, setFilter] = useState<FilterValue>('all');
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
+  contractPrincipal,
+  apiUrl = 'https://api.mainnet.hiro.so',
+  pollInterval = 20000,
+}) => {
+  const [events, setEvents] = useState<ContractEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
+  const [filter, setFilter] = useState<EventFilter>({
+    categories: ['stake', 'proposal', 'vote', 'cancel', 'execute', 'treasury'],
+    includeFailures: false,
+  });
 
-  const loadEvents = useCallback(async (silent = false) => {
-    if (silent) {
-      setIsRefreshing(true);
-    } else {
-      setIsLoading(true);
-    }
-
-    try {
-      const nextEvents = await fetchContractEventStream({ limit: INITIAL_LIMIT });
-      setEvents(nextEvents);
+  const loadEvents = useCallback(
+    async (silent = false) => {
+      if (!silent) setIsLoading(true);
       setError(null);
-      setLastUpdated(Date.now());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load contract activity.');
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  }, []);
 
-  useEffect(() => {
-    void loadEvents(false);
-    const interval = window.setInterval(() => {
-      void loadEvents(true);
-    }, REFRESH_INTERVAL);
-
-    return () => window.clearInterval(interval);
-  }, [loadEvents]);
-
-  const filteredEvents = useMemo(
-    () => (filter === 'all' ? events : events.filter((event) => event.category === filter)),
-    [events, filter],
+      try {
+        const fetchedEvents = await fetchContractEventStream(contractPrincipal, apiUrl);
+        setEvents(fetchedEvents);
+        setLastUpdated(Date.now());
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Unknown error');
+        setError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [contractPrincipal, apiUrl]
   );
 
-  const eventCountLabel = `${events.length} event${events.length === 1 ? '' : 's'}`;
-  const updatedLabel = lastUpdated ? formatTimeAgo(lastUpdated) : 'waiting for first sync';
+  useEffect(() => {
+    loadEvents();
+
+    const interval = setInterval(() => {
+      loadEvents(true);
+    }, pollInterval);
+
+    return () => clearInterval(interval);
+  }, [loadEvents, pollInterval]);
+
+  const filteredEvents = useMemo(() => {
+    return events.filter(event => {
+      const categoryMatch = filter.categories.includes(event.category);
+      const statusMatch = filter.includeFailures || event.status === 'success';
+      return categoryMatch && statusMatch;
+    });
+  }, [events, filter]);
+
+  const formatTime = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], {
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 8)}...${address.slice(-4)}`;
+  };
+
+  const toggleCategory = (category: ContractEvent['category']) => {
+    setFilter(prev => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter(c => c !== category)
+        : [...prev.categories, category],
+    }));
+  };
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
-      <div className="flex flex-col gap-4 border-b border-white/10 p-6 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-300">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            Live contract activity
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-white">Contract event stream</h2>
-            <p className="mt-1 max-w-2xl text-sm text-white/60">
-              Recent stake, proposal, vote, cancellation, execution, and treasury transactions from the active SprintFund contract.
-            </p>
+    <div className="w-full border border-gray-200 rounded-lg bg-white shadow-sm">
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Contract Events</h2>
+          <div className="text-sm text-gray-500">
+            {lastUpdated && (
+              <span>Updated {new Date(lastUpdated).toLocaleTimeString()}</span>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/60">
-            <div className="font-medium text-white">{eventCountLabel}</div>
-            <div className="mt-1">Updated {updatedLabel}</div>
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {(['stake', 'proposal', 'vote', 'cancel', 'execute', 'treasury'] as const).map(
+            category => (
+              <button
+                key={category}
+                onClick={() => toggleCategory(category)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  filter.categories.includes(category)
+                    ? categoryColors[category]
+                    : 'bg-gray-100 text-gray-400'
+                }`}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </button>
+            )
+          )}
+        </div>
+
+        <div className="mt-4 flex gap-2">
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={filter.includeFailures}
+              onChange={e =>
+                setFilter(prev => ({
+                  ...prev,
+                  includeFailures: e.target.checked,
+                }))
+              }
+              className="rounded"
+            />
+            Show failed transactions
+          </label>
           <button
-            type="button"
-            onClick={() => void loadEvents(false)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
+            onClick={() => loadEvents()}
+            disabled={isLoading}
+            className="ml-auto px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:bg-gray-300"
           >
-            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            {isLoading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 border-b border-white/10 px-6 py-4">
-        <Filter className="h-4 w-4 text-white/50" />
-        <div className="flex flex-wrap gap-2">
-          {FILTERS.map((item) => (
-            <button
-              key={item.value}
-              type="button"
-              onClick={() => setFilter(item.value)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                filter === item.value
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
+        {error && <div className="p-4 bg-red-50 text-red-700 text-sm">{error.message}</div>}
 
-      <div className="p-6">
-        {isLoading ? (
-          <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-5 text-sm text-white/60">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Loading contract activity
-          </div>
-        ) : error && events.length === 0 ? (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-5 text-sm text-red-200">
-            <p className="font-medium text-white">Unable to load contract activity</p>
-            <p className="mt-1 text-white/70">{error}</p>
-          </div>
-        ) : filteredEvents.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-black/20 p-8 text-center">
-            <Activity className="mx-auto h-10 w-10 text-white/20" />
-            <p className="mt-3 text-sm font-medium text-white">No matching events</p>
-            <p className="mt-1 text-sm text-white/50">
-              Try a different filter or wait for the next contract update.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredEvents.map((event) => {
-              const meta = EVENT_META[event.category];
-              const Icon = meta.icon;
-              const statusClasses =
-                event.status === 'confirmed'
-                  ? 'bg-emerald-500/10 text-emerald-200 border-emerald-500/20'
-                  : event.status === 'failed'
-                    ? 'bg-rose-500/10 text-rose-200 border-rose-500/20'
-                    : 'bg-amber-500/10 text-amber-200 border-amber-500/20';
-
-              return (
-                <article
-                  key={event.id}
-                  className="rounded-xl border border-white/10 bg-black/20 p-4 transition-colors hover:border-white/20"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`mt-0.5 rounded-xl bg-white/5 p-3 ${meta.tone}`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-sm font-semibold text-white">{event.title}</h3>
-                            <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.2em] ${statusClasses}`}>
-                              {event.status}
-                            </span>
-                          </div>
-                          <p className="mt-1 text-sm text-white/70">{event.summary}</p>
-                        </div>
-
-                        <a
-                          href={event.explorerUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-medium text-white/60 transition-colors hover:text-white"
-                        >
-                          View transaction
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      </div>
-
-                      <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-white/50">
-                        <span className="font-mono">{truncateAddress(event.senderAddress)}</span>
-                        <span>{formatTimeAgo(event.timestamp)}</span>
-                        <span>{meta.label}</span>
-                        {event.eventCount > 0 && <span>{event.eventCount} on-chain events</span>}
-                        {event.errorMessage && event.status === 'failed' && (
-                          <span className="text-rose-200">{event.errorMessage}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+        {filteredEvents.length === 0 && !isLoading && (
+          <div className="p-8 text-center text-gray-500">
+            {events.length === 0 ? 'No events found' : 'No events match your filters'}
           </div>
         )}
+
+        {filteredEvents.map(event => {
+          const Icon = categoryIcons[event.category];
+          return (
+            <div key={event.id} className="p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex items-start gap-3">
+                <div className={`p-2 rounded-lg ${categoryColors[event.category]} flex-shrink-0`}>
+                  <Icon size={18} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium text-gray-900">{event.description}</span>
+                    {event.status === 'failed' && (
+                      <span className="flex items-center gap-1 text-red-600 text-xs">
+                        <X size={14} />
+                        Failed
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-gray-600 space-y-1">
+                    <div>From: {formatAddress(event.sender)}</div>
+                    <div>{formatTime(event.timestamp)}</div>
+                    {event.amount && <div>Amount: {event.amount}</div>}
+                    {event.proposalId && <div>Proposal #{event.proposalId}</div>}
+                  </div>
+                  <a
+                    href={`https://explorer.stacks.co/txid/${event.txId}?chain=mainnet`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block"
+                  >
+                    View on Explorer →
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default ContractEventStream;

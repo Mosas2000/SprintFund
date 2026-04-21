@@ -31,6 +31,7 @@ import { Providers } from "@/components/Providers";
 import GlassBackground from "@/components/common/GlassBackground";
 import ToastProvider from "@/components/common/ToastProvider";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import { GovernanceNotificationManager } from "@/components/GovernanceNotificationManager";
 
 export default function RootLayout({
   children,
@@ -44,6 +45,7 @@ export default function RootLayout({
       >
         <Providers>
           <ToastProvider />
+          <GovernanceNotificationManager contractPrincipal="SP2ZNGJ85ENDY6QTHQ0YCWM1GRFX77YXF1W8F25J9.sprint-fund" />
           <PWAInstallPrompt />
           <GlassBackground />
           <div className="relative z-0">
