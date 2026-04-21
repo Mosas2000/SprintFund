@@ -33,7 +33,12 @@ export const normalizeContractTransaction = (
   if (!tx.contract_call.contract_id.startsWith(contractPrincipal)) return null;
 
   const functionName = tx.contract_call.function_name.toLowerCase();
-  const isSuccess = !tx.tx_result.repr.includes('error');
+  const resultRepr = tx.tx_result.repr.toLowerCase();
+  const isSuccess = !(
+    resultRepr.includes('(err') ||
+    resultRepr.startsWith('err') ||
+    resultRepr.includes('error')
+  );
   const timestamp = tx.block_time * 1000;
   const sender = tx.sender_address;
   const txId = tx.tx_id;

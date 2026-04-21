@@ -73,7 +73,7 @@ export const createGovernanceNotification = (
         type,
         title: 'Delegation Received',
         message: event.delegatorAddress
-          ? `You received delegation from ${event.delegatorAddress.slice(0, 8)}...${event.delegatorAddress.slice(-4)}`
+          ? `You received delegation from ${event.delegatorAddress.slice(0, 9)}...${event.delegatorAddress.slice(-5)}`
           : 'You have received delegation',
         timestamp: Date.now(),
         read: false,
@@ -97,15 +97,15 @@ export const deduplicateGovernanceNotifications = (
 ): Notification[] => {
   const seen = new Map<string, number>();
   const result: Notification[] = [];
-  const now = Date.now();
 
   for (const notif of notifications) {
     const key = `${notif.type}-${notif.message}`;
     const lastSeen = seen.get(key);
+    const eventTime = notif.timestamp;
 
-    if (!lastSeen || now - lastSeen > timeWindowMs) {
+    if (lastSeen === undefined || eventTime - lastSeen > timeWindowMs) {
       result.push(notif);
-      seen.set(key, now);
+      seen.set(key, eventTime);
     }
   }
 
