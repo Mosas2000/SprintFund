@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { ContractEvent, EventFilter } from '../types/contract-events';
-import { fetchContractEventStream } from '../lib/contract-events';
+import { ContractEvent, EventFilter } from '../../src/types/contract-events';
+import { fetchContractEventStream } from '../../src/lib/contract-events';
 import { Activity, AlertCircle, Check, X } from 'lucide-react';
 
 interface ContractEventStreamProps {
@@ -107,9 +107,9 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
   };
 
   return (
-    <div className="w-full border border-gray-200 rounded-lg bg-white shadow-sm">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-4">
+    <div className="w-full rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="border-b border-gray-200 p-4 sm:p-6">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xl font-semibold text-gray-900">Contract Events</h2>
           <div className="text-sm text-gray-500">
             {lastUpdated && (
@@ -124,7 +124,7 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
               <button
                 key={category}
                 onClick={() => toggleCategory(category)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                className={`rounded-full px-3 py-2 text-sm font-medium transition-colors sm:py-1 ${
                   filter.categories.includes(category)
                     ? categoryColors[category]
                     : 'bg-gray-100 text-gray-400'
@@ -136,7 +136,7 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
           )}
         </div>
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
               type="checkbox"
@@ -154,14 +154,14 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
           <button
             onClick={() => loadEvents()}
             disabled={isLoading}
-            className="ml-auto px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:bg-gray-300"
+            className="w-full rounded bg-blue-500 px-4 py-3 text-sm text-white transition-colors hover:bg-blue-600 disabled:bg-gray-300 sm:ml-auto sm:w-auto sm:py-2"
           >
             {isLoading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
       </div>
 
-      <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
+      <div className="max-h-96 divide-y divide-gray-200 overflow-y-auto">
         {error && (
           <div className="p-4 bg-red-50 text-red-700 text-sm">
             {error.message}
@@ -179,7 +179,7 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
         {filteredEvents.map(event => {
           const Icon = categoryIcons[event.category];
           return (
-            <div key={event.id} className="p-4 hover:bg-gray-50 transition-colors">
+            <div key={event.id} className="p-4 transition-colors hover:bg-gray-50">
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg ${categoryColors[event.category]} flex-shrink-0`}>
                   <Icon size={18} />
