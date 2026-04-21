@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useReducer, useCallback } from 'react';
-import { Notification } from '../src/types/notifications';
+import { Notification } from '../types/notifications';
 
 interface NotificationState {
   notifications: Notification[];

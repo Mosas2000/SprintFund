@@ -4,8 +4,8 @@ import React, { useState, useCallback } from 'react';
 import {
   getGovernanceNotificationPreferences,
   saveGovernanceNotificationPreferences,
-} from '../lib/governance-notification-preferences';
-import { NotificationPreference } from '../types/notifications';
+} from '../src/lib/governance-notification-preferences';
+import { NotificationPreference } from '../src/types/notifications';
 import { Bell, Check, X } from 'lucide-react';
 
 const preferenceLabels: Record<keyof NotificationPreference, string> = {
