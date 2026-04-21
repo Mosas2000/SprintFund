@@ -64,9 +64,9 @@ export function ProposalDiscussionSection({ proposalId }: ProposalDiscussionSect
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-6">
+      <div className="mb-6 flex items-center gap-2">
         <MessageCircle className="h-5 w-5 text-purple-400" />
-        <h2 className="text-2xl font-bold text-white">Discussion</h2>
+        <h2 className="text-xl font-bold text-white sm:text-2xl">Discussion</h2>
         <span className="text-sm text-white/60">({thread.totalComments} comments)</span>
       </div>
 
@@ -78,14 +78,14 @@ export function ProposalDiscussionSection({ proposalId }: ProposalDiscussionSect
 
       {sortedComments.length > 0 && (
         <>
-          <div className="flex items-center justify-between py-3 border-b border-white/10">
+          <div className="flex flex-col gap-3 border-b border-white/10 py-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-sm text-white/60">Sort by:</span>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {(['recent', 'oldest', 'likes'] as const).map((option) => (
                 <button
                   key={option}
                   onClick={() => setSortBy(option)}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                  className={`rounded px-3 py-2 text-sm transition-colors ${
                     sortBy === option
                       ? 'bg-purple-600 text-white'
                       : 'bg-white/5 text-white/60 hover:bg-white/10'
@@ -108,7 +108,7 @@ export function ProposalDiscussionSection({ proposalId }: ProposalDiscussionSect
                 />
 
                 {replyingTo === comment.id && (
-                  <div className="mt-4 ml-6 space-y-3">
+                  <div className="mt-4 ml-3 space-y-3 sm:ml-6">
                     <CommentInput
                       proposalId={proposalId}
                       onSubmit={handleAddReply}
