@@ -167,6 +167,13 @@ describe('Proposal utilities', () => {
       const sorted = sortProposals([newer, older], 'ending-soon');
       expect(sorted[0].createdAt).toBeLessThan(sorted[1].createdAt);
     });
+
+    it('ending-soon: sorts executed proposals by ascending createdAt when all are executed', () => {
+      const early = { ...mockProposal, id: 1, executed: true, createdAt: 200 };
+      const late = { ...mockProposal, id: 2, executed: true, createdAt: 800 };
+      const sorted = sortProposals([late, early], 'ending-soon');
+      expect(sorted[0].createdAt).toBeLessThan(sorted[1].createdAt);
+    });
   });
 
   describe('findProposal', () => {
