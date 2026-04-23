@@ -61,69 +61,73 @@ export function PaginationControls({
         </div>
       </div>
 
-      <nav aria-label="Pagination Controls" className="flex items-center justify-center gap-2">
-        <button
-          onClick={() => onPageChange(1)}
-          disabled={!hasPreviousPage}
-          className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
-          title="First page"
-          aria-label="Go to first page"
-        >
-          <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
-        </button>
-
-        <button
-          onClick={() => onPageChange(page - 1)}
-          disabled={!hasPreviousPage}
-          className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
-          title="Previous page"
-          aria-label="Go to previous page"
-        >
-          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        </button>
-
-        <div className="flex items-center gap-1">
-          {pageRange.map((p) => (
+      {totalPages > 1 && (
+        <>
+          <nav aria-label="Pagination Controls" className="flex items-center justify-center gap-2">
             <button
-              key={p}
-              onClick={() => onPageChange(p)}
-              aria-current={p === page ? 'page' : undefined}
-              aria-label={`Go to page ${p}`}
-              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                p === page
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-white/5 text-white/60 hover:bg-white/10'
-              }`}
+              onClick={() => onPageChange(1)}
+              disabled={!hasPreviousPage}
+              className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
+              title="First page"
+              aria-label="Go to first page"
             >
-              {p}
+              <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
             </button>
-          ))}
-        </div>
 
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={!hasNextPage}
-          className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
-          title="Next page"
-          aria-label="Go to next page"
-        >
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
-        </button>
+            <button
+              onClick={() => onPageChange(page - 1)}
+              disabled={!hasPreviousPage}
+              className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
+              title="Previous page"
+              aria-label="Go to previous page"
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+            </button>
 
-        <button
-          onClick={() => onPageChange(totalPages)}
-          disabled={!hasNextPage}
-          className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
-          title="Last page"
-          aria-label="Go to last page"
-        >
-          <ChevronsRight className="h-4 w-4" aria-hidden="true" />
-        </button>
-      </nav>
+            <div className="flex items-center gap-1">
+              {pageRange.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => onPageChange(p)}
+                  aria-current={p === page ? 'page' : undefined}
+                  aria-label={`Go to page ${p}`}
+                  className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                    p === page
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white/5 text-white/60 hover:bg-white/10'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
 
-      <div className="text-center text-xs text-white/40" role="status" aria-live="polite">
-        Page {page} of {totalPages}
-      </div>
+            <button
+              onClick={() => onPageChange(page + 1)}
+              disabled={!hasNextPage}
+              className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
+              title="Next page"
+              aria-label="Go to next page"
+            >
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+
+            <button
+              onClick={() => onPageChange(totalPages)}
+              disabled={!hasNextPage}
+              className="p-2 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-white/60 rounded transition-colors"
+              title="Last page"
+              aria-label="Go to last page"
+            >
+              <ChevronsRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </nav>
+
+          <div className="text-center text-xs text-white/40" role="status" aria-live="polite">
+            Page {page} of {totalPages}
+          </div>
+        </>
+      )}
     </div>
   );
 }
