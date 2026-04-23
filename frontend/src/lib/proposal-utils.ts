@@ -126,3 +126,50 @@ export function paginateProposals<T>(
   const startIndex = (page - 1) * pageSize;
   return items.slice(startIndex, startIndex + pageSize);
 }
+
+/**
+ * Calculates blocks remaining until voting ends.
+ */
+export function getBlocksUntilVotingEnds(proposal: Proposal, currentBlockHeight: number): number {
+  return Math.max(0, proposal.votingEndsAt - currentBlockHeight);
+}
+
+/**
+ * Calculates blocks remaining until execution is allowed.
+ */
+export function getBlocksUntilExecutionAllowed(proposal: Proposal, currentBlockHeight: number): number {
+  return Math.max(0, proposal.executionAllowedAt - currentBlockHeight);
+}
+
+/**
+ * Formats a block difference as a human-readable estimated time string.
+ * Uses 10 minutes per block as a standard Stacks block time estimate.
+ */
+export function formatBlockDuration(blocks: number): string {
+  if (blocks <= 0) return '0m';
+  
+  const totalMinutes = blocks * 10;
+  if (totalMinutes < 60) {
+    return `${totalMinutes}m`;
+  }
+  
+  const totalHours = Math.floor(totalMinutes / 60);
+  const remainingMinutes = totalMinutes % 60;
+  
+  if (totalHours < 24) {
+    return remainingMinutes > 0 ? `${totalHours}h ${remainingMinutes}m` : `${totalHours}h`;
+  }
+  
+  const totalDays = Math.floor(totalHours / 24);
+  const remainingHours = totalHours % 24;
+  
+  return remainingHours > 0 ? `${totalDays}d ${remainingHours}h` : `${totalDays}d`;
+}
+
+/**
+ * Checks if a proposal is considered "high-value" based on the 100 STX threshold.
+ * (100,000,000 microSTX)
+ */
+export function isHighValueProposal(proposal: Proposal): boolean {
+  return proposal.amount >= 100_000_000;
+}
