@@ -15,6 +15,7 @@ interface ProposalSortbarProps {
 
 const DEFAULT_SORT_OPTIONS: SortOption[] = [
   { label: 'Date Created', value: 'createdAt' },
+  { label: 'Ending Soon', value: 'endingSoon' },
   { label: 'Title', value: 'title' },
   { label: 'Funding Requested', value: 'requestedAmount' },
   { label: 'Vote Count', value: 'votes' },
