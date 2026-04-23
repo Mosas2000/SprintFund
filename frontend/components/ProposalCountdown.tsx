@@ -63,12 +63,15 @@ export function ProposalCountdown({ proposal }: ProposalCountdownProps) {
                   ? 'Proposal Ready' 
                   : 'Execution Timelock'}
             </p>
-            <p className="text-xl font-black text-white tabular-nums tracking-tight">
+            <p className="text-xl font-black text-white tabular-nums tracking-tight group/time relative">
               {isVotingActive 
                 ? formatBlockDuration(blocksUntilVotingEnds) 
                 : isReadyForExecution 
                   ? 'Now' 
                   : formatBlockDuration(blocksUntilExecution)}
+              <span className="ml-2 hidden sm:inline-block text-[10px] text-slate-500 font-bold opacity-0 group-hover/time:opacity-100 transition-opacity">
+                ({isVotingActive ? blocksUntilVotingEnds : blocksUntilExecution} blocks)
+              </span>
             </p>
           </div>
         </div>
