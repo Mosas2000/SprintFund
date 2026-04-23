@@ -463,6 +463,9 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                 const totalVotesB = b.votesFor + b.votesAgainst;
                 return totalVotesB - totalVotesA;
             }
+            case 'ending-soon':
+                if (a.executed !== b.executed) return a.executed ? 1 : -1;
+                return a.createdAt - b.createdAt;
             default:
                 return 0;
         }
