@@ -129,7 +129,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
             </button>
 
             {selectedSort !== 'newest' && (
-                <p className="mt-1 text-xs text-purple-300/70">
+                <p className="mt-1 text-xs text-purple-300/70" aria-live="polite" role="status">
                     {SORT_DESCRIPTIONS[selectedSort]}
                 </p>
             )}
