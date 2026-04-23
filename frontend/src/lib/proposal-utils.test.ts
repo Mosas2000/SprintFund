@@ -146,6 +146,13 @@ describe('Proposal utilities', () => {
       expect(sorted[0].amount).toBeLessThan(sorted[1].amount);
     });
 
+    it('sorts by highest amount with equal amounts', () => {
+      const p1 = { ...mockProposal, id: 1, amount: 1000 };
+      const p2 = { ...mockProposal, id: 2, amount: 1000 };
+      const sorted = sortProposals([p1, p2], 'highest');
+      expect(sorted[0].amount).toEqual(sorted[1].amount);
+    });
+
     it('sorts by most votes', () => {
       const p1 = { ...mockProposal, votesFor: 10, votesAgainst: 5 };
       const p2 = { ...mockProposal, id: 2, votesFor: 50, votesAgainst: 20 };
