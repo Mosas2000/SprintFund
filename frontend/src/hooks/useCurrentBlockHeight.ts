@@ -6,6 +6,14 @@ import { stacksApi } from '@/services/stacks-api';
 /**
  * Hook to track and periodically update the current Stacks block height.
  * Refreshes every 30 seconds to stay reasonably in sync with the blockchain.
+ * 
+ * Used for real-time governance countdowns and execution gating.
+ * 
+ * @returns {Object} { blockHeight, loading, error, refresh }
+ *  - blockHeight: The latest block number (null if not yet loaded)
+ *  - loading: True if the initial fetch is in progress
+ *  - error: Any error during fetch
+ *  - refresh: Manual trigger to update the height immediately
  */
 export function useCurrentBlockHeight() {
   const [blockHeight, setBlockHeight] = useState<number | null>(null);
