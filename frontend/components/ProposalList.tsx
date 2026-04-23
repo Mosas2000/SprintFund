@@ -642,6 +642,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                         hasPreviousPage={validPage > 1}
                         onPageChange={setPage}
                         onPageSizeChange={setPageSize}
+                        maxVisiblePages={5}
                     />
                 </div>
             )}
