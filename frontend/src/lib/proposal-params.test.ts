@@ -278,6 +278,10 @@ describe('countActiveFilters', () => {
     expect(countActiveFilters({ ...DEFAULT_PARAMS, page: 5 })).toBe(0);
   });
 
+  it('does not count pageSize', () => {
+    expect(countActiveFilters({ ...DEFAULT_PARAMS, pageSize: 20 })).toBe(0);
+  });
+
   it('counts multiple active filters', () => {
     const params: ProposalFilterParams = {
       status: 'active',
@@ -321,5 +325,9 @@ describe('isDefaultParams', () => {
 
   it('returns false when page is not 1', () => {
     expect(isDefaultParams({ ...DEFAULT_PARAMS, page: 2 })).toBe(false);
+  });
+
+  it('returns false when pageSize is non-default', () => {
+    expect(isDefaultParams({ ...DEFAULT_PARAMS, pageSize: 20 })).toBe(false);
   });
 });
