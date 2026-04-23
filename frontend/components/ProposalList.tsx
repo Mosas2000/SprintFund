@@ -515,7 +515,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
             </div>
 
             {filterParams.sort !== 'newest' && (
-                <p className="mb-4 text-xs text-purple-300/70">
+                <p className="mb-4 text-xs text-purple-300/70" aria-live="polite" role="status">
                     {{
                         'oldest': 'Sorted by earliest created',
                         'ending-soon': 'Sorted by active proposals closest to their deadline',
