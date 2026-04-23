@@ -7,7 +7,7 @@ export type CategoryFilter =
   | 'community'
   | 'research'
   | 'other';
-export type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes';
+export type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes' | 'ending-soon';
 
 export interface ProposalFilterParams {
   status: StatusFilter;
@@ -45,6 +45,7 @@ const VALID_SORTS = new Set<SortOption>([
   'highest',
   'lowest',
   'most-votes',
+  'ending-soon',
 ]);
 
 export function parseStatus(value: string | null): StatusFilter {

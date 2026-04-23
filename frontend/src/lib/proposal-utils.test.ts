@@ -132,11 +132,54 @@ describe('Proposal utilities', () => {
       expect(sorted[0].createdAt).toBeLessThanOrEqual(sorted[1].createdAt);
     });
 
+    it('sorts by highest amount', () => {
+      const low = { ...mockProposal, id: 1, amount: 500 };
+      const high = { ...mockProposal, id: 2, amount: 5000 };
+      const sorted = sortProposals([low, high], 'highest');
+      expect(sorted[0].amount).toBeGreaterThan(sorted[1].amount);
+    });
+
+    it('sorts by lowest amount', () => {
+      const low = { ...mockProposal, id: 1, amount: 500 };
+      const high = { ...mockProposal, id: 2, amount: 5000 };
+      const sorted = sortProposals([high, low], 'lowest');
+      expect(sorted[0].amount).toBeLessThan(sorted[1].amount);
+    });
+
+    it('sorts by highest amount with equal amounts', () => {
+      const p1 = { ...mockProposal, id: 1, amount: 1000 };
+      const p2 = { ...mockProposal, id: 2, amount: 1000 };
+      const sorted = sortProposals([p1, p2], 'highest');
+      expect(sorted[0].amount).toEqual(sorted[1].amount);
+    });
+
     it('sorts by most votes', () => {
       const p1 = { ...mockProposal, votesFor: 10, votesAgainst: 5 };
       const p2 = { ...mockProposal, id: 2, votesFor: 50, votesAgainst: 20 };
       const sorted = sortProposals([p1, p2], 'most-votes');
       expect(calculateTotalVotes(sorted[0])).toBeGreaterThan(calculateTotalVotes(sorted[1]));
+    });
+
+    it('ending-soon: places active proposals before executed ones', () => {
+      const active = { ...mockProposal, id: 1, executed: false, createdAt: 1000 };
+      const executed = { ...mockProposal, id: 2, executed: true, createdAt: 500 };
+      const sorted = sortProposals([executed, active], 'ending-soon');
+      expect(sorted[0].executed).toBe(false);
+      expect(sorted[1].executed).toBe(true);
+    });
+
+    it('ending-soon: orders active proposals by ascending createdAt', () => {
+      const older = { ...mockProposal, id: 1, executed: false, createdAt: 100 };
+      const newer = { ...mockProposal, id: 2, executed: false, createdAt: 500 };
+      const sorted = sortProposals([newer, older], 'ending-soon');
+      expect(sorted[0].createdAt).toBeLessThan(sorted[1].createdAt);
+    });
+
+    it('ending-soon: sorts executed proposals by ascending createdAt when all are executed', () => {
+      const early = { ...mockProposal, id: 1, executed: true, createdAt: 200 };
+      const late = { ...mockProposal, id: 2, executed: true, createdAt: 800 };
+      const sorted = sortProposals([late, early], 'ending-soon');
+      expect(sorted[0].createdAt).toBeLessThan(sorted[1].createdAt);
     });
   });
 

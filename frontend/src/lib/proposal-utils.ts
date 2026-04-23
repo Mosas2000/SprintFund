@@ -75,7 +75,7 @@ export function filterProposalsByStatus(
  */
 export function sortProposals(
   proposals: Proposal[],
-  sortBy: 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes' = 'newest',
+  sortBy: 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes' | 'ending-soon' = 'newest',
 ): Proposal[] {
   const sorted = [...proposals];
 
@@ -90,6 +90,11 @@ export function sortProposals(
       return sorted.sort((a, b) => a.amount - b.amount);
     case 'most-votes':
       return sorted.sort((a, b) => calculateTotalVotes(b) - calculateTotalVotes(a));
+    case 'ending-soon':
+      return sorted.sort((a, b) => {
+        if (a.executed !== b.executed) return a.executed ? 1 : -1;
+        return a.createdAt - b.createdAt;
+      });
     default:
       return sorted;
   }

@@ -53,8 +53,12 @@ describe('parseSort', () => {
   });
 
   it('accepts all valid sort options', () => {
-    const valid = ['newest', 'oldest', 'highest', 'lowest', 'most-votes'] as const;
+    const valid = ['newest', 'oldest', 'highest', 'lowest', 'most-votes', 'ending-soon'] as const;
     valid.forEach((s) => expect(parseSort(s)).toBe(s));
+  });
+
+  it('accepts ending-soon as a valid sort value', () => {
+    expect(parseSort('ending-soon')).toBe('ending-soon');
   });
 
   it('returns default for unknown value', () => {
@@ -139,6 +143,11 @@ describe('serializeParams', () => {
     expect(result.get('sort')).toBe('most-votes');
   });
 
+  it('serializes ending-soon sort to query string', () => {
+    const result = serializeParams({ ...DEFAULT_PARAMS, sort: 'ending-soon' });
+    expect(result.get('sort')).toBe('ending-soon');
+  });
+
   it('includes non-default search query', () => {
     const result = serializeParams({ ...DEFAULT_PARAMS, q: 'treasury' });
     expect(result.get('q')).toBe('treasury');
@@ -170,6 +179,20 @@ describe('serializeParams', () => {
     const serialized = serializeParams(original);
     const parsed = parseSearchParams(serialized);
     expect(parsed).toEqual(original);
+  });
+
+  it('round-trips ending-soon sort through parse and serialize', () => {
+    const original: ProposalFilterParams = {
+      status: 'active',
+      category: 'all',
+      sort: 'ending-soon',
+      q: '',
+      page: 1,
+    };
+    const serialized = serializeParams(original);
+    const parsed = parseSearchParams(serialized);
+    expect(parsed.sort).toBe('ending-soon');
+    expect(parsed.status).toBe('active');
   });
 });
 
@@ -213,6 +236,10 @@ describe('countActiveFilters', () => {
     expect(countActiveFilters({ ...DEFAULT_PARAMS, sort: 'oldest' })).toBe(1);
   });
 
+  it('counts ending-soon as an active sort filter', () => {
+    expect(countActiveFilters({ ...DEFAULT_PARAMS, sort: 'ending-soon' })).toBe(1);
+  });
+
   it('counts search query', () => {
     expect(countActiveFilters({ ...DEFAULT_PARAMS, q: 'hello' })).toBe(1);
   });
@@ -252,6 +279,10 @@ describe('isDefaultParams', () => {
 
   it('returns false when sort is non-default', () => {
     expect(isDefaultParams({ ...DEFAULT_PARAMS, sort: 'oldest' })).toBe(false);
+  });
+
+  it('returns false when sort is ending-soon', () => {
+    expect(isDefaultParams({ ...DEFAULT_PARAMS, sort: 'ending-soon' })).toBe(false);
   });
 
   it('returns false when q is set', () => {

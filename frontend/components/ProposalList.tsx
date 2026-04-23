@@ -463,6 +463,9 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                 const totalVotesB = b.votesFor + b.votesAgainst;
                 return totalVotesB - totalVotesA;
             }
+            case 'ending-soon':
+                if (a.executed !== b.executed) return a.executed ? 1 : -1;
+                return a.createdAt - b.createdAt;
             default:
                 return 0;
         }
@@ -510,6 +513,18 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                     </button>
                 </div>
             </div>
+
+            {filterParams.sort !== 'newest' && (
+                <p className="mb-4 text-xs text-purple-300/70" aria-live="polite" role="status">
+                    {{
+                        'oldest': 'Sorted by earliest created',
+                        'ending-soon': 'Sorted by active proposals closest to their deadline',
+                        'highest': 'Sorted by largest funding request',
+                        'lowest': 'Sorted by smallest funding request',
+                        'most-votes': 'Sorted by highest total vote count',
+                    }[filterParams.sort]}
+                </p>
+            )}
 
             <div className="space-y-4">
                 {sortedProposals.length === 0 && filterParams.q ? (
