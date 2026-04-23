@@ -121,7 +121,7 @@ export function PaginationControls({
         </button>
       </nav>
 
-      <div className="text-center text-xs text-white/40">
+      <div className="text-center text-xs text-white/40" role="status" aria-live="polite">
         Page {page} of {totalPages}
       </div>
     </div>
