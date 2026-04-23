@@ -75,7 +75,7 @@ export function filterProposalsByStatus(
  */
 export function sortProposals(
   proposals: Proposal[],
-  sortBy: 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes' = 'newest',
+  sortBy: 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes' | 'ending-soon' = 'newest',
 ): Proposal[] {
   const sorted = [...proposals];
 
