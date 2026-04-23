@@ -143,6 +143,11 @@ describe('serializeParams', () => {
     expect(result.get('sort')).toBe('most-votes');
   });
 
+  it('serializes ending-soon sort to query string', () => {
+    const result = serializeParams({ ...DEFAULT_PARAMS, sort: 'ending-soon' });
+    expect(result.get('sort')).toBe('ending-soon');
+  });
+
   it('includes non-default search query', () => {
     const result = serializeParams({ ...DEFAULT_PARAMS, q: 'treasury' });
     expect(result.get('q')).toBe('treasury');
