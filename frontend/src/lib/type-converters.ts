@@ -60,6 +60,7 @@ export function convertRawToVote(proposalId: number, voter: string, raw: RawVote
     voter,
     support: unwrapClarityValue(raw.support) ?? false,
     weight: unwrapClarityValue(raw.weight) ?? 0,
+    costPaid: unwrapClarityValue(raw['cost-paid']) ?? 0,
   };
 }
 
