@@ -76,9 +76,14 @@ export function parsePage(value: string | null): number {
   return isNaN(n) || n < 1 ? 1 : n;
 }
 
+const VALID_PAGE_SIZES = new Set<number>([10, 15, 20, 25, 50]);
+
 export function parsePageSize(value: string | null): number {
   const n = parseInt(value ?? '', 10);
-  return isNaN(n) || n < 1 ? 10 : n;
+  if (!isNaN(n) && VALID_PAGE_SIZES.has(n)) {
+    return n;
+  }
+  return DEFAULT_PARAMS.pageSize;
 }
 
 export function parseSearchParams(params: SearchParamsLike): ProposalFilterParams {
