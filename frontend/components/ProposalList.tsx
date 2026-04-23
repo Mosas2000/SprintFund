@@ -488,6 +488,11 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
         }
     }, [page, totalPages, totalItems, setPage]);
 
+    // Scroll to top on page change
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [validPage]);
+
     const paginatedProposals = paginateProposals(sortedProposals, validPage, pageSize);
 
     return (
