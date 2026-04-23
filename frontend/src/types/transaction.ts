@@ -1,4 +1,4 @@
-export type TransactionType = 'stake' | 'vote' | 'create-proposal' | 'execute' | 'unstake';
+export type TransactionType = 'stake' | 'vote' | 'create-proposal' | 'execute' | 'unstake' | 'reclaim-vote';
 
 export type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'dropped';
 
