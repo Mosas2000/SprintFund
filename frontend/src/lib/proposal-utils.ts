@@ -3,6 +3,7 @@
  */
 
 import type { Proposal, ProposalWithStats } from '../types/proposal';
+import { getBlockHeightDaysOld } from './block-height-utils';
 
 /**
  * Calculates total votes for a proposal.
@@ -37,23 +38,22 @@ export function isProposalActive(proposal: Proposal): boolean {
 }
 
 /**
- * Calculates days since proposal creation.
+ * Calculates days since proposal creation using block height.
  */
-export function calculateProposalAge(proposal: Proposal, now: number = Date.now()): number {
-  const ageMs = now - proposal.createdAt * 1000;
-  return Math.floor(ageMs / (1000 * 60 * 60 * 24));
+export function calculateProposalAge(proposal: Proposal): number {
+  return getBlockHeightDaysOld(proposal.createdAt) ?? 0;
 }
 
 /**
  * Converts Proposal to ProposalWithStats with all derived fields.
  */
-export function enrichProposal(proposal: Proposal, now?: number): ProposalWithStats {
+export function enrichProposal(proposal: Proposal): ProposalWithStats {
   return {
     ...proposal,
     totalVotes: calculateTotalVotes(proposal),
     forPercentage: calculateForPercentage(proposal),
     againstPercentage: calculateAgainstPercentage(proposal),
-    daysOld: calculateProposalAge(proposal, now),
+    daysOld: calculateProposalAge(proposal),
     isActive: isProposalActive(proposal),
   };
 }
