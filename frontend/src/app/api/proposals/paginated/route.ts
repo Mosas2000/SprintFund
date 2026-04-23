@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PaginationService } from '@/services/pagination';
 
-const MOCK_PROPOSALS = Array.from({ length: 150 }, (_, i) => ({
-  id: `prop_${i + 1}`,
-  title: `Proposal ${i + 1}`,
-  description: `This is proposal number ${i + 1}`,
-  proposer: `SP${Math.random().toString(36).slice(2, 34)}`,
-  createdAt: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(),
-  status: ['pending', 'approved', 'rejected'][Math.floor(Math.random() * 3)],
-  requestedAmount: Math.floor(Math.random() * 20000000000),
-  votes: Array(Math.floor(Math.random() * 50)),
-}));
+const MOCK_PROPOSALS = Array.from({ length: 150 }, (_, i) => {
+  const createdAt = 100000 - i * 144; // Spaced by ~1 day
+  return {
+    id: `prop_${i + 1}`,
+    title: `Proposal ${i + 1}`,
+    description: `This is proposal number ${i + 1}`,
+    proposer: `SP${Math.random().toString(36).slice(2, 34)}`,
+    createdAt,
+    votingEndsAt: createdAt + 1000,
+    executionAllowedAt: createdAt + 1144,
+    status: ['pending', 'approved', 'rejected'][Math.floor(Math.random() * 3)],
+    requestedAmount: Math.floor(Math.random() * 20000000000),
+    votes: Array(Math.floor(Math.random() * 50)),
+  };
+});
 
 export async function GET(request: NextRequest) {
   try {
