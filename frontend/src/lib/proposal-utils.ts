@@ -129,6 +129,9 @@ export function paginateProposals<T>(
 
 /**
  * Calculates blocks remaining until voting ends.
+ * @param proposal The proposal object with votingEndsAt block height
+ * @param currentBlockHeight The current height of the blockchain
+ * @returns Number of blocks until the voting window closes (0 if already closed)
  */
 export function getBlocksUntilVotingEnds(proposal: Proposal, currentBlockHeight: number): number {
   return Math.max(0, proposal.votingEndsAt - currentBlockHeight);
@@ -136,6 +139,9 @@ export function getBlocksUntilVotingEnds(proposal: Proposal, currentBlockHeight:
 
 /**
  * Calculates blocks remaining until execution is allowed.
+ * @param proposal The proposal object with executionAllowedAt block height
+ * @param currentBlockHeight The current height of the blockchain
+ * @returns Number of blocks until execution is permitted (0 if already allowed)
  */
 export function getBlocksUntilExecutionAllowed(proposal: Proposal, currentBlockHeight: number): number {
   return Math.max(0, proposal.executionAllowedAt - currentBlockHeight);
@@ -144,6 +150,8 @@ export function getBlocksUntilExecutionAllowed(proposal: Proposal, currentBlockH
 /**
  * Formats a block difference as a human-readable estimated time string.
  * Uses 10 minutes per block as a standard Stacks block time estimate.
+ * @param blocks The number of blocks to format
+ * @returns A string like "1d 4h 30m"
  */
 export function formatBlockDuration(blocks: number): string {
   if (blocks <= 0) return '0m';
