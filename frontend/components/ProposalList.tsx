@@ -629,6 +629,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                                 executed={proposal.executed}
                                 votesFor={proposal.votesFor}
                                 votesAgainst={proposal.votesAgainst}
+                                executionAllowedAt={proposal.executionAllowedAt}
                                 onExecuted={fetchProposals}
                                 title={proposal.title}
                             />
