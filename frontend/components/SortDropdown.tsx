@@ -18,6 +18,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
     const sortOptions = [
         { value: 'newest' as const, label: 'Newest First' },
         { value: 'oldest' as const, label: 'Oldest First' },
+        { value: 'ending-soon' as const, label: 'Ending Soon' },
         { value: 'highest' as const, label: 'Highest Amount' },
         { value: 'lowest' as const, label: 'Lowest Amount' },
         { value: 'most-votes' as const, label: 'Most Votes' },
