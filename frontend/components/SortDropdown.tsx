@@ -78,6 +78,12 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
                 </svg>
             </button>
 
+            {selectedSort !== 'newest' && (
+                <p className="mt-1 text-xs text-purple-300/70">
+                    {sortDescriptions[selectedSort]}
+                </p>
+            )}
+
             {isOpen && (
                 <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-lg border border-white/20 bg-gray-800 shadow-md sm:left-auto sm:right-0 sm:w-48">
                     {sortOptions.map((option) => (
