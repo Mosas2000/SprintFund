@@ -64,6 +64,8 @@ export function validateRawProposal(raw: unknown): RawProposal | null {
   const votesAgainst = unwrapClarityValue(obj['votes-against']);
   const executed = unwrapClarityValue(obj.executed);
   const createdAt = unwrapClarityValue(obj['created-at']);
+  const votingEndsAt = unwrapClarityValue(obj['voting-ends-at']);
+  const executionAllowedAt = unwrapClarityValue(obj['execution-allowed-at']);
 
   if (
     !isString(proposer) ||
@@ -73,7 +75,9 @@ export function validateRawProposal(raw: unknown): RawProposal | null {
     !isNumber(votesFor) ||
     !isNumber(votesAgainst) ||
     !isBoolean(executed) ||
-    !isNumber(createdAt)
+    !isNumber(createdAt) ||
+    !isNumber(votingEndsAt) ||
+    !isNumber(executionAllowedAt)
   ) {
     return null;
   }
@@ -87,6 +91,8 @@ export function validateRawProposal(raw: unknown): RawProposal | null {
     'votes-against': { value: votesAgainst },
     executed: { value: executed },
     'created-at': { value: createdAt },
+    'voting-ends-at': { value: votingEndsAt },
+    'execution-allowed-at': { value: executionAllowedAt },
   };
 }
 
@@ -106,6 +112,8 @@ export function rawProposalToProposal(id: number, raw: RawProposal): Proposal {
     votesAgainst: unwrapClarityValue(raw['votes-against']) || 0,
     executed: unwrapClarityValue(raw.executed) || false,
     createdAt: unwrapClarityValue(raw['created-at']) || 0,
+    votingEndsAt: unwrapClarityValue(raw['voting-ends-at']) || 0,
+    executionAllowedAt: unwrapClarityValue(raw['execution-allowed-at']) || 0,
   };
 }
 
