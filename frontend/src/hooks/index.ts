@@ -9,3 +9,4 @@ export { useRetry } from './useRetry';
 export { useDebouncedSearch } from './useDebouncedSearch';
 export { useStxPriceData } from './useStxPrice';
 export { useWalletBalanceData } from './useWalletBalance';
+export { useCurrentBlockHeight } from './useCurrentBlockHeight';
