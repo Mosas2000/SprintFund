@@ -9,6 +9,7 @@ import {
 import { STACKS_MAINNET } from '@stacks/network';
 import { CONTRACT_ADDRESS, CONTRACT_NAME } from '@/config';
 import { useTransaction } from '@/hooks/useTransaction';
+import { useCurrentBlockHeight } from '@/hooks';
 
 const NETWORK = STACKS_MAINNET;
 
@@ -19,6 +20,7 @@ interface ExecuteProposalProps {
     executed: boolean;
     votesFor: number;
     votesAgainst: number;
+    executionAllowedAt: number;
     onExecuted?: () => void;
     title?: string;
 }
@@ -30,9 +32,11 @@ export default function ExecuteProposal({
     executed,
     votesFor,
     votesAgainst,
+    executionAllowedAt,
     onExecuted,
     title,
 }: ExecuteProposalProps) {
+    const { blockHeight } = useCurrentBlockHeight();
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
 
@@ -62,11 +66,14 @@ export default function ExecuteProposal({
     // 1. User is the proposer
     // 2. Proposal is not already executed
     // 3. Proposal has more votes for than against
+    const isTimelockPassed = blockHeight ? blockHeight >= executionAllowedAt : false;
+
     const canExecute =
         userAddress &&
         userAddress === proposer &&
         !executed &&
-        votesFor > votesAgainst;
+        votesFor > votesAgainst &&
+        isTimelockPassed;
 
     if (!canExecute) {
         return null;

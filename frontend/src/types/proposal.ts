@@ -21,7 +21,9 @@ export interface Proposal {
   votesFor: number;
   votesAgainst: number;
   executed: boolean;
-  createdAt: number;
+  createdAt: number; // Block height
+  votingEndsAt: number; // Block height
+  executionAllowedAt: number; // Block height
   category?: string; // Optional category for filtering/display
 }
 

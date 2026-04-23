@@ -43,6 +43,8 @@ describe('validateRawProposal', () => {
     'votes-against': { value: 2 },
     executed: { value: false },
     'created-at': { value: 1000000 },
+    'voting-ends-at': { value: 1000432 },
+    'execution-allowed-at': { value: 1000576 },
   };
 
   it('returns null for invalid input', () => {
@@ -72,6 +74,8 @@ describe('validateRawProposal', () => {
       'votes-against': 5,
       executed: false,
       'created-at': 1000000,
+      'voting-ends-at': 1000432,
+      'execution-allowed-at': 1000576,
     };
     const result = validateRawProposal(unwrapped);
     expect(result).not.toBeNull();
@@ -88,6 +92,8 @@ describe('rawProposalToProposal', () => {
     'votes-against': { value: 3 },
     executed: { value: true },
     'created-at': { value: 999999 },
+    'voting-ends-at': { value: 1000431 },
+    'execution-allowed-at': { value: 1000431 },
   };
 
   it('converts RawProposal to Proposal', () => {
@@ -101,6 +107,8 @@ describe('rawProposalToProposal', () => {
     expect(proposal.votesAgainst).toBe(3);
     expect(proposal.executed).toBe(true);
     expect(proposal.createdAt).toBe(999999);
+    expect(proposal.votingEndsAt).toBe(1000431);
+    expect(proposal.executionAllowedAt).toBe(1000431);
   });
 });
 
@@ -179,6 +187,8 @@ describe('isProposal', () => {
     votesAgainst: 2,
     executed: false,
     createdAt: 1000000,
+    votingEndsAt: 1000432,
+    executionAllowedAt: 1000576,
   };
 
   it('returns true for valid Proposal objects', () => {
@@ -208,6 +218,8 @@ describe('isProposalArray', () => {
     votesAgainst: 2,
     executed: false,
     createdAt: 1000000,
+    votingEndsAt: 1000432,
+    executionAllowedAt: 1000576,
   };
 
   it('returns true for arrays of valid Proposals', () => {

@@ -18,7 +18,9 @@ describe('Proposal types', () => {
       votesFor: 100,
       votesAgainst: 25,
       executed: false,
-      createdAt: 1700000000,
+      createdAt: 100000,
+      votingEndsAt: 100432,
+      executionAllowedAt: 100576,
     };
 
     expect(proposal.id).toBe(1);
@@ -36,7 +38,9 @@ describe('Proposal types', () => {
       votesFor: 80,
       votesAgainst: 20,
       executed: true,
-      createdAt: 1698000000,
+      createdAt: 99000,
+      votingEndsAt: 99431,
+      executionAllowedAt: 99431,
       totalVotes: 100,
       forPercentage: 80,
       againstPercentage: 20,

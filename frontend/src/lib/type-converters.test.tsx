@@ -22,7 +22,9 @@ describe('Type converters', () => {
       'votes-for': { value: 100 },
       'votes-against': { value: 25 },
       executed: { value: false },
-      'created-at': { value: 1700000000 },
+      'created-at': { value: 1000000 },
+      'voting-ends-at': { value: 1000432 },
+      'execution-allowed-at': { value: 1000576 },
     };
 
     it('converts RawProposal to Proposal', () => {
@@ -35,6 +37,8 @@ describe('Type converters', () => {
       expect(proposal.votesFor).toBe(100);
       expect(proposal.votesAgainst).toBe(25);
       expect(proposal.executed).toBe(false);
+      expect(proposal.votingEndsAt).toBe(1000432);
+      expect(proposal.executionAllowedAt).toBe(1000576);
     });
 
     it('handles missing wrapped fields', () => {
@@ -58,7 +62,9 @@ describe('Type converters', () => {
       votesFor: 100,
       votesAgainst: 25,
       executed: false,
-      createdAt: 1700000000,
+      createdAt: 1000000,
+      votingEndsAt: 1000432,
+      executionAllowedAt: 1000576,
     };
 
     it('converts Proposal to ProposalWithStats', () => {
@@ -125,6 +131,8 @@ describe('Type converters', () => {
       votesAgainst: 2,
       executed: false,
       createdAt: 1000000,
+      votingEndsAt: 1000432,
+      executionAllowedAt: 1000576,
     };
 
     it('passes for valid Proposal', () => {
@@ -165,6 +173,8 @@ describe('Type converters', () => {
       votesAgainst: 2,
       executed: false,
       createdAt: 1000000,
+      votingEndsAt: 1000432,
+      executionAllowedAt: 1000576,
     };
 
     it('returns Proposal for valid value', () => {

@@ -3,6 +3,7 @@
  */
 
 import type { Proposal, ProposalWithStats } from '../types/proposal';
+import { getBlockHeightDaysOld } from './block-height-utils';
 
 /**
  * Calculates total votes for a proposal.
@@ -37,23 +38,22 @@ export function isProposalActive(proposal: Proposal): boolean {
 }
 
 /**
- * Calculates days since proposal creation.
+ * Calculates days since proposal creation using block height.
  */
-export function calculateProposalAge(proposal: Proposal, now: number = Date.now()): number {
-  const ageMs = now - proposal.createdAt * 1000;
-  return Math.floor(ageMs / (1000 * 60 * 60 * 24));
+export function calculateProposalAge(proposal: Proposal): number {
+  return getBlockHeightDaysOld(proposal.createdAt) ?? 0;
 }
 
 /**
  * Converts Proposal to ProposalWithStats with all derived fields.
  */
-export function enrichProposal(proposal: Proposal, now?: number): ProposalWithStats {
+export function enrichProposal(proposal: Proposal): ProposalWithStats {
   return {
     ...proposal,
     totalVotes: calculateTotalVotes(proposal),
     forPercentage: calculateForPercentage(proposal),
     againstPercentage: calculateAgainstPercentage(proposal),
-    daysOld: calculateProposalAge(proposal, now),
+    daysOld: calculateProposalAge(proposal),
     isActive: isProposalActive(proposal),
   };
 }
@@ -93,7 +93,7 @@ export function sortProposals(
     case 'ending-soon':
       return sorted.sort((a, b) => {
         if (a.executed !== b.executed) return a.executed ? 1 : -1;
-        return a.createdAt - b.createdAt;
+        return a.votingEndsAt - b.votingEndsAt;
       });
     default:
       return sorted;
@@ -125,4 +125,59 @@ export function paginateProposals<T>(
 ): T[] {
   const startIndex = (page - 1) * pageSize;
   return items.slice(startIndex, startIndex + pageSize);
+}
+
+/**
+ * Calculates blocks remaining until voting ends.
+ * @param proposal The proposal object with votingEndsAt block height
+ * @param currentBlockHeight The current height of the blockchain
+ * @returns Number of blocks until the voting window closes (0 if already closed)
+ */
+export function getBlocksUntilVotingEnds(proposal: Proposal, currentBlockHeight: number): number {
+  return Math.max(0, proposal.votingEndsAt - currentBlockHeight);
+}
+
+/**
+ * Calculates blocks remaining until execution is allowed.
+ * @param proposal The proposal object with executionAllowedAt block height
+ * @param currentBlockHeight The current height of the blockchain
+ * @returns Number of blocks until execution is permitted (0 if already allowed)
+ */
+export function getBlocksUntilExecutionAllowed(proposal: Proposal, currentBlockHeight: number): number {
+  return Math.max(0, proposal.executionAllowedAt - currentBlockHeight);
+}
+
+/**
+ * Formats a block difference as a human-readable estimated time string.
+ * Uses 10 minutes per block as a standard Stacks block time estimate.
+ * @param blocks The number of blocks to format
+ * @returns A string like "1d 4h 30m"
+ */
+export function formatBlockDuration(blocks: number): string {
+  if (blocks <= 0) return '0m';
+  
+  const totalMinutes = blocks * 10;
+  if (totalMinutes < 60) {
+    return `${totalMinutes}m`;
+  }
+  
+  const totalHours = Math.floor(totalMinutes / 60);
+  const remainingMinutes = totalMinutes % 60;
+  
+  if (totalHours < 24) {
+    return remainingMinutes > 0 ? `${totalHours}h ${remainingMinutes}m` : `${totalHours}h`;
+  }
+  
+  const totalDays = Math.floor(totalHours / 24);
+  const remainingHours = totalHours % 24;
+  
+  return remainingHours > 0 ? `${totalDays}d ${remainingHours}h` : `${totalDays}d`;
+}
+
+/**
+ * Checks if a proposal is considered "high-value" based on the 100 STX threshold.
+ * (100,000,000 microSTX)
+ */
+export function isHighValueProposal(proposal: Proposal): boolean {
+  return proposal.amount >= 100_000_000;
 }

@@ -45,6 +45,8 @@ describe('useBlockHeight hook', () => {
         votesAgainst: 5,
         executed: false,
         createdAt: 50000,
+        votingEndsAt: 50432,
+        executionAllowedAt: 50576,
       };
 
       const { result } = renderHook(() => useProposalBlockHeight(mockProposal));

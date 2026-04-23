@@ -10,6 +10,8 @@ import { ExecutionStatus } from '@/components/ExecutionStatus';
 import { VotingHistory } from '@/components/VotingHistory';
 import { RelatedProposals } from '@/components/RelatedProposals';
 import { proposalExecutionService, type ExecutionHistoryEntry } from '@/services/proposal-execution';
+import { ProposalCountdown } from '@/components/ProposalCountdown';
+import { formatBlockHeight } from '@/lib/block-height';
 import type { Proposal } from '@/types';
 
 export default function ProposalDetailPage() {
@@ -110,7 +112,7 @@ export default function ProposalDetailPage() {
                   </span>
 
                   <span className="text-sm text-white/60">
-                    Created {new Date(proposal.createdAt).toLocaleDateString()}
+                    Created {formatBlockHeight(proposal.createdAt)}
                   </span>
 
                   <span className="text-sm text-white/60">
@@ -120,7 +122,9 @@ export default function ProposalDetailPage() {
               </div>
             </div>
 
-              <p className="text-base leading-relaxed text-white/70 sm:text-lg">{proposal.description}</p>
+            <ProposalCountdown proposal={proposal} />
+
+            <p className="text-base leading-relaxed text-white/70 sm:text-lg">{proposal.description}</p>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
               <div className="rounded-lg border border-white/10 bg-white/5 p-4">

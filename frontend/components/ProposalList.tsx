@@ -10,6 +10,7 @@ import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './ui/LoadingSkeleton';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { ProposalCountdown } from './ProposalCountdown';
 import Comments from './Comments';
 import FilterDropdown from './FilterDropdown';
 import SortDropdown from './SortDropdown';
@@ -602,6 +603,9 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                                 </div>
                             </div>
 
+                            {/* Countdown Timer */}
+                            <ProposalCountdown proposal={proposal} />
+
                             {/* Voting Stats */}
                             <div className="bg-white/5 rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-2">
@@ -625,6 +629,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                                 executed={proposal.executed}
                                 votesFor={proposal.votesFor}
                                 votesAgainst={proposal.votesAgainst}
+                                executionAllowedAt={proposal.executionAllowedAt}
                                 onExecuted={fetchProposals}
                                 title={proposal.title}
                             />

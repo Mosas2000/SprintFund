@@ -29,6 +29,8 @@ export function convertRawToProposal(id: number, raw: RawProposal): Proposal {
     votesAgainst: unwrapClarityValue(raw['votes-against']) ?? 0,
     executed: unwrapClarityValue(raw.executed) ?? false,
     createdAt: unwrapClarityValue(raw['created-at']) ?? 0,
+    votingEndsAt: unwrapClarityValue(raw['voting-ends-at']) ?? 0,
+    executionAllowedAt: unwrapClarityValue(raw['execution-allowed-at']) ?? 0,
   };
 }
 
