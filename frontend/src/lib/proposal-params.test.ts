@@ -222,6 +222,10 @@ describe('countActiveFilters', () => {
     expect(countActiveFilters({ ...DEFAULT_PARAMS, sort: 'oldest' })).toBe(1);
   });
 
+  it('counts ending-soon as an active sort filter', () => {
+    expect(countActiveFilters({ ...DEFAULT_PARAMS, sort: 'ending-soon' })).toBe(1);
+  });
+
   it('counts search query', () => {
     expect(countActiveFilters({ ...DEFAULT_PARAMS, q: 'hello' })).toBe(1);
   });
