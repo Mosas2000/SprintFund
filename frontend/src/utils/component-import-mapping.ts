@@ -19,7 +19,6 @@ export const componentImportMapping = {
   'ProposalDetailError': 'components/proposals',
   'ProposalSortbar': 'components/proposals',
   'ProposalLink': 'components/proposals',
-  'PaginatedProposalList': 'components/proposals',
   'RelatedProposals': 'components/proposals',
   'ProposalArchive': 'components/proposals',
   'ProposalCollaboration': 'components/proposals',
