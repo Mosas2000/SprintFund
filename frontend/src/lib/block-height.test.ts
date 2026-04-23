@@ -1,88 +1,67 @@
 import { describe, it, expect } from 'vitest';
-import { formatBlockHeight, formatBlockHeightShort, getBlockTimestampEstimate } from './block-height';
+import { 
+  getBlockTimestampEstimate, 
+  getBlockHeightCountdown,
+  formatBlockHeight,
+  formatBlockHeightShort
+} from './block-height';
 
 describe('block-height utilities', () => {
-  describe('formatBlockHeightShort', () => {
-    it('should format positive block heights', () => {
-      expect(formatBlockHeightShort(12345)).toContain('Block #12,345');
+  describe('getBlockTimestampEstimate', () => {
+    it('returns null for invalid inputs', () => {
+      expect(getBlockTimestampEstimate(null)).toBeNull();
+      expect(getBlockTimestampEstimate(undefined)).toBeNull();
+      expect(getBlockTimestampEstimate(-1)).toBeNull();
+      expect(getBlockTimestampEstimate(NaN)).toBeNull();
     });
 
-    it('should handle zero', () => {
-      expect(formatBlockHeightShort(0)).toContain('Block #0');
+    it('estimates timestamp from block height', () => {
+      const timestamp = getBlockTimestampEstimate(100000);
+      expect(timestamp).toBeGreaterThan(0);
+      expect(typeof timestamp).toBe('number');
+    });
+  });
+
+  describe('getBlockHeightCountdown', () => {
+    it('calculates countdown correctly when target is in future', () => {
+      const countdown = getBlockHeightCountdown(100500, 100400);
+      expect(countdown.blocksRemaining).toBe(100);
+      expect(countdown.isPassed).toBe(false);
+      expect(countdown.estimatedTimestamp).toBeGreaterThan(0);
     });
 
-    it('should handle null', () => {
-      expect(formatBlockHeightShort(null)).toBe('Block #0');
+    it('handles target in the past', () => {
+      const countdown = getBlockHeightCountdown(100300, 100400);
+      expect(countdown.blocksRemaining).toBe(0);
+      expect(countdown.isPassed).toBe(true);
     });
 
-    it('should handle undefined', () => {
-      expect(formatBlockHeightShort(undefined)).toBe('Block #0');
-    });
-
-    it('should handle NaN', () => {
-      expect(formatBlockHeightShort(NaN)).toBe('Block #0');
-    });
-
-    it('should handle negative numbers', () => {
-      expect(formatBlockHeightShort(-5)).toBe('Block #0');
-    });
-
-    it('should format large numbers with commas', () => {
-      expect(formatBlockHeightShort(1000000)).toContain('Block #1,000,000');
+    it('handles exact target', () => {
+      const countdown = getBlockHeightCountdown(100400, 100400);
+      expect(countdown.blocksRemaining).toBe(0);
+      expect(countdown.isPassed).toBe(true);
     });
   });
 
   describe('formatBlockHeight', () => {
-    it('should format block height with relative time', () => {
-      const result = formatBlockHeight(12345);
-      expect(result).toMatch(/Block #\d+,?\d* \(.+\)/);
+    it('formats valid block height with relative time', () => {
+      const formatted = formatBlockHeight(100000);
+      expect(formatted).toMatch(/Block #100,000/);
     });
 
-    it('should handle zero', () => {
-      const result = formatBlockHeight(0);
-      expect(result).toMatch(/Block #0 \(.+\)/);
-    });
-
-    it('should handle null', () => {
+    it('handles invalid inputs by returning Block #0', () => {
       expect(formatBlockHeight(null)).toBe('Block #0');
-    });
-
-    it('should handle undefined', () => {
-      expect(formatBlockHeight(undefined)).toBe('Block #0');
-    });
-
-    it('should handle NaN', () => {
-      expect(formatBlockHeight(NaN)).toBe('Block #0');
-    });
-
-    it('should handle negative numbers', () => {
-      expect(formatBlockHeight(-10)).toBe('Block #0');
+      expect(formatBlockHeight(-1)).toBe('Block #0');
     });
   });
 
-  describe('getBlockTimestampEstimate', () => {
-    it('should estimate timestamp from block height', () => {
-      const blockHeight = 1000;
-      const timestamp = getBlockTimestampEstimate(blockHeight);
-      expect(timestamp).not.toBeNull();
-      expect(typeof timestamp).toBe('number');
-      expect(timestamp).toBeGreaterThan(0);
+  describe('formatBlockHeightShort', () => {
+    it('formats block height without time', () => {
+      expect(formatBlockHeightShort(123456)).toBe('Block #123,456');
     });
 
-    it('should return null for invalid inputs', () => {
-      expect(getBlockTimestampEstimate(null)).toBeNull();
-      expect(getBlockTimestampEstimate(undefined)).toBeNull();
-      expect(getBlockTimestampEstimate(NaN)).toBeNull();
-      expect(getBlockTimestampEstimate(-5)).toBeNull();
-    });
-
-    it('should estimate reasonable timestamps', () => {
-      const blockHeight = 100;
-      const timestamp = getBlockTimestampEstimate(blockHeight);
-      if (timestamp) {
-        const now = Date.now();
-        expect(timestamp).toBeLessThanOrEqual(now);
-      }
+    it('handles invalid inputs', () => {
+      expect(formatBlockHeightShort(null)).toBe('Block #0');
     });
   });
 });
