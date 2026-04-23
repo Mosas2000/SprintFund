@@ -43,6 +43,8 @@ export interface RawProposal {
   'votes-against': ClarityValue<number>;
   executed: ClarityValue<boolean>;
   'created-at': ClarityValue<number>;
+  'voting-ends-at': ClarityValue<number>;
+  'execution-allowed-at': ClarityValue<number>;
 }
 
 /**
