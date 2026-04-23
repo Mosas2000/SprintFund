@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { getAllProposals, getProposalCount } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
+import { useCurrentBlockHeight } from '@/hooks/useCurrentBlockHeight';
+import { Layers } from 'lucide-react';
 
 export default function Stats() {
     const [totalProposals, setTotalProposals] = useState(0);
@@ -10,6 +12,7 @@ export default function Stats() {
     const [totalDistributed, setTotalDistributed] = useState(0);
     const [topProposers, setTopProposers] = useState<{ address: string; count: number }[]>([]);
     const [loading, setLoading] = useState(true);
+    const { blockHeight } = useCurrentBlockHeight();
 
     const fetchStats = async () => {
         try {
@@ -123,6 +126,21 @@ export default function Stats() {
                     </div>
                     <p className="text-green-300 text-sm mb-1">STX Distributed</p>
                     <p className="text-white font-bold text-3xl">{formatSTX(totalDistributed)}</p>
+                </div>
+
+                {/* Current Block Height */}
+                <div className="bg-gradient-to-br from-orange-500/20 to-yellow-500/20 border border-orange-400/30 rounded-lg p-6 col-span-2 md:col-span-3">
+                    <div className="flex items-center justify-between mb-2">
+                        <Layers className="w-8 h-8 text-orange-300" />
+                        <div className="flex items-center gap-2">
+                            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-[10px] font-black text-green-500 uppercase tracking-widest">Live Sync</span>
+                        </div>
+                    </div>
+                    <p className="text-orange-300 text-sm mb-1">Current Block Height</p>
+                    <p className="text-white font-bold text-3xl tabular-nums">
+                        {blockHeight ? `#${blockHeight.toLocaleString()}` : 'Syncing...'}
+                    </p>
                 </div>
             </div>
 
