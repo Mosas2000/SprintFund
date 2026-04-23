@@ -29,12 +29,24 @@ const SORT_DESCRIPTIONS: Record<SortOption, string> = {
 export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [internalSort, setInternalSort] = useState<SortOption>('newest');
+    const [activeIndex, setActiveIndex] = useState(-1);
+    
     const dropdownRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
 
     const selectedSort = sort ?? internalSort;
 
-    const close = useCallback(() => setIsOpen(false), []);
+    const close = useCallback(() => {
+        setIsOpen(false);
+        setActiveIndex(-1);
+    }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            const index = SORT_OPTIONS.findIndex(o => o.value === selectedSort);
+            setActiveIndex(index >= 0 ? index : 0);
+        }
+    }, [isOpen, selectedSort]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -48,15 +60,35 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
 
     useEffect(() => {
         if (!isOpen) return;
+        
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 close();
                 triggerRef.current?.focus();
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                setActiveIndex(prev => (prev < SORT_OPTIONS.length - 1 ? prev + 1 : 0));
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                setActiveIndex(prev => (prev > 0 ? prev - 1 : SORT_OPTIONS.length - 1));
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                setActiveIndex(prev => {
+                    const opt = SORT_OPTIONS[prev];
+                    if (opt) {
+                        if (sort === undefined) setInternalSort(opt.value);
+                        onSortChange(opt.value);
+                        close();
+                        triggerRef.current?.focus();
+                    }
+                    return prev;
+                });
             }
         };
+        
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, close]);
+    }, [isOpen, close, onSortChange, sort]);
 
     const handleSortSelect = (s: SortOption) => {
         if (sort === undefined) setInternalSort(s);
@@ -73,7 +105,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
                 onClick={() => setIsOpen(prev => !prev)}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white shadow-md transition-all hover:bg-white/20 sm:w-auto sm:justify-start sm:py-2"
+                className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white shadow-md transition-all hover:bg-white/20 sm:w-auto sm:justify-start sm:py-2 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
             >
                 <svg
                     className="w-4 h-4 shrink-0"
@@ -108,23 +140,32 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
                     aria-label="Sort proposals by"
                     className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-lg border border-white/20 bg-gray-800 shadow-md sm:left-auto sm:right-0 sm:w-52"
                 >
-                    {SORT_OPTIONS.map((option) => (
-                        <li key={option.value} role="option" aria-selected={selectedSort === option.value}>
-                            <button
-                                onClick={() => handleSortSelect(option.value)}
-                                className={`w-full text-left px-4 py-3 text-sm transition-colors ${
-                                    selectedSort === option.value
-                                        ? 'bg-purple-500/20 text-purple-200 font-semibold'
-                                        : 'text-white hover:bg-white/10'
-                                }`}
-                            >
-                                <span className="block">{option.label}</span>
-                                <span className="block text-xs text-purple-300/60 mt-0.5">
-                                    {SORT_DESCRIPTIONS[option.value]}
-                                </span>
-                            </button>
-                        </li>
-                    ))}
+                    {SORT_OPTIONS.map((option, index) => {
+                        const isSelected = selectedSort === option.value;
+                        const isActive = activeIndex === index;
+                        
+                        return (
+                            <li key={option.value} role="option" aria-selected={isSelected}>
+                                <button
+                                    onClick={() => handleSortSelect(option.value)}
+                                    tabIndex={-1}
+                                    onMouseEnter={() => setActiveIndex(index)}
+                                    className={`w-full text-left px-4 py-3 text-sm transition-colors ${
+                                        isActive ? 'bg-white/10' : ''
+                                    } ${
+                                        isSelected
+                                            ? 'text-purple-200 font-semibold'
+                                            : 'text-white'
+                                    }`}
+                                >
+                                    <span className="block">{option.label}</span>
+                                    <span className={`block text-xs mt-0.5 ${isSelected ? 'text-purple-300/80' : 'text-purple-300/60'}`}>
+                                        {SORT_DESCRIPTIONS[option.value]}
+                                    </span>
+                                </button>
+                            </li>
+                        );
+                    })}
                 </ul>
             )}
         </div>
