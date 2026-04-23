@@ -281,6 +281,10 @@ describe('isDefaultParams', () => {
     expect(isDefaultParams({ ...DEFAULT_PARAMS, sort: 'oldest' })).toBe(false);
   });
 
+  it('returns false when sort is ending-soon', () => {
+    expect(isDefaultParams({ ...DEFAULT_PARAMS, sort: 'ending-soon' })).toBe(false);
+  });
+
   it('returns false when q is set', () => {
     expect(isDefaultParams({ ...DEFAULT_PARAMS, q: 'governance' })).toBe(false);
   });
