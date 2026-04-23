@@ -24,6 +24,15 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
         { value: 'most-votes' as const, label: 'Most Votes' },
     ];
 
+    const sortDescriptions: Record<SortOption, string> = {
+        'newest': 'Most recently created proposals first',
+        'oldest': 'Earliest created proposals first',
+        'ending-soon': 'Active proposals closest to their deadline',
+        'highest': 'Largest funding requests first',
+        'lowest': 'Smallest funding requests first',
+        'most-votes': 'Proposals with the most total votes',
+    };
+
     // Click outside to close
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
