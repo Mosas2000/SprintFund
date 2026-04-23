@@ -105,6 +105,7 @@ describe('parsePageSize', () => {
     expect(parsePageSize('abc')).toBe(10);
     expect(parsePageSize('0')).toBe(10);
     expect(parsePageSize('-5')).toBe(10);
+    expect(parsePageSize('13')).toBe(10); // Not in valid set
   });
 });
 
