@@ -106,6 +106,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
                 aria-controls={isOpen ? 'sort-options-list' : undefined}
+                aria-activedescendant={isOpen && activeIndex >= 0 ? `sort-option-${SORT_OPTIONS[activeIndex].value}` : undefined}
                 className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white shadow-md transition-all hover:bg-white/20 sm:w-auto sm:justify-start sm:py-2 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
             >
                 <svg
@@ -147,7 +148,12 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
                         const isActive = activeIndex === index;
                         
                         return (
-                            <li key={option.value} role="option" aria-selected={isSelected}>
+                            <li 
+                                key={option.value} 
+                                id={`sort-option-${option.value}`}
+                                role="option" 
+                                aria-selected={isSelected}
+                            >
                                 <button
                                     onClick={() => handleSortSelect(option.value)}
                                     tabIndex={-1}
