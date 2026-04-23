@@ -11,3 +11,4 @@ export { useStxPriceData } from './useStxPrice';
 export { useWalletBalanceData } from './useWalletBalance';
 // Blockchain state hooks
 export { useCurrentBlockHeight } from './useCurrentBlockHeight';
+export { useVote } from './useVote';
