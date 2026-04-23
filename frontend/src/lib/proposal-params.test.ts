@@ -180,6 +180,20 @@ describe('serializeParams', () => {
     const parsed = parseSearchParams(serialized);
     expect(parsed).toEqual(original);
   });
+
+  it('round-trips ending-soon sort through parse and serialize', () => {
+    const original: ProposalFilterParams = {
+      status: 'active',
+      category: 'all',
+      sort: 'ending-soon',
+      q: '',
+      page: 1,
+    };
+    const serialized = serializeParams(original);
+    const parsed = parseSearchParams(serialized);
+    expect(parsed.sort).toBe('ending-soon');
+    expect(parsed.status).toBe('active');
+  });
 });
 
 describe('buildProposalUrl', () => {
