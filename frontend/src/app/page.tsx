@@ -128,7 +128,7 @@ export default function Home() {
               <div>
                 <div className="text-cyan-400 font-bold text-lg mb-2">3. Execute</div>
                 <p className="text-purple-200 text-sm">
-                  Approved proposals get funded automatically in 24 hours.
+                  Approved proposals get funded automatically after a 144-block (~24h) safety timelock.
                 </p>
               </div>
             </div>
