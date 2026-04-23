@@ -146,6 +146,13 @@ describe('Proposal utilities', () => {
       expect(sorted[0].executed).toBe(false);
       expect(sorted[1].executed).toBe(true);
     });
+
+    it('ending-soon: orders active proposals by ascending createdAt', () => {
+      const older = { ...mockProposal, id: 1, executed: false, createdAt: 100 };
+      const newer = { ...mockProposal, id: 2, executed: false, createdAt: 500 };
+      const sorted = sortProposals([newer, older], 'ending-soon');
+      expect(sorted[0].createdAt).toBeLessThan(sorted[1].createdAt);
+    });
   });
 
   describe('findProposal', () => {
