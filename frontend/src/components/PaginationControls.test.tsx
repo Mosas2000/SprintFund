@@ -66,4 +66,13 @@ describe('PaginationControls', () => {
     const activeBtn = screen.getByRole('button', { name: 'Go to page 2' });
     expect(activeBtn.getAttribute('aria-current')).toBe('page');
   });
+
+  it('respects maxVisiblePages prop', () => {
+    render(<PaginationControls {...defaultProps} totalPages={10} maxVisiblePages={3} />);
+    // Should show 1, 2, 3 (since page is 2)
+    expect(screen.queryByRole('button', { name: 'Go to page 1' })).not.toBeNull();
+    expect(screen.queryByRole('button', { name: 'Go to page 2' })).not.toBeNull();
+    expect(screen.queryByRole('button', { name: 'Go to page 3' })).not.toBeNull();
+    expect(screen.queryByRole('button', { name: 'Go to page 4' })).toBeNull();
+  });
 });
