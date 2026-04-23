@@ -138,6 +138,14 @@ describe('Proposal utilities', () => {
       const sorted = sortProposals([p1, p2], 'most-votes');
       expect(calculateTotalVotes(sorted[0])).toBeGreaterThan(calculateTotalVotes(sorted[1]));
     });
+
+    it('ending-soon: places active proposals before executed ones', () => {
+      const active = { ...mockProposal, id: 1, executed: false, createdAt: 1000 };
+      const executed = { ...mockProposal, id: 2, executed: true, createdAt: 500 };
+      const sorted = sortProposals([executed, active], 'ending-soon');
+      expect(sorted[0].executed).toBe(false);
+      expect(sorted[1].executed).toBe(true);
+    });
   });
 
   describe('findProposal', () => {
