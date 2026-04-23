@@ -10,6 +10,7 @@ import {
   sortProposals,
   findProposal,
   wouldProposalPass,
+  paginateProposals,
 } from './proposal-utils';
 import type { Proposal } from '../types/proposal';
 
@@ -209,6 +210,35 @@ describe('Proposal utilities', () => {
     it('returns false when no votes', () => {
       const noVotes = { ...mockProposal, votesFor: 0, votesAgainst: 0 };
       expect(wouldProposalPass(noVotes)).toBe(false);
+    });
+
+    it('returns false when votes are equal', () => {
+      const equalVotes = { ...mockProposal, votesFor: 10, votesAgainst: 10 };
+      expect(wouldProposalPass(equalVotes)).toBe(false);
+    });
+  });
+
+  describe('paginateProposals', () => {
+    const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    it('returns first page', () => {
+      expect(paginateProposals(items, 1, 3)).toEqual([1, 2, 3]);
+    });
+
+    it('returns middle page', () => {
+      expect(paginateProposals(items, 2, 3)).toEqual([4, 5, 6]);
+    });
+
+    it('returns last partial page', () => {
+      expect(paginateProposals(items, 4, 3)).toEqual([10]);
+    });
+
+    it('returns empty array for out of bounds page', () => {
+      expect(paginateProposals(items, 5, 3)).toEqual([]);
+    });
+
+    it('handles empty input array', () => {
+      expect(paginateProposals([], 1, 10)).toEqual([]);
     });
   });
 });

@@ -114,3 +114,15 @@ export function wouldProposalPass(proposal: Proposal): boolean {
   if (proposal.votesFor === 0 && proposal.votesAgainst === 0) return false;
   return proposal.votesFor > proposal.votesAgainst;
 }
+
+/**
+ * Paginates an array of proposals.
+ */
+export function paginateProposals<T>(
+  items: T[],
+  page: number,
+  pageSize: number
+): T[] {
+  const startIndex = (page - 1) * pageSize;
+  return items.slice(startIndex, startIndex + pageSize);
+}

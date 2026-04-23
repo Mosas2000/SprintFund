@@ -10,7 +10,6 @@ export const componentQuickRef = {
   'ProposalSearch': { category: 'proposals', description: 'Search proposals interface' },
   'ProposalSort': { category: 'proposals', description: 'Sort proposals controls' },
   'VotingProgressBar': { category: 'voting', description: 'Voting progress visualization' },
-  'PaginatedProposalList': { category: 'proposals', description: 'Paginated proposal list' },
   'RelatedProposals': { category: 'proposals', description: 'Show related proposals' },
 
   'VoteDelegation': { category: 'voting', description: 'Vote delegation interface' },

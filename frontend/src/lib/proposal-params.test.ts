@@ -4,6 +4,7 @@ import {
   parseCategory,
   parseSort,
   parsePage,
+  parsePageSize,
   parseSearchParams,
   serializeParams,
   buildProposalUrl,
@@ -90,6 +91,24 @@ describe('parsePage', () => {
   });
 });
 
+describe('parsePageSize', () => {
+  it('returns 10 for null', () => {
+    expect(parsePageSize(null)).toBe(10);
+  });
+
+  it('parses valid page sizes', () => {
+    expect(parsePageSize('15')).toBe(15);
+    expect(parsePageSize('50')).toBe(50);
+  });
+
+  it('returns 10 for invalid values', () => {
+    expect(parsePageSize('abc')).toBe(10);
+    expect(parsePageSize('0')).toBe(10);
+    expect(parsePageSize('-5')).toBe(10);
+    expect(parsePageSize('13')).toBe(10); // Not in valid set
+  });
+});
+
 describe('parseSearchParams', () => {
   it('returns defaults when no params set', () => {
     const params = parseSearchParams(new URLSearchParams());
@@ -97,13 +116,14 @@ describe('parseSearchParams', () => {
   });
 
   it('parses all params from URLSearchParams', () => {
-    const qs = new URLSearchParams('status=active&category=development&sort=oldest&q=hello&page=3');
+    const qs = new URLSearchParams('status=active&category=development&sort=oldest&q=hello&page=3&pageSize=20');
     const params = parseSearchParams(qs);
     expect(params.status).toBe('active');
     expect(params.category).toBe('development');
     expect(params.sort).toBe('oldest');
     expect(params.q).toBe('hello');
     expect(params.page).toBe(3);
+    expect(params.pageSize).toBe(20);
   });
 
   it('falls back to defaults for invalid param values', () => {
@@ -113,6 +133,7 @@ describe('parseSearchParams', () => {
     expect(params.category).toBe('all');
     expect(params.sort).toBe('newest');
     expect(params.page).toBe(1);
+    expect(params.pageSize).toBe(10);
   });
 });
 
@@ -156,6 +177,12 @@ describe('serializeParams', () => {
   it('trims whitespace from search query', () => {
     const result = serializeParams({ ...DEFAULT_PARAMS, q: '  treasury  ' });
     expect(result.get('q')).toBe('treasury');
+  });
+
+  it('includes non-default page and pageSize', () => {
+    const result = serializeParams({ ...DEFAULT_PARAMS, page: 2, pageSize: 20 });
+    expect(result.get('page')).toBe('2');
+    expect(result.get('pageSize')).toBe('20');
   });
 
   it('omits blank search query', () => {
@@ -252,6 +279,10 @@ describe('countActiveFilters', () => {
     expect(countActiveFilters({ ...DEFAULT_PARAMS, page: 5 })).toBe(0);
   });
 
+  it('does not count pageSize', () => {
+    expect(countActiveFilters({ ...DEFAULT_PARAMS, pageSize: 20 })).toBe(0);
+  });
+
   it('counts multiple active filters', () => {
     const params: ProposalFilterParams = {
       status: 'active',
@@ -295,5 +326,9 @@ describe('isDefaultParams', () => {
 
   it('returns false when page is not 1', () => {
     expect(isDefaultParams({ ...DEFAULT_PARAMS, page: 2 })).toBe(false);
+  });
+
+  it('returns false when pageSize is non-default', () => {
+    expect(isDefaultParams({ ...DEFAULT_PARAMS, pageSize: 20 })).toBe(false);
   });
 });

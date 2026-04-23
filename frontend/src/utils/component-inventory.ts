@@ -21,9 +21,8 @@ export const componentInventory: ComponentInfo[] = [
   { name: 'NotificationCenter', category: 'common', description: 'Centralized notifications', dependencies: [], status: 'pending' },
 
   // Proposal Components
-  { name: 'ProposalList', category: 'proposals', description: 'List of governance proposals with pagination', dependencies: ['pagination', 'filters'], status: 'pending' },
+  { name: 'ProposalList', category: 'proposals', description: 'List of governance proposals with pagination', dependencies: ['pagination', 'filters'], status: 'migrated' },
   { name: 'ProposalForm', category: 'proposals', description: 'Create new proposal form', dependencies: ['forms'], status: 'pending' },
-  { name: 'PaginatedProposalList', category: 'proposals', description: 'Proposal list with pagination controls', dependencies: ['ProposalList'], status: 'pending' },
   { name: 'RelatedProposals', category: 'proposals', description: 'Show related proposals', dependencies: ['ProposalList'], status: 'pending' },
   { name: 'ProposalArchive', category: 'proposals', description: 'Historical proposal archive', dependencies: ['ProposalList'], status: 'pending' },
 

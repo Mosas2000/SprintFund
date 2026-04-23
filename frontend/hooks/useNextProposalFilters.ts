@@ -22,6 +22,7 @@ export interface UseNextProposalFiltersReturn {
   setSort: (sort: SortOption) => void;
   setSearch: (q: string) => void;
   setPage: (page: number) => void;
+  setPageSize: (pageSize: number) => void;
   resetFilters: () => void;
   activeFilterCount: number;
   hasActiveFilters: boolean;
@@ -76,6 +77,11 @@ export function useNextProposalFilters(): UseNextProposalFiltersReturn {
     [navigate],
   );
 
+  const setPageSize = useCallback(
+    (pageSize: number) => navigate({ pageSize, page: 1 }), // reset to page 1 on resize
+    [navigate],
+  );
+
   const resetFilters = useCallback(() => {
     startTransition(() => {
       router.replace(pathname, { scroll: false });
@@ -99,6 +105,7 @@ export function useNextProposalFilters(): UseNextProposalFiltersReturn {
     setSort,
     setSearch,
     setPage,
+    setPageSize,
     resetFilters,
     activeFilterCount,
     hasActiveFilters,
