@@ -4,6 +4,7 @@ import {
   parseCategory,
   parseSort,
   parsePage,
+  parsePageSize,
   parseSearchParams,
   serializeParams,
   buildProposalUrl,
@@ -90,6 +91,23 @@ describe('parsePage', () => {
   });
 });
 
+describe('parsePageSize', () => {
+  it('returns 10 for null', () => {
+    expect(parsePageSize(null)).toBe(10);
+  });
+
+  it('parses valid page sizes', () => {
+    expect(parsePageSize('15')).toBe(15);
+    expect(parsePageSize('50')).toBe(50);
+  });
+
+  it('returns 10 for invalid values', () => {
+    expect(parsePageSize('abc')).toBe(10);
+    expect(parsePageSize('0')).toBe(10);
+    expect(parsePageSize('-5')).toBe(10);
+  });
+});
+
 describe('parseSearchParams', () => {
   it('returns defaults when no params set', () => {
     const params = parseSearchParams(new URLSearchParams());
@@ -97,13 +115,14 @@ describe('parseSearchParams', () => {
   });
 
   it('parses all params from URLSearchParams', () => {
-    const qs = new URLSearchParams('status=active&category=development&sort=oldest&q=hello&page=3');
+    const qs = new URLSearchParams('status=active&category=development&sort=oldest&q=hello&page=3&pageSize=20');
     const params = parseSearchParams(qs);
     expect(params.status).toBe('active');
     expect(params.category).toBe('development');
     expect(params.sort).toBe('oldest');
     expect(params.q).toBe('hello');
     expect(params.page).toBe(3);
+    expect(params.pageSize).toBe(20);
   });
 
   it('falls back to defaults for invalid param values', () => {
@@ -113,6 +132,7 @@ describe('parseSearchParams', () => {
     expect(params.category).toBe('all');
     expect(params.sort).toBe('newest');
     expect(params.page).toBe(1);
+    expect(params.pageSize).toBe(10);
   });
 });
 
