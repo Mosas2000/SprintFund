@@ -75,4 +75,10 @@ describe('PaginationControls', () => {
     expect(screen.queryByRole('button', { name: 'Go to page 3' })).not.toBeNull();
     expect(screen.queryByRole('button', { name: 'Go to page 4' })).toBeNull();
   });
+
+  it('hides navigation when totalPages is 1', () => {
+    render(<PaginationControls {...defaultProps} totalPages={1} page={1} hasNextPage={false} hasPreviousPage={false} />);
+    expect(screen.queryByRole('navigation')).toBeNull();
+    expect(screen.getByText('Showing 1 to 10 of 45 results')).not.toBeNull();
+  });
 });
