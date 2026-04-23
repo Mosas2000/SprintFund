@@ -15,6 +15,7 @@ import FilterDropdown from './FilterDropdown';
 import SortDropdown from './SortDropdown';
 import SearchBar from './common/SearchBar';
 import CategoryBadge from './common/CategoryBadge';
+import { PaginationControls } from './PaginationControls';
 import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
@@ -40,6 +41,8 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
         setCategory,
         setSort,
         setSearch,
+        setPage,
+        setPageSize,
         resetFilters,
         hasActiveFilters,
         activeFilterCount,
@@ -471,6 +474,22 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
         }
     });
 
+    // Pagination logic
+    const { page, pageSize } = filterParams;
+    const totalItems = sortedProposals.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const validPage = Math.max(1, Math.min(page, Math.max(1, totalPages)));
+    
+    // Auto-correct out-of-bounds page
+    useEffect(() => {
+        if (totalItems > 0 && page > totalPages) {
+            setPage(totalPages);
+        }
+    }, [page, totalPages, totalItems, setPage]);
+
+    const startIndex = (validPage - 1) * pageSize;
+    const paginatedProposals = sortedProposals.slice(startIndex, startIndex + pageSize);
+
     return (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-8 backdrop-blur-sm">
             {/* Search Bar */}
@@ -536,7 +555,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                         <p className="text-purple-300 text-sm mt-2">Try adjusting your search term</p>
                     </div>
                 ) : (
-                    sortedProposals.map((proposal, index) => (
+                    paginatedProposals.map((proposal, index) => (
                         <motion.div
                             key={proposal.id}
                             initial={{ opacity: 0, y: 20 }}
@@ -611,6 +630,21 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                     ))
                 )}
             </div>
+
+            {totalItems > 0 && (
+                <div className="mt-8">
+                    <PaginationControls
+                        page={validPage}
+                        pageSize={pageSize}
+                        total={totalItems}
+                        totalPages={totalPages}
+                        hasNextPage={validPage < totalPages}
+                        hasPreviousPage={validPage > 1}
+                        onPageChange={setPage}
+                        onPageSizeChange={setPageSize}
+                    />
+                </div>
+            )}
         </div>
     );
 }
