@@ -514,6 +514,18 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                 </div>
             </div>
 
+            {filterParams.sort !== 'newest' && (
+                <p className="mb-4 text-xs text-purple-300/70">
+                    {{
+                        'oldest': 'Sorted by earliest created',
+                        'ending-soon': 'Sorted by active proposals closest to their deadline',
+                        'highest': 'Sorted by largest funding request',
+                        'lowest': 'Sorted by smallest funding request',
+                        'most-votes': 'Sorted by highest total vote count',
+                    }[filterParams.sort]}
+                </p>
+            )}
+
             <div className="space-y-4">
                 {sortedProposals.length === 0 && filterParams.q ? (
                     <div className="text-center py-12">
