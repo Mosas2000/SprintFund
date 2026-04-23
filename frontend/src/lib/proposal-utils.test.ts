@@ -263,5 +263,26 @@ describe('Proposal utilities', () => {
       expect(formatBlockDuration(0)).toBe('0m');
       expect(formatBlockDuration(-10)).toBe('0m');
     });
+
+    it('formats large block counts correctly', () => {
+      // 4320 blocks is 30 days
+      expect(formatBlockDuration(4320)).toBe('30d');
+      // 4326 blocks is 30 days and 1 hour
+      expect(formatBlockDuration(4326)).toBe('30d 1h');
+    });
+  });
+
+  describe('Countdown calculations', () => {
+    it('getBlocksUntilVotingEnds returns correct difference', () => {
+      const proposal = { ...mockProposal, votingEndsAt: 100500 };
+      expect(getBlocksUntilVotingEnds(proposal, 100400)).toBe(100);
+      expect(getBlocksUntilVotingEnds(proposal, 100600)).toBe(0);
+    });
+
+    it('getBlocksUntilExecutionAllowed returns correct difference', () => {
+      const proposal = { ...mockProposal, executionAllowedAt: 100600 };
+      expect(getBlocksUntilExecutionAllowed(proposal, 100400)).toBe(200);
+      expect(getBlocksUntilExecutionAllowed(proposal, 100700)).toBe(0);
+    });
   });
 });
