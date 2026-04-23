@@ -11,7 +11,7 @@ import { CONTRACT_ADDRESS, CONTRACT_NAME, CONTRACT_PRINCIPAL, NETWORK } from '..
 import { sanitizeText, sanitizeMultilineText } from './sanitize';
 import { blockchainCache } from './blockchain-cache';
 import { AsyncError, ErrorCode } from './async-errors';
-import type { Proposal, ProposalPage } from '../types';
+import type { Proposal, ProposalPage, StakeInfo, VoteRecord } from '../types';
 import type {
   ProposalCountResponse,
   ProposalResponse,
@@ -20,6 +20,7 @@ import type {
   TxCallbacks,
   RawProposal,
   RawStake,
+  RawVote,
 } from '../types/contract';
 import {
   validateRawProposal,
@@ -422,6 +423,50 @@ export function callExecuteProposal(proposalId: number, cb: TxCallbacks): void {
   });
 }
 
+/**
+ * Submit a transaction to reclaim vote cost after a proposal ends.
+ * @param proposalId ID of the proposal to reclaim from
+ * @param cb Callbacks for transaction completion or cancellation
+ */
+export function callReclaimVoteCost(proposalId: number, cb: TxCallbacks): void {
+  contractCall({
+    functionName: 'reclaim-vote-cost',
+    functionArgs: [uintCV(proposalId)],
+    cb,
+  });
+}
+
+/**
+ * Fetch a specific user's vote on a proposal.
+ * @param proposalId ID of the proposal
+ * @param voter Principal of the voter
+ * @returns VoteRecord or null if no vote was found
+ */
+export async function getVote(proposalId: number, voter: string): Promise<VoteRecord | null> {
+  try {
+    const cached = blockchainCache.getVote(proposalId, voter);
+    if (cached !== null) {
+      return cached;
+    }
+
+    const raw = await readOnly<RawVote>('get-vote', [
+      uintCV(proposalId),
+      principalCV(voter),
+    ]);
+
+    if (!raw) {
+      return null;
+    }
+
+    const vote = convertRawToVote(proposalId, voter, raw);
+    blockchainCache.setVote(proposalId, voter, vote);
+    return vote;
+  } catch (err) {
+    console.error(`[SprintFund] Failed to fetch vote for prop ${proposalId}:`, err);
+    return null;
+  }
+}
+
 export function invalidateProposalCache(proposalId: number): void {
   blockchainCache.invalidateProposal(proposalId);
 }
@@ -436,6 +481,10 @@ export function invalidateProposalCountCache(): void {
 
 export function invalidateStakeCache(address: string): void {
   blockchainCache.invalidateStake(address);
+}
+
+export function invalidateVoteCache(proposalId: number, voter: string): void {
+  blockchainCache.invalidateVote(proposalId, voter);
 }
 
 export function invalidateAllBlockchainCache(): void {
