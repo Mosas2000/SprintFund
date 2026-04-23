@@ -105,6 +105,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
                 onClick={() => setIsOpen(prev => !prev)}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
+                aria-controls={isOpen ? 'sort-options-list' : undefined}
                 className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white shadow-md transition-all hover:bg-white/20 sm:w-auto sm:justify-start sm:py-2 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
             >
                 <svg
@@ -136,6 +137,7 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
 
             {isOpen && (
                 <ul
+                    id="sort-options-list"
                     role="listbox"
                     aria-label="Sort proposals by"
                     className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-lg border border-white/20 bg-gray-800 shadow-md sm:left-auto sm:right-0 sm:w-52"
