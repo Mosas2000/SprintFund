@@ -7,7 +7,7 @@ export type CategoryFilter =
   | 'community'
   | 'research'
   | 'other';
-export type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes';
+export type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes' | 'ending-soon';
 
 export interface ProposalFilterParams {
   status: StatusFilter;
