@@ -19,6 +19,7 @@ export interface VoteRecord {
   voter: string;
   support: boolean;
   weight: number;
+  costPaid: number;
 }
 
 /**
