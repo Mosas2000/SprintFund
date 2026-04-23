@@ -45,6 +45,7 @@ const VALID_SORTS = new Set<SortOption>([
   'highest',
   'lowest',
   'most-votes',
+  'ending-soon',
 ]);
 
 export function parseStatus(value: string | null): StatusFilter {
