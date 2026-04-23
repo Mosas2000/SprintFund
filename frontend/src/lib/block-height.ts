@@ -36,3 +36,14 @@ export function getBlockTimestampEstimate(blockHeight: number | null | undefined
 
   return estimateTimestampFromBlockHeight(blockHeight);
 }
+
+export function getBlockHeightCountdown(targetHeight: number, currentHeight: number) {
+  const blocksRemaining = Math.max(0, targetHeight - currentHeight);
+  const estimatedTimestamp = estimateTimestampFromBlockHeight(targetHeight);
+  
+  return {
+    blocksRemaining,
+    estimatedTimestamp,
+    isPassed: blocksRemaining === 0,
+  };
+}
