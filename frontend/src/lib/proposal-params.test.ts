@@ -53,8 +53,12 @@ describe('parseSort', () => {
   });
 
   it('accepts all valid sort options', () => {
-    const valid = ['newest', 'oldest', 'highest', 'lowest', 'most-votes'] as const;
+    const valid = ['newest', 'oldest', 'highest', 'lowest', 'most-votes', 'ending-soon'] as const;
     valid.forEach((s) => expect(parseSort(s)).toBe(s));
+  });
+
+  it('accepts ending-soon as a valid sort value', () => {
+    expect(parseSort('ending-soon')).toBe('ending-soon');
   });
 
   it('returns default for unknown value', () => {
