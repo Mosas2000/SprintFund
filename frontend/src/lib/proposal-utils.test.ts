@@ -23,7 +23,9 @@ const mockProposal: Proposal = {
   votesFor: 100,
   votesAgainst: 30,
   executed: false,
-  createdAt: Math.floor(Date.now() / 1000) - 86400,
+  createdAt: 100000,
+  votingEndsAt: 100432,
+  executionAllowedAt: 100576,
 };
 
 const executedProposal: Proposal = {
@@ -77,14 +79,10 @@ describe('Proposal utilities', () => {
   });
 
   describe('calculateProposalAge', () => {
-    it('calculates age in days', () => {
-      const now = Math.floor(Date.now() / 1000) * 1000;
-      const proposal: Proposal = {
-        ...mockProposal,
-        createdAt: Math.floor((now - 86400000) / 1000),
-      };
-      const age = calculateProposalAge(proposal, now);
-      expect(age).toBe(1);
+    it('calculates age in days using block height', () => {
+      // 100000 is ~1.9 years after genesis (0), so it should be > 0
+      const age = calculateProposalAge(mockProposal);
+      expect(age).toBeGreaterThan(0);
     });
   });
 
@@ -162,25 +160,27 @@ describe('Proposal utilities', () => {
     });
 
     it('ending-soon: places active proposals before executed ones', () => {
-      const active = { ...mockProposal, id: 1, executed: false, createdAt: 1000 };
-      const executed = { ...mockProposal, id: 2, executed: true, createdAt: 500 };
+      const active = { ...mockProposal, id: 1, executed: false, votingEndsAt: 1000 };
+      const executed = { ...mockProposal, id: 2, executed: true, votingEndsAt: 500 };
       const sorted = sortProposals([executed, active], 'ending-soon');
       expect(sorted[0].executed).toBe(false);
       expect(sorted[1].executed).toBe(true);
     });
 
-    it('ending-soon: orders active proposals by ascending createdAt', () => {
-      const older = { ...mockProposal, id: 1, executed: false, createdAt: 100 };
-      const newer = { ...mockProposal, id: 2, executed: false, createdAt: 500 };
-      const sorted = sortProposals([newer, older], 'ending-soon');
-      expect(sorted[0].createdAt).toBeLessThan(sorted[1].createdAt);
+    it('ending-soon: orders active proposals by ascending votingEndsAt', () => {
+      const endsSooner = { ...mockProposal, id: 1, executed: false, votingEndsAt: 100200 };
+      const endsLater = { ...mockProposal, id: 2, executed: false, votingEndsAt: 100500 };
+      const sorted = sortProposals([endsLater, endsSooner], 'ending-soon');
+      expect(sorted[0].votingEndsAt).toBe(100200);
+      expect(sorted[1].votingEndsAt).toBe(100500);
     });
 
-    it('ending-soon: sorts executed proposals by ascending createdAt when all are executed', () => {
-      const early = { ...mockProposal, id: 1, executed: true, createdAt: 200 };
-      const late = { ...mockProposal, id: 2, executed: true, createdAt: 800 };
+    it('ending-soon: sorts executed proposals by ascending votingEndsAt when all are executed', () => {
+      const early = { ...mockProposal, id: 1, executed: true, votingEndsAt: 200 };
+      const late = { ...mockProposal, id: 2, executed: true, votingEndsAt: 800 };
       const sorted = sortProposals([late, early], 'ending-soon');
-      expect(sorted[0].createdAt).toBeLessThan(sorted[1].createdAt);
+      expect(sorted[0].votingEndsAt).toBe(200);
+      expect(sorted[1].votingEndsAt).toBe(800);
     });
   });
 
@@ -239,6 +239,29 @@ describe('Proposal utilities', () => {
 
     it('handles empty input array', () => {
       expect(paginateProposals([], 1, 10)).toEqual([]);
+    });
+  });
+
+  describe('formatBlockDuration', () => {
+    it('formats minutes correctly', () => {
+      expect(formatBlockDuration(1)).toBe('10m');
+      expect(formatBlockDuration(5)).toBe('50m');
+    });
+
+    it('formats hours correctly', () => {
+      expect(formatBlockDuration(6)).toBe('1h');
+      expect(formatBlockDuration(9)).toBe('1h 30m');
+    });
+
+    it('formats days correctly', () => {
+      expect(formatBlockDuration(144)).toBe('1d');
+      expect(formatBlockDuration(200)).toBe('1d 9h 20m');
+      expect(formatBlockDuration(432)).toBe('3d');
+    });
+
+    it('handles zero or negative blocks', () => {
+      expect(formatBlockDuration(0)).toBe('0m');
+      expect(formatBlockDuration(-10)).toBe('0m');
     });
   });
 });
