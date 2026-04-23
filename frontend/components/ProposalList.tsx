@@ -10,6 +10,7 @@ import ExecuteProposal from './ExecuteProposal';
 import LoadingSkeleton from './ui/LoadingSkeleton';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { ProposalCountdown } from './ProposalCountdown';
 import Comments from './Comments';
 import FilterDropdown from './FilterDropdown';
 import SortDropdown from './SortDropdown';
@@ -601,6 +602,9 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                                     <p className="text-white font-mono text-sm">{shortenAddress(proposal.proposer)}</p>
                                 </div>
                             </div>
+
+                            {/* Countdown Timer */}
+                            <ProposalCountdown proposal={proposal} />
 
                             {/* Voting Stats */}
                             <div className="bg-white/5 rounded-lg p-4">
