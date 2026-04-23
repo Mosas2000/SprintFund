@@ -178,6 +178,12 @@ describe('serializeParams', () => {
     expect(result.get('q')).toBe('treasury');
   });
 
+  it('includes non-default page and pageSize', () => {
+    const result = serializeParams({ ...DEFAULT_PARAMS, page: 2, pageSize: 20 });
+    expect(result.get('page')).toBe('2');
+    expect(result.get('pageSize')).toBe('20');
+  });
+
   it('omits blank search query', () => {
     const result = serializeParams({ ...DEFAULT_PARAMS, q: '   ' });
     expect(result.has('q')).toBe(false);
