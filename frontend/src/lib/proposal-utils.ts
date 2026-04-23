@@ -93,7 +93,7 @@ export function sortProposals(
     case 'ending-soon':
       return sorted.sort((a, b) => {
         if (a.executed !== b.executed) return a.executed ? 1 : -1;
-        return a.createdAt - b.createdAt;
+        return a.votingEndsAt - b.votingEndsAt;
       });
     default:
       return sorted;
