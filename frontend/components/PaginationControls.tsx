@@ -13,6 +13,7 @@ interface PaginationControlsProps {
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
   maxVisiblePages?: number;
+  isLoading?: boolean;
 }
 
 export function PaginationControls({
@@ -25,6 +26,7 @@ export function PaginationControls({
   onPageChange,
   onPageSizeChange,
   maxVisiblePages = 5,
+  isLoading = false,
 }: PaginationControlsProps) {
   if (total === 0) {
     return null;
