@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-
-export type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest' | 'most-votes';
+import type { SortOption } from '../src/lib/proposal-params';
 
 interface SortDropdownProps {
     onSortChange: (sort: SortOption) => void;
