@@ -19,6 +19,7 @@ import { PaginationControls } from './PaginationControls';
 import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
+import { paginateProposals } from '@/lib/proposal-utils';
 import type { Proposal } from '@/types';
 
 // Get network configuration
@@ -487,8 +488,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
         }
     }, [page, totalPages, totalItems, setPage]);
 
-    const startIndex = (validPage - 1) * pageSize;
-    const paginatedProposals = sortedProposals.slice(startIndex, startIndex + pageSize);
+    const paginatedProposals = paginateProposals(sortedProposals, validPage, pageSize);
 
     return (
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-8 backdrop-blur-sm">
