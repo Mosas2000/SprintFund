@@ -15,6 +15,7 @@ export interface ProposalFilterParams {
   sort: SortOption;
   q: string;
   page: number;
+  pageSize: number;
 }
 
 export interface SearchParamsLike {
@@ -27,6 +28,7 @@ export const DEFAULT_PARAMS: ProposalFilterParams = {
   sort: 'newest',
   q: '',
   page: 1,
+  pageSize: 10,
 };
 
 const VALID_STATUSES = new Set<StatusFilter>(['all', 'active', 'executed']);
@@ -74,6 +76,11 @@ export function parsePage(value: string | null): number {
   return isNaN(n) || n < 1 ? 1 : n;
 }
 
+export function parsePageSize(value: string | null): number {
+  const n = parseInt(value ?? '', 10);
+  return isNaN(n) || n < 1 ? 10 : n;
+}
+
 export function parseSearchParams(params: SearchParamsLike): ProposalFilterParams {
   return {
     status: parseStatus(params.get('status')),
@@ -81,6 +88,7 @@ export function parseSearchParams(params: SearchParamsLike): ProposalFilterParam
     sort: parseSort(params.get('sort')),
     q: params.get('q') ?? '',
     page: parsePage(params.get('page')),
+    pageSize: parsePageSize(params.get('pageSize')),
   };
 }
 
@@ -93,6 +101,7 @@ export function serializeParams(params: Partial<ProposalFilterParams>): URLSearc
   if (merged.sort !== DEFAULT_PARAMS.sort) out.set('sort', merged.sort);
   if (merged.q.trim()) out.set('q', merged.q.trim());
   if (merged.page > 1) out.set('page', String(merged.page));
+  if (merged.pageSize !== DEFAULT_PARAMS.pageSize) out.set('pageSize', String(merged.pageSize));
 
   return out;
 }
