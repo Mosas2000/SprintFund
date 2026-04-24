@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 type StepStatus = 'pending' | 'loading' | 'complete' | 'error';
 
@@ -6,13 +8,13 @@ interface Step {
   id: string;
   name: string;
   status: StepStatus;
-  error?: Error;
+  error?: NormalizedError;
 }
 
 interface UseMultiStepOptions {
   onStepComplete?: (stepId: string) => void;
   onComplete?: () => void;
-  onError?: (stepId: string, error: Error) => void;
+  onError?: (stepId: string, error: NormalizedError) => void;
 }
 
 export function useMultiStep(
@@ -23,7 +25,7 @@ export function useMultiStep(
     new Map(steps.map(s => [s.id, { ...s, status: 'pending' }]))
   );
 
-  const updateStepStatus = useCallback((stepId: string, status: StepStatus, error?: Error) => {
+  const updateStepStatus = useCallback((stepId: string, status: StepStatus, error?: NormalizedError) => {
     setStepStates(prev => {
       const updated = new Map(prev);
       const step = updated.get(stepId);
@@ -42,10 +44,10 @@ export function useMultiStep(
         updateStepStatus(stepId, 'complete');
         options?.onStepComplete?.(stepId);
       } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        updateStepStatus(stepId, 'error', error);
-        options?.onError?.(stepId, error);
-        throw error;
+        const normalized = normalizeError(err);
+        updateStepStatus(stepId, 'error', normalized);
+        options?.onError?.(stepId, normalized);
+        throw err;
       }
     },
     [updateStepStatus, options]
