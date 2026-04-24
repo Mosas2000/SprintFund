@@ -64,6 +64,15 @@ describe('ReclaimVoteAction', () => {
     expect(container.firstChild).toBeNull();
   });
 
+  it('shows loading skeleton when vote data is loading', () => {
+    vi.mocked(hooks.useCurrentBlockHeight).mockReturnValue({ blockHeight: 250, error: null, isLoading: false, refresh: vi.fn() });
+    vi.mocked(hooks.useVote).mockReturnValue({ vote: null, loading: true, error: null, refresh: vi.fn() });
+    vi.mocked(hooks.useTransaction).mockReturnValue({ execute: vi.fn(), isLoading: false, isError: false, isSuccess: false, isIdle: true, error: null, reset: vi.fn() });
+
+    const { container } = render(<ReclaimVoteAction proposal={mockProposal} userAddress="ST1234" />);
+    expect(container.querySelector('.animate-pulse')).toBeTruthy();
+  });
+
   it('shows locked message if voting is still active', () => {
     vi.mocked(hooks.useCurrentBlockHeight).mockReturnValue({ blockHeight: 150, error: null, isLoading: false, refresh: vi.fn() });
     vi.mocked(hooks.useVote).mockReturnValue({ vote: mockVote, loading: false, error: null, refresh: vi.fn() });
