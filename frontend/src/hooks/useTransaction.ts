@@ -6,11 +6,12 @@ import { useState, useCallback } from 'react';
 import type { LoadingState } from '../lib/loading-state';
 import { createLoadingState, updateLoadingState } from '../lib/loading-state';
 import { useTransactionStore } from '../store/transactions';
-import type { TransactionType } from '../types/transaction';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseTransactionOptions {
   onSuccess?: (txId: string) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: NormalizedError) => void;
   onFinal?: () => void;
   type?: TransactionType;
   proposalId?: number;
@@ -25,7 +26,7 @@ interface UseTransactionOptions {
 export function useTransaction(options?: UseTransactionOptions) {
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
   const [txId, setTxId] = useState<string | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
   const { addTransaction } = useTransactionStore();
 
   const execute = useCallback(
@@ -55,11 +56,11 @@ export function useTransaction(options?: UseTransactionOptions) {
 
         return id;
       } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
+        const normalized = normalizeError(err);
+        setError(normalized);
         setLoadingState(updateLoadingState(loadingState, 'error'));
-        options?.onError?.(error);
-        throw error;
+        options?.onError?.(normalized);
+        throw err;
       } finally {
         options?.onFinal?.();
       }
