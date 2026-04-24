@@ -7,15 +7,26 @@ import { callReclaimVoteCost, invalidateStakeCache } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
 import { Coins, Lock, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 
+/**
+ * Props for the ReclaimVoteAction component.
+ */
 interface ReclaimVoteActionProps {
+  /** The proposal object containing metadata like title and voting period */
   proposal: Proposal;
+  /** The Stacks address of the current user */
   userAddress?: string;
+  /** Optional callback triggered after a successful reclaim transaction */
   onSuccess?: () => void;
 }
 
 /**
  * Premium action component for reclaiming vote costs.
- * Guides the user through the recovery process once a voting period ends.
+ * 
+ * This component provides a guided user interface for recovering the STX cost 
+ * paid during quadratic voting. It automatically determines eligibility based 
+ * on current block height and individual voting records.
+ * 
+ * @param props The component props
  */
 export default function ReclaimVoteAction({ 
   proposal, 
