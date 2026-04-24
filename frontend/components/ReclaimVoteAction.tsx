@@ -3,7 +3,7 @@
 import React from 'react';
 import { Proposal } from '@/types';
 import { useCurrentBlockHeight, useVote, useTransaction } from '@/hooks';
-import { callReclaimVoteCost } from '@/lib/stacks';
+import { callReclaimVoteCost, invalidateStakeCache } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
 import { Coins, Lock, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 
@@ -30,6 +30,9 @@ export default function ReclaimVoteAction({
     title: proposal.title,
     onSuccess: (txId) => {
       refreshVote();
+      if (userAddress) {
+        invalidateStakeCache(userAddress);
+      }
       onSuccess?.();
     }
   });
