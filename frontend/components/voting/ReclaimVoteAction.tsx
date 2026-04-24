@@ -35,7 +35,7 @@ export default function ReclaimVoteAction({
 }: ReclaimVoteActionProps) {
   const { blockHeight } = useCurrentBlockHeight();
   const { vote, refresh: refreshVote } = useVote(proposal.id, userAddress);
-  const { execute, isLoading: isReclaiming } = useTransaction({
+  const { execute, isLoading: isReclaiming, isSuccess } = useTransaction({
     type: 'reclaim-vote',
     proposalId: proposal.id,
     title: proposal.title,
@@ -137,6 +137,17 @@ export default function ReclaimVoteAction({
           </div>
         </div>
       </div>
+      
+      {isSuccess && (
+        <div className="mt-4 rounded-xl bg-green-500/10 border border-green-500/20 p-4 animate-in fade-in slide-in-from-top-2 duration-500">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-green-400" />
+            <p className="text-sm font-medium text-green-100">
+              Stake reclaimed successfully! Your available balance has been updated.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
