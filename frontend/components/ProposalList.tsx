@@ -21,7 +21,8 @@ import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
 import { paginateProposals } from '@/lib/proposal-utils';
-import type { Proposal } from '@/types';
+import { Proposal } from '@/types';
+import { normalizeError } from '@/lib/error-normalizer';
 
 // Get network configuration
 const NETWORK = getStacksNetwork();
@@ -60,7 +61,10 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
             setProposals(fetchedProposals);
         } catch (err: unknown) {
             console.error('Error fetching proposals:', err);
-            setError('Failed to load proposals. Please try again.');
+            const normalized = normalizeError(err);
+            setError(normalized.suggestion 
+                ? `${normalized.message} Tip: ${normalized.suggestion}` 
+                : normalized.message);
         } finally {
             setLoading(false);
         }
@@ -117,17 +121,11 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
                 setTimeout(() => fetchProposals(), 3000);
             },
             onError: (err) => {
-                const message = err.message || '';
-                let errorMessage = 'Failed to submit vote. Please try again.';
-                if (message.includes('already voted')) {
-                    errorMessage = 'You have already voted on this proposal';
-                } else if (message.includes('insufficient')) {
-                    errorMessage = 'Insufficient STX balance for this vote weight';
-                } else {
-                    errorMessage = message || errorMessage;
-                }
+                const errorMessage = err.suggestion 
+                    ? `${err.message} Tip: ${err.suggestion}`
+                    : err.message;
                 setVoteError(errorMessage);
-                toast.error(errorMessage);
+                toast.error(err.message);
             },
         });
 
