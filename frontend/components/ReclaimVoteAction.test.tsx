@@ -12,6 +12,7 @@ vi.mock('@/hooks', () => ({
 
 vi.mock('@/lib/stacks', () => ({
   callReclaimVoteCost: vi.fn(),
+  invalidateStakeCache: vi.fn(),
 }));
 
 vi.mock('@/utils/formatSTX', () => ({
