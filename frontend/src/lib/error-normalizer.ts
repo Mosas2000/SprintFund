@@ -165,6 +165,16 @@ function normalizeApiError(error: AsyncError): NormalizedError {
   };
 }
 
+export class ContractError extends AsyncError {
+  readonly functionName: string;
+
+  constructor(message: string, code: string, functionName?: string) {
+    super(message, code);
+    this.name = 'ContractError';
+    this.functionName = functionName || '';
+  }
+}
+
 export function normalizeError(error: unknown): NormalizedError {
   if (error instanceof AsyncError) {
     if (error.code === ErrorCode.CONTRACT_CALL_FAILED) {
