@@ -14,7 +14,7 @@ import { ProposalCountdown } from '@/components/ProposalCountdown';
 import { formatBlockHeight } from '@/lib/block-height';
 import type { Proposal } from '@/types';
 import { useConnect } from '@stacks/connect-react';
-import ReclaimVoteAction from '@/components/ReclaimVoteAction';
+import ReclaimVoteAction from '@/components/voting/ReclaimVoteAction';
 
 export default function ProposalDetailPage() {
   const params = useParams();

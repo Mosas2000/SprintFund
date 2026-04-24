@@ -13,6 +13,7 @@ export { default as DelegatorCard } from '../DelegatorCard';
 export { default as DelegatorMarketplace } from '../DelegatorMarketplace';
 export { default as BulkVotingQueue } from '../BulkVotingQueue';
 export { default as DelegationStats } from '../DelegationStats';
+export { default as ReclaimVoteAction } from './ReclaimVoteAction';
 
 // Analytics and visualization
 export { default as VotingAnalyticsDashboard } from '../VotingAnalyticsDashboard';
