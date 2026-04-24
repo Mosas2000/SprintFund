@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { fetchWalletBalance, clearBalanceCache } from '../services/balance-service';
 import type { WalletBalance } from '../types/balance';
+import { normalizeError } from '../lib/error-normalizer';
 
 interface BalanceStore {
   balance: WalletBalance | null;
@@ -29,7 +30,10 @@ export const useBalanceStore = create<BalanceStore>((set) => ({
       const balance = await fetchWalletBalance(address);
       set({ balance, loading: false, lastUpdated: Date.now() });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch balance';
+      const normalized = normalizeError(err);
+      const message = normalized.suggestion 
+        ? `${normalized.message} Tip: ${normalized.suggestion}` 
+        : normalized.message;
       set({ error: message, loading: false });
     }
   },
