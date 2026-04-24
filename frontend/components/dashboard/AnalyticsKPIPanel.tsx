@@ -50,14 +50,36 @@ export function AnalyticsKPIPanel() {
     voterStats,
     votingPower,
     timeline,
+    loading,
+    error,
+    refetch,
   } = useGovernanceAnalytics();
 
   const avgFundingTime = calculateAverageFundingTime(timeline);
+
+  if (loading && !proposalStats) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-white mb-4">Key Performance Indicators</h2>
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6 flex justify-between items-center">
+            <p className="text-red-200 text-sm">{error}</p>
+            <button 
+              onClick={() => refetch()}
+              className="text-xs font-bold text-red-400 hover:text-red-300 underline underline-offset-2"
+            >
+              Retry
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
