@@ -5,7 +5,7 @@ import { Proposal } from '@/types';
 import { useCurrentBlockHeight, useVote, useTransaction } from '@/hooks';
 import { callReclaimVoteCost, invalidateStakeCache } from '@/lib/stacks';
 import { formatSTX } from '@/utils/formatSTX';
-import { Coins, Lock, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { Coins, Lock, CheckCircle, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
 
 /**
  * Props for the ReclaimVoteAction component.
@@ -39,6 +39,7 @@ export default function ReclaimVoteAction({
     execute, 
     isLoading: isReclaiming, 
     isSuccess,
+    txId,
     error,
     reset: resetTransaction
   } = useTransaction({
@@ -164,9 +165,21 @@ export default function ReclaimVoteAction({
         <div className="mt-4 rounded-xl bg-green-500/10 border border-green-500/20 p-4 animate-in fade-in slide-in-from-top-2 duration-500">
           <div className="flex items-center gap-3">
             <CheckCircle className="h-5 w-5 text-green-400" />
-            <p className="text-sm font-medium text-green-100">
-              Stake reclaimed successfully! Your available balance has been updated.
-            </p>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-green-100">
+                Stake reclaimed successfully! Your available balance has been updated.
+              </p>
+              {txId && (
+                <a 
+                  href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 flex items-center gap-1 text-xs text-green-400 underline hover:text-green-300 font-bold"
+                >
+                  View Transaction <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
           </div>
         </div>
       )}
