@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { TxCallbacks } from '../types/contract';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 import {
   invalidateProposalCache,
   invalidateProposalPagesCache,
@@ -9,12 +11,12 @@ import {
 
 interface MutationOptions {
   onSuccess?: (txId: string) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: NormalizedError) => void;
 }
 
 export function useMutationWithCacheInvalidation() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
 
   const createProposal = useCallback(
     async (
@@ -34,11 +36,11 @@ export function useMutationWithCacheInvalidation() {
             resolve(txId);
           },
           onCancel: () => {
-            const cancelError = new Error('Transaction cancelled');
-            setError(cancelError);
+            const normalized = normalizeError(new Error('Transaction cancelled'));
+            setError(normalized);
             setIsLoading(false);
-            options?.onError?.(cancelError);
-            reject(cancelError);
+            options?.onError?.(normalized);
+            reject(normalized);
           },
         });
       });
@@ -65,11 +67,11 @@ export function useMutationWithCacheInvalidation() {
             resolve(txId);
           },
           onCancel: () => {
-            const cancelError = new Error('Transaction cancelled');
-            setError(cancelError);
+            const normalized = normalizeError(new Error('Transaction cancelled'));
+            setError(normalized);
             setIsLoading(false);
-            options?.onError?.(cancelError);
-            reject(cancelError);
+            options?.onError?.(normalized);
+            reject(normalized);
           },
         });
       });
@@ -96,11 +98,11 @@ export function useMutationWithCacheInvalidation() {
             resolve(txId);
           },
           onCancel: () => {
-            const cancelError = new Error('Transaction cancelled');
-            setError(cancelError);
+            const normalized = normalizeError(new Error('Transaction cancelled'));
+            setError(normalized);
             setIsLoading(false);
-            options?.onError?.(cancelError);
-            reject(cancelError);
+            options?.onError?.(normalized);
+            reject(normalized);
           },
         });
       });
@@ -126,11 +128,11 @@ export function useMutationWithCacheInvalidation() {
             resolve(txId);
           },
           onCancel: () => {
-            const cancelError = new Error('Transaction cancelled');
-            setError(cancelError);
+            const normalized = normalizeError(new Error('Transaction cancelled'));
+            setError(normalized);
             setIsLoading(false);
-            options?.onError?.(cancelError);
-            reject(cancelError);
+            options?.onError?.(normalized);
+            reject(normalized);
           },
         });
       });

@@ -51,14 +51,7 @@ export default function ExecuteProposal({
             }
         },
         onError: (err) => {
-            const message = err.message || '';
-            if (message.includes('not authorized')) {
-                setError('Only the proposer can execute this proposal');
-            } else if (message.includes('already executed')) {
-                setError('This proposal has already been executed');
-            } else {
-                setError(message || 'Failed to execute proposal. Please try again.');
-            }
+            setError(err.message);
         },
     });
 

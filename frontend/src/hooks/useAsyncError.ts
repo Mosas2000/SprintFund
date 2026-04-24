@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react';
-import { AsyncError } from '../lib/async-errors';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 export const useAsyncError = () => {
-  const [error, setError] = useState<AsyncError | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const execute = useCallback(
@@ -14,16 +15,7 @@ export const useAsyncError = () => {
         const result = await fn();
         return result;
       } catch (err) {
-        if (err instanceof AsyncError) {
-          setError(err);
-        } else {
-          setError(
-            new AsyncError(
-              err instanceof Error ? err.message : 'An error occurred',
-              'UNKNOWN',
-            ),
-          );
-        }
+        setError(normalizeError(err));
         return null;
       } finally {
         setIsLoading(false);

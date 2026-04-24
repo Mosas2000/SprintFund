@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { ContractEvent, EventFilter } from '../../src/types/contract-events';
 import { fetchContractEventStream } from '../../src/lib/contract-events';
+import { normalizeError } from '../../src/lib/error-normalizer';
 import { Activity, AlertCircle, Check, X } from 'lucide-react';
 
 interface ContractEventStreamProps {
@@ -53,8 +54,11 @@ export const ContractEventStream: React.FC<ContractEventStreamProps> = ({
         setEvents(fetchedEvents);
         setLastUpdated(Date.now());
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Unknown error');
-        setError(error);
+        console.error('Error fetching contract events:', err);
+        const normalized = normalizeError(err);
+        setError(new Error(normalized.suggestion 
+          ? `${normalized.message} Tip: ${normalized.suggestion}` 
+          : normalized.message));
       } finally {
         setIsLoading(false);
       }

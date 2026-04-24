@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { fetchStxPrice } from '../services/price-service';
+import { normalizeError } from '../lib/error-normalizer';
 import type { PriceData } from '../types/price';
 
 interface PriceStore {
@@ -21,8 +22,8 @@ export const usePriceStore = create<PriceStore>((set) => ({
       const price = await fetchStxPrice();
       set({ price, loading: false });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch price';
-      set({ error: message, loading: false });
+      const normalized = normalizeError(err);
+      set({ error: normalized.message, loading: false });
     }
   },
 

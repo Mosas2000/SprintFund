@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getVote } from '@/lib/stacks';
 import type { VoteRecord } from '@/types';
+import { normalizeError } from '@/lib/error-normalizer';
+import type { NormalizedError } from '@/lib/error-normalizer';
 
 /**
  * Custom hook to fetch and track a specific user's voting record for a proposal.
@@ -14,7 +16,7 @@ import type { VoteRecord } from '@/types';
 export function useVote(proposalId: number, voterAddress?: string) {
   const [vote, setVote] = useState<VoteRecord | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
 
   const fetchVote = useCallback(async () => {
     if (!voterAddress) {
@@ -28,7 +30,7 @@ export function useVote(proposalId: number, voterAddress?: string) {
       const data = await getVote(proposalId, voterAddress);
       setVote(data);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch vote'));
+      setError(normalizeError(err));
     } finally {
       setLoading(false);
     }

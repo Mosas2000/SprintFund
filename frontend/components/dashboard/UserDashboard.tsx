@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getStake, getAllProposals } from '@/lib/stacks';
+import { normalizeError } from '@/lib/error-normalizer';
 import { formatSTX } from '@/utils/formatSTX';
 import VoteDelegation from '../VoteDelegation';
 
@@ -13,12 +14,14 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
     const [stakeBalance, setStakeBalance] = useState(0);
     const [myProposals, setMyProposals] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchUserData = useCallback(async () => {
         if (!userAddress) return;
 
         try {
             setLoading(true);
+            setError(null);
 
             // Use centralized API with caching
             const [stake, proposals] = await Promise.all([
@@ -34,9 +37,13 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
                 .map(p => p.id);
 
             setMyProposals(userProposalIds);
-            setLoading(false);
         } catch (err) {
             console.error('Error fetching user data:', err);
+            const normalized = normalizeError(err);
+            setError(normalized.suggestion 
+                ? `${normalized.message} Tip: ${normalized.suggestion}` 
+                : normalized.message);
+        } finally {
             setLoading(false);
         }
     }, [userAddress]);
@@ -88,6 +95,18 @@ export default function UserDashboard({ userAddress }: UserDashboardProps) {
     return (
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
             <h3 className="text-2xl font-bold text-white mb-6">My Dashboard</h3>
+            
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+                    <p className="text-red-200 text-sm">{error}</p>
+                    <button 
+                        onClick={() => fetchUserData()}
+                        className="mt-2 text-xs text-red-400 underline hover:text-red-300 font-bold"
+                    >
+                        Retry
+                    </button>
+                </div>
+            )}
 
             {/* Wallet Info */}
             <div className="bg-white/5 rounded-lg p-4 mb-6">

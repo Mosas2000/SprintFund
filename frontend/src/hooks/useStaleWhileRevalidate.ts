@@ -1,16 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseStaleWhileRevalidateOptions<T> {
   staleTime?: number;
   onSuccess?: (data: T) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: NormalizedError) => void;
 }
 
 interface UseStaleWhileRevalidateState<T> {
   data: T | null;
   isLoading: boolean;
   isStale: boolean;
-  error: Error | null;
+  error: NormalizedError | null;
 }
 
 export function useStaleWhileRevalidate<T>(
@@ -49,10 +51,10 @@ export function useStaleWhileRevalidate<T>(
         return result;
       })
       .catch((err) => {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
-        onError?.(error);
-        throw error;
+        const normalized = normalizeError(err);
+        setError(normalized);
+        onError?.(normalized);
+        throw err;
       })
       .finally(() => {
         setIsLoading(false);

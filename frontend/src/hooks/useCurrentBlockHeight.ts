@@ -15,10 +15,13 @@ import { stacksApi } from '@/services/stacks-api';
  *  - error: Any error during fetch
  *  - refresh: Manual trigger to update the height immediately
  */
+import { normalizeError } from '@/lib/error-normalizer';
+import type { NormalizedError } from '@/lib/error-normalizer';
+
 export function useCurrentBlockHeight() {
   const [blockHeight, setBlockHeight] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
 
   const fetchHeight = useCallback(async () => {
     try {
@@ -26,7 +29,7 @@ export function useCurrentBlockHeight() {
       setBlockHeight(height);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch block height'));
+      setError(normalizeError(err));
     } finally {
       setLoading(false);
     }

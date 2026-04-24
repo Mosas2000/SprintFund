@@ -1,14 +1,12 @@
-/**
- * Hook for managing data refresh/refetch operations with loading states.
- */
-
 import { useState, useCallback, useRef } from 'react';
 import type { LoadingState } from '../lib/loading-state';
 import { createLoadingState, updateLoadingState } from '../lib/loading-state';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseRefreshOptions<T> {
   onSuccess?: (data: T) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: NormalizedError) => void;
 }
 
 /**
@@ -20,7 +18,7 @@ export function useRefresh<T>(
 ) {
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
   const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const refresh = useCallback(async () => {
@@ -38,12 +36,15 @@ export function useRefresh<T>(
 
       return result;
     } catch (err) {
-      if (err instanceof Error && err.name !== 'AbortError') {
-        const error = err;
-        setError(error);
-        setLoadingState(updateLoadingState(loadingState, 'error'));
-        options?.onError?.(error);
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw err;
       }
+      
+      const normalized = normalizeError(err);
+      setError(normalized);
+      setLoadingState(updateLoadingState(loadingState, 'error'));
+      options?.onError?.(normalized);
+      
       throw err;
     }
   }, [fetchFn, loadingState, options]);
@@ -71,7 +72,7 @@ export function usePoll<T>(
 ) {
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
   const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isPolling, setIsPolling] = useState(false);
 
@@ -87,10 +88,10 @@ export function usePoll<T>(
         setLoadingState(updateLoadingState(loadingState, 'success'));
         options?.onSuccess?.(result);
       } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
+        const normalized = normalizeError(err);
+        setError(normalized);
         setLoadingState(updateLoadingState(loadingState, 'error'));
-        options?.onError?.(error);
+        options?.onError?.(normalized);
       }
     };
 

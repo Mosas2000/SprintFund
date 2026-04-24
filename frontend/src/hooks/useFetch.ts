@@ -1,10 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
 import type { LoadingState } from '../lib/loading-state';
 import { createLoadingState, updateLoadingState } from '../lib/loading-state';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseFetchOptions<T> {
   onSuccess?: (data: T) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: NormalizedError) => void;
 }
 
 export function useFetch<T>(
@@ -13,7 +15,7 @@ export function useFetch<T>(
 ) {
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
   const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetch = useCallback(async () => {
@@ -31,12 +33,15 @@ export function useFetch<T>(
 
       return result;
     } catch (err) {
-      if (err instanceof Error && err.name !== 'AbortError') {
-        const error = err;
-        setError(error);
-        setLoadingState(updateLoadingState(loadingState, 'error'));
-        options?.onError?.(error);
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw err;
       }
+      
+      const normalized = normalizeError(err);
+      setError(normalized);
+      setLoadingState(updateLoadingState(loadingState, 'error'));
+      options?.onError?.(normalized);
+      
       throw err;
     }
   }, [fetchFn, loadingState, options]);

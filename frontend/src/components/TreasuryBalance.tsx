@@ -2,6 +2,7 @@ import { useState, useEffect, memo } from 'react';
 import { API_URL, CONTRACT_ADDRESS, CONTRACT_NAME, formatStx } from '../config';
 import { useStxPriceData } from '../hooks/useStxPrice';
 import { formatUsd, stxToUsd } from '../lib/currency';
+import { normalizeError } from '../lib/error-normalizer';
 
 interface TreasuryBalanceProps {
   className?: string;
@@ -26,14 +27,14 @@ export const TreasuryBalance = memo(function TreasuryBalance({
         const response = await fetch(url);
 
         if (!response.ok) {
-          throw new Error('Failed to fetch treasury balance');
+          throw new Error(`Failed to fetch treasury balance: ${response.statusText}`);
         }
 
         const data = await response.json();
         setBalance(Number(data.balance) || 0);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Unknown error';
-        setError(message);
+        const normalized = normalizeError(err);
+        setError(normalized.message);
       } finally {
         setLoading(false);
       }

@@ -5,10 +5,12 @@
 import { useState, useCallback, useRef } from 'react';
 import type { AsyncStatus, LoadingState } from '../lib/loading-state';
 import { createLoadingState, updateLoadingState } from '../lib/loading-state';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseAsyncOptions {
   onSuccess?: () => void;
-  onError?: (error: Error) => void;
+  onError?: (error: NormalizedError) => void;
 }
 
 /**
@@ -18,7 +20,7 @@ export function useAsync<T>(
   asyncFn: () => Promise<T>,
   options?: UseAsyncOptions,
 ) {
-  const [state, setState] = useState<LoadingState & { data?: T; error?: Error }>(
+  const [state, setState] = useState<LoadingState & { data?: T; error?: NormalizedError }>(
     createLoadingState('idle'),
   );
 
@@ -30,10 +32,10 @@ export function useAsync<T>(
       options?.onSuccess?.();
       return data;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      setState((s) => ({ ...s, ...updateLoadingState(s, 'error'), error }));
-      options?.onError?.(error);
-      throw error;
+      const normalized = normalizeError(err);
+      setState((s) => ({ ...s, ...updateLoadingState(s, 'error'), error: normalized }));
+      options?.onError?.(normalized);
+      throw err;
     }
   }, [asyncFn, options]);
 
@@ -54,9 +56,9 @@ export function useAsync<T>(
  * Hook for managing multiple async operations.
  */
 export function useMultiAsync() {
-  const [states, setStates] = useState<Record<string, LoadingState & { error?: Error }>>({});
+  const [states, setStates] = useState<Record<string, LoadingState & { error?: NormalizedError }>>({});
 
-  const setStatus = useCallback((key: string, status: AsyncStatus, error?: Error) => {
+  const setStatus = useCallback((key: string, status: AsyncStatus, error?: NormalizedError) => {
     setStates((prev) => ({
       ...prev,
       [key]: {
@@ -74,9 +76,9 @@ export function useMultiAsync() {
         setStatus(key, 'success');
         return data;
       } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setStatus(key, 'error', error);
-        throw error;
+        const normalized = normalizeError(err);
+        setStatus(key, 'error', normalized);
+        throw err;
       }
     },
     [setStatus],
