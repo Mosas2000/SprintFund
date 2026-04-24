@@ -44,19 +44,12 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
             setAmount('');
         },
         onError: (err) => {
-            const message = err.message || '';
-            let errorMessage = 'Failed to create proposal. Please try again.';
-
-            if (message.includes('insufficient')) {
-                errorMessage = 'Insufficient STX balance. You need at least 10 STX staked.';
-            } else if (message.includes('stake')) {
-                errorMessage = 'You must stake at least 10 STX before creating a proposal.';
-            } else {
-                errorMessage = message || errorMessage;
-            }
+            const errorMessage = err.suggestion 
+                ? `${err.message} Tip: ${err.suggestion}`
+                : err.message;
 
             setError(errorMessage);
-            toast.error(errorMessage);
+            toast.error(err.message);
         },
     });
 
