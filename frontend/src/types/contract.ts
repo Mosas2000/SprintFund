@@ -54,6 +54,7 @@ export interface RawProposal {
  */
 export interface RawStake {
   amount: ClarityValue<number>;
+  'locked-until': ClarityValue<number>;
 }
 
 /**
@@ -64,6 +65,7 @@ export interface RawStake {
 export interface RawVote {
   weight: ClarityValue<number>;
   support: ClarityValue<boolean>;
+  'cost-paid': ClarityValue<number>;
 }
 
 /* ═══════════════════════════════════════════════
@@ -141,6 +143,9 @@ export const CONTRACT_ERROR_CODES = {
   110: 'ERR-ZERO-AMOUNT',
   111: 'ERR-INSUFFICIENT-BALANCE',
   112: 'ERR-PROPOSAL-EXPIRED',
+  113: 'ERR-PROPOSAL-CANCELLED',
+  114: 'ERR-STAKE-LOCKED',
+  115: 'ERR-TIMELOCK-ACTIVE',
 } as const;
 
 export type ContractErrorCode = keyof typeof CONTRACT_ERROR_CODES;

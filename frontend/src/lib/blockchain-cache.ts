@@ -1,4 +1,4 @@
-import type { Proposal, ProposalPage } from '../types';
+import type { Proposal, ProposalPage, VoteRecord } from '../types';
 
 interface CacheEntry<T> {
   data: T;
@@ -19,6 +19,7 @@ class BlockchainDataCache {
   private proposalCounts = new Map<string, CacheEntry<number>>();
   private stakes = new Map<string, CacheEntry<number>>();
   private minStakeAmounts = new Map<string, CacheEntry<number>>();
+  private votes = new Map<string, CacheEntry<VoteRecord>>();
 
   private stats: CacheStats = {
     hits: 0,
@@ -96,6 +97,16 @@ class BlockchainDataCache {
   getMinStakeAmount(): number | null {
     return this.getCachedEntry(this.minStakeAmounts.get('global'));
   }
+  
+  setVote(proposalId: number, voter: string, vote: VoteRecord, ttl: number = this.DEFAULT_TTL_MS): void {
+    const key = `${proposalId}-${voter}`;
+    this.votes.set(key, { data: vote, timestamp: Date.now(), ttl });
+  }
+
+  getVote(proposalId: number, voter: string): VoteRecord | null {
+    const key = `${proposalId}-${voter}`;
+    return this.getCachedEntry(this.votes.get(key));
+  }
 
   private getCachedEntry<T>(entry: CacheEntry<T> | undefined): T | null {
     if (!entry) {
@@ -129,12 +140,24 @@ class BlockchainDataCache {
     this.stakes.delete(address);
   }
 
+  /**
+   * Invalidate a specific voting record in the cache.
+   * Forces a refresh from the blockchain on the next fetch attempt.
+   * 
+   * @param proposalId The ID of the proposal
+   * @param voter The Stacks address of the voter
+   */
+  invalidateVote(proposalId: number, voter: string): void {
+    this.votes.delete(`${proposalId}-${voter}`);
+  }
+
   invalidateAll(): void {
     this.proposals.clear();
     this.proposalPages.clear();
     this.proposalCounts.clear();
     this.stakes.clear();
     this.minStakeAmounts.clear();
+    this.votes.clear();
   }
 
   getStats(): CacheStats {
@@ -163,7 +186,8 @@ class BlockchainDataCache {
       this.proposalPages.size +
       this.proposalCounts.size +
       this.stakes.size +
-      this.minStakeAmounts.size
+      this.minStakeAmounts.size +
+      this.votes.size
     );
   }
 

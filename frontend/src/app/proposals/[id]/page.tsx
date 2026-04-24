@@ -13,6 +13,8 @@ import { proposalExecutionService, type ExecutionHistoryEntry } from '@/services
 import { ProposalCountdown } from '@/components/ProposalCountdown';
 import { formatBlockHeight } from '@/lib/block-height';
 import type { Proposal } from '@/types';
+import { useConnect } from '@stacks/connect-react';
+import ReclaimVoteAction from '@/components/voting/ReclaimVoteAction';
 
 export default function ProposalDetailPage() {
   const params = useParams();
@@ -21,6 +23,11 @@ export default function ProposalDetailPage() {
   const [relatedProposals, setRelatedProposals] = useState<Proposal[]>([]);
   const [executionStatus, setExecutionStatus] = useState<ExecutionHistoryEntry | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  const { userSession } = useConnect();
+  const userAddress = userSession?.isUserSignedIn() 
+    ? userSession.loadUserData().profile?.stxAddress?.mainnet 
+    : undefined;
 
   useEffect(() => {
     const fetchProposalData = async () => {
@@ -160,6 +167,13 @@ export default function ProposalDetailPage() {
                 blockHeight={executionStatus.blockHeight}
                 executedAt={executionStatus.timestamp}
                 errorMessage={executionStatus.errorMessage}
+              />
+            )}
+
+            {proposal && userAddress && (
+              <ReclaimVoteAction 
+                proposal={proposal} 
+                userAddress={userAddress} 
               />
             )}
 
