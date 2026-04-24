@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { governanceAnalytics } from '../services/governance-analytics';
+import { normalizeError } from '../lib/error-normalizer';
 
 // Internal Proposal type from governance analytics service
 interface AnalyticsProposal {
@@ -92,9 +93,11 @@ export function useGovernanceAnalytics() {
       const timelineData = governanceAnalytics.generateProposalTimeline(fetchedProposals);
       setTimeline(timelineData);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch analytics';
-      setError(errorMessage);
       console.error('Analytics error:', err);
+      const normalized = normalizeError(err);
+      setError(normalized.suggestion 
+        ? `${normalized.message} Tip: ${normalized.suggestion}` 
+        : normalized.message);
     } finally {
       setLoading(false);
     }
