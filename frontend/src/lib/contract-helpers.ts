@@ -180,6 +180,8 @@ export class ContractConverter {
   }
 }
 
+import { normalizeError, isNormalizedRetryable } from './error-normalizer';
+
 /**
  * Error recovery utilities for failed contract calls.
  */
@@ -188,15 +190,7 @@ export class ErrorRecovery {
    * Determine if error is retryable.
    */
   static isRetryable(error: unknown): boolean {
-    if (typeof error !== 'object' || error === null) return false;
-    const err = error as Record<string, unknown>;
-    const message = String(err.message || '').toLowerCase();
-    return (
-      message.includes('timeout') ||
-      message.includes('temporarily') ||
-      message.includes('try again') ||
-      message.includes('network')
-    );
+    return isNormalizedRetryable(error);
   }
 
   /**
@@ -213,14 +207,13 @@ export class ErrorRecovery {
    * Check if error looks like authentication failure.
    */
   static isAuthError(error: unknown): boolean {
-    if (typeof error !== 'object' || error === null) return false;
-    const err = error as Record<string, unknown>;
-    const message = String(err.message || '').toLowerCase();
+    const normalized = normalizeError(error);
     return (
-      message.includes('unauthorized') ||
-      message.includes('forbidden') ||
-      message.includes('not authenticated') ||
-      message.includes('wallet not connected')
+      normalized.rawMessage.toLowerCase().includes('unauthorized') ||
+      normalized.rawMessage.toLowerCase().includes('forbidden') ||
+      normalized.rawMessage.toLowerCase().includes('not authenticated') ||
+      normalized.rawMessage.toLowerCase().includes('wallet not connected') ||
+      normalized.rawCode === 'UNAUTHORIZED'
     );
   }
 }
