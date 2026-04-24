@@ -35,29 +35,11 @@ export function getErrorCode(status?: number): ErrorCode {
   return ErrorCode.UNKNOWN;
 }
 
+import { normalizeError } from './error-normalizer';
+
 export function getErrorMessage(error: AsyncError): string {
-  switch (error.code) {
-    case ErrorCode.NETWORK_ERROR:
-      return 'Network connection failed. Please check your internet connection.';
-    case ErrorCode.TIMEOUT_ERROR:
-      return 'Request timed out. Please try again.';
-    case ErrorCode.RATE_LIMIT:
-      return 'Too many requests. Please wait a moment and try again.';
-    case ErrorCode.UNAUTHORIZED:
-      return 'Authentication failed. Please reconnect your wallet.';
-    case ErrorCode.NOT_FOUND:
-      return 'Resource not found.';
-    case ErrorCode.SERVER_ERROR:
-      return `Server error (${error.statusCode}). Please try again later.`;
-    case ErrorCode.INVALID_RESPONSE:
-      return 'Invalid response from server. Please try again.';
-    case ErrorCode.CONTRACT_CALL_FAILED:
-      return 'Contract call failed. Please check your inputs and try again.';
-    case ErrorCode.VALIDATION_FAILED:
-      return 'Data validation failed. Please try again.';
-    default:
-      return 'An unexpected error occurred. Please try again.';
-  }
+  const normalized = normalizeError(error);
+  return normalized.message;
 }
 
 export function isRetryableError(error: AsyncError): boolean {
