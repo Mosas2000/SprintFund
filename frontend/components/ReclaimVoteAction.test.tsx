@@ -71,9 +71,9 @@ describe('ReclaimVoteAction', () => {
 
     render(<ReclaimVoteAction proposal={mockProposal} userAddress="ST1234" />);
     
-    expect(screen.getByText(/You have 10 STX currently locked/i)).toBeInTheDocument();
-    const button = screen.getByRole('button', { name: /Reclaim 10 STX/i });
-    expect(button).toBeDisabled();
+    expect(screen.getByText(/You have 10 STX currently locked/i)).toBeTruthy();
+    const button = screen.getByRole('button', { name: /Reclaim 10 STX/i }) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
   });
 
   it('shows available message and enables button if voting has ended', () => {
@@ -83,11 +83,11 @@ describe('ReclaimVoteAction', () => {
 
     render(<ReclaimVoteAction proposal={mockProposal} userAddress="ST1234" />);
     
-    expect(screen.getByText(/The voting period has ended/i)).toBeInTheDocument();
-    expect(screen.getByText(/Available/i)).toBeInTheDocument();
+    expect(screen.getByText(/The voting period has ended/i)).toBeTruthy();
+    expect(screen.getAllByText(/Available/i).length).toBeGreaterThan(0);
     
-    const button = screen.getByRole('button', { name: /Reclaim 10 STX/i });
-    expect(button).not.toBeDisabled();
+    const button = screen.getByRole('button', { name: /Reclaim 10 STX/i }) as HTMLButtonElement;
+    expect(button.disabled).toBe(false);
   });
 
   it('calls execute function when button is clicked', async () => {
@@ -112,8 +112,8 @@ describe('ReclaimVoteAction', () => {
 
     render(<ReclaimVoteAction proposal={mockProposal} userAddress="ST1234" />);
     
-    expect(screen.getByText(/Reclaiming STX.../i)).toBeInTheDocument();
-    const button = screen.getByRole('button');
-    expect(button).toBeDisabled();
+    expect(screen.getByText(/Reclaiming STX.../i)).toBeTruthy();
+    const button = screen.getByRole('button') as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
   });
 });
