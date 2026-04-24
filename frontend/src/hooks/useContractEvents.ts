@@ -3,6 +3,8 @@
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { ContractEvent } from '../types/contract-events';
 import { fetchContractEventStream } from '../lib/contract-events';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseContractEventsOptions {
   contractPrincipal: string;
@@ -14,7 +16,7 @@ interface UseContractEventsOptions {
 interface UseContractEventsReturn {
   events: ContractEvent[];
   isLoading: boolean;
-  error: Error | null | undefined;
+  error: NormalizedError | null | undefined;
   refetch: () => Promise<void>;
 }
 
@@ -26,7 +28,7 @@ export const useContractEvents = ({
 }: UseContractEventsOptions): UseContractEventsReturn => {
   const [events, setEvents] = useState<ContractEvent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null | undefined>(undefined);
+  const [error, setError] = useState<NormalizedError | null | undefined>(undefined);
   const previousLengthRef = useRef(0);
   const didInitialLoadRef = useRef(false);
 
@@ -48,8 +50,7 @@ export const useContractEvents = ({
 
       previousLengthRef.current = fetchedEvents.length;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
-      setError(error);
+      setError(normalizeError(err));
     } finally {
       setIsLoading(false);
     }
