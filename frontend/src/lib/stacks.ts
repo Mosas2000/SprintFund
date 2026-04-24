@@ -424,9 +424,11 @@ export function callExecuteProposal(proposalId: number, cb: TxCallbacks): void {
 }
 
 /**
- * Submit a transaction to reclaim vote cost after a proposal ends.
- * @param proposalId ID of the proposal to reclaim from
- * @param cb Callbacks for transaction completion or cancellation
+ * Submit a transaction to reclaim the STX cost paid during quadratic voting.
+ * This is only allowed after the voting period for the specified proposal has ended.
+ * 
+ * @param proposalId The ID of the proposal to recover costs from
+ * @param cb Object containing onFinish (txId) and onCancel callbacks
  */
 export function callReclaimVoteCost(proposalId: number, cb: TxCallbacks): void {
   contractCall({
