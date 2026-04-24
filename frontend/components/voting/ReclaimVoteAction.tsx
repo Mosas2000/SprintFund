@@ -35,7 +35,13 @@ export default function ReclaimVoteAction({
 }: ReclaimVoteActionProps) {
   const { blockHeight } = useCurrentBlockHeight();
   const { vote, refresh: refreshVote } = useVote(proposal.id, userAddress);
-  const { execute, isLoading: isReclaiming, isSuccess } = useTransaction({
+  const { 
+    execute, 
+    isLoading: isReclaiming, 
+    isSuccess,
+    error,
+    reset: resetTransaction
+  } = useTransaction({
     type: 'reclaim-vote',
     proposalId: proposal.id,
     title: proposal.title,
@@ -145,6 +151,25 @@ export default function ReclaimVoteAction({
             <p className="text-sm font-medium text-green-100">
               Stake reclaimed successfully! Your available balance has been updated.
             </p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 rounded-xl bg-red-500/10 border border-red-500/20 p-4 animate-in fade-in slide-in-from-top-2 duration-500">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 text-red-400" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-100">
+                Recovery failed: {error.message}
+              </p>
+              <button 
+                onClick={resetTransaction}
+                className="mt-1 text-xs text-red-400 underline hover:text-red-300 font-bold"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         </div>
       )}
