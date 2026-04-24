@@ -140,6 +140,13 @@ class BlockchainDataCache {
     this.stakes.delete(address);
   }
 
+  /**
+   * Invalidate a specific voting record in the cache.
+   * Forces a refresh from the blockchain on the next fetch attempt.
+   * 
+   * @param proposalId The ID of the proposal
+   * @param voter The Stacks address of the voter
+   */
   invalidateVote(proposalId: number, voter: string): void {
     this.votes.delete(`${proposalId}-${voter}`);
   }
