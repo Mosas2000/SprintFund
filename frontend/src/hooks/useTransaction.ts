@@ -88,7 +88,7 @@ export function useTransaction(options?: UseTransactionOptions) {
  */
 export function useTransactionBatch() {
   const [states, setStates] = useState<Record<string, LoadingState>>({});
-  const [errors, setErrors] = useState<Record<string, Error | null>>({});
+  const [errors, setErrors] = useState<Record<string, NormalizedError | null>>({});
   const [txIds, setTxIds] = useState<Record<string, string | null>>({});
 
   const execute = useCallback(
@@ -109,13 +109,13 @@ export function useTransactionBatch() {
 
         return id;
       } catch (err) {
-        const error = err instanceof Error ? err : new Error(String(err));
-        setErrors((prev) => ({ ...prev, [key]: error }));
+        const normalized = normalizeError(err);
+        setErrors((prev) => ({ ...prev, [key]: normalized }));
         setStates((prev) => ({
           ...prev,
           [key]: updateLoadingState(prev[key] || createLoadingState(), 'error'),
         }));
-        throw error;
+        throw err;
       }
     },
     [],
