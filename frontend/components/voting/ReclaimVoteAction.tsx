@@ -34,7 +34,7 @@ export default function ReclaimVoteAction({
   onSuccess 
 }: ReclaimVoteActionProps) {
   const { blockHeight } = useCurrentBlockHeight();
-  const { vote, refresh: refreshVote } = useVote(proposal.id, userAddress);
+  const { vote, loading: isVoteLoading, refresh: refreshVote } = useVote(proposal.id, userAddress);
   const { 
     execute, 
     isLoading: isReclaiming, 
@@ -59,6 +59,22 @@ export default function ReclaimVoteAction({
   
   // A user can reclaim if voting ended, they voted, and there is a cost to reclaim
   const canReclaim = !isVotingActive && vote && vote.costPaid > 0;
+
+  // Render a loading state if vote data is pending
+  if (userAddress && isVoteLoading) {
+    return (
+      <div className="mt-6 rounded-2xl bg-slate-900/50 border border-slate-800 p-6 backdrop-blur-sm shadow-xl animate-pulse">
+        <div className="flex items-start gap-5">
+          <div className="h-12 w-12 rounded-xl bg-slate-800" />
+          <div className="flex-1 space-y-3">
+            <div className="h-4 w-1/3 rounded bg-slate-800" />
+            <div className="h-4 w-full rounded bg-slate-800" />
+            <div className="h-10 w-full rounded bg-slate-800" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Don't render if user hasn't voted or there's nothing to reclaim
   if (!userAddress || !vote || vote.costPaid === 0) {
