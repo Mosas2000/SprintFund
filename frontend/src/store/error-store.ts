@@ -1,20 +1,21 @@
 import { create } from 'zustand';
-import { AsyncError, ErrorCode } from '../lib/async-errors';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface ErrorState {
-  errors: Map<string, AsyncError>;
-  addError: (id: string, error: AsyncError) => void;
+  errors: Map<string, NormalizedError>;
+  addError: (id: string, error: unknown) => void;
   removeError: (id: string) => void;
   clearErrors: () => void;
-  getError: (id: string) => AsyncError | undefined;
+  getError: (id: string) => NormalizedError | undefined;
 }
 
 export const useErrorStore = create<ErrorState>((set, get) => ({
   errors: new Map(),
 
-  addError: (id: string, error: AsyncError) => {
+  addError: (id: string, error: unknown) => {
     set((state) => ({
-      errors: new Map(state.errors).set(id, error),
+      errors: new Map(state.errors).set(id, normalizeError(error)),
     }));
   },
 
@@ -37,7 +38,7 @@ export const useErrorStore = create<ErrorState>((set, get) => ({
 
 export const createAsyncErrorHandler = (contextId: string) => {
   return {
-    handleError: (error: AsyncError) => {
+    handleError: (error: unknown) => {
       useErrorStore.getState().addError(contextId, error);
     },
     clearError: () => {
