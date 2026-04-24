@@ -114,6 +114,28 @@ describe('ReclaimVoteAction', () => {
     expect(mockExecute).toHaveBeenCalled();
   });
 
+  it('shows success message and explorer link when transaction is successful', () => {
+    vi.mocked(hooks.useCurrentBlockHeight).mockReturnValue({ blockHeight: 250, error: null, isLoading: false, refresh: vi.fn() });
+    vi.mocked(hooks.useVote).mockReturnValue({ vote: mockVote, loading: false, error: null, refresh: vi.fn() });
+    vi.mocked(hooks.useTransaction).mockReturnValue({ 
+      execute: vi.fn(), 
+      isLoading: false, 
+      isError: false, 
+      isSuccess: true, 
+      isIdle: false, 
+      txId: '0x123',
+      error: null, 
+      reset: vi.fn() 
+    });
+
+    render(<ReclaimVoteAction proposal={mockProposal} userAddress="ST1234" />);
+    
+    expect(screen.getByText(/Stake reclaimed successfully/i)).toBeTruthy();
+    const link = screen.getByRole('link', { name: /View Transaction/i });
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toContain('0x123');
+  });
+
   it('shows loading state when transaction is executing', () => {
     vi.mocked(hooks.useCurrentBlockHeight).mockReturnValue({ blockHeight: 250, error: null, isLoading: false, refresh: vi.fn() });
     vi.mocked(hooks.useVote).mockReturnValue({ vote: mockVote, loading: false, error: null, refresh: vi.fn() });
