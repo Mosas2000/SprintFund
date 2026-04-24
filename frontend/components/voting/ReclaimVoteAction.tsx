@@ -192,9 +192,14 @@ export default function ReclaimVoteAction({
               <p className="text-sm font-medium text-red-100">
                 Recovery failed: {error.message}
               </p>
+              {error.suggestion && (
+                <p className="mt-1 text-xs text-red-200/70 italic">
+                  Tip: {error.suggestion}
+                </p>
+              )}
               <button 
                 onClick={resetTransaction}
-                className="mt-1 text-xs text-red-400 underline hover:text-red-300 font-bold"
+                className="mt-2 text-xs text-red-400 underline hover:text-red-300 font-bold"
               >
                 Dismiss
               </button>
