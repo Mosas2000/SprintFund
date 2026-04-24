@@ -11,6 +11,9 @@ export interface ErrorHandlingConfig {
   circuitBreakerThreshold?: number;
 }
 
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
+
 class ErrorHandlingManager {
   private config: ErrorHandlingConfig = {
     enableLogging: true,
@@ -26,13 +29,25 @@ class ErrorHandlingManager {
     error: AsyncError,
     context: Record<string, unknown> = {},
   ): void {
+    const normalized = normalizeError(error);
+    const enrichedContext = {
+      ...context,
+      normalizedMessage: normalized.message,
+      normalizedSeverity: normalized.severity,
+      contractCode: normalized.contractCode,
+    };
+
     if (this.config.enableLogging) {
-      errorLogger.log(error, context);
+      errorLogger.log(error, enrichedContext);
     }
 
     if (this.config.enableMetrics) {
       errorMetrics.recordError(error);
     }
+  }
+
+  getNormalizedError(error: unknown): NormalizedError {
+    return normalizeError(error);
   }
 
   async executeWithCircuitBreaker<T>(
