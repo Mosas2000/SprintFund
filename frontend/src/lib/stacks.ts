@@ -35,15 +35,8 @@ import {
  * Error thrown when a smart contract call fails.
  * Contains the function name that failed for debugging.
  */
-export class ContractError extends AsyncError {
-  readonly functionName: string;
-
-  constructor(message: string, code: string, functionName?: string) {
-    super(message, code);
-    this.name = 'ContractError';
-    this.functionName = functionName || '';
-  }
-}
+import { ContractError, normalizeError } from './error-normalizer';
+import { convertRawToVote } from './type-converters';
 
 /* ═══════════════════════════════════════════════
    Read-only helpers
@@ -70,10 +63,11 @@ async function readOnly<T>(
     });
     return cvToValue(result) as T;
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    console.error(`[SprintFund] Read-only call failed (${functionName}):`, err);
+    const normalized = normalizeError(err);
     throw new ContractError(
-      `Contract call failed: ${message}`,
-      ErrorCode.CONTRACT_CALL_FAILED,
+      normalized.message,
+      normalized.rawCode || ErrorCode.CONTRACT_CALL_FAILED,
       functionName,
     );
   }
