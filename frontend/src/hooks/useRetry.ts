@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import type { LoadingState } from '../lib/loading-state';
 import { createLoadingState, updateLoadingState } from '../lib/loading-state';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseRetryOptions {
   maxAttempts?: number;
@@ -24,11 +26,11 @@ export function useRetry<T>(
 
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
   const [attempts, setAttempts] = useState(0);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
   const execute = useCallback(async () => {
-    let lastError: Error | null = null;
+    let lastError: NormalizedError | null = null;
     let currentAttempt = 0;
 
     while (currentAttempt < maxAttempts) {
@@ -43,7 +45,7 @@ export function useRetry<T>(
         setLoadingState(updateLoadingState(loadingState, 'success'));
         return result;
       } catch (err) {
-        lastError = err instanceof Error ? err : new Error(String(err));
+        lastError = normalizeError(err);
         setError(lastError);
 
         if (currentAttempt < maxAttempts) {
