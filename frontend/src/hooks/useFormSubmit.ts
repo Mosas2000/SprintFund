@@ -1,10 +1,12 @@
 import { useState, useCallback } from 'react';
 import type { LoadingState } from '../lib/loading-state';
 import { createLoadingState, updateLoadingState } from '../lib/loading-state';
+import { normalizeError } from '../lib/error-normalizer';
+import type { NormalizedError } from '../lib/error-normalizer';
 
 interface UseFormOptions<T> {
   onSuccess?: (data: T) => void;
-  onError?: (error: Error) => void;
+  onError?: (error: NormalizedError) => void;
 }
 
 export function useFormSubmit<T>(
@@ -12,7 +14,7 @@ export function useFormSubmit<T>(
   options?: UseFormOptions<T>,
 ) {
   const [loadingState, setLoadingState] = useState<LoadingState>(createLoadingState('idle'));
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<NormalizedError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
   const submit = useCallback(async () => {
@@ -27,12 +29,12 @@ export function useFormSubmit<T>(
 
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      setError(error);
+      const normalized = normalizeError(err);
+      setError(normalized);
       setLoadingState(updateLoadingState(loadingState, 'error'));
-      options?.onError?.(error);
+      options?.onError?.(normalized);
 
-      throw error;
+      throw err;
     }
   }, [submitFn, loadingState, options]);
 
