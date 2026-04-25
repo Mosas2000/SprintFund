@@ -6,7 +6,7 @@ import BadgeGallery from '@/components/common/BadgeGallery';
 import InterestProfiler from '@/components/InterestProfiler';
 import DelegationStats from '@/components/DelegationStats';
 import UserDashboard from '@/components/dashboard/UserDashboard';
-import { ActivityTimeline } from '@/components/profile';
+import { ActivityTimeline, VotingHistory, UserProposals, ProfileStatsGrid } from '@/components/profile';
 import { fetchUserProfile } from '@/lib/profile-data';
 import { toErrorMessage } from '@/lib/errors';
 import {
@@ -199,17 +199,31 @@ export default function ProfilePage() {
           <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
               <h3 className="text-2xl font-black uppercase tracking-tight text-white">
-                Wallet activity timeline
+                {activeTab === 'activity' ? 'Activity Timeline' : activeTab === 'votes' ? 'Voting History' : 'My Proposals'}
               </h3>
               <p className="text-sm text-slate-400">
-                Recent proposal, voting, and execution activity for the connected wallet.
+                {activeTab === 'activity' 
+                  ? 'Recent proposal, voting, and execution activity for the connected wallet.'
+                  : activeTab === 'votes'
+                  ? 'History of all governance votes cast by this wallet.'
+                  : 'Proposals created and submitted to the DAO by this wallet.'}
               </p>
             </div>
-            {address && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                {shortenAddress(address)}
-              </p>
-            )}
+            <div className="flex items-center gap-1.5 rounded-2xl bg-white/5 p-1">
+              {(['activity', 'votes', 'proposals'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+                    activeTab === tab
+                      ? 'bg-orange-600 text-white shadow-lg'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
           </div>
 
           {!connected || !address ? (
@@ -219,7 +233,17 @@ export default function ProfilePage() {
           ) : activityError ? (
             <TimelineError error={activityError} onRetry={loadProfile} />
           ) : (
-            <ActivityTimeline activity={visibleActivity} />
+            <div className="mt-4">
+              {activeTab === 'activity' && (
+                <ActivityTimeline activity={visibleActivity} />
+              )}
+              {activeTab === 'votes' && (
+                <VotingHistory votes={profile?.votes || []} />
+              )}
+              {activeTab === 'proposals' && (
+                <UserProposals proposals={profile?.proposals || []} />
+              )}
+            </div>
           )}
         </section>
       </main>
