@@ -12,7 +12,7 @@ interface StatCardProps {
 function StatCard({ label, value, detail, color = 'text-white' }: StatCardProps) {
   return (
     <div className="group rounded-2xl bg-white/5 border border-white/10 p-5 sm:p-6 hover:bg-white/10 transition-all duration-500">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 group-hover:text-slate-400 transition-colors">
+      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-3 group-hover:text-slate-400 transition-colors">
         {label}
       </p>
       <p className={`text-2xl sm:text-3xl font-black tracking-tighter ${color}`}>
