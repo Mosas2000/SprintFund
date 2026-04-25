@@ -10,9 +10,9 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 
 **Status**: ✅ **Live on Stacks Mainnet**
 
-**Contract Address**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core`
+**Contract Address**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3`
 
-**Explorer**: [View on Stacks Explorer](https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core?chain=mainnet)
+**Explorer**: [View on Stacks Explorer](https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3?chain=mainnet)
 
 ## Key Features
 
@@ -90,7 +90,7 @@ See [frontend/README.md](frontend/README.md) for local development setup.
 ```
 sprintfund/
 ├── contracts/
-│   └── sprintfund-core.clar    # Main DAO contract
+│   └── sprintfund-core-v3.clar  # Main DAO contract
 ├── frontend/
 │   ├── app/
 │   │   └── page.tsx            # Landing page
@@ -200,4 +200,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ on Stacks Blockchain**
 
-🔗 [GitHub](https://github.com/Mosas2000/SprintFund) | 📊 [Contract Explorer](https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core?chain=mainnet)
+🔗 [GitHub](https://github.com/Mosas2000/SprintFund) | 📊 [Contract Explorer](https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3?chain=mainnet)

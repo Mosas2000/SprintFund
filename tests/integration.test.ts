@@ -14,7 +14,7 @@ describe("Integration: Contract-Frontend Interaction", () => {
   let simnet: Awaited<ReturnType<typeof initSimnet>>;
   let deployer: string;
   let accounts: string[];
-  const contractName = "sprintfund-core";
+  const contractName = "sprintfund-core-v3";
   const minStake = 10_000_000n; // 10 STX in microSTX
 
   beforeEach(async () => {

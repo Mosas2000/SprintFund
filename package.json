@@ -10,6 +10,7 @@
     "test:report": "vitest run -- --coverage --costs",
     "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\"",
     "security:audit": "bash scripts/security-audit.sh",
+    "lint": "npm run lint --prefix frontend",
     "prepare": "husky"
   },
   "lint-staged": {

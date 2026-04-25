@@ -22,8 +22,8 @@ describe('Config types', () => {
     it('represents contract deployment configuration', () => {
       const config: ContractConfig = {
         contractAddress: 'SP123456789',
-        contractName: 'sprintfund-core',
-        contractPrincipal: 'SP123456789.sprintfund-core',
+        contractName: 'sprintfund-core-v3',
+        contractPrincipal: 'SP123456789.sprintfund-core-v3',
       };
 
       expect(config.contractAddress).toMatch(/^S[PT]/);
@@ -43,8 +43,8 @@ describe('Config types', () => {
         },
         contract: {
           contractAddress: 'SP123456789',
-          contractName: 'sprintfund-core',
-          contractPrincipal: 'SP123456789.sprintfund-core',
+          contractName: 'sprintfund-core-v3',
+          contractPrincipal: 'SP123456789.sprintfund-core-v3',
         },
         version: '1.0.0',
         debug: false,

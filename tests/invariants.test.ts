@@ -22,10 +22,10 @@ describe("SprintFund Mathematical Invariants", () => {
   describe("quadratic voting cost invariant: cost = weight^2", () => {
     beforeEach(() => {
       // Large stake to allow high weight votes
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(1000000000000)], wallet1);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(1000000000000)], wallet2);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(1000000000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(1000000000000)], wallet2);
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "create-proposal",
         [Cl.uint(50000000), Cl.stringUtf8("Test"), Cl.stringUtf8("Description")],
         wallet1
@@ -39,7 +39,7 @@ describe("SprintFund Mathematical Invariants", () => {
       const expectedCost = weight * weight;
       it(`weight ${weight} requires stake >= ${expectedCost}`, () => {
         const result = simnet.callPublicFn(
-          "sprintfund-core",
+          "sprintfund-core-v3",
           "vote",
           [Cl.uint(0), Cl.bool(true), Cl.uint(weight)],
           wallet2
@@ -52,17 +52,17 @@ describe("SprintFund Mathematical Invariants", () => {
   describe("quadratic cost boundary validation", () => {
     it("stake exactly equal to cost allows vote", () => {
       // Stake 25 microSTX, vote with weight 5 (cost = 25)
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(10000000)], wallet1);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(25)], wallet3);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(10000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(25)], wallet3);
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "create-proposal",
         [Cl.uint(50000000), Cl.stringUtf8("Test"), Cl.stringUtf8("Description")],
         wallet1
       );
 
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(5)],
         wallet3
@@ -72,17 +72,17 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("stake one less than cost rejects vote", () => {
       // Stake 24 microSTX, vote with weight 5 (cost = 25)
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(10000000)], wallet1);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(24)], wallet3);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(10000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(24)], wallet3);
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "create-proposal",
         [Cl.uint(50000000), Cl.stringUtf8("Test"), Cl.stringUtf8("Description")],
         wallet1
       );
 
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(5)],
         wallet3
@@ -101,11 +101,11 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it(`multiple deposits sum correctly to ${expectedTotal}`, () => {
       for (const amount of depositAmounts) {
-        simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(amount)], wallet1);
+        simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(amount)], wallet1);
       }
 
       const result = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-stake",
         [Cl.principal(wallet1)],
         deployer
@@ -121,24 +121,24 @@ describe("SprintFund Mathematical Invariants", () => {
       const stake2 = 25000000;
       const stake3 = 50000000;
 
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(stake1)], wallet1);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(stake2)], wallet2);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(stake3)], wallet3);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(stake1)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(stake2)], wallet2);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(stake3)], wallet3);
 
       const result1 = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-stake",
         [Cl.principal(wallet1)],
         deployer
       );
       const result2 = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-stake",
         [Cl.principal(wallet2)],
         deployer
       );
       const result3 = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-stake",
         [Cl.principal(wallet3)],
         deployer
@@ -156,7 +156,7 @@ describe("SprintFund Mathematical Invariants", () => {
 
   describe("proposal count invariant: count = number of proposals", () => {
     beforeEach(() => {
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(10000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(10000000)], wallet1);
     });
 
     const proposalCounts = [1, 2, 3, 5, 10];
@@ -165,7 +165,7 @@ describe("SprintFund Mathematical Invariants", () => {
       it(`creating ${count} proposals results in count = ${count}`, () => {
         for (let i = 0; i < count; i++) {
           simnet.callPublicFn(
-            "sprintfund-core",
+            "sprintfund-core-v3",
             "create-proposal",
             [Cl.uint(50000000), Cl.stringUtf8(`Proposal ${i}`), Cl.stringUtf8("Description")],
             wallet1
@@ -173,7 +173,7 @@ describe("SprintFund Mathematical Invariants", () => {
         }
 
         const result = simnet.callReadOnlyFn(
-          "sprintfund-core",
+          "sprintfund-core-v3",
           "get-proposal-count",
           [],
           deployer
@@ -186,12 +186,12 @@ describe("SprintFund Mathematical Invariants", () => {
 
   describe("proposal ID invariant: IDs are sequential starting from 0", () => {
     beforeEach(() => {
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(10000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(10000000)], wallet1);
     });
 
     it("first proposal gets ID 0", () => {
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "create-proposal",
         [Cl.uint(50000000), Cl.stringUtf8("First"), Cl.stringUtf8("Description")],
         wallet1
@@ -202,7 +202,7 @@ describe("SprintFund Mathematical Invariants", () => {
     it("proposals get sequential IDs", () => {
       for (let i = 0; i < 5; i++) {
         const result = simnet.callPublicFn(
-          "sprintfund-core",
+          "sprintfund-core-v3",
           "create-proposal",
           [Cl.uint(50000000), Cl.stringUtf8(`Proposal ${i}`), Cl.stringUtf8("Description")],
           wallet1
@@ -218,11 +218,11 @@ describe("SprintFund Mathematical Invariants", () => {
 
   describe("vote count invariant: votes accumulate correctly", () => {
     beforeEach(() => {
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(100000000)], wallet1);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(100000000)], wallet2);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(100000000)], wallet3);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(100000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(100000000)], wallet2);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(100000000)], wallet3);
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "create-proposal",
         [Cl.uint(50000000), Cl.stringUtf8("Test"), Cl.stringUtf8("Description")],
         wallet1
@@ -231,14 +231,14 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("single vote-for updates count correctly", () => {
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(7)],
         wallet2
       );
 
       const result = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-proposal",
         [Cl.uint(0)],
         deployer
@@ -251,14 +251,14 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("single vote-against updates count correctly", () => {
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(false), Cl.uint(5)],
         wallet2
       );
 
       const result = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-proposal",
         [Cl.uint(0)],
         deployer
@@ -271,26 +271,26 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("multiple voters for same proposal accumulate", () => {
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(3)],
         wallet1
       );
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(5)],
         wallet2
       );
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(false), Cl.uint(2)],
         wallet3
       );
 
       const result = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-proposal",
         [Cl.uint(0)],
         deployer
@@ -308,27 +308,27 @@ describe("SprintFund Mathematical Invariants", () => {
 
   describe("execution state invariant: executed proposals stay executed", () => {
     beforeEach(() => {
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(10000000)], wallet1);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(50000000)], wallet2);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(100000000)], deployer);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(10000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(50000000)], wallet2);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(100000000)], deployer);
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "create-proposal",
         [Cl.uint(50000000), Cl.stringUtf8("Test"), Cl.stringUtf8("Description")],
         wallet1
       );
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(5)],
         wallet2
       );
-      simnet.callPublicFn("sprintfund-core", "execute-proposal", [Cl.uint(0)], deployer);
+      simnet.callPublicFn("sprintfund-core-v3", "execute-proposal", [Cl.uint(0)], deployer);
     });
 
     it("executed flag is true after execution", () => {
       const result = simnet.callReadOnlyFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "get-proposal",
         [Cl.uint(0)],
         deployer
@@ -340,7 +340,7 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("re-execution fails with ALREADY-EXECUTED error", () => {
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "execute-proposal",
         [Cl.uint(0)],
         deployer
@@ -350,7 +350,7 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("voting fails after execution", () => {
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(1)],
         deployer
@@ -375,10 +375,10 @@ describe("SprintFund Mathematical Invariants", () => {
 
     testAmounts.forEach(({ amount, shouldFail }) => {
       it(`stake of ${amount} microSTX ${shouldFail ? "fails" : "succeeds"} for proposal`, () => {
-        simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(amount)], wallet1);
+        simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(amount)], wallet1);
 
         const result = simnet.callPublicFn(
-          "sprintfund-core",
+          "sprintfund-core-v3",
           "create-proposal",
           [Cl.uint(50000000), Cl.stringUtf8("Test"), Cl.stringUtf8("Description")],
           wallet1
@@ -399,12 +399,12 @@ describe("SprintFund Mathematical Invariants", () => {
 
   describe("vote outcome invariant: votes-for > votes-against required", () => {
     beforeEach(() => {
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(10000000)], wallet1);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(100000000)], wallet2);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(100000000)], wallet3);
-      simnet.callPublicFn("sprintfund-core", "stake", [Cl.uint(100000000)], deployer);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(10000000)], wallet1);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(100000000)], wallet2);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(100000000)], wallet3);
+      simnet.callPublicFn("sprintfund-core-v3", "stake", [Cl.uint(100000000)], deployer);
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "create-proposal",
         [Cl.uint(50000000), Cl.stringUtf8("Test"), Cl.stringUtf8("Description")],
         wallet1
@@ -413,20 +413,20 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("execution succeeds when votes-for > votes-against", () => {
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(10)],
         wallet2
       );
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(false), Cl.uint(5)],
         wallet3
       );
 
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "execute-proposal",
         [Cl.uint(0)],
         deployer
@@ -436,20 +436,20 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("execution fails when votes-for == votes-against", () => {
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(5)],
         wallet2
       );
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(false), Cl.uint(5)],
         wallet3
       );
 
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "execute-proposal",
         [Cl.uint(0)],
         deployer
@@ -459,20 +459,20 @@ describe("SprintFund Mathematical Invariants", () => {
 
     it("execution fails when votes-for < votes-against", () => {
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(true), Cl.uint(3)],
         wallet2
       );
       simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "vote",
         [Cl.uint(0), Cl.bool(false), Cl.uint(7)],
         wallet3
       );
 
       const result = simnet.callPublicFn(
-        "sprintfund-core",
+        "sprintfund-core-v3",
         "execute-proposal",
         [Cl.uint(0)],
         deployer

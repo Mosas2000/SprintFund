@@ -14,7 +14,8 @@ Create a `.env.local` file with the following variables:
 
 ```bash
 NEXT_PUBLIC_NETWORK=mainnet
-NEXT_PUBLIC_CONTRACT_ADDRESS=<your-contract-address>
+NEXT_PUBLIC_CONTRACT_ADDRESS=SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T
+NEXT_PUBLIC_CONTRACT_NAME=sprintfund-core-v3
 NEXT_PUBLIC_STACKS_API_URL=https://stacks-node-api.mainnet.stacks.co
 ```
 

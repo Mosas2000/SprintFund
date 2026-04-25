@@ -5,6 +5,10 @@ authors = []
 telemetry = false
 cache_dir = "./.cache"
 
+[contracts.sprintfund-core-v3]
+path = "contracts/sprintfund-core-v3.clar"
+epoch = "latest"
+
 [contracts.sprintfund-core]
 path = "contracts/sprintfund-core.clar"
 epoch = "latest"
@@ -32,3 +36,4 @@ check_checker = { trusted_sender = false, trusted_caller = false, callee_filter 
 # warning, if it gets checked inside. This check will also propagate up to the
 # caller.
 # More informations: https://www.hiro.so/blog/new-safety-checks-in-clarinet
+# v3 moved to top

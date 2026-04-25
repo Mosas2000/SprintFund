@@ -30,6 +30,7 @@ echo ""
 echo "Required environment variables:"
 check_env_var "NEXT_PUBLIC_NETWORK" "true"
 check_env_var "NEXT_PUBLIC_CONTRACT_ADDRESS" "true"
+check_env_var "NEXT_PUBLIC_CONTRACT_NAME" "true"
 check_env_var "NEXT_PUBLIC_STACKS_API_URL" "true"
 
 echo ""

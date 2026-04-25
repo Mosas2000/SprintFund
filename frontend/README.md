@@ -22,6 +22,16 @@ Modern Next.js frontend for the SprintFund DAO on Stacks blockchain.
 - Real-time data fetching from mainnet
 - In-app notification system for governance events
 
+## V3 Contract Migration
+
+The SprintFund frontend is fully aligned with the `sprintfund-core-v3` contract. This version includes critical bug fixes and performance improvements.
+
+- **Active Contract**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3`
+- **Migration Guide**: [MIGRATION_V3.md](../docs/MIGRATION_V3.md)
+- **Status**: Production Ready
+
+Users with stakes in legacy contracts can find instructions in the migration guide on how to withdraw and re-stake in the active version.
+
 ## Prerequisites
 
 - Node.js 18+ and npm
@@ -49,7 +59,7 @@ Available environment variables:
 |----------|-------------|---------|
 | `NEXT_PUBLIC_NETWORK` | Stacks network (mainnet/testnet) | mainnet |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | Contract deployer address | SP31PKQ... |
-| `NEXT_PUBLIC_CONTRACT_NAME` | Contract name | sprintfund-core |
+| `NEXT_PUBLIC_CONTRACT_NAME` | Contract name | sprintfund-core-v3 |
 
 For mainnet deployment, no environment changes are typically needed.
 
@@ -111,7 +121,7 @@ frontend/
 
 The frontend interacts with the deployed contract:
 
-**Contract**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core`
+**Contract**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3`
 
 ### Read-Only Functions
 - `get-proposal-count()` - Fetch total proposals

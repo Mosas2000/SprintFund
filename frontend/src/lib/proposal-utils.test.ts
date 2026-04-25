@@ -11,6 +11,10 @@ import {
   findProposal,
   wouldProposalPass,
   paginateProposals,
+  getBlocksUntilVotingEnds,
+  getBlocksUntilExecutionAllowed,
+  formatBlockDuration,
+  isHighValueProposal,
 } from './proposal-utils';
 import type { Proposal } from '../types/proposal';
 
@@ -283,6 +287,24 @@ describe('Proposal utilities', () => {
       const proposal = { ...mockProposal, executionAllowedAt: 100600 };
       expect(getBlocksUntilExecutionAllowed(proposal, 100400)).toBe(200);
       expect(getBlocksUntilExecutionAllowed(proposal, 100700)).toBe(0);
+    });
+  });
+
+  describe('isHighValueProposal', () => {
+    it('returns true for proposals with 100 STX or more', () => {
+      const highValue = { ...mockProposal, amount: 100_000_000 };
+      expect(isHighValueProposal(highValue)).toBe(true);
+      
+      const veryHighValue = { ...mockProposal, amount: 250_000_000 };
+      expect(isHighValueProposal(veryHighValue)).toBe(true);
+    });
+
+    it('returns false for proposals below 100 STX', () => {
+      const lowValue = { ...mockProposal, amount: 99_999_999 };
+      expect(isHighValueProposal(lowValue)).toBe(false);
+      
+      const smallValue = { ...mockProposal, amount: 1_000_000 };
+      expect(isHighValueProposal(smallValue)).toBe(false);
     });
   });
 });

@@ -6,13 +6,13 @@
 
 | Version | Contract Name | Address | Status | Deployment Date |
 |---------|---------------|---------|--------|----------------|
-| v1 | `sprintfund-core` | `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core` | **ACTIVE** | Initial deployment |
-| v3 | `sprintfund-core-v3` | `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3` | Deployed | - |
+| v1 | `sprintfund-core` | `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core` | Deprecated | Initial deployment |
+| v3 | `sprintfund-core-v3` | `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3` | **ACTIVE** | Current production version |
 
 ### Active Contract
 
 **The frontend and all production systems currently use:**
-- Contract: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core`
+- Contract: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3`
 - Network: Mainnet
 
 ## Version Differences
@@ -26,7 +26,7 @@
 ### v3 (sprintfund-core-v3)
 - Enhanced version with improvements
 - May include bug fixes or feature enhancements
-- **Note**: Currently deployed but not in active use by frontend
+- **Note**: Currently the active production contract
 
 ## Versioning Strategy
 
@@ -56,7 +56,7 @@ All contract references use centralized configuration:
 
 ```typescript
 export const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-export const CONTRACT_NAME = 'sprintfund-core';
+export const CONTRACT_NAME = 'sprintfund-core-v3';
 export const CONTRACT_PRINCIPAL = `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`;
 ```
 
@@ -97,10 +97,10 @@ When ready to switch to a new version:
 
 ## Current Status
 
-**Frontend is using**: `sprintfund-core` (v1)
+**Frontend is using**: `sprintfund-core-v3` (v3)
 
-**Recommendation**: The v3 contract exists but is not in active use. Before switching:
-1. Document specific improvements in v3
+**Recommendation**: The v3 contract is now in active use. Future migrations should:
+1. Document specific improvements in newer versions
 2. Test thoroughly
 3. Create migration plan if state needs to be preserved
 4. Update all references using the checklist above
