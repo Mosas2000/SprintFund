@@ -163,7 +163,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
           <h2 id="voting-history-heading" className="text-lg font-black uppercase tracking-tight text-white">
             Governance Activity
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">
             {filtered.length} total votes recorded
           </p>
         </div>
@@ -240,21 +240,21 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
                   {vote.executed && (
                     <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">Executed</span>
                   )}
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
                     {formatDate(vote.timestamp)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-6 border-t border-white/5 pt-3 sm:border-none sm:pt-0">
                 <div className="flex flex-col items-start sm:items-center">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 mb-1">Direction</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 mb-1">Direction</span>
                   <VoteBadge support={vote.support} />
                 </div>
                 <div className="flex flex-col items-start sm:items-center min-w-[60px]">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 mb-1">Weight</span>
+                  <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 mb-1">Weight</span>
                   <div className="flex items-baseline gap-1">
                     <span className="text-sm font-black text-white">{vote.weight}</span>
-                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">({vote.weight ** 2} STX)</span>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">({vote.weight ** 2} STX)</span>
                   </div>
                 </div>
               </div>
