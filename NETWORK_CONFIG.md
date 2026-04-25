@@ -29,7 +29,7 @@ SprintFund supports both Stacks Mainnet and Testnet environments via environment
 
 ### `NEXT_PUBLIC_CONTRACT_NAME`
 - **Type:** String
-- **Default:** `sprintfund-core`
+- **Default:** `sprintfund-core-v3`
 - **Description:** The contract name (optional)
 
 ### `NEXT_PUBLIC_STACKS_API_URL`
@@ -45,14 +45,14 @@ SprintFund supports both Stacks Mainnet and Testnet environments via environment
 ```bash
 NEXT_PUBLIC_NETWORK=mainnet
 NEXT_PUBLIC_CONTRACT_ADDRESS=SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T
-NEXT_PUBLIC_CONTRACT_NAME=sprintfund-core
+NEXT_PUBLIC_CONTRACT_NAME=sprintfund-core-v3
 ```
 
 ### Testnet (Development)
 ```bash
 NEXT_PUBLIC_NETWORK=testnet
 NEXT_PUBLIC_CONTRACT_ADDRESS=ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-NEXT_PUBLIC_CONTRACT_NAME=sprintfund-core
+NEXT_PUBLIC_CONTRACT_NAME=sprintfund-core-v3
 ```
 
 ## Testing Network Switching
