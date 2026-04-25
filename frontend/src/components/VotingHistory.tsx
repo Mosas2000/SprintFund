@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { VotingHistoryProps } from '../types/profile';
 import type { VoteRecord } from '../types/profile';
@@ -106,6 +106,9 @@ function sortVotes(votes: VoteRecord[], field: SortField, dir: SortDir): VoteRec
 function VotingHistoryBase({ votes }: VotingHistoryProps) {
   const [sortField, setSortField] = useState<SortField>('timestamp');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
+  const [filter, setFilter] = useState<'all' | 'for' | 'against'>('all');
+  const [search, setSearch] = useState('');
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const handleSort = (field: SortField) => {
     if (field === sortField) {
@@ -116,10 +119,31 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
     }
   };
 
-  const sorted = useMemo(
-    () => sortVotes(votes, sortField, sortDir),
-    [votes, sortField, sortDir],
-  );
+  const filtered = useMemo(() => {
+    let result = [...votes];
+    if (filter === 'for') {
+      result = result.filter((v) => v.support);
+    } else if (filter === 'against') {
+      result = result.filter((v) => !v.support);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((v) => v.title.toLowerCase().includes(q));
+    }
+    return sortVotes(result, sortField, sortDir);
+  }, [votes, sortField, sortDir, filter, search]);
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  const handleShowMore = () => {
+    setVisibleCount((c) => c + 10);
+  };
+
+  // Reset pagination on filter or search change
+  useEffect(() => {
+    setVisibleCount(10);
+  }, [filter, search]);
 
   if (votes.length === 0) {
     return (
