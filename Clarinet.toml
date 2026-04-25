@@ -32,3 +32,6 @@ check_checker = { trusted_sender = false, trusted_caller = false, callee_filter 
 # warning, if it gets checked inside. This check will also propagate up to the
 # caller.
 # More informations: https://www.hiro.so/blog/new-safety-checks-in-clarinet
+[contracts.sprintfund-core-v3]
+path = "contracts/sprintfund-core-v3.clar"
+epoch = "latest"
