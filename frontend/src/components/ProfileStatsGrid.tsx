@@ -83,3 +83,4 @@ function ProfileStatsGridBase({ stats }: ProfileStatsGridProps) {
 const ProfileStatsGrid = memo(ProfileStatsGridBase);
 ProfileStatsGrid.displayName = 'ProfileStatsGrid';
 export default ProfileStatsGrid;
+/** ProfileStatsGrid component displays participation metrics */
