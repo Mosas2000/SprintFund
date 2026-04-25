@@ -101,14 +101,14 @@ function EventRow({ event }: { event: ActivityEvent }) {
               )}
             </div>
             <time
-              className="text-[10px] font-black uppercase tracking-widest text-slate-500 shrink-0 mt-1"
+              className="text-[10px] font-black uppercase tracking-widest text-zinc-500 shrink-0 mt-1"
               dateTime={new Date(event.timestamp).toISOString()}
             >
               {formatRelativeTime(event.timestamp)}
             </time>
           </div>
           {event.description && (
-            <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">{event.description}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.1em] text-zinc-500">{event.description}</p>
           )}
         </div>
       </div>
@@ -165,7 +165,7 @@ function ActivityTimelineBase({ activity }: ActivityTimelineProps) {
               className={`text-[10px] px-4 py-2 rounded-xl font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
                 filter === opt.value
                   ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
-                  : 'text-slate-500 hover:text-slate-200 hover:bg-white/5'
+                  : 'text-zinc-500 hover:text-slate-200 hover:bg-white/5'
               }`}
               aria-pressed={filter === opt.value}
             >
