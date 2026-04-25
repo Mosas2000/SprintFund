@@ -16,6 +16,7 @@ import CategoryTags from './common/CategoryTags';
 import { predictProposalSuccess } from '@/utils/successPredictor';
 import { Target, AlertCircle, Sparkles, Brain, CheckCircle2 } from 'lucide-react';
 import { useTransaction } from '@/hooks/useTransaction';
+import { ContractVersionGuard } from './common/ContractVersionGuard';
 
 const NETWORK = STACKS_MAINNET;
 
@@ -149,6 +150,8 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                         <p className="text-[10px] font-medium text-slate-500 uppercase tracking-tight">10 STX commitment mandatory for proposal manifest.</p>
                     </div>
                 </div>
+
+                <ContractVersionGuard>
 
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                     {/* Title Field */}
@@ -296,6 +299,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                         )}
                     </button>
                 </form>
+                </ContractVersionGuard>
             </motion.div>
 
             {/* Success Forecast Sidebar */}
