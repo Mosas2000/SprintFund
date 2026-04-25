@@ -172,7 +172,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
           <div className="relative flex-1 sm:flex-initial">
             <input
               type="text"
-              placeholder="Search proposals..."
+              placeholder="Search proposals..." aria-label="Search governance proposals"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="bg-transparent border-none focus:ring-0 text-xs px-3 py-1.5 text-white placeholder-zinc-500 w-full sm:w-40 pr-8"
