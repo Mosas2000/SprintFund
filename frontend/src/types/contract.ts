@@ -1,6 +1,6 @@
 /**
  * Contract-level TypeScript types that mirror the Clarity
- * sprintfund-core contract data structures and responses.
+ * sprintfund-core-v3 contract data structures and responses.
  *
  * These types represent the raw on-chain data shapes returned
  * by Stacks read-only function calls and transaction callbacks.
@@ -126,7 +126,7 @@ export interface ContractCallOptions {
    ═══════════════════════════════════════════════ */
 
 /**
- * Known Clarity error codes from the sprintfund-core contract.
+ * Known Clarity error codes from the sprintfund-core-v3 contract.
  * Maps uint error codes to their semantic meaning.
  */
 export const CONTRACT_ERROR_CODES = {
