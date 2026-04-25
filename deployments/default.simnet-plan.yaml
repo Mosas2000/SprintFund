@@ -69,6 +69,11 @@ plan:
             path: contracts/sprintfund-core.clar
             clarity-version: 3
         - emulated-contract-publish:
+            contract-name: sprintfund-core-v3
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/sprintfund-core-v3.clar
+            clarity-version: 3
+        - emulated-contract-publish:
             contract-name: sprintfund-core-v2
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/sprintfund-core-v2.clar
