@@ -4,6 +4,7 @@ export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK || 'mainnet') as 'mainne
 export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
 export const CONTRACT_NAME = process.env.NEXT_PUBLIC_CONTRACT_NAME || 'sprintfund-core-v3';
 export const CONTRACT_PRINCIPAL = `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`;
+export const EXPECTED_CONTRACT_VERSION = 3;
 
 /* ── API ──────────────────────────────────────── */
 
