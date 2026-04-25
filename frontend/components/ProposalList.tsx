@@ -20,6 +20,7 @@ import { PaginationControls } from './PaginationControls';
 import { useNextProposalFilters } from '../hooks/useNextProposalFilters';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
+import { ContractVersionGuard } from './common/ContractVersionGuard';
 import { paginateProposals } from '@/lib/proposal-utils';
 import { Proposal } from '@/types';
 import { normalizeError } from '@/lib/error-normalizer';
@@ -220,169 +221,171 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
 
         return (
             <div className="mt-4 pt-4 border-t border-white/10">
-                <div className="mb-3 flex items-center justify-between gap-2">
-                    <h5 className="text-white font-semibold text-sm">Cast Your Vote</h5>
-                    <div className="group relative">
+                <ContractVersionGuard>
+                    <div className="mb-3 flex items-center justify-between gap-2">
+                        <h5 className="text-white font-semibold text-sm">Cast Your Vote</h5>
+                        <div className="group relative">
+                            <button
+                                type="button"
+                                className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/30 text-[11px] text-purple-200 hover:border-white/50"
+                                aria-label="Quadratic voting explanation"
+                            >
+                                i
+                            </button>
+                            <div className="pointer-events-none absolute right-0 top-7 z-20 w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-white/20 bg-black/90 p-3 text-xs text-purple-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 sm:w-64">
+                                Quadratic voting uses cost = weight^2. A larger vote carries higher impact but each additional unit of weight costs more stake than the previous one.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mb-3 rounded-lg border border-white/10 bg-white/5 p-3">
+                        <div className="mb-2 flex items-center justify-between">
+                            <span className="text-xs text-purple-200">Quadratic cost curve</span>
+                            <span className="text-[11px] text-purple-300">cost = weight^2</span>
+                        </div>
+                        <div className="h-28 w-full rounded-md bg-black/20 p-2">
+                            <svg viewBox="0 0 100 100" className="h-full w-full" role="img" aria-label="Quadratic voting cost curve">
+                                <polyline
+                                    fill="none"
+                                    stroke="rgb(129 140 248)"
+                                    strokeWidth="2"
+                                    points={curvePoints.map((point) => `${point.x},${point.y}`).join(' ')}
+                                />
+                                {selectedPoint && (
+                                    <circle cx={selectedPoint.x} cy={selectedPoint.y} r="3.5" fill="rgb(96 165 250)" />
+                                )}
+                            </svg>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[11px] text-purple-300">
+                            <span>Weight 1</span>
+                            <span>Weight {curveMaxWeight}</span>
+                        </div>
+                    </div>
+
+                    <div className="mb-3">
+                        <div className="mb-2 flex items-center justify-between">
+                            <label className="block text-purple-200 text-xs">Vote Weight</label>
+                            <span className="text-xs font-semibold text-white">{weight || 1}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="1"
+                            max={sliderMax}
+                            value={weight > 0 ? weight : 1}
+                            onChange={(e) => handleWeightInput(e.target.value)}
+                            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/20"
+                            disabled={isVoting || sliderMax <= 1}
+                        />
+                        <input
+                            type="number"
+                            value={voteWeight}
+                            onChange={(e) => handleWeightInput(e.target.value)}
+                            min="1"
+                            max={sliderMax}
+                            placeholder="10"
+                            className="mt-2 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            disabled={isVoting}
+                        />
+
+                        {stakeLoading && !!userAddress && (
+                            <p className="mt-2 text-xs text-purple-300">Loading stake balance...</p>
+                        )}
+
+                        {weight > 0 && (
+                            <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-3 text-xs text-purple-200">
+                                <div className="flex items-center justify-between">
+                                    <span>Quadratic Cost</span>
+                                    <span className="font-semibold text-white">{cost.toLocaleString()} units</span>
+                                </div>
+                                <div className="mt-1 flex items-center justify-between">
+                                    <span>Cost in STX</span>
+                                    <span className="font-semibold text-white">{formatSTX(cost, 6)} STX</span>
+                                </div>
+                                {hasStakeData && (
+                                    <>
+                                        <div className="mt-1 flex items-center justify-between">
+                                            <span>Your Stake</span>
+                                            <span className="font-semibold text-white">{formatSTX(stakeAmount)} STX</span>
+                                        </div>
+                                        <div className="mt-1 flex items-center justify-between">
+                                            <span>Remaining After Vote</span>
+                                            <span className="font-semibold text-white">{formatSTX(remainingStake)} STX</span>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {weight > 0 && (
+                            <div className="mt-2 rounded-lg border border-blue-400/25 bg-blue-500/10 p-3 text-xs text-blue-100">
+                                <div className="flex items-center justify-between">
+                                    <span>Voting power per STX spent</span>
+                                    <span className="font-semibold">{votingPowerPerStx.toFixed(4)} votes / unit</span>
+                                </div>
+                                <p className="mt-1 text-blue-200">
+                                    Efficiency drop vs weight 1: {efficiencyDrop.toFixed(2)}%
+                                </p>
+                            </div>
+                        )}
+
+                        {isNearLimit && (
+                            <div className="mt-2 rounded-lg border border-amber-400/30 bg-amber-500/15 p-3">
+                                <p className="text-xs text-amber-100">Warning: this vote uses more than 80% of your current staked balance.</p>
+                            </div>
+                        )}
+
+                        {exceedsStake && (
+                            <div className="mt-2 rounded-lg border border-red-400/30 bg-red-500/15 p-3">
+                                <p className="text-xs text-red-100">This vote cost exceeds your staked balance. Reduce the vote weight.</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                         <button
-                            type="button"
-                            className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/30 text-[11px] text-purple-200 hover:border-white/50"
-                            aria-label="Quadratic voting explanation"
+                            onClick={() => handleVote(true)}
+                            disabled={isVoting || !voteWeight || exceedsStake}
+                            className="flex items-center justify-center rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-3 text-sm font-semibold text-white transition-all hover:from-green-600 hover:to-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            i
+                            {isVoting ? (
+                                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : (
+                                'Vote YES'
+                            )}
                         </button>
-                        <div className="pointer-events-none absolute right-0 top-7 z-20 w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-white/20 bg-black/90 p-3 text-xs text-purple-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 sm:w-64">
-                            Quadratic voting uses cost = weight^2. A larger vote carries higher impact but each additional unit of weight costs more stake than the previous one.
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mb-3 rounded-lg border border-white/10 bg-white/5 p-3">
-                    <div className="mb-2 flex items-center justify-between">
-                        <span className="text-xs text-purple-200">Quadratic cost curve</span>
-                        <span className="text-[11px] text-purple-300">cost = weight^2</span>
-                    </div>
-                    <div className="h-28 w-full rounded-md bg-black/20 p-2">
-                        <svg viewBox="0 0 100 100" className="h-full w-full" role="img" aria-label="Quadratic voting cost curve">
-                            <polyline
-                                fill="none"
-                                stroke="rgb(129 140 248)"
-                                strokeWidth="2"
-                                points={curvePoints.map((point) => `${point.x},${point.y}`).join(' ')}
-                            />
-                            {selectedPoint && (
-                                <circle cx={selectedPoint.x} cy={selectedPoint.y} r="3.5" fill="rgb(96 165 250)" />
+                        <button
+                            onClick={() => handleVote(false)}
+                            disabled={isVoting || !voteWeight || exceedsStake}
+                            className="flex items-center justify-center rounded-lg bg-gradient-to-r from-red-500 to-rose-500 px-4 py-3 text-sm font-semibold text-white transition-all hover:from-red-600 hover:to-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            {isVoting ? (
+                                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : (
+                                'Vote NO'
                             )}
-                        </svg>
+                        </button>
                     </div>
-                    <div className="mt-2 flex items-center justify-between text-[11px] text-purple-300">
-                        <span>Weight 1</span>
-                        <span>Weight {curveMaxWeight}</span>
-                    </div>
-                </div>
 
-                <div className="mb-3">
-                    <div className="mb-2 flex items-center justify-between">
-                        <label className="block text-purple-200 text-xs">Vote Weight</label>
-                        <span className="text-xs font-semibold text-white">{weight || 1}</span>
-                    </div>
-                    <input
-                        type="range"
-                        min="1"
-                        max={sliderMax}
-                        value={weight > 0 ? weight : 1}
-                        onChange={(e) => handleWeightInput(e.target.value)}
-                        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-white/20"
-                        disabled={isVoting || sliderMax <= 1}
-                    />
-                    <input
-                        type="number"
-                        value={voteWeight}
-                        onChange={(e) => handleWeightInput(e.target.value)}
-                        min="1"
-                        max={sliderMax}
-                        placeholder="10"
-                        className="mt-2 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
-                        disabled={isVoting}
-                    />
-
-                    {stakeLoading && !!userAddress && (
-                        <p className="mt-2 text-xs text-purple-300">Loading stake balance...</p>
-                    )}
-
-                    {weight > 0 && (
-                        <div className="mt-2 rounded-lg border border-white/10 bg-black/20 p-3 text-xs text-purple-200">
-                            <div className="flex items-center justify-between">
-                                <span>Quadratic Cost</span>
-                                <span className="font-semibold text-white">{cost.toLocaleString()} units</span>
-                            </div>
-                            <div className="mt-1 flex items-center justify-between">
-                                <span>Cost in STX</span>
-                                <span className="font-semibold text-white">{formatSTX(cost, 6)} STX</span>
-                            </div>
-                            {hasStakeData && (
-                                <>
-                                    <div className="mt-1 flex items-center justify-between">
-                                        <span>Your Stake</span>
-                                        <span className="font-semibold text-white">{formatSTX(stakeAmount)} STX</span>
-                                    </div>
-                                    <div className="mt-1 flex items-center justify-between">
-                                        <span>Remaining After Vote</span>
-                                        <span className="font-semibold text-white">{formatSTX(remainingStake)} STX</span>
-                                    </div>
-                                </>
-                            )}
+                    {/* Success Message */}
+                    {voteSuccess && (
+                        <div className="bg-green-500/20 border border-green-400/30 rounded-lg p-3 mb-2">
+                            <p className="text-green-200 text-xs break-all">{voteSuccess}</p>
                         </div>
                     )}
 
-                    {weight > 0 && (
-                        <div className="mt-2 rounded-lg border border-blue-400/25 bg-blue-500/10 p-3 text-xs text-blue-100">
-                            <div className="flex items-center justify-between">
-                                <span>Voting power per STX spent</span>
-                                <span className="font-semibold">{votingPowerPerStx.toFixed(4)} votes / unit</span>
-                            </div>
-                            <p className="mt-1 text-blue-200">
-                                Efficiency drop vs weight 1: {efficiencyDrop.toFixed(2)}%
-                            </p>
+                    {/* Error Message */}
+                    {voteError && (
+                        <div className="bg-red-500/20 border border-red-400/30 rounded-lg p-3">
+                            <p className="text-red-200 text-xs">{voteError}</p>
                         </div>
                     )}
-
-                    {isNearLimit && (
-                        <div className="mt-2 rounded-lg border border-amber-400/30 bg-amber-500/15 p-3">
-                            <p className="text-xs text-amber-100">Warning: this vote uses more than 80% of your current staked balance.</p>
-                        </div>
-                    )}
-
-                    {exceedsStake && (
-                        <div className="mt-2 rounded-lg border border-red-400/30 bg-red-500/15 p-3">
-                            <p className="text-xs text-red-100">This vote cost exceeds your staked balance. Reduce the vote weight.</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <button
-                        onClick={() => handleVote(true)}
-                        disabled={isVoting || !voteWeight || exceedsStake}
-                        className="flex items-center justify-center rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 px-4 py-3 text-sm font-semibold text-white transition-all hover:from-green-600 hover:to-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {isVoting ? (
-                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        ) : (
-                            'Vote YES'
-                        )}
-                    </button>
-                    <button
-                        onClick={() => handleVote(false)}
-                        disabled={isVoting || !voteWeight || exceedsStake}
-                        className="flex items-center justify-center rounded-lg bg-gradient-to-r from-red-500 to-rose-500 px-4 py-3 text-sm font-semibold text-white transition-all hover:from-red-600 hover:to-rose-600 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {isVoting ? (
-                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        ) : (
-                            'Vote NO'
-                        )}
-                    </button>
-                </div>
-
-                {/* Success Message */}
-                {voteSuccess && (
-                    <div className="bg-green-500/20 border border-green-400/30 rounded-lg p-3 mb-2">
-                        <p className="text-green-200 text-xs break-all">{voteSuccess}</p>
-                    </div>
-                )}
-
-                {/* Error Message */}
-                {voteError && (
-                    <div className="bg-red-500/20 border border-red-400/30 rounded-lg p-3">
-                        <p className="text-red-200 text-xs">{voteError}</p>
-                    </div>
-                )}
+                </ContractVersionGuard>
             </div>
         );
     };
