@@ -281,3 +281,4 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
 const VotingHistory = memo(VotingHistoryBase);
 VotingHistory.displayName = 'VotingHistory';
 export default VotingHistory;
+/** VotingHistory component displays a list of governance votes */
