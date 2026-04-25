@@ -11,15 +11,15 @@ interface StatCardProps {
 
 function StatCard({ label, value, detail, color = 'text-white' }: StatCardProps) {
   return (
-    <div className="rounded-xl bg-white/5 border border-white/10 p-4 sm:p-5">
-      <p className="text-xs text-zinc-400 uppercase tracking-wider mb-1">
+    <div className="group rounded-2xl bg-white/5 border border-white/10 p-5 sm:p-6 hover:bg-white/10 transition-all duration-300">
+      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-3 group-hover:text-slate-400 transition-colors">
         {label}
       </p>
-      <p className={`text-xl sm:text-2xl font-bold ${color}`}>
+      <p className={`text-2xl sm:text-3xl font-black tracking-tighter ${color}`}>
         {value}
       </p>
       {detail && (
-        <p className="text-xs text-zinc-500 mt-1">{detail}</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mt-2">{detail}</p>
       )}
     </div>
   );
@@ -32,12 +32,17 @@ function StatCard({ label, value, detail, color = 'text-white' }: StatCardProps)
 function ProfileStatsGridBase({ stats }: ProfileStatsGridProps) {
   return (
     <section aria-labelledby="profile-stats-heading">
-      <h2
-        id="profile-stats-heading"
-        className="text-lg font-semibold text-white mb-4"
-      >
-        Overview
-      </h2>
+      <div className="flex items-end justify-between mb-6">
+        <h2
+          id="profile-stats-heading"
+          className="text-2xl font-black uppercase tracking-tight text-white"
+        >
+          Citizen Overview
+        </h2>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">
+          Last synced: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </p>
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard
