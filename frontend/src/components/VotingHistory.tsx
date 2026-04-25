@@ -163,7 +163,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
           <h2 id="voting-history-heading" className="text-lg font-black uppercase tracking-tight text-white">
             Governance Activity
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">
+          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500 mt-1">
             {filtered.length} total votes recorded
           </p>
         </div>
@@ -196,7 +196,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
                 setSortField(field);
                 setSortDir(dir);
               }}
-              className="bg-transparent border-none focus:ring-0 text-[10px] font-bold uppercase tracking-widest text-zinc-400 cursor-pointer hover:text-zinc-200 transition-colors"
+              className="bg-transparent border-none focus:ring-0 text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-400 cursor-pointer hover:text-zinc-200 transition-colors"
             >
               <option value="timestamp-desc" className="bg-zinc-900 text-white">Latest</option>
               <option value="timestamp-asc" className="bg-zinc-900 text-white">Oldest</option>
@@ -208,7 +208,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${
                   filter === f
                     ? 'bg-white/10 text-white'
                     : 'text-zinc-500 hover:text-zinc-300'
@@ -238,23 +238,23 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
                 </Link>
                 <div className="flex items-center gap-2 mt-1">
                   {vote.executed && (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">Executed</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">Executed</span>
                   )}
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500">
                     {formatDate(vote.timestamp)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-6 border-t border-white/5 pt-3 sm:border-none sm:pt-0">
                 <div className="flex flex-col items-start sm:items-center">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 mb-1">Direction</span>
+                  <span className="text-[8px] font-black uppercase tracking-[0.15em] text-zinc-500 mb-1">Direction</span>
                   <VoteBadge support={vote.support} />
                 </div>
                 <div className="flex flex-col items-start sm:items-center min-w-[60px]">
-                  <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 mb-1">Weight</span>
+                  <span className="text-[8px] font-black uppercase tracking-[0.15em] text-zinc-500 mb-1">Weight</span>
                   <div className="flex items-baseline gap-1">
                     <span className="text-sm font-black text-white">{vote.weight}</span>
-                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500">({vote.weight ** 2} STX)</span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.15em] text-zinc-500">({vote.weight ** 2} STX)</span>
                   </div>
                 </div>
               </div>
@@ -268,7 +268,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
           <button
             type="button"
             onClick={handleShowMore}
-            className="text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-indigo-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-6 py-3 border border-indigo-500/20 bg-indigo-500/5"
+            className="text-[10px] font-black uppercase tracking-[0.15em] text-indigo-400 hover:text-indigo-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-6 py-3 border border-indigo-500/20 bg-indigo-500/5"
           >
             Show more ({filtered.length - visibleCount} remaining)
           </button>
