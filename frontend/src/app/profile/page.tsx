@@ -87,6 +87,7 @@ export default function ProfilePage() {
   const connect = useWalletConnect();
   const disconnect = useWalletDisconnect();
 
+  const [activeTab, setActiveTab] = useState<'activity' | 'votes' | 'proposals'>('activity');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityError, setActivityError] = useState<string | null>(null);
