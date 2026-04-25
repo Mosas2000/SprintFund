@@ -204,7 +204,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="mb-12 grid grid-cols-1 gap-12 lg:grid-cols-2">
+        <div className="mb-12 grid grid-cols-1 gap-16 lg:grid-cols-2">
           <InterestProfiler />
           <UserDashboard userAddress={address} />
         </div>
