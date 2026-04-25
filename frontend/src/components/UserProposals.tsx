@@ -147,3 +147,4 @@ function UserProposalsBase({ proposals }: UserProposalsProps) {
 const UserProposals = memo(UserProposalsBase);
 UserProposals.displayName = 'UserProposals';
 export default UserProposals;
+/** UserProposals component displays proposals created by the user */
