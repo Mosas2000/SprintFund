@@ -49,7 +49,7 @@ Available environment variables:
 |----------|-------------|---------|
 | `NEXT_PUBLIC_NETWORK` | Stacks network (mainnet/testnet) | mainnet |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | Contract deployer address | SP31PKQ... |
-| `NEXT_PUBLIC_CONTRACT_NAME` | Contract name | sprintfund-core |
+| `NEXT_PUBLIC_CONTRACT_NAME` | Contract name | sprintfund-core-v3 |
 
 For mainnet deployment, no environment changes are typically needed.
 
@@ -111,7 +111,7 @@ frontend/
 
 The frontend interacts with the deployed contract:
 
-**Contract**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core`
+**Contract**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3`
 
 ### Read-Only Functions
 - `get-proposal-count()` - Fetch total proposals
