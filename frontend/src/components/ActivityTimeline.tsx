@@ -70,44 +70,46 @@ function EventRow({ event }: { event: ActivityEvent }) {
   const meta = EVENT_META[event.type];
 
   return (
-    <li className="flex gap-3">
+    <li className="group flex gap-5">
       {/* Timeline line + dot */}
       <div className="flex flex-col items-center">
         <div
-          className={`w-8 h-8 rounded-full ${meta.color} flex items-center justify-center text-white text-xs font-bold shrink-0`}
+          className={`w-10 h-10 rounded-2xl ${meta.color} flex items-center justify-center text-white text-[10px] font-black shadow-lg group-hover:scale-110 transition-transform duration-300 shrink-0`}
           aria-hidden="true"
         >
           {meta.icon}
         </div>
-        <div className="flex-1 w-px bg-white/10" aria-hidden="true" />
+        <div className="flex-1 w-0.5 bg-gradient-to-b from-white/10 to-transparent my-2" aria-hidden="true" />
       </div>
 
       {/* Content */}
-      <div className="flex-1 pb-6 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            {event.proposalId !== undefined ? (
-              <Link
-                to={`/proposals/${event.proposalId}`}
-                className="text-sm font-medium text-white hover:text-indigo-300 transition-colors truncate block focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
-              >
-                {event.label}
-              </Link>
-            ) : (
-              <p className="text-sm font-medium text-white truncate">
-                {event.label}
-              </p>
-            )}
-            {event.description && (
-              <p className="text-xs text-zinc-400 mt-0.5">{event.description}</p>
-            )}
+      <div className="flex-1 pb-10 min-w-0">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              {event.proposalId !== undefined ? (
+                <Link
+                  to={`/proposals/${event.proposalId}`}
+                  className="text-sm font-black uppercase tracking-tight text-white hover:text-orange-400 transition-colors truncate block focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded"
+                >
+                  {event.label}
+                </Link>
+              ) : (
+                <p className="text-sm font-black uppercase tracking-tight text-white truncate">
+                  {event.label}
+                </p>
+              )}
+            </div>
+            <time
+              className="text-[10px] font-black uppercase tracking-widest text-zinc-500 shrink-0 mt-1"
+              dateTime={new Date(event.timestamp).toISOString()}
+            >
+              {formatRelativeTime(event.timestamp)}
+            </time>
           </div>
-          <time
-            className="text-xs text-zinc-500 shrink-0 mt-0.5"
-            dateTime={new Date(event.timestamp).toISOString()}
-          >
-            {formatRelativeTime(event.timestamp)}
-          </time>
+          {event.description && (
+            <p className="text-[10px] font-black uppercase tracking-[0.1em] text-zinc-500">{event.description}</p>
+          )}
         </div>
       </div>
     </li>
@@ -145,13 +147,13 @@ function ActivityTimelineBase({ activity }: ActivityTimelineProps) {
 
   return (
     <section aria-labelledby="activity-heading">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h2 id="activity-heading" className="text-lg font-semibold text-white">
-          Activity ({filtered.length})
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h2 id="activity-heading" className="text-lg font-black uppercase tracking-tight text-white">
+          Recent Activity ({filtered.length})
         </h2>
 
         {/* Filter pills */}
-        <div className="flex gap-2" role="group" aria-label="Filter activity">
+        <div className="flex flex-wrap gap-1.5 bg-white/5 p-1 rounded-2xl" role="group" aria-label="Filter activity">
           {FILTER_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -160,10 +162,10 @@ function ActivityTimelineBase({ activity }: ActivityTimelineProps) {
                 setFilter(opt.value);
                 setVisibleCount(PAGE_SIZE);
               }}
-              className={`text-xs px-3 py-1 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+              className={`text-[10px] px-4 py-2 rounded-xl font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 ${
                 filter === opt.value
-                  ? 'bg-indigo-500/30 text-indigo-300'
-                  : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+                  : 'text-zinc-500 hover:text-slate-200 hover:bg-white/5'
               }`}
               aria-pressed={filter === opt.value}
             >
@@ -205,3 +207,5 @@ function ActivityTimelineBase({ activity }: ActivityTimelineProps) {
 const ActivityTimeline = memo(ActivityTimelineBase);
 ActivityTimeline.displayName = 'ActivityTimeline';
 export default ActivityTimeline;
+/** ActivityTimeline component displays recent governance events */
+// Optimized with React.memo

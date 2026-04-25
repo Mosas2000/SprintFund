@@ -21,22 +21,36 @@ function statusBadge(proposal: Proposal): { label: string; className: string } {
 
 /* ── Vote bar ─────────────────────────────────── */
 
-function VoteBar({ votesFor, votesAgainst }: { votesFor: number; votesAgainst: number }) {
+function VoteBar({ votesFor, votesAgainst }: { votesFor: number; votesAgainst: number }, votesAgainst }: { votesFor: number; votesAgainst: number }) {
   const total = votesFor + votesAgainst;
   const forPct = total > 0 ? Math.round((votesFor / total) * 100) : 0;
   const againstPct = total > 0 ? 100 - forPct : 0;
 
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
-        <div
-          className="h-full bg-emerald-500 rounded-full"
-          style={{ width: `${forPct}%` }}
-        />
+    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+      <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden border border-white/5">
+        <div className="flex h-full w-full">
+          {total > 0 ? (
+            <>
+              <div
+                className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-500"
+                style={{ width: `${forPct}%` }}
+              />
+              <div
+                className="h-full bg-gradient-to-r from-red-400 to-red-600 transition-all duration-500"
+                style={{ width: `${againstPct}%` }}
+              />
+            </>
+          ) : (
+            <div className="h-full w-full bg-white/5" />
+          )}
+        </div>
       </div>
-      <span className="text-emerald-400 min-w-[3ch] text-right">{forPct}%</span>
-      <span className="text-zinc-600">/</span>
-      <span className="text-red-400 min-w-[3ch]">{againstPct}%</span>
+      <div className="flex items-center gap-1.5 shrink-0 min-w-[80px] justify-end">
+        <span className="text-emerald-400">{forPct}%</span>
+        <span className="text-zinc-700">/</span>
+        <span className="text-red-400">{againstPct}%</span>
+      </div>
     </div>
   );
 }
@@ -45,9 +59,11 @@ function VoteBar({ votesFor, votesAgainst }: { votesFor: number; votesAgainst: n
 
 function ProposalRow({ proposal }: { proposal: Proposal }) {
   const badge = statusBadge(proposal);
+  const votesFor = proposal.votesFor || 0;
+  const votesAgainst = proposal.votesAgainst || 0;
 
   return (
-    <li className="rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/8 transition-colors">
+    <li className="group rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/8 hover:scale-[1.01] hover:shadow-2xl hover:shadow-indigo-500/5 transition-all duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -131,3 +147,5 @@ function UserProposalsBase({ proposals }: UserProposalsProps) {
 const UserProposals = memo(UserProposalsBase);
 UserProposals.displayName = 'UserProposals';
 export default UserProposals;
+/** UserProposals component displays proposals created by the user */
+// Optimized with React.memo

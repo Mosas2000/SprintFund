@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type { VotingHistoryProps } from '../types/profile';
 import type { VoteRecord } from '../types/profile';
@@ -18,7 +18,7 @@ function formatDate(timestamp: number): string {
 
 /* ── Vote direction badge ─────────────────────── */
 
-function VoteBadge({ support }: { support: boolean }) {
+function VoteBadge({ support }: { support: boolean }: { support: boolean }) {
   return (
     <span
       className={`inline-flex items-center text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full ${
@@ -106,6 +106,9 @@ function sortVotes(votes: VoteRecord[], field: SortField, dir: SortDir): VoteRec
 function VotingHistoryBase({ votes }: VotingHistoryProps) {
   const [sortField, setSortField] = useState<SortField>('timestamp');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
+  const [filter, setFilter] = useState<'all' | 'for' | 'against'>('all');
+  const [search, setSearch] = useState('');
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const handleSort = (field: SortField) => {
     if (field === sortField) {
@@ -116,10 +119,31 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
     }
   };
 
-  const sorted = useMemo(
-    () => sortVotes(votes, sortField, sortDir),
-    [votes, sortField, sortDir],
-  );
+  const filtered = useMemo(() => {
+    let result = [...votes];
+    if (filter === 'for') {
+      result = result.filter((v) => v.support);
+    } else if (filter === 'against') {
+      result = result.filter((v) => !v.support);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((v) => v.title.toLowerCase().includes(q));
+    }
+    return sortVotes(result, sortField, sortDir);
+  }, [votes, sortField, sortDir, filter, search]);
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
+
+  const handleShowMore = () => {
+    setVisibleCount((c) => c + 10);
+  };
+
+  // Reset pagination on filter or search change
+  useEffect(() => {
+    setVisibleCount(10);
+  }, [filter, search]);
 
   if (votes.length === 0) {
     return (
@@ -134,81 +158,122 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
 
   return (
     <section aria-labelledby="voting-history-heading">
-      <div className="flex items-center justify-between mb-4">
-        <h2 id="voting-history-heading" className="text-lg font-semibold text-white">
-          Voting History ({votes.length})
-        </h2>
-      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 id="voting-history-heading" className="text-lg font-black uppercase tracking-tight text-white">
+            Governance Activity
+          </h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500 mt-1">
+            {filtered.length} total votes recorded
+          </p>
+        </div>
 
-      {/* Sortable table header */}
-      <div className="hidden sm:flex items-center gap-4 px-4 py-2 text-zinc-400 border-b border-white/10 mb-2">
-        <div className="flex-1">Proposal</div>
-        <div className="w-20 text-center">
-          <SortButton
-            field="support"
-            label="Vote"
-            activeField={sortField}
-            direction={sortDir}
-            onSort={handleSort}
-          />
-        </div>
-        <div className="w-20 text-center">
-          <SortButton
-            field="weight"
-            label="Weight"
-            activeField={sortField}
-            direction={sortDir}
-            onSort={handleSort}
-          />
-        </div>
-        <div className="w-28 text-right">
-          <SortButton
-            field="timestamp"
-            label="Date"
-            activeField={sortField}
-            direction={sortDir}
-            onSort={handleSort}
-          />
+        <div className="flex flex-wrap items-center gap-4 bg-white/5 p-1 rounded-xl w-full sm:w-auto relative">
+          <div className="relative flex-1 sm:flex-initial">
+            <input
+              type="text"
+              placeholder="Search proposals..." aria-label="Search governance proposals"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="bg-transparent border-none focus:ring-0 text-xs px-3 py-1.5 text-white placeholder-zinc-500 w-full sm:w-40 pr-8"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          <div className="hidden sm:block w-px h-4 bg-white/10" />
+          <div className="flex items-center gap-1">
+            <select
+              value={`${sortField}-${sortDir}`}
+              onChange={(e) => {
+                const [field, dir] = e.target.value.split('-') as [SortField, SortDir];
+                setSortField(field);
+                setSortDir(dir);
+              }}
+              className="bg-transparent border-none focus:ring-0 text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-400 cursor-pointer hover:text-zinc-200 transition-colors"
+            >
+              <option value="timestamp-desc" className="bg-zinc-900 text-white">Latest</option>
+              <option value="timestamp-asc" className="bg-zinc-900 text-white">Oldest</option>
+              <option value="weight-desc" className="bg-zinc-900 text-white">Highest Weight</option>
+              <option value="weight-asc" className="bg-zinc-900 text-white">Lowest Weight</option>
+            </select>
+            <div className="w-px h-4 bg-white/10 mx-1" />
+            {(['all', 'for', 'against'] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] transition-all ${
+                  filter === f
+                    ? 'bg-white/10 text-white'
+                    : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Rows */}
       <ul className="space-y-2" role="list">
-        {sorted.map((vote) => (
+        {visible.map((vote) => (
           <li
             key={`vote-${vote.proposalId}-${vote.timestamp}`}
-            className="rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/8 transition-colors"
+            className="group rounded-xl bg-white/5 border border-white/10 p-4 hover:bg-white/8 hover:scale-[1.01] hover:shadow-2xl hover:shadow-orange-500/5 transition-all duration-300"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="flex-1 min-w-0">
                 <Link
                   to={`/proposals/${vote.proposalId}`}
-                  className="text-sm font-medium text-white hover:text-indigo-300 transition-colors truncate block focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
+                  className="text-sm font-black uppercase tracking-tight text-white hover:text-orange-400 transition-colors truncate block focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded"
                 >
                   {vote.title}
                 </Link>
-                {vote.executed && (
-                  <span className="text-[10px] text-zinc-500">Executed</span>
-                )}
-              </div>
-              <div className="flex items-center gap-4 sm:gap-0">
-                <div className="sm:w-20 sm:text-center">
-                  <VoteBadge support={vote.support} />
-                </div>
-                <div className="sm:w-20 text-center">
-                  <span className="text-sm text-zinc-300">{vote.weight}</span>
-                  <span className="text-[10px] text-zinc-500 ml-1 sm:hidden">weight</span>
-                </div>
-                <div className="sm:w-28 sm:text-right">
-                  <span className="text-xs text-zinc-400">
+                <div className="flex items-center gap-2 mt-1">
+                  {vote.executed && (
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">Executed</span>
+                  )}
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500">
                     {formatDate(vote.timestamp)}
                   </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between sm:justify-end gap-6 border-t border-white/5 pt-3 sm:border-none sm:pt-0">
+                <div className="flex flex-col items-start sm:items-center">
+                  <span className="text-[8px] font-black uppercase tracking-[0.15em] text-zinc-500 mb-1">Direction</span>
+                  <VoteBadge support={vote.support} />
+                </div>
+                <div className="flex flex-col items-start sm:items-center min-w-[60px]">
+                  <span className="text-[8px] font-black uppercase tracking-[0.15em] text-zinc-500 mb-1">Weight</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-sm font-black text-white">{vote.weight}</span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.15em] text-zinc-500">({vote.weight ** 2} STX)</span>
+                  </div>
                 </div>
               </div>
             </div>
           </li>
         ))}
       </ul>
+
+      {hasMore && (
+        <div className="text-center pt-6">
+          <button
+            type="button"
+            onClick={handleShowMore}
+            className="text-[10px] font-black uppercase tracking-[0.15em] text-indigo-400 hover:text-indigo-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-8 py-4 border border-indigo-500/20 bg-indigo-500/5"
+          >
+            Show more ({filtered.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
     </section>
   );
 }
@@ -216,3 +281,5 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
 const VotingHistory = memo(VotingHistoryBase);
 VotingHistory.displayName = 'VotingHistory';
 export default VotingHistory;
+/** VotingHistory component displays a list of governance votes */
+// Optimized with React.memo
