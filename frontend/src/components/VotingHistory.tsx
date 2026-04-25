@@ -238,7 +238,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
                 </Link>
                 <div className="flex items-center gap-2 mt-1">
                   {vote.executed && (
-                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded">Executed</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">Executed</span>
                   )}
                   <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500">
                     {formatDate(vote.timestamp)}
