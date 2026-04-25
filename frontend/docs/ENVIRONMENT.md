@@ -8,6 +8,7 @@ This document describes all environment variables used by the SprintFund fronten
 |----------|-------------|---------|
 | `NEXT_PUBLIC_NETWORK` | Stacks network to connect to | `mainnet`, `testnet` |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | Deployed contract address | `SP2...` |
+| `NEXT_PUBLIC_CONTRACT_NAME` | Name of the contract | `sprintfund-core-v3` |
 | `NEXT_PUBLIC_STACKS_API_URL` | Stacks API endpoint | `https://stacks-node-api.mainnet.stacks.co` |
 
 ## Optional Variables
@@ -27,6 +28,7 @@ Create `.env.local`:
 ```bash
 NEXT_PUBLIC_NETWORK=testnet
 NEXT_PUBLIC_CONTRACT_ADDRESS=ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+NEXT_PUBLIC_CONTRACT_NAME=sprintfund-core-v3
 NEXT_PUBLIC_STACKS_API_URL=https://stacks-node-api.testnet.stacks.co
 ```
 
@@ -37,6 +39,7 @@ Set environment variables in your deployment platform or create `.env.production
 ```bash
 NEXT_PUBLIC_NETWORK=mainnet
 NEXT_PUBLIC_CONTRACT_ADDRESS=SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9
+NEXT_PUBLIC_CONTRACT_NAME=sprintfund-core-v3
 NEXT_PUBLIC_STACKS_API_URL=https://stacks-node-api.mainnet.stacks.co
 ```
 
