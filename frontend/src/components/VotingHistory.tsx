@@ -268,7 +268,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
           <button
             type="button"
             onClick={handleShowMore}
-            className="text-[10px] font-black uppercase tracking-[0.15em] text-indigo-400 hover:text-indigo-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-6 py-3 border border-indigo-500/20 bg-indigo-500/5"
+            className="text-[10px] font-black uppercase tracking-[0.15em] text-indigo-400 hover:text-indigo-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded px-8 py-4 border border-indigo-500/20 bg-indigo-500/5"
           >
             Show more ({filtered.length - visibleCount} remaining)
           </button>
