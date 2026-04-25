@@ -138,19 +138,33 @@ export default function ProfilePage() {
       <main className="mx-auto max-w-7xl px-4 pb-20 pt-28 sm:px-6 lg:px-8 lg:pt-32">
         <div className="mb-16 flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
-            <div className="group relative flex h-24 w-24 items-center justify-center rounded-[32px] bg-gradient-to-br from-orange-600 to-orange-500 text-3xl font-black text-white shadow-2xl sm:h-32 sm:w-32 sm:rounded-[40px] sm:text-4xl">
-              {avatarInitials}
-              <div className="absolute inset-0 rounded-[32px] border border-white/20 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100 sm:rounded-[40px]" />
-            </div>
-            <div>
-              <h2 className="mb-2 text-3xl font-black uppercase tracking-tighter text-white sm:text-5xl">
-                {address ? 'Wallet Profile' : 'Sprint Citizen'}
-              </h2>
-              <div className="flex items-center gap-3">
-                <Wallet className="h-4 w-4 text-slate-500" />
-                <p className="text-sm font-bold uppercase tracking-widest leading-relaxed text-slate-500">
-                  {address ? shortenAddress(address) : 'Connect a wallet to view your profile'}
-                </p>
+            <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
+              <div className="group relative flex h-24 w-24 items-center justify-center rounded-[32px] bg-gradient-to-br from-orange-600 to-orange-500 text-3xl font-black text-white shadow-2xl sm:h-32 sm:w-32 sm:rounded-[40px] sm:text-4xl">
+                {avatarInitials}
+                <div className="absolute inset-0 rounded-[32px] border border-white/20 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100 sm:rounded-[40px]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Live Sync</span>
+                </div>
+                <h2 className="mb-2 text-3xl font-black uppercase tracking-tighter text-white sm:text-5xl">
+                  {address ? 'Wallet Profile' : 'Sprint Citizen'}
+                </h2>
+                <div className="flex items-center gap-3">
+                  <Wallet className="h-4 w-4 text-slate-500" />
+                  <p className="text-sm font-bold uppercase tracking-widest leading-relaxed text-slate-500">
+                    {address ? shortenAddress(address) : 'Connect a wallet to view your profile'}
+                  </p>
+                  {address && (
+                    <button
+                      onClick={() => navigator.clipboard.writeText(address)}
+                      className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-600 hover:text-orange-400 transition-colors"
+                    >
+                      [Copy]
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -190,10 +204,16 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="mb-12 grid grid-cols-1 gap-12 lg:grid-cols-2">
           <InterestProfiler />
           <UserDashboard userAddress={address} />
         </div>
+
+        {profile && (
+          <div className="mb-12">
+            <ProfileStatsGrid stats={profile.stats} />
+          </div>
+        )}
 
         <section className="rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8">
           <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
