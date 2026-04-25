@@ -5,7 +5,7 @@
 
 # Contract details
 CONTRACT_ADDRESS="SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T"
-CONTRACT_NAME="sprintfund-core"
+CONTRACT_NAME="sprintfund-core-v3"
 FUNCTION_NAME="create-proposal"
 
 # Proposal parameters
