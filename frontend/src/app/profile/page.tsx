@@ -232,7 +232,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-1.5 rounded-2xl bg-white/5 p-1">
               {(['activity', 'votes', 'proposals'] as const).map((tab) => (
                 <button
-                  key={tab}
+                  key={tab} aria-label={`Switch to ${tab} view`}
                   onClick={() => setActiveTab(tab)}
                   className={`rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${
                     activeTab === tab
