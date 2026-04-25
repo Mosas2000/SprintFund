@@ -107,6 +107,12 @@
   (ok (var-get contract-owner))
 )
 
+;; Get the contract version
+;; @returns: Contract version number
+(define-read-only (get-version)
+  (ok u3)
+)
+
 ;; ============================================
 ;; Initialization
 ;; ============================================
