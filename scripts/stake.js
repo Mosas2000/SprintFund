@@ -38,7 +38,7 @@ async function stakeSTX() {
 
   const privateKey = keyResult.key;
   const contractAddress = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-  const contractName = 'sprintfund-core';
+  const contractName = 'sprintfund-core-v3';
   const stakeAmount = 10000000;
   
   console.log('============================================');
