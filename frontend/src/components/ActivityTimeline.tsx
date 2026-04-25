@@ -207,3 +207,4 @@ function ActivityTimelineBase({ activity }: ActivityTimelineProps) {
 const ActivityTimeline = memo(ActivityTimelineBase);
 ActivityTimeline.displayName = 'ActivityTimeline';
 export default ActivityTimeline;
+/** ActivityTimeline component displays recent governance events */
