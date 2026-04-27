@@ -3,6 +3,7 @@ import {
   validateTitle,
   validateDescription,
   validateAmount,
+  validateAmountAgainstTreasury,
   validateDuration,
   validateProposalForm,
   isFormValid,
@@ -179,5 +180,36 @@ describe('isFormValid', () => {
 
   it('returns false when errors object has entries', () => {
     expect(isFormValid({ title: 'Title is required' })).toBe(false);
+  });
+});
+
+/* ────────────────────────────────────────────── */
+/*  validateAmountAgainstTreasury                 */
+/* ────────────────────────────────────────────── */
+describe('validateAmountAgainstTreasury', () => {
+  it('returns basic validation error when amount is invalid', () => {
+    expect(validateAmountAgainstTreasury('', 100)).toBe('Amount is required');
+    expect(validateAmountAgainstTreasury('abc', 100)).toContain('valid number');
+    expect(validateAmountAgainstTreasury('0', 100)).toContain('at least');
+  });
+
+  it('returns null when amount is valid and within treasury balance', () => {
+    expect(validateAmountAgainstTreasury('50', 100)).toBeNull();
+    expect(validateAmountAgainstTreasury('100', 100)).toBeNull();
+  });
+
+  it('returns error when amount exceeds treasury balance', () => {
+    const error = validateAmountAgainstTreasury('150', 100);
+    expect(error).toContain('exceeds treasury balance');
+    expect(error).toContain('100.00 STX available');
+  });
+
+  it('handles null treasury balance gracefully', () => {
+    expect(validateAmountAgainstTreasury('50', null)).toBeNull();
+  });
+
+  it('validates against treasury balance with decimals', () => {
+    expect(validateAmountAgainstTreasury('50.5', 50.25)).toContain('exceeds treasury balance');
+    expect(validateAmountAgainstTreasury('50.25', 50.25)).toBeNull();
   });
 });

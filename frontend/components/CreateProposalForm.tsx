@@ -14,9 +14,11 @@ import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import CategoryTags from './common/CategoryTags';
 import { predictProposalSuccess } from '@/utils/successPredictor';
-import { Target, AlertCircle, Sparkles, Brain, CheckCircle2 } from 'lucide-react';
+import { Target, AlertCircle, Sparkles, Brain, CheckCircle2, Wallet } from 'lucide-react';
 import { useTransaction } from '@/hooks/useTransaction';
 import { ContractVersionGuard } from './common/ContractVersionGuard';
+import { useTreasuryBalance } from '@/hooks/useTreasuryBalance';
+import { validateAmountAgainstTreasury } from '@/lib/validation';
 
 const NETWORK = STACKS_MAINNET;
 
@@ -32,6 +34,7 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
     const [amountError, setAmountError] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const { balanceInStx, loading: treasuryLoading, error: treasuryError } = useTreasuryBalance();
 
     const { isLoading, execute } = useTransaction({
         type: 'create-proposal',
@@ -151,6 +154,37 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                     </div>
                 </div>
 
+                {/* Treasury Balance Display */}
+                <div className={`border rounded-2xl p-4 mb-6 flex items-center gap-4 ${
+                    treasuryError ? 'bg-red-600/10 border-red-500/20' : 
+                    treasuryLoading ? 'bg-slate-800/50 border-slate-700/30' :
+                    'bg-purple-600/10 border-purple-500/20'
+                }`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
+                        treasuryError ? 'bg-red-600/20 border-red-500/30' :
+                        treasuryLoading ? 'bg-slate-700/30 border-slate-600/30' :
+                        'bg-purple-600/20 border-purple-500/30'
+                    }`}>
+                        <Wallet className={`w-5 h-5 ${
+                            treasuryError ? 'text-red-500' :
+                            treasuryLoading ? 'text-slate-500' :
+                            'text-purple-500'
+                        }`} />
+                    </div>
+                    <div className="flex-1">
+                        <p className="text-white text-xs font-black uppercase tracking-widest">Treasury Available</p>
+                        {treasuryLoading ? (
+                            <p className="text-[10px] font-medium text-slate-500 uppercase tracking-tight">Loading balance...</p>
+                        ) : treasuryError ? (
+                            <p className="text-[10px] font-medium text-red-400 uppercase tracking-tight">Failed to load treasury balance</p>
+                        ) : (
+                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tight">
+                                {balanceInStx !== null ? `${balanceInStx.toFixed(2)} STX` : '0.00 STX'} available for funding
+                            </p>
+                        )}
+                    </div>
+                </div>
+
                 <ContractVersionGuard>
 
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
@@ -207,14 +241,8 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     setAmount(val);
-                                    const numVal = parseFloat(val);
-                                    if (val && numVal < 1) {
-                                        setAmountError('Amount must be at least 1 STX');
-                                    } else if (val && numVal > 200) {
-                                        setAmountError('Amount cannot exceed 200 STX');
-                                    } else {
-                                        setAmountError('');
-                                    }
+                                    const error = validateAmountAgainstTreasury(val, balanceInStx);
+                                    setAmountError(error || '');
                                 }}
                                 step="0.000001"
                                 min="1"
@@ -275,6 +303,31 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                                 <div className="flex items-start space-x-3">
                                     <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                                     <p className="text-green-200 text-xs font-medium leading-relaxed uppercase tracking-tight break-all">{success}</p>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Treasury Warning */}
+                    <AnimatePresence>
+                        {amount && balanceInStx !== null && parseFloat(amount) > balanceInStx && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 overflow-hidden"
+                            >
+                                <div className="flex items-start space-x-3">
+                                    <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-yellow-200 text-xs font-bold leading-relaxed uppercase tracking-tight mb-1">
+                                            Insufficient Treasury Funds
+                                        </p>
+                                        <p className="text-yellow-300/80 text-[10px] font-medium leading-relaxed uppercase tracking-tight">
+                                            Your request of {parseFloat(amount).toFixed(2)} STX exceeds the available treasury balance of {balanceInStx.toFixed(2)} STX. 
+                                            This proposal cannot be executed until the treasury is replenished.
+                                        </p>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}

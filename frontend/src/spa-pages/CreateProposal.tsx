@@ -9,7 +9,8 @@ import { useFormValidation } from '../hooks/useFormValidation';
 import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useStxPriceData } from '../hooks/useStxPrice';
-import { isFormValid, validateProposalForm } from '../lib/validation';
+import { useTreasuryBalance } from '../hooks/useTreasuryBalance';
+import { isFormValid, validateProposalForm, validateAmountAgainstTreasury } from '../lib/validation';
 import { sanitizeText, sanitizeMultilineText } from '../lib/sanitize';
 import { formatUsd, stxToUsd } from '../lib/currency';
 import { CharacterCounter } from '../components/CharacterCounter';
@@ -29,6 +30,7 @@ export function CreateProposalPage() {
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle('Create Proposal');
   const { price: stxPrice } = useStxPriceData();
+  const { balanceInStx, loading: treasuryLoading, error: treasuryError } = useTreasuryBalance();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -119,9 +121,34 @@ export function CreateProposalPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
       <h1 ref={headingRef} tabIndex={-1} className="mb-2 text-2xl font-bold text-text outline-none">Create Proposal</h1>
-      <p className="mb-8 text-sm text-muted">
+      <p className="mb-4 text-sm text-muted">
         Submit a funding request to the SprintFund DAO. Requires {MIN_STAKE_STX}+ STX staked.
       </p>
+
+      {/* Treasury Balance Display */}
+      <div className={`mb-6 rounded-lg border px-4 py-3 ${
+        treasuryError ? 'bg-red/5 border-red/20' : 
+        treasuryLoading ? 'bg-card border-border' :
+        'bg-green/5 border-green/20'
+      }`}>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-medium text-muted">Treasury Available</p>
+            {treasuryLoading ? (
+              <p className="text-sm text-muted">Loading balance...</p>
+            ) : treasuryError ? (
+              <p className="text-sm text-red">Failed to load treasury balance</p>
+            ) : (
+              <p className="text-sm font-semibold text-text">
+                {balanceInStx !== null ? `${balanceInStx.toFixed(2)} STX` : '0.00 STX'}
+              </p>
+            )}
+          </div>
+          {!treasuryLoading && !treasuryError && balanceInStx !== null && (
+            <p className="text-xs text-muted">Available for funding</p>
+          )}
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {/* Title */}
@@ -271,6 +298,19 @@ export function CreateProposalPage() {
           <p role="alert" aria-live="assertive" className="rounded-lg bg-red/5 border border-red/20 px-3 py-2 text-xs text-red">
             {submitError}
           </p>
+        )}
+
+        {/* Treasury Warning */}
+        {amount && balanceInStx !== null && parseFloat(amount) > balanceInStx && (
+          <div role="alert" aria-live="polite" className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 px-4 py-3">
+            <p className="mb-1 text-xs font-semibold text-yellow-600">
+              Insufficient Treasury Funds
+            </p>
+            <p className="text-xs text-yellow-700/80">
+              Your request of {parseFloat(amount).toFixed(2)} STX exceeds the available treasury balance of {balanceInStx.toFixed(2)} STX. 
+              This proposal cannot be executed until the treasury is replenished.
+            </p>
+          </div>
         )}
 
         {/* TX Status */}
