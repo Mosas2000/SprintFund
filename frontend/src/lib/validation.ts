@@ -96,6 +96,23 @@ export function validateAmount(value: string): string | null {
   return null;
 }
 
+export function validateAmountAgainstTreasury(
+  value: string,
+  treasuryBalance: number | null
+): string | null {
+  const basicError = validateAmount(value);
+  if (basicError) return basicError;
+
+  if (treasuryBalance !== null) {
+    const num = parseFloat(value);
+    if (num > treasuryBalance) {
+      return `Amount exceeds treasury balance (${treasuryBalance.toFixed(2)} STX available)`;
+    }
+  }
+
+  return null;
+}
+
 export function validateDuration(value: string): string | null {
   if (!value.trim()) return 'Duration is required';
   const num = parseInt(value, 10);

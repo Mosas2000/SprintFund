@@ -18,6 +18,7 @@ import { Target, AlertCircle, Sparkles, Brain, CheckCircle2, Wallet } from 'luci
 import { useTransaction } from '@/hooks/useTransaction';
 import { ContractVersionGuard } from './common/ContractVersionGuard';
 import { useTreasuryBalance } from '@/hooks/useTreasuryBalance';
+import { validateAmountAgainstTreasury } from '@/lib/validation';
 
 const NETWORK = STACKS_MAINNET;
 
@@ -240,16 +241,8 @@ export default function CreateProposalForm({ userAddress }: CreateProposalFormPr
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     setAmount(val);
-                                    const numVal = parseFloat(val);
-                                    if (val && numVal < 1) {
-                                        setAmountError('Amount must be at least 1 STX');
-                                    } else if (val && numVal > 200) {
-                                        setAmountError('Amount cannot exceed 200 STX');
-                                    } else if (val && balanceInStx !== null && numVal > balanceInStx) {
-                                        setAmountError(`Amount exceeds treasury balance (${balanceInStx.toFixed(2)} STX available)`);
-                                    } else {
-                                        setAmountError('');
-                                    }
+                                    const error = validateAmountAgainstTreasury(val, balanceInStx);
+                                    setAmountError(error || '');
                                 }}
                                 step="0.000001"
                                 min="1"
