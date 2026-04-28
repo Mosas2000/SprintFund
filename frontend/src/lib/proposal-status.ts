@@ -246,6 +246,23 @@ export function isTerminalStatus(status: ProposalStatus): boolean {
 }
 
 /**
+ * Gets a human-readable label for a proposal status
+ * @param status - The proposal status
+ * @returns Display label for the status
+ */
+export function getStatusLabel(status: ProposalStatus): string {
+  const labels: Record<ProposalStatus, string> = {
+    active: 'Active',
+    passing: 'Passing',
+    failing: 'Failing',
+    executable: 'Executable',
+    executed: 'Executed',
+    expired: 'Expired',
+  };
+  return labels[status];
+}
+
+/**
  * Checks if a proposal can accept votes
  * @param proposal - The proposal to check
  * @param currentBlockHeight - Current blockchain height
