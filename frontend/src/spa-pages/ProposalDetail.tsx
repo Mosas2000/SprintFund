@@ -19,6 +19,9 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 import { VoteProgressBar } from '../components/VoteProgressBar';
 import { CommentSection } from '../components/CommentSection';
 import { toErrorMessage } from '../lib/errors';
+import { useCurrentBlockHeight } from '../hooks/useCurrentBlockHeight';
+import { getProposalStatus } from '../lib/proposal-status';
+import { ProposalStatusBadge } from '../components/ProposalStatusBadge';
 import type { Proposal } from '../types';
 
 /**
@@ -50,6 +53,12 @@ export function ProposalDetailPage(): React.JSX.Element {
   const dialog = useConfirmDialog();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
   useDocumentTitle(proposal?.title ? sanitizeText(proposal.title) : 'Proposal Detail');
+  const { blockHeight } = useCurrentBlockHeight();
+
+  const statusInfo = useMemo(() => {
+    if (!proposal || !blockHeight) return null;
+    return getProposalStatus(proposal, blockHeight);
+  }, [proposal, blockHeight]);
 
   const fetchProposal = useCallback((): void => {
     if (isNaN(proposalId)) {
@@ -198,13 +207,7 @@ export function ProposalDetailPage(): React.JSX.Element {
           <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
             <div className="mb-3 sm:mb-4 flex items-start justify-between gap-3 sm:gap-4">
               <h1 ref={headingRef} tabIndex={-1} className="text-lg font-bold text-text sm:text-2xl outline-none">{sanitizeText(proposal.title)}</h1>
-              <span
-                className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  proposal.executed ? 'bg-green/10 text-green' : 'bg-amber/10 text-amber'
-                }`}
-              >
-                {proposal.executed ? 'Executed' : 'Active'}
-              </span>
+              {statusInfo && <ProposalStatusBadge statusInfo={statusInfo} />}
             </div>
             <p className="text-sm text-muted leading-relaxed whitespace-pre-wrap">{sanitizeMultilineText(proposal.description)}</p>
           </div>
@@ -270,6 +273,15 @@ export function ProposalDetailPage(): React.JSX.Element {
 
         {/* -- Sidebar -------------------------------- */}
         <aside aria-label="Proposal details" className="space-y-4">
+          {/* Status card */}
+          {statusInfo && (
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+              <p className="text-xs text-muted mb-2">Status</p>
+              <ProposalStatusBadge statusInfo={statusInfo} className="mb-2" />
+              <p className="text-xs text-muted">{statusInfo.description}</p>
+            </div>
+          )}
+
           {/* Info card */}
           <div className="rounded-xl border border-border bg-card p-4 sm:p-5 space-y-3">
             <div>
