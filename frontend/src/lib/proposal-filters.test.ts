@@ -3,6 +3,7 @@ import {
   filterProposalsByStatus,
   filterProposalsByCategory,
   searchProposals,
+  applyProposalFilters,
 } from './proposal-filters';
 import type { Proposal } from '../types/proposal';
 
@@ -130,5 +131,85 @@ describe('searchProposals', () => {
     
     const result = searchProposals(proposals, 'DASHBOARD');
     expect(result).toHaveLength(1);
+  });
+});
+
+describe('applyProposalFilters', () => {
+  it('applies no filters when all are set to default', () => {
+    const proposals = [
+      createMockProposal({ id: 1 }),
+      createMockProposal({ id: 2 }),
+    ];
+    
+    const result = applyProposalFilters(proposals, {
+      status: 'all',
+      category: 'all',
+      search: '',
+      currentBlockHeight: 1100,
+    });
+    
+    expect(result).toHaveLength(2);
+  });
+
+  it('applies status filter only', () => {
+    const proposals = [
+      createMockProposal({ id: 1 }),
+      createMockProposal({ id: 2, executed: true }),
+    ];
+    
+    const result = applyProposalFilters(proposals, {
+      status: 'executed',
+      currentBlockHeight: 1100,
+    });
+    
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe(2);
+  });
+
+  it('applies category filter only', () => {
+    const proposals = [
+      createMockProposal({ id: 1, category: 'development' }),
+      createMockProposal({ id: 2, category: 'design' }),
+    ];
+    
+    const result = applyProposalFilters(proposals, {
+      category: 'development',
+      currentBlockHeight: 1100,
+    });
+    
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe(1);
+  });
+
+  it('applies search filter only', () => {
+    const proposals = [
+      createMockProposal({ id: 1, title: 'Build Dashboard' }),
+      createMockProposal({ id: 2, title: 'Design Logo' }),
+    ];
+    
+    const result = applyProposalFilters(proposals, {
+      search: 'dashboard',
+      currentBlockHeight: 1100,
+    });
+    
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe(1);
+  });
+
+  it('applies multiple filters together', () => {
+    const proposals = [
+      createMockProposal({ id: 1, category: 'development', title: 'Build Dashboard' }),
+      createMockProposal({ id: 2, category: 'development', title: 'Design Logo' }),
+      createMockProposal({ id: 3, category: 'design', title: 'Build Dashboard' }),
+    ];
+    
+    const result = applyProposalFilters(proposals, {
+      category: 'development',
+      search: 'dashboard',
+      currentBlockHeight: 1100,
+    });
+    
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe(1);
   });
 });
