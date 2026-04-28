@@ -8,11 +8,13 @@ export type ProposalStatus =
   | 'expired'
   | 'executable';
 
+export type StatusVariant = 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+
 export interface ProposalStatusInfo {
   status: ProposalStatus;
   label: string;
   description: string;
-  variant: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+  variant: StatusVariant;
 }
 
 const VOTING_PERIOD_BLOCKS = 432;
