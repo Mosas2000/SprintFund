@@ -2,6 +2,15 @@
 
 This directory contains scripts for interacting with the SprintFund contract on Stacks mainnet.
 
+## Configuration
+
+All scripts use the centralized contract configuration from `../contract-config.json`.
+
+To validate configuration consistency:
+```bash
+npm run validate-config
+```
+
 ## Prerequisites
 
 Before running any scripts, ensure you have:
