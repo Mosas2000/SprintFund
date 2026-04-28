@@ -55,3 +55,13 @@ export function getNetworkApiUrl(network: 'mainnet' | 'testnet'): string {
 export function getExplorerUrl(network: 'mainnet' | 'testnet'): string {
   return config.network[network].explorerUrl;
 }
+
+export function getLegacyContractName(version: string | number): string | null {
+  const legacyKey = `v${version}` as keyof typeof config.legacy;
+  return config.legacy[legacyKey]?.name || null;
+}
+
+export function isLegacyContract(contractName: string): boolean {
+  const legacyNames = Object.values(config.legacy).map(v => v.name);
+  return legacyNames.includes(contractName);
+}
