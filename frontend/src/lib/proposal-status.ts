@@ -231,3 +231,16 @@ export function getStatusIcon(status: ProposalStatus): string {
 export function isTerminalStatus(status: ProposalStatus): boolean {
   return status === 'executed' || status === 'expired';
 }
+
+/**
+ * Checks if a proposal can accept votes
+ * @param proposal - The proposal to check
+ * @param currentBlockHeight - Current blockchain height
+ * @returns True if the proposal can receive votes
+ */
+export function canAcceptVotes(
+  proposal: Proposal,
+  currentBlockHeight: number
+): boolean {
+  return isProposalActive(proposal, currentBlockHeight) && !proposal.executed;
+}
