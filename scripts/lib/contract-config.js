@@ -58,3 +58,15 @@ export function getContractVersion() {
   const config = loadContractConfig();
   return config.version;
 }
+
+export function getLegacyContractName(version) {
+  const config = loadContractConfig();
+  const legacyKey = `v${version}`;
+  return config.legacy?.[legacyKey]?.name || null;
+}
+
+export function isLegacyContract(contractName) {
+  const config = loadContractConfig();
+  const legacyNames = Object.values(config.legacy || {}).map(v => v.name);
+  return legacyNames.includes(contractName);
+}
