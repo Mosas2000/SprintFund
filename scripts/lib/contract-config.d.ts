@@ -34,3 +34,5 @@ export function getContractName(): string;
 export function getContractPrincipal(): string;
 export function getNetworkConfig(networkName?: string): { apiUrl: string; explorerUrl: string };
 export function getContractVersion(): string;
+export function getLegacyContractName(version: string | number): string | null;
+export function isLegacyContract(contractName: string): boolean;
