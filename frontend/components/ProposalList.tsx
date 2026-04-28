@@ -23,6 +23,8 @@ import { useRefreshOnConfirmation } from '@/hooks/useRefreshOnConfirmation';
 import { paginateProposals } from '@/lib/proposal-utils';
 import { Proposal } from '@/types';
 import { normalizeError } from '@/lib/error-normalizer';
+import { useCurrentBlockHeight } from '@/hooks/useCurrentBlockHeight';
+import { getProposalStatus } from '@/lib/proposal-status';
 
 // Get network configuration
 const NETWORK = getStacksNetwork();
@@ -37,6 +39,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
     const [stakeLoading, setStakeLoading] = useState(false);
     const [userStakeAmount, setUserStakeAmount] = useState<number | null>(null);
     const [error, setError] = useState('');
+    const { blockHeight } = useCurrentBlockHeight();
 
     const {
         params: filterParams,
@@ -434,8 +437,15 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
 
     // Filter proposals based on URL params
     const filteredProposals = proposals.filter(proposal => {
-        if (filterParams.status === 'active') return !proposal.executed;
-        if (filterParams.status === 'executed') return proposal.executed;
+        if (filterParams.status !== 'all' && blockHeight) {
+            const statusInfo = getProposalStatus(proposal, blockHeight);
+            if (filterParams.status === 'active') {
+                return statusInfo.status === 'active' || statusInfo.status === 'passing' || statusInfo.status === 'failing';
+            }
+            if (filterParams.status !== statusInfo.status) {
+                return false;
+            }
+        }
         if (filterParams.category !== 'all' && proposal.category !== filterParams.category) return false;
         return true;
     });
