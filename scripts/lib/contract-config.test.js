@@ -5,7 +5,9 @@ import {
   getContractName,
   getContractPrincipal,
   getNetworkConfig,
-  getContractVersion
+  getContractVersion,
+  getLegacyContractName,
+  isLegacyContract
 } from './contract-config.js';
 
 describe('contract-config', () => {
@@ -68,6 +70,41 @@ describe('contract-config', () => {
     it('returns the contract version', () => {
       const version = getContractVersion();
       expect(version).toBe('3');
+    });
+  });
+
+  describe('getLegacyContractName', () => {
+    it('returns legacy v1 contract name', () => {
+      const name = getLegacyContractName(1);
+      expect(name).toBe('sprintfund-core');
+    });
+
+    it('returns legacy v2 contract name', () => {
+      const name = getLegacyContractName(2);
+      expect(name).toBe('sprintfund-core-v2');
+    });
+
+    it('returns null for non-existent version', () => {
+      const name = getLegacyContractName(99);
+      expect(name).toBeNull();
+    });
+  });
+
+  describe('isLegacyContract', () => {
+    it('returns true for v1 contract', () => {
+      expect(isLegacyContract('sprintfund-core')).toBe(true);
+    });
+
+    it('returns true for v2 contract', () => {
+      expect(isLegacyContract('sprintfund-core-v2')).toBe(true);
+    });
+
+    it('returns false for current contract', () => {
+      expect(isLegacyContract('sprintfund-core-v3')).toBe(false);
+    });
+
+    it('returns false for unknown contract', () => {
+      expect(isLegacyContract('unknown-contract')).toBe(false);
     });
   });
 });
