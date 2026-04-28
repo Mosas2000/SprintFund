@@ -222,3 +222,12 @@ export function getStatusIcon(status: ProposalStatus): string {
   };
   return iconMap[status];
 }
+
+/**
+ * Checks if a proposal status is terminal (no further actions possible)
+ * @param status - The proposal status to check
+ * @returns True if the status is terminal
+ */
+export function isTerminalStatus(status: ProposalStatus): boolean {
+  return status === 'executed' || status === 'expired';
+}
