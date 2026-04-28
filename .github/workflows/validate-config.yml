@@ -1,0 +1,48 @@
+name: Validate Configuration
+
+on:
+  pull_request:
+    paths:
+      - 'contract-config.json'
+      - 'frontend/src/config.ts'
+      - 'frontend/config.ts'
+      - '.env.example'
+      - 'scripts/**/*.js'
+  push:
+    branches:
+      - main
+    paths:
+      - 'contract-config.json'
+      - 'frontend/src/config.ts'
+      - 'frontend/config.ts'
+      - '.env.example'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          cd scripts
+          npm install
+      
+      - name: Validate configuration
+        run: |
+          cd scripts
+          npm run validate-config
+      
+      - name: Check for config drift
+        if: failure()
+        run: |
+          echo "Configuration validation failed!"
+          echo "Please ensure all config files reference the centralized contract-config.json"
+          exit 1
