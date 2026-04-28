@@ -9,6 +9,7 @@ export { useRetry } from './useRetry';
 export { useDebouncedSearch } from './useDebouncedSearch';
 export { useStxPriceData } from './useStxPrice';
 export { useWalletBalanceData } from './useWalletBalance';
+export { useProposalStatus } from './useProposalStatus';
 // Blockchain state hooks
 export { useCurrentBlockHeight } from './useCurrentBlockHeight';
 export { useVote } from './useVote';
