@@ -22,9 +22,12 @@ export const SORT_ORDERS = {
 } as const;
 
 export const PROPOSAL_STATUS = {
-  PENDING: 'pending',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
+  ACTIVE: 'active',
+  PASSING: 'passing',
+  FAILING: 'failing',
+  EXECUTED: 'executed',
+  EXPIRED: 'expired',
+  EXECUTABLE: 'executable',
 } as const;
 
 export type SortOption = typeof SORT_OPTIONS[keyof typeof SORT_OPTIONS];
