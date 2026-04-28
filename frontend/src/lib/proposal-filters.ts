@@ -78,3 +78,35 @@ export function searchProposals(
       proposal.description.toLowerCase().includes(query)
   );
 }
+
+/**
+ * Applies multiple filters to proposals in sequence
+ * @param proposals - Array of proposals to filter
+ * @param filters - Object containing filter criteria
+ * @returns Filtered array of proposals
+ */
+export function applyProposalFilters(
+  proposals: Proposal[],
+  filters: {
+    status?: ProposalStatus | 'all';
+    category?: string;
+    search?: string;
+    currentBlockHeight: number;
+  }
+): Proposal[] {
+  let filtered = proposals;
+
+  if (filters.status && filters.status !== 'all') {
+    filtered = filterProposalsByStatus(filtered, filters.status, filters.currentBlockHeight);
+  }
+
+  if (filters.category && filters.category !== 'all') {
+    filtered = filterProposalsByCategory(filtered, filters.category);
+  }
+
+  if (filters.search) {
+    filtered = searchProposals(filtered, filters.search);
+  }
+
+  return filtered;
+}
