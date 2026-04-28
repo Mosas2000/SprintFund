@@ -14,6 +14,8 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 
 **Explorer**: [View on Stacks Explorer](https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3?chain=mainnet)
 
+**Configuration**: See [CONFIGURATION.md](CONFIGURATION.md) for centralized config management
+
 ## Key Features
 
 - **⚡ Micro-Grants** - Fast funding for small projects ($50-200 STX range)
