@@ -17,6 +17,12 @@ export interface ProposalStatusInfo {
 
 const VOTING_PERIOD_BLOCKS = 432;
 
+/**
+ * Determines the current status of a proposal based on voting state and block height
+ * @param proposal - The proposal to evaluate
+ * @param currentBlockHeight - Current blockchain height
+ * @returns Status information including label, description, and variant
+ */
 export function getProposalStatus(
   proposal: Proposal,
   currentBlockHeight: number
@@ -91,6 +97,12 @@ export function getProposalStatus(
   };
 }
 
+/**
+ * Checks if a proposal is currently in its active voting period
+ * @param proposal - The proposal to check
+ * @param currentBlockHeight - Current blockchain height
+ * @returns True if voting is still active
+ */
 export function isProposalActive(
   proposal: Proposal,
   currentBlockHeight: number
@@ -103,6 +115,12 @@ export function isProposalActive(
   return currentBlockHeight <= votingEndsAt;
 }
 
+/**
+ * Checks if a proposal has passed and is ready for execution
+ * @param proposal - The proposal to check
+ * @param currentBlockHeight - Current blockchain height
+ * @returns True if the proposal can be executed
+ */
 export function isProposalExecutable(
   proposal: Proposal,
   currentBlockHeight: number
@@ -124,6 +142,12 @@ export function isProposalExecutable(
   return currentBlockHeight >= executionAllowedAt;
 }
 
+/**
+ * Calculates the time remaining in a proposal's voting period
+ * @param proposal - The proposal to evaluate
+ * @param currentBlockHeight - Current blockchain height
+ * @returns Object containing remaining blocks, days, and hours
+ */
 export function getTimeRemaining(
   proposal: Proposal,
   currentBlockHeight: number
@@ -141,6 +165,12 @@ export function getTimeRemaining(
   };
 }
 
+/**
+ * Formats the remaining time into a human-readable string
+ * @param proposal - The proposal to evaluate
+ * @param currentBlockHeight - Current blockchain height
+ * @returns Formatted time string
+ */
 export function formatTimeRemaining(
   proposal: Proposal,
   currentBlockHeight: number
@@ -157,6 +187,11 @@ export function formatTimeRemaining(
 }
 
 
+/**
+ * Returns Tailwind CSS classes for styling a status badge
+ * @param status - The proposal status
+ * @returns CSS class string for the status
+ */
 export function getStatusColorClasses(status: ProposalStatus): string {
   const colorMap: Record<ProposalStatus, string> = {
     active: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
@@ -169,6 +204,11 @@ export function getStatusColorClasses(status: ProposalStatus): string {
   return colorMap[status];
 }
 
+/**
+ * Returns an emoji icon representing the proposal status
+ * @param status - The proposal status
+ * @returns Emoji string for the status
+ */
 export function getStatusIcon(status: ProposalStatus): string {
   const iconMap: Record<ProposalStatus, string> = {
     active: '🗳️',
