@@ -18,6 +18,10 @@ import {
   logDryRun,
   printUsage
 } from './lib/script-utils.js';
+import {
+  getContractAddress,
+  getContractName
+} from './lib/contract-config.js';
 
 dotenv.config();
 
@@ -44,8 +48,8 @@ async function createProposal() {
   }
 
   const privateKey = keyResult.key;
-  const contractAddress = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-  const contractName = 'sprintfund-core-v3';
+  const contractAddress = getContractAddress();
+  const contractName = getContractName();
   const amount = 50000000;
   const title = 'Test Proposal 1';
   const description = 'Testing SprintFund proposal creation for Builder Rewards program';
