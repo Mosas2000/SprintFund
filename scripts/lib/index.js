@@ -1,1 +1,1 @@
-export { loadContractConfig, getContractAddress, getContractName, getContractPrincipal, getNetworkConfig, getContractVersion, getLegacyContractName, isLegacyContract } from './contract-config.js';
+export { loadContractConfig, getContractAddress, getContractName, getContractPrincipal, getNetworkConfig, getContractVersion, getLegacyContractName, isLegacyContract, getAllNetworks, getDefaultNetwork } from './contract-config.js';

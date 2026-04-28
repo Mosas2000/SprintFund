@@ -70,3 +70,13 @@ export function isLegacyContract(contractName) {
   const legacyNames = Object.values(config.legacy || {}).map(v => v.name);
   return legacyNames.includes(contractName);
 }
+
+export function getAllNetworks() {
+  const config = loadContractConfig();
+  return Object.keys(config.network).filter(key => key !== 'default');
+}
+
+export function getDefaultNetwork() {
+  const config = loadContractConfig();
+  return config.network.default;
+}
