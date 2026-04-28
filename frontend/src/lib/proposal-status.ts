@@ -21,6 +21,18 @@ const VOTING_PERIOD_BLOCKS = 432;
 const BLOCK_TIME_MINUTES = 10;
 
 /**
+ * All possible proposal status values
+ */
+export const PROPOSAL_STATUSES: readonly ProposalStatus[] = [
+  'active',
+  'passing',
+  'failing',
+  'executable',
+  'executed',
+  'expired',
+] as const;
+
+/**
  * Determines the current status of a proposal based on voting state and block height
  * @param proposal - The proposal to evaluate
  * @param currentBlockHeight - Current blockchain height
