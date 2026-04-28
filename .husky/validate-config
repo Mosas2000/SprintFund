@@ -1,0 +1,12 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Check if contract-config.json or related files were modified
+if git diff --cached --name-only | grep -qE '(contract-config\.json|frontend/(src/)?config\.ts|\.env\.example)'; then
+  echo "Config files modified, running validation..."
+  cd scripts && npm run validate-config
+  if [ $? -ne 0 ]; then
+    echo "Config validation failed! Please fix the issues before committing."
+    exit 1
+  fi
+fi
