@@ -10,6 +10,9 @@ import {
   logDryRun,
   printUsage
 } from './lib/script-utils.js';
+import {
+  getContractAddress
+} from './lib/contract-config.js';
 
 dotenv.config();
 
@@ -32,7 +35,7 @@ async function logActivity(message, index, options, network) {
     throw new Error(keyResult.error);
   }
 
-  const contractAddress = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
+  const contractAddress = getContractAddress();
   const contractName = 'sprintfund-logger';
   
   const txOptions = {

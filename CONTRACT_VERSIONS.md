@@ -52,15 +52,24 @@ When deploying a new contract version:
 
 All contract references use centralized configuration:
 
-**Single source of truth**: `frontend/src/config.ts`
+**Single source of truth**: `contract-config.json` (root level)
 
-```typescript
-export const CONTRACT_ADDRESS = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-export const CONTRACT_NAME = 'sprintfund-core-v3';
-export const CONTRACT_PRINCIPAL = `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`;
+```json
+{
+  "version": "3",
+  "contract": {
+    "address": "SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T",
+    "name": "sprintfund-core-v3",
+    "principal": "SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3"
+  }
+}
 ```
 
-All components import from this file instead of hardcoding values.
+All components and scripts import from this file via:
+- Frontend: `frontend/src/config.ts` (reads from env with fallback to centralized config)
+- Scripts: `scripts/lib/contract-config.js` (loads centralized config directly)
+
+Run `npm run validate-config` to verify all config files are in sync.
 
 ### 4. Backward Compatibility
 
@@ -86,8 +95,8 @@ Before switching to a new contract version:
 
 When ready to switch to a new version:
 
-- [ ] Update `CONTRACT_NAME` in `frontend/src/config.ts`
-- [ ] Update `CONTRACT_NAME` in all script files under `scripts/`
+- [ ] Update `contract-config.json` with new contract details
+- [ ] Run `npm run validate-config` to verify consistency
 - [ ] Update documentation (README.md, frontend/README.md)
 - [ ] Update deployment configs (`Clarinet.toml`, deployment plans)
 - [ ] Update kubernetes configs if applicable

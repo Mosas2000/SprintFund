@@ -14,6 +14,9 @@ import {
   logDryRun,
   printUsage
 } from './lib/script-utils.js';
+import {
+  getContractAddress
+} from './lib/contract-config.js';
 
 dotenv.config();
 
@@ -48,7 +51,7 @@ async function withdrawLegacy() {
   }
 
   const privateKey = keyResult.key;
-  const contractAddress = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
+  const contractAddress = getContractAddress();
   const contractName = 'sprintfund-core'; // Legacy contract
   const amount = options.amount ? parseInt(options.amount, 10) : 0;
   

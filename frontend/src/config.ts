@@ -1,10 +1,12 @@
+import { config } from './lib/contract-config';
+
 /* ── Contract ─────────────────────────────────── */
 
-export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK || 'mainnet') as 'mainnet' | 'testnet';
-export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-export const CONTRACT_NAME = process.env.NEXT_PUBLIC_CONTRACT_NAME || 'sprintfund-core-v3';
+export const NETWORK = (process.env.NEXT_PUBLIC_NETWORK || config.network.default) as 'mainnet' | 'testnet';
+export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || config.contract.address;
+export const CONTRACT_NAME = process.env.NEXT_PUBLIC_CONTRACT_NAME || config.contract.name;
 export const CONTRACT_PRINCIPAL = `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`;
-export const EXPECTED_CONTRACT_VERSION = 3;
+export const EXPECTED_CONTRACT_VERSION = parseInt(config.version, 10);
 
 /* ── API ──────────────────────────────────────── */
 

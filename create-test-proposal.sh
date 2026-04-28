@@ -3,9 +3,25 @@
 # SprintFund Test Proposal Creation Script
 # This script broadcasts a create-proposal transaction to mainnet
 
-# Contract details
-CONTRACT_ADDRESS="SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T"
-CONTRACT_NAME="sprintfund-core-v3"
+# Load contract config from centralized JSON
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$SCRIPT_DIR/contract-config.json"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "ERROR: contract-config.json not found at $CONFIG_FILE"
+    exit 1
+fi
+
+# Parse contract config using jq (or fallback to defaults)
+if command -v jq &> /dev/null; then
+    CONTRACT_ADDRESS=$(jq -r '.contract.address' "$CONFIG_FILE")
+    CONTRACT_NAME=$(jq -r '.contract.name' "$CONFIG_FILE")
+else
+    # Fallback defaults if jq not available
+    CONTRACT_ADDRESS="SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T"
+    CONTRACT_NAME="sprintfund-core-v3"
+fi
+
 FUNCTION_NAME="create-proposal"
 
 # Proposal parameters

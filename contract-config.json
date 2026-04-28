@@ -1,0 +1,29 @@
+{
+  "version": "3",
+  "contract": {
+    "address": "SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T",
+    "name": "sprintfund-core-v3",
+    "principal": "SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3"
+  },
+  "network": {
+    "default": "mainnet",
+    "mainnet": {
+      "apiUrl": "https://api.mainnet.hiro.so",
+      "explorerUrl": "https://explorer.hiro.so"
+    },
+    "testnet": {
+      "apiUrl": "https://api.testnet.hiro.so",
+      "explorerUrl": "https://explorer.hiro.so"
+    }
+  },
+  "legacy": {
+    "v1": {
+      "name": "sprintfund-core",
+      "status": "deprecated"
+    },
+    "v2": {
+      "name": "sprintfund-core-v2",
+      "status": "deprecated"
+    }
+  }
+}

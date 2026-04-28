@@ -14,6 +14,10 @@ import {
   logDryRun,
   printUsage
 } from './lib/script-utils.js';
+import {
+  getContractAddress,
+  getContractName
+} from './lib/contract-config.js';
 
 dotenv.config();
 
@@ -37,8 +41,8 @@ async function stakeSTX() {
   }
 
   const privateKey = keyResult.key;
-  const contractAddress = 'SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T';
-  const contractName = 'sprintfund-core-v3';
+  const contractAddress = getContractAddress();
+  const contractName = getContractName();
   const stakeAmount = 10000000;
   
   console.log('============================================');
