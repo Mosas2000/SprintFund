@@ -17,9 +17,19 @@ export function loadContractConfig() {
   try {
     const configData = fs.readFileSync(CONFIG_PATH, 'utf8');
     cachedConfig = JSON.parse(configData);
+    
+    if (!cachedConfig.contract || !cachedConfig.contract.address) {
+      throw new Error('Invalid config: missing contract.address');
+    }
+    
+    if (!cachedConfig.contract.name) {
+      throw new Error('Invalid config: missing contract.name');
+    }
+    
     return cachedConfig;
   } catch (error) {
     console.error('Failed to load contract-config.json:', error.message);
+    console.error('Expected location:', CONFIG_PATH);
     process.exit(1);
   }
 }
