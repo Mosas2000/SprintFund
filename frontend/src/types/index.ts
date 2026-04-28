@@ -17,6 +17,12 @@ export type {
   ProposalCountResult,
 } from './proposal';
 
+// Proposal status types
+export type {
+  ProposalStatus,
+  ProposalStatusInfo,
+} from '../lib/proposal-status';
+
 // Re-export governance types from types directory
 export type {
   VotingData,
