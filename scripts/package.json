@@ -8,6 +8,7 @@
     "deploy-logger": "node deploy-logger.js",
     "call-logger": "node call-logger.js",
     "validate-config": "node scripts/validate-config.js",
+    "update-config": "node scripts/update-config.js",
     "test": "jest"
   },
   "dependencies": {
