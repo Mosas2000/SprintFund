@@ -13,6 +13,10 @@ export function filterProposalsByStatus(
   statusFilter: ProposalStatus | 'all',
   currentBlockHeight: number
 ): Proposal[] {
+  if (!proposals || proposals.length === 0) {
+    return [];
+  }
+
   if (statusFilter === 'all') {
     return proposals;
   }
@@ -38,6 +42,10 @@ export function filterProposalsByCategory(
   proposals: Proposal[],
   category: string
 ): Proposal[] {
+  if (!proposals || proposals.length === 0) {
+    return [];
+  }
+
   if (category === 'all') {
     return proposals;
   }
@@ -55,6 +63,10 @@ export function searchProposals(
   proposals: Proposal[],
   searchQuery: string
 ): Proposal[] {
+  if (!proposals || proposals.length === 0) {
+    return [];
+  }
+
   if (!searchQuery.trim()) {
     return proposals;
   }
