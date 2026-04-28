@@ -12,6 +12,9 @@ import { RelatedProposals } from '@/components/RelatedProposals';
 import { proposalExecutionService, type ExecutionHistoryEntry } from '@/services/proposal-execution';
 import { ProposalCountdown } from '@/components/ProposalCountdown';
 import { formatBlockHeight } from '@/lib/block-height';
+import { useCurrentBlockHeight } from '@/hooks/useCurrentBlockHeight';
+import { getProposalStatus } from '@/lib/proposal-status';
+import { ProposalStatusBadge } from '@/components/ProposalStatusBadge';
 import type { Proposal } from '@/types';
 import { useConnect } from '@stacks/connect-react';
 import ReclaimVoteAction from '@/components/voting/ReclaimVoteAction';
@@ -23,11 +26,14 @@ export default function ProposalDetailPage() {
   const [relatedProposals, setRelatedProposals] = useState<Proposal[]>([]);
   const [executionStatus, setExecutionStatus] = useState<ExecutionHistoryEntry | null>(null);
   const [loading, setLoading] = useState(true);
+  const { blockHeight } = useCurrentBlockHeight();
   
   const { userSession } = useConnect();
   const userAddress = userSession?.isUserSignedIn() 
     ? userSession.loadUserData().profile?.stxAddress?.mainnet 
     : undefined;
+
+  const statusInfo = proposal && blockHeight ? getProposalStatus(proposal, blockHeight) : null;
 
   useEffect(() => {
     const fetchProposalData = async () => {
@@ -82,16 +88,6 @@ export default function ProposalDetailPage() {
     );
   }
 
-  const statusColor = {
-    approved: 'bg-green-500/20 text-green-400 border-green-500/30',
-    rejected: 'bg-red-500/20 text-red-400 border-red-500/30',
-    pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    executed: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  };
-
-  // Derive status from proposal data
-  const proposalStatus = proposal.executed ? 'executed' : 'pending';
-
   return (
     <main className="min-h-screen py-4 sm:py-8">
       <div className="mx-auto max-w-6xl space-y-6 px-4 sm:space-y-8 sm:px-6">
@@ -110,13 +106,7 @@ export default function ProposalDetailPage() {
                 <h1 className="mb-3 text-3xl font-bold text-white sm:text-4xl">{proposal.title}</h1>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                      statusColor[proposalStatus as keyof typeof statusColor]
-                    }`}
-                  >
-                    {proposalStatus.charAt(0).toUpperCase() + proposalStatus.slice(1)}
-                  </span>
+                  {statusInfo && <ProposalStatusBadge statusInfo={statusInfo} />}
 
                   <span className="text-sm text-white/60">
                     Created {formatBlockHeight(proposal.createdAt)}
