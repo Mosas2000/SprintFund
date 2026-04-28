@@ -213,3 +213,30 @@ describe('applyProposalFilters', () => {
     expect(result[0].id).toBe(1);
   });
 });
+
+describe('edge cases', () => {
+  it('handles empty proposal array in filterProposalsByStatus', () => {
+    const result = filterProposalsByStatus([], 'active', 1100);
+    expect(result).toHaveLength(0);
+  });
+
+  it('handles empty proposal array in filterProposalsByCategory', () => {
+    const result = filterProposalsByCategory([], 'development');
+    expect(result).toHaveLength(0);
+  });
+
+  it('handles empty proposal array in searchProposals', () => {
+    const result = searchProposals([], 'test');
+    expect(result).toHaveLength(0);
+  });
+
+  it('handles empty proposal array in applyProposalFilters', () => {
+    const result = applyProposalFilters([], {
+      status: 'active',
+      category: 'development',
+      search: 'test',
+      currentBlockHeight: 1100,
+    });
+    expect(result).toHaveLength(0);
+  });
+});
