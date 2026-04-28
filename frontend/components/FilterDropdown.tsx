@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-export type StatusFilter = 'all' | 'active' | 'executed';
+export type StatusFilter = 'all' | 'active' | 'passing' | 'failing' | 'executable' | 'executed' | 'expired';
 export type CategoryFilter = 'all' | 'development' | 'design' | 'marketing' | 'community' | 'research' | 'other';
 
 interface FilterDropdownProps {
@@ -23,7 +23,11 @@ export default function FilterDropdown({ onFilterChange, status, category }: Fil
     const statusFilters = [
         { value: 'all' as const, label: 'All Proposals' },
         { value: 'active' as const, label: 'Active' },
+        { value: 'passing' as const, label: 'Passing' },
+        { value: 'failing' as const, label: 'Failing' },
+        { value: 'executable' as const, label: 'Executable' },
         { value: 'executed' as const, label: 'Executed' },
+        { value: 'expired' as const, label: 'Expired' },
     ];
 
     const categoryFilters = [
