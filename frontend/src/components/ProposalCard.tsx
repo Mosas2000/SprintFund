@@ -6,6 +6,9 @@ import { sanitizeText } from '../lib/sanitize';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 import { VoteProgressBar } from './VoteProgressBar';
 import { useCommentCount } from '../store/comment-selectors';
+import { useCurrentBlockHeight } from '../hooks/useCurrentBlockHeight';
+import { getProposalStatus } from '../lib/proposal-status';
+import { ProposalStatusBadge } from './ProposalStatusBadge';
 import type { Proposal } from '../types';
 
 /**
@@ -24,9 +27,12 @@ export const ProposalCard = memo(function ProposalCard({ proposal, selected }: P
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
   const commentCount = useCommentCount(proposal.id);
+  const { blockHeight } = useCurrentBlockHeight();
 
   const safeTitle = sanitizeText(proposal.title);
   const safeDescription = sanitizeText(proposal.description);
+
+  const statusInfo = blockHeight ? getProposalStatus(proposal, blockHeight) : null;
 
   return (
     <Link
@@ -43,15 +49,7 @@ export const ProposalCard = memo(function ProposalCard({ proposal, selected }: P
         <h2 className="text-sm sm:text-base font-semibold text-text group-hover:text-green transition-colors line-clamp-2 sm:line-clamp-1">
           {safeTitle}
         </h2>
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-            proposal.executed
-              ? 'bg-green/10 text-green'
-              : 'bg-amber/10 text-amber'
-          }`}
-        >
-          {proposal.executed ? 'Executed' : 'Active'}
-        </span>
+        {statusInfo && <ProposalStatusBadge statusInfo={statusInfo} className="shrink-0" />}
       </div>
 
       {/* Description */}
