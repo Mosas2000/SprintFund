@@ -7,6 +7,7 @@
     "stake": "node scripts/stake.js",
     "deploy-logger": "node deploy-logger.js",
     "call-logger": "node call-logger.js",
+    "validate-config": "node scripts/validate-config.js",
     "test": "jest"
   },
   "dependencies": {
