@@ -155,3 +155,28 @@ export function formatTimeRemaining(
     return 'Ending soon';
   }
 }
+
+
+export function getStatusColorClasses(status: ProposalStatus): string {
+  const colorMap: Record<ProposalStatus, string> = {
+    active: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+    passing: 'bg-green-500/10 text-green-500 border-green-500/20',
+    failing: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+    executed: 'bg-green-500/10 text-green-500 border-green-500/20',
+    expired: 'bg-gray-500/10 text-gray-500 border-gray-500/20',
+    executable: 'bg-green-500/10 text-green-500 border-green-500/20',
+  };
+  return colorMap[status];
+}
+
+export function getStatusIcon(status: ProposalStatus): string {
+  const iconMap: Record<ProposalStatus, string> = {
+    active: '🗳️',
+    passing: '✅',
+    failing: '⚠️',
+    executed: '✓',
+    expired: '⏱️',
+    executable: '▶️',
+  };
+  return iconMap[status];
+}
