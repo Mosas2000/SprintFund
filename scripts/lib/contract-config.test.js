@@ -108,3 +108,43 @@ describe('contract-config', () => {
     });
   });
 });
+
+describe('getLegacyContractName', () => {
+  it('returns legacy contract name for v1', () => {
+    const name = getLegacyContractName('1');
+    expect(name).toBe('sprintfund-core');
+  });
+
+  it('returns null for non-existent version', () => {
+    const name = getLegacyContractName('99');
+    expect(name).toBeNull();
+  });
+});
+
+describe('isLegacyContract', () => {
+  it('returns true for legacy contract', () => {
+    const result = isLegacyContract('sprintfund-core');
+    expect(result).toBe(true);
+  });
+
+  it('returns false for current contract', () => {
+    const result = isLegacyContract('sprintfund-core-v3');
+    expect(result).toBe(false);
+  });
+});
+
+describe('getAllNetworks', () => {
+  it('returns all network names', () => {
+    const networks = getAllNetworks();
+    expect(networks).toContain('mainnet');
+    expect(networks).toContain('testnet');
+    expect(networks).not.toContain('default');
+  });
+});
+
+describe('getDefaultNetwork', () => {
+  it('returns the default network', () => {
+    const network = getDefaultNetwork();
+    expect(network).toBe('mainnet');
+  });
+});
