@@ -18,6 +18,7 @@ export interface ProposalStatusInfo {
 }
 
 const VOTING_PERIOD_BLOCKS = 432;
+const BLOCK_TIME_MINUTES = 10;
 
 /**
  * Determines the current status of a proposal based on voting state and block height
@@ -156,7 +157,7 @@ export function getTimeRemaining(
 ): { blocks: number; days: number; hours: number } {
   const votingEndsAt = proposal.votingEndsAt || proposal.createdAt + VOTING_PERIOD_BLOCKS;
   const blocksRemaining = Math.max(0, votingEndsAt - currentBlockHeight);
-  const minutesRemaining = blocksRemaining * 10;
+  const minutesRemaining = blocksRemaining * BLOCK_TIME_MINUTES;
   const hoursRemaining = Math.floor(minutesRemaining / 60);
   const daysRemaining = Math.floor(hoursRemaining / 24);
 
