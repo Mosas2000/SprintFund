@@ -6,8 +6,7 @@ import { sanitizeText } from '../lib/sanitize';
 import { FOCUS_RING_GREEN } from '../lib/focus-styles';
 import { VoteProgressBar } from './VoteProgressBar';
 import { useCommentCount } from '../store/comment-selectors';
-import { useCurrentBlockHeight } from '../hooks/useCurrentBlockHeight';
-import { getProposalStatus } from '../lib/proposal-status';
+import { useProposalStatus } from '../hooks/useProposalStatus';
 import { ProposalStatusBadge } from './ProposalStatusBadge';
 import type { Proposal } from '../types';
 
@@ -27,12 +26,10 @@ export const ProposalCard = memo(function ProposalCard({ proposal, selected }: P
   const totalVotes = proposal.votesFor + proposal.votesAgainst;
   const forPct = totalVotes > 0 ? Math.round((proposal.votesFor / totalVotes) * 100) : 0;
   const commentCount = useCommentCount(proposal.id);
-  const { blockHeight } = useCurrentBlockHeight();
+  const statusInfo = useProposalStatus(proposal);
 
   const safeTitle = sanitizeText(proposal.title);
   const safeDescription = sanitizeText(proposal.description);
-
-  const statusInfo = blockHeight ? getProposalStatus(proposal, blockHeight) : null;
 
   return (
     <Link
