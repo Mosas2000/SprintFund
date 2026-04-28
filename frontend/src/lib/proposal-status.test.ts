@@ -5,6 +5,9 @@ import {
   isProposalExecutable,
   getTimeRemaining,
   formatTimeRemaining,
+  isTerminalStatus,
+  getStatusLabel,
+  canAcceptVotes,
 } from './proposal-status';
 import type { Proposal } from '../types/proposal';
 
@@ -178,5 +181,59 @@ describe('formatTimeRemaining', () => {
     const result = formatTimeRemaining(proposal, 1005);
     
     expect(result).toBe('Ending soon');
+  });
+});
+
+describe('isTerminalStatus', () => {
+  it('returns true for executed status', () => {
+    expect(isTerminalStatus('executed')).toBe(true);
+  });
+
+  it('returns true for expired status', () => {
+    expect(isTerminalStatus('expired')).toBe(true);
+  });
+
+  it('returns false for active status', () => {
+    expect(isTerminalStatus('active')).toBe(false);
+  });
+
+  it('returns false for passing status', () => {
+    expect(isTerminalStatus('passing')).toBe(false);
+  });
+
+  it('returns false for failing status', () => {
+    expect(isTerminalStatus('failing')).toBe(false);
+  });
+
+  it('returns false for executable status', () => {
+    expect(isTerminalStatus('executable')).toBe(false);
+  });
+});
+
+describe('getStatusLabel', () => {
+  it('returns correct label for each status', () => {
+    expect(getStatusLabel('active')).toBe('Active');
+    expect(getStatusLabel('passing')).toBe('Passing');
+    expect(getStatusLabel('failing')).toBe('Failing');
+    expect(getStatusLabel('executable')).toBe('Executable');
+    expect(getStatusLabel('executed')).toBe('Executed');
+    expect(getStatusLabel('expired')).toBe('Expired');
+  });
+});
+
+describe('canAcceptVotes', () => {
+  it('returns false for executed proposals', () => {
+    const proposal = createMockProposal({ executed: true });
+    expect(canAcceptVotes(proposal, 1100)).toBe(false);
+  });
+
+  it('returns true for active proposals', () => {
+    const proposal = createMockProposal();
+    expect(canAcceptVotes(proposal, 1100)).toBe(true);
+  });
+
+  it('returns false after voting period ends', () => {
+    const proposal = createMockProposal();
+    expect(canAcceptVotes(proposal, 1500)).toBe(false);
   });
 });
