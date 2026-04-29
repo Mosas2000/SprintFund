@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react';
 import { getStake, getAllProposals, getVote } from '../lib/stacks';
 import type { DetailedStakeInfo, VoteCostInfo } from '../types/stake';
 
-export function useDetailedStake(address: string | undefined) {
+interface UseDetailedStakeOptions {
+  refreshInterval?: number;
+  onError?: (error: Error) => void;
+}
+
+export function useDetailedStake(
+  address: string | undefined,
+  options: UseDetailedStakeOptions = {}
+) {
   const [stakeInfo, setStakeInfo] = useState<DetailedStakeInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +65,11 @@ export function useDetailedStake(address: string | undefined) {
       } catch (err) {
         if (!mounted) return;
         console.error('Error fetching detailed stake:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch stake information');
+        const error = err instanceof Error ? err : new Error('Failed to fetch stake information');
+        setError(error.message);
+        if (options.onError) {
+          options.onError(error);
+        }
       } finally {
         if (mounted) {
           setLoading(false);
@@ -70,7 +82,7 @@ export function useDetailedStake(address: string | undefined) {
     return () => {
       mounted = false;
     };
-  }, [address]);
+  }, [address, options]);
 
   return { stakeInfo, loading, error };
 }
