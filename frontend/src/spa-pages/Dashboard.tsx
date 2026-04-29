@@ -20,6 +20,7 @@ import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { TreasuryBalance } from '../components/TreasuryBalance';
+import { StakeDashboard } from '../components/StakeDashboard';
 import { toErrorMessage } from '../lib/errors';
 import { formatUsd, stxToUsd } from '../lib/currency';
 import type { Proposal } from '../types';
@@ -317,6 +318,12 @@ export function DashboardPage(): React.JSX.Element {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Stake Lock Status */}
+      <div>
+        <h2 className="mb-4 text-lg font-semibold text-text">Stake Details</h2>
+        <StakeDashboard address={address} />
       </div>
 
       {/* -- Your proposals ----------------------------- */}
