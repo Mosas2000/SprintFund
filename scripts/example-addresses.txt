@@ -1,0 +1,13 @@
+# Example addresses file for migration report
+# Add one Stacks address per line
+# Lines starting with # are ignored
+
+# Example mainnet addresses (replace with actual addresses)
+SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T
+SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR
+SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE
+
+# Example testnet addresses (replace with actual addresses)
+ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG
+ST2JHG361ZXG51QTKY2NQCVBPPRRE2KZB1HR05NNC
