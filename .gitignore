@@ -28,6 +28,12 @@ frontend/.next/
 frontend/out/
 dist/
 
+# Migration reports
+migration-report*.json
+migration-report*.csv
+scripts/migration-report*.json
+scripts/migration-report*.csv
+
 # IDE and editor files
 .idea/
 .vscode/settings.json
