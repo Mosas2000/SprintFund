@@ -16,3 +16,5 @@ export interface DetailedStakeInfo extends StakeLockInfo {
   voteCosts: VoteCostInfo[];
   activeVotes: number;
 }
+
+export type { StakeLockInfo, VoteCostInfo, DetailedStakeInfo };
