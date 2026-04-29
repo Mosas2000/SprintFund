@@ -9,6 +9,9 @@
     "call-logger": "node call-logger.js",
     "validate-config": "node scripts/validate-config.js",
     "update-config": "node scripts/update-config.js",
+    "check-legacy": "node scripts/check-legacy-balance.js",
+    "migrate": "node scripts/migrate-stake.js",
+    "migration-report": "node scripts/migration-report.js",
     "test": "jest"
   },
   "dependencies": {
