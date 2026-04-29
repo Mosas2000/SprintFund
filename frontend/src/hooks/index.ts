@@ -10,6 +10,7 @@ export { useDebouncedSearch } from './useDebouncedSearch';
 export { useStxPriceData } from './useStxPrice';
 export { useWalletBalanceData } from './useWalletBalance';
 export { useTreasuryBalance } from './useTreasuryBalance';
+export { useDetailedStake } from './useDetailedStake';
 // Blockchain state hooks
 export { useCurrentBlockHeight } from './useCurrentBlockHeight';
 export { useVote } from './useVote';

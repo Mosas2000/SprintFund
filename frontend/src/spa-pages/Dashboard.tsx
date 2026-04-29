@@ -13,6 +13,8 @@ import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useOnboardingAutoComplete } from '../hooks/useOnboardingAutoComplete';
 import { useStxPriceData } from '../hooks/useStxPrice';
+import { useDetailedStake } from '../hooks/useDetailedStake';
+import { validateWithdrawal, getWithdrawWarning } from '../lib/stake-validation';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { useLoadComments } from '../store/comment-selectors';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
@@ -20,6 +22,8 @@ import { ErrorState } from '../components/ErrorState';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { TreasuryBalance } from '../components/TreasuryBalance';
+import { StakeDashboard } from '../components/StakeDashboard';
+import { StakeLockWarning } from '../components/StakeLockWarning';
 import { toErrorMessage } from '../lib/errors';
 import { formatUsd, stxToUsd } from '../lib/currency';
 import type { Proposal } from '../types';
@@ -55,6 +59,7 @@ export function DashboardPage(): React.JSX.Element {
   const [withdrawInput, setWithdrawInput] = useState<string>('');
   const [txStatus, setTxStatus] = useState<string | null>(null);
   const loadComments = useLoadComments();
+  const { stakeInfo } = useDetailedStake(address);
 
   const fetchData = useCallback(async (): Promise<void> => {
     if (!address) return;
@@ -132,19 +137,35 @@ export function DashboardPage(): React.JSX.Element {
       return;
     }
 
+    const microAmount = stxToMicro(stx);
+    const validation = validateWithdrawal(microAmount, stakeInfo);
+
+    if (!validation.canWithdraw) {
+      toast.error('Cannot withdraw', validation.error || 'Withdrawal not allowed');
+      if (validation.warning) {
+        toast.warning('Locked funds', validation.warning);
+      }
+      return;
+    }
+
+    const warning = stakeInfo ? getWithdrawWarning(microAmount, stakeInfo) : null;
+
     dialog.open({
       title: `Withdraw ${stx} STX`,
-      description: 'Withdrawing your stake reduces your voting power and may prevent you from creating proposals if your balance falls below the minimum.',
+      description: warning || 'Withdrawing your stake reduces your voting power and may prevent you from creating proposals if your balance falls below the minimum.',
       variant: 'danger',
       confirmLabel: 'Confirm Withdrawal',
       details: [
         { label: 'Withdraw Amount', value: `${stx} STX` },
         { label: 'Current Stake', value: `${formatStx(stakeAmount)} STX` },
-        { label: 'Remaining Stake', value: `${formatStx(stakeAmount - stxToMicro(stx))} STX` },
+        { label: 'Remaining Stake', value: `${formatStx(stakeAmount - microAmount)} STX` },
+        ...(stakeInfo && stakeInfo.lockedStake > 0
+          ? [{ label: 'Locked in Votes', value: `${formatStx(stakeInfo.lockedStake)} STX` }]
+          : []),
       ],
       onConfirm: () => {
         toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
-        callWithdrawStake(stxToMicro(stx), {
+        callWithdrawStake(microAmount, {
           onFinish: (txId: string) => {
             const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
             pollTxStatus(toastId, txId);
@@ -158,7 +179,7 @@ export function DashboardPage(): React.JSX.Element {
         });
       },
     });
-  }, [withdrawInput, stakeAmount, toast, dialog]);
+  }, [withdrawInput, stakeAmount, stakeInfo, toast, dialog]);
 
   /* -- Wallet hydrating ----------------------------- */
   if (walletLoading) {
@@ -297,6 +318,15 @@ export function DashboardPage(): React.JSX.Element {
         <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="mb-3 text-sm font-semibold text-text">Withdraw Stake</h2>
           <p className="mb-3 text-xs text-muted">Current stake: {formatStx(stakeAmount)} STX</p>
+          {stakeInfo && stakeInfo.lockedStake > 0 && (
+            <div className="mb-3">
+              <StakeLockWarning
+                lockedAmount={stakeInfo.lockedStake}
+                activeVotes={stakeInfo.activeVotes}
+                variant="warning"
+              />
+            </div>
+          )}
           <div className="flex flex-col gap-2 sm:flex-row">
             <label htmlFor="withdraw-amount" className="sr-only">Amount to withdraw in STX</label>
             <input
@@ -317,6 +347,12 @@ export function DashboardPage(): React.JSX.Element {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Stake Lock Status */}
+      <div>
+        <h2 className="mb-4 text-lg font-semibold text-text">Stake Details</h2>
+        <StakeDashboard address={address} />
       </div>
 
       {/* -- Your proposals ----------------------------- */}
