@@ -103,6 +103,9 @@ When ready to switch to a new version:
 - [ ] Test all functionality end-to-end
 - [ ] Update contract address in documentation
 - [ ] Announce to community with migration guide if needed
+- [ ] Deploy migration scripts and test thoroughly
+- [ ] Enable migration UI components in frontend
+- [ ] Monitor migration progress and provide user support
 
 ## Current Status
 
@@ -121,6 +124,27 @@ Track contract usage via:
 - Contract read calls for version info
 - Transaction volume per contract
 
+## Migration Resources
+
+### Documentation
+
+- [Contract Migration Guide](./CONTRACT_MIGRATION_GUIDE.md) - Comprehensive technical guide
+- [User Migration Guide](./USER_MIGRATION_GUIDE.md) - User-facing instructions
+- [Migration State Risks](./MIGRATION_STATE_RISKS.md) - Risk assessment and mitigation
+
+### Scripts
+
+- `scripts/check-legacy-balance.js` - Check user balances in legacy contracts
+- `scripts/migrate-stake.js` - Automated migration script
+- `scripts/migration-report.js` - Generate migration progress reports
+
+### Frontend Components
+
+- `MigrationBanner` - Persistent notification about available migration
+- `MigrationModal` - Step-by-step migration wizard
+- `MigrationStatus` - Display migration status and eligibility
+- `VersionMismatchWarning` - Alert users to version mismatches
+
 ## Contact
 
-For questions about contract versioning, open an issue on GitHub.
+For questions about contract versioning or migration, open an issue on GitHub.
