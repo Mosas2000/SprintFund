@@ -23,6 +23,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { TreasuryBalance } from '../components/TreasuryBalance';
 import { StakeDashboard } from '../components/StakeDashboard';
+import { StakeLockWarning } from '../components/StakeLockWarning';
 import { toErrorMessage } from '../lib/errors';
 import { formatUsd, stxToUsd } from '../lib/currency';
 import type { Proposal } from '../types';
@@ -317,6 +318,15 @@ export function DashboardPage(): React.JSX.Element {
         <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="mb-3 text-sm font-semibold text-text">Withdraw Stake</h2>
           <p className="mb-3 text-xs text-muted">Current stake: {formatStx(stakeAmount)} STX</p>
+          {stakeInfo && stakeInfo.lockedStake > 0 && (
+            <div className="mb-3">
+              <StakeLockWarning
+                lockedAmount={stakeInfo.lockedStake}
+                activeVotes={stakeInfo.activeVotes}
+                variant="warning"
+              />
+            </div>
+          )}
           <div className="flex flex-col gap-2 sm:flex-row">
             <label htmlFor="withdraw-amount" className="sr-only">Amount to withdraw in STX</label>
             <input
