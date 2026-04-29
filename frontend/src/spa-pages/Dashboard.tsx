@@ -13,6 +13,8 @@ import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useOnboardingAutoComplete } from '../hooks/useOnboardingAutoComplete';
 import { useStxPriceData } from '../hooks/useStxPrice';
+import { useDetailedStake } from '../hooks/useDetailedStake';
+import { validateWithdrawal, getWithdrawWarning } from '../lib/stake-validation';
 import { pollTxStatus } from '../lib/pollTxStatus';
 import { useLoadComments } from '../store/comment-selectors';
 import { DashboardSkeleton } from '../components/DashboardSkeleton';
@@ -56,6 +58,7 @@ export function DashboardPage(): React.JSX.Element {
   const [withdrawInput, setWithdrawInput] = useState<string>('');
   const [txStatus, setTxStatus] = useState<string | null>(null);
   const loadComments = useLoadComments();
+  const { stakeInfo } = useDetailedStake(address);
 
   const fetchData = useCallback(async (): Promise<void> => {
     if (!address) return;
@@ -133,19 +136,35 @@ export function DashboardPage(): React.JSX.Element {
       return;
     }
 
+    const microAmount = stxToMicro(stx);
+    const validation = validateWithdrawal(microAmount, stakeInfo);
+
+    if (!validation.canWithdraw) {
+      toast.error('Cannot withdraw', validation.error || 'Withdrawal not allowed');
+      if (validation.warning) {
+        toast.warning('Locked funds', validation.warning);
+      }
+      return;
+    }
+
+    const warning = stakeInfo ? getWithdrawWarning(microAmount, stakeInfo) : null;
+
     dialog.open({
       title: `Withdraw ${stx} STX`,
-      description: 'Withdrawing your stake reduces your voting power and may prevent you from creating proposals if your balance falls below the minimum.',
+      description: warning || 'Withdrawing your stake reduces your voting power and may prevent you from creating proposals if your balance falls below the minimum.',
       variant: 'danger',
       confirmLabel: 'Confirm Withdrawal',
       details: [
         { label: 'Withdraw Amount', value: `${stx} STX` },
         { label: 'Current Stake', value: `${formatStx(stakeAmount)} STX` },
-        { label: 'Remaining Stake', value: `${formatStx(stakeAmount - stxToMicro(stx))} STX` },
+        { label: 'Remaining Stake', value: `${formatStx(stakeAmount - microAmount)} STX` },
+        ...(stakeInfo && stakeInfo.lockedStake > 0
+          ? [{ label: 'Locked in Votes', value: `${formatStx(stakeInfo.lockedStake)} STX` }]
+          : []),
       ],
       onConfirm: () => {
         toast.info('Opening wallet', 'Confirm the withdrawal in your wallet.');
-        callWithdrawStake(stxToMicro(stx), {
+        callWithdrawStake(microAmount, {
           onFinish: (txId: string) => {
             const toastId = toast.tx(`Pending: Withdraw ${stx} STX`, txId, 'Waiting for on-chain confirmation...');
             pollTxStatus(toastId, txId);
@@ -159,7 +178,7 @@ export function DashboardPage(): React.JSX.Element {
         });
       },
     });
-  }, [withdrawInput, stakeAmount, toast, dialog]);
+  }, [withdrawInput, stakeAmount, stakeInfo, toast, dialog]);
 
   /* -- Wallet hydrating ----------------------------- */
   if (walletLoading) {
