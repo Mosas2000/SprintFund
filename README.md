@@ -193,6 +193,7 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 - [Contributing Guide](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Keyboard Shortcuts](KEYBOARD_SHORTCUTS.md)
+- [Contract Migration System](MIGRATION_README.md) - Guide for contract version migrations
 
 ## License
 
