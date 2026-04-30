@@ -61,7 +61,7 @@ class ContractVersionService {
         isSupported: version === EXPECTED_CONTRACT_VERSION,
         isValidated: true,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to detect contract version:', error);
       
       return {
