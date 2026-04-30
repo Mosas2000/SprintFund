@@ -99,6 +99,24 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
 
     useRefreshOnConfirmation(fetchProposals);
 
+    // Pagination effects
+    const { page, pageSize } = filterParams;
+    const totalItems = proposals.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    
+    // Auto-correct out-of-bounds page
+    useEffect(() => {
+        if (totalItems > 0 && page > totalPages && totalPages > 0) {
+            setPage(totalPages);
+        }
+    }, [page, totalPages, totalItems, setPage]);
+
+    // Scroll to top on page change
+    useEffect(() => {
+        const validPage = Math.max(1, Math.min(page, Math.max(1, totalPages)));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [page, totalPages]);
+
     // Uses centralized formatSTX from utils/formatSTX
 
     const shortenAddress = (address: string) => {
@@ -478,23 +496,7 @@ export default function ProposalList({ userAddress }: ProposalListProps) {
     });
 
     // Pagination logic
-    const { page, pageSize } = filterParams;
-    const totalItems = sortedProposals.length;
-    const totalPages = Math.ceil(totalItems / pageSize);
     const validPage = Math.max(1, Math.min(page, Math.max(1, totalPages)));
-    
-    // Auto-correct out-of-bounds page
-    useEffect(() => {
-        if (totalItems > 0 && page > totalPages) {
-            setPage(totalPages);
-        }
-    }, [page, totalPages, totalItems, setPage]);
-
-    // Scroll to top on page change
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [validPage]);
-
     const paginatedProposals = paginateProposals(sortedProposals, validPage, pageSize);
 
     return (
