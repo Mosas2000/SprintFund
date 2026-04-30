@@ -17,7 +17,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   onDismiss,
   onDismissAll,
 }) => {
-  const [currentTime, setCurrentTime] = React.useState(Date.now());
+  const [currentTime, setCurrentTime] = React.useState(() => Date.now());
 
   React.useEffect(() => {
     const interval = setInterval(() => {
