@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { useNotifications } from '../src/hooks/useNotifications';
 import { useGovernanceEventNotifications } from '../src/hooks/useGovernanceEventNotifications';
-import NotificationList from './NotificationList';
-import { Bell, X } from 'lucide-react';
+import { Bell } from 'lucide-react';
 
 interface NotificationCenterProps {
   contractPrincipal: string;
