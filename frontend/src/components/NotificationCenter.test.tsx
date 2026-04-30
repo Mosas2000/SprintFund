@@ -19,7 +19,7 @@ function makeNotification(overrides: Partial<Notification> = {}): Notification {
 
 describe('NotificationCenter state management', () => {
   it('dropdown starts closed', () => {
-    let isOpen = false;
+    const isOpen = false;
     expect(isOpen).toBe(false);
   });
 
