@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useContractEvents } from '../src/hooks/useContractEvents';
 import { getEventStats, groupEventsByCategory } from '../src/lib/event-utilities';
 import { GOVERNANCE_CONFIG } from '../src/lib/governance-config';
