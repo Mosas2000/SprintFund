@@ -13,7 +13,7 @@ interface ContractTransaction {
   };
 }
 
-const parseClarity = (repr: string): any => {
+const parseClarity = (repr: string): string | number | boolean => {
   if (repr.startsWith('u') && !isNaN(Number(repr.slice(1)))) {
     return Number(repr.slice(1));
   }
