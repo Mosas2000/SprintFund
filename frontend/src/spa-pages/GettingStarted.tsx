@@ -11,6 +11,7 @@ export function GettingStartedPage() {
           <p className="text-muted mb-6">
             Have questions about how SprintFund works?
           </p>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/help"
             className="inline-block rounded-lg bg-green px-6 py-3 font-semibold text-dark hover:bg-green-dim transition-colors"
