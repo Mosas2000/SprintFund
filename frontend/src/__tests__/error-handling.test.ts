@@ -118,6 +118,7 @@ describe('Error Handling', () => {
         if (attempts > 1) {
           timings.push(now - lastTime);
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         lastTime = now;
 
         if (attempts < 4) {
