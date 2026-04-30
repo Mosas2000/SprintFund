@@ -2,24 +2,35 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { normalizeContractTransaction, fetchContractEventStream } from './contract-events';
 import { ContractEvent } from '../types/contract-events';
 
+type MockTransaction = {
+  tx_id: string;
+  block_time: number;
+  sender_address: string;
+  tx_result: { repr: string };
+  contract_call?: {
+    contract_id: string;
+    function_name: string;
+  };
+};
+
 describe('Contract Events', () => {
   describe('normalizeContractTransaction', () => {
     const mockContractPrincipal = 'SP2ZNGJ85ENDY6QTHQ0YCWM1GRFX77YXF1W8F25J9.sprint-fund';
 
     it('returns null for transactions without contract calls', () => {
-      const tx = {
+      const tx: MockTransaction = {
         tx_id: 'test-1',
         block_time: 1000,
         sender_address: 'SP123',
         tx_result: { repr: '(ok true)' },
       };
 
-      const result = normalizeContractTransaction(tx as any, mockContractPrincipal);
+      const result = normalizeContractTransaction(tx as never, mockContractPrincipal);
       expect(result).toBeNull();
     });
 
     it('returns null for transactions from different contracts', () => {
-      const tx = {
+      const tx: MockTransaction = {
         tx_id: 'test-1',
         block_time: 1000,
         sender_address: 'SP123',
@@ -30,12 +41,12 @@ describe('Contract Events', () => {
         tx_result: { repr: 'u1000' },
       };
 
-      const result = normalizeContractTransaction(tx as any, mockContractPrincipal);
+      const result = normalizeContractTransaction(tx as never, mockContractPrincipal);
       expect(result).toBeNull();
     });
 
     it('normalizes stake transactions', () => {
-      const tx = {
+      const tx: MockTransaction = {
         tx_id: 'tx-stake-1',
         block_time: 1000,
         sender_address: 'SP123',
@@ -46,7 +57,7 @@ describe('Contract Events', () => {
         tx_result: { repr: 'u5000' },
       };
 
-      const result = normalizeContractTransaction(tx as any, mockContractPrincipal);
+      const result = normalizeContractTransaction(tx as never, mockContractPrincipal);
 
       expect(result).toBeDefined();
       expect(result?.category).toBe('stake');
@@ -56,7 +67,7 @@ describe('Contract Events', () => {
     });
 
     it('normalizes proposal transactions', () => {
-      const tx = {
+      const tx: MockTransaction = {
         tx_id: 'tx-prop-1',
         block_time: 2000,
         sender_address: 'SP456',
@@ -67,14 +78,14 @@ describe('Contract Events', () => {
         tx_result: { repr: 'u42' },
       };
 
-      const result = normalizeContractTransaction(tx as any, mockContractPrincipal);
+      const result = normalizeContractTransaction(tx as never, mockContractPrincipal);
 
       expect(result?.category).toBe('proposal');
       expect(result?.proposalId).toBe('42');
     });
 
     it('normalizes vote transactions', () => {
-      const tx = {
+      const tx: MockTransaction = {
         tx_id: 'tx-vote-1',
         block_time: 3000,
         sender_address: 'SP789',
@@ -85,14 +96,14 @@ describe('Contract Events', () => {
         tx_result: { repr: 'u100' },
       };
 
-      const result = normalizeContractTransaction(tx as any, mockContractPrincipal);
+      const result = normalizeContractTransaction(tx as never, mockContractPrincipal);
 
       expect(result?.category).toBe('vote');
       expect(result?.weight).toBe(100);
     });
 
     it('marks failed transactions correctly', () => {
-      const tx = {
+      const tx: MockTransaction = {
         tx_id: 'tx-fail-1',
         block_time: 4000,
         sender_address: 'SP000',
@@ -103,7 +114,7 @@ describe('Contract Events', () => {
         tx_result: { repr: '(err u1000)' },
       };
 
-      const result = normalizeContractTransaction(tx as any, mockContractPrincipal);
+      const result = normalizeContractTransaction(tx as never, mockContractPrincipal);
 
       expect(result?.status).toBe('failed');
     });

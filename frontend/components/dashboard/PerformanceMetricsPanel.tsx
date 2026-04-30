@@ -4,7 +4,7 @@ import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
 import { Clock, Zap, TrendingUp } from 'lucide-react';
 
 export function PerformanceMetricsPanel() {
-  const { proposals, proposalStats, timeline } = useGovernanceAnalytics();
+  const { proposals, proposalStats } = useGovernanceAnalytics();
 
   const calculateApprovalVelocity = () => {
     if (!proposals || proposals.length === 0) return 0;

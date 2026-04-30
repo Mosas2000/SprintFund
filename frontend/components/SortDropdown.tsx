@@ -29,24 +29,18 @@ const SORT_DESCRIPTIONS: Record<SortOption, string> = {
 export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [internalSort, setInternalSort] = useState<SortOption>('newest');
-    const [activeIndex, setActiveIndex] = useState(-1);
     
     const dropdownRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
 
     const selectedSort = sort ?? internalSort;
+    const initialActiveIndex = SORT_OPTIONS.findIndex(o => o.value === selectedSort);
+    const [activeIndex, setActiveIndex] = useState(initialActiveIndex >= 0 ? initialActiveIndex : 0);
 
     const close = useCallback(() => {
         setIsOpen(false);
-        setActiveIndex(-1);
-    }, []);
-
-    useEffect(() => {
-        if (isOpen) {
-            const index = SORT_OPTIONS.findIndex(o => o.value === selectedSort);
-            setActiveIndex(index >= 0 ? index : 0);
-        }
-    }, [isOpen, selectedSort]);
+        setActiveIndex(initialActiveIndex >= 0 ? initialActiveIndex : 0);
+    }, [initialActiveIndex, setActiveIndex]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

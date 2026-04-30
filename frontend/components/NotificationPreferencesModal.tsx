@@ -6,7 +6,7 @@ import {
   saveGovernanceNotificationPreferences,
 } from '../src/lib/governance-notification-preferences';
 import { NotificationPreference } from '../src/types/notifications';
-import { Bell, Check, X } from 'lucide-react';
+import { Bell, Check } from 'lucide-react';
 
 const preferenceLabels: Record<keyof NotificationPreference, string> = {
   proposalCreated: 'New Proposals',

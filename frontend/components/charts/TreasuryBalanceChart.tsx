@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
 
 export default function TreasuryBalanceChart() {
-  const { proposals, timeline, loading } = useGovernanceAnalytics();
+  const { proposals, loading } = useGovernanceAnalytics();
 
   if (loading) {
     return (

@@ -30,7 +30,7 @@ export class AsyncErrorBoundary extends React.Component<
     };
   }
 
-  componentDidCatch(error: Error) {
+  componentDidCatch() {
     if (this.props.onError && this.state.error) {
       this.props.onError(this.state.error);
     }

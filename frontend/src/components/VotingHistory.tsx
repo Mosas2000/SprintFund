@@ -18,7 +18,7 @@ function formatDate(timestamp: number): string {
 
 /* ── Vote direction badge ─────────────────────── */
 
-function VoteBadge({ support }: { support: boolean }: { support: boolean }) {
+function VoteBadge({ support }: { support: boolean }) {
   return (
     <span
       className={`inline-flex items-center text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full ${
@@ -142,6 +142,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
 
   // Reset pagination on filter or search change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisibleCount(10);
   }, [filter, search]);
 

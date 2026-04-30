@@ -21,7 +21,7 @@ function statusBadge(proposal: Proposal): { label: string; className: string } {
 
 /* ── Vote bar ─────────────────────────────────── */
 
-function VoteBar({ votesFor, votesAgainst }: { votesFor: number; votesAgainst: number }, votesAgainst }: { votesFor: number; votesAgainst: number }) {
+function VoteBar({ votesFor, votesAgainst }: { votesFor: number; votesAgainst: number }) {
   const total = votesFor + votesAgainst;
   const forPct = total > 0 ? Math.round((votesFor / total) * 100) : 0;
   const againstPct = total > 0 ? 100 - forPct : 0;

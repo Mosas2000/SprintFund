@@ -9,7 +9,7 @@ interface GlobalLoadingContextType {
   setGlobalLoading: (state: LoadingState) => void;
   startLoading: (message?: string) => void;
   completeLoading: () => void;
-  failLoading: (error?: any) => void;
+  failLoading: (error?: unknown) => void;
 }
 
 const GlobalLoadingContext = createContext<GlobalLoadingContextType | undefined>(undefined);
@@ -30,7 +30,7 @@ export function GlobalLoadingProvider({ children }: { children: ReactNode }) {
     setGlobalLoading(prev => updateLoadingState(prev, 'success'));
   }, []);
 
-  const failLoading = useCallback((error?: any) => {
+  const failLoading = useCallback((error?: unknown) => {
     setGlobalLoading(prev => ({
       ...updateLoadingState(prev, 'error'),
       error: error ? normalizeError(error) : undefined,

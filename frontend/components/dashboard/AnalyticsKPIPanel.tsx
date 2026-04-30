@@ -142,11 +142,9 @@ function calculateAverageFundingTime(timeline: TimelineItem[]): number {
 
   // Since this hook provides counts per day, not proposal IDs,
   // we estimate average funding time based on the timeline pattern
-  let totalCreated = 0;
   let totalApproved = 0;
   
   timeline.forEach((item) => {
-    totalCreated += item.created || 0;
     totalApproved += item.approved || 0;
   });
 

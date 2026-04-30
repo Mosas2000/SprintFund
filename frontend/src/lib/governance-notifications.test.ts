@@ -83,7 +83,7 @@ describe('Governance Notifications', () => {
     });
 
     it('returns null for invalid type', () => {
-      const notif = createGovernanceNotification('delegationReceived' as any, {});
+      const notif = createGovernanceNotification('delegationReceived' as never, {});
 
       expect(notif).not.toBeNull();
     });
