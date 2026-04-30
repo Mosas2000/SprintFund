@@ -1,12 +1,9 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNotifications } from '../src/hooks/useNotifications';
-import { getGovernanceNotificationPreferences } from '../src/lib/governance-notification-preferences';
 import {
-  createGovernanceNotification,
   shouldNotifyGovernance,
-  deduplicateGovernanceNotifications,
 } from '../src/lib/governance-notifications';
 import { NotificationContainer } from './NotificationDisplay';
 import { NotificationPreferencesModal } from './NotificationPreferencesModal';
@@ -19,50 +16,17 @@ interface GovernanceNotificationManagerProps {
 
 export const GovernanceNotificationManager: React.FC<
   GovernanceNotificationManagerProps
-> = ({ contractPrincipal, pollInterval = 30000 }) => {
+> = () => {
   const {
     notifications,
-    addNotification,
     dismissNotification,
   } = useNotifications();
   const [preferencesOpen, setPreferencesOpen] = useState(false);
-  const [preferences, setPreferences] = useState(
-    getGovernanceNotificationPreferences()
-  );
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  useEffect(() => {
-    const count = notifications.filter(n => !n.read).length;
-    setUnreadCount(count);
-  }, [notifications]);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleNavigation = useCallback((url: string) => {
     window.location.href = url;
   }, []);
-
-  const handleSimulateProposalCreated = useCallback(() => {
-    if (shouldNotifyGovernance('proposalCreated', preferences)) {
-      const notif = createGovernanceNotification('proposalCreated', {
-        proposalId: '123',
-        proposalTitle: 'Sample Governance Proposal',
-      });
-      if (notif) {
-        addNotification(notif);
-      }
-    }
-  }, [preferences, addNotification]);
-
-  const handleSimulateProposalExecuted = useCallback(() => {
-    if (shouldNotifyGovernance('proposalExecuted', preferences)) {
-      const notif = createGovernanceNotification('proposalExecuted', {
-        proposalId: '123',
-        proposalTitle: 'Sample Governance Proposal',
-      });
-      if (notif) {
-        addNotification(notif);
-      }
-    }
-  }, [preferences, addNotification]);
 
   return (
     <>
@@ -101,7 +65,6 @@ export const GovernanceNotificationManager: React.FC<
         isOpen={preferencesOpen}
         onClose={() => {
           setPreferencesOpen(false);
-          setPreferences(getGovernanceNotificationPreferences());
         }}
       />
     </>
