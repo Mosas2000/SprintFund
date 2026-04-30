@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip as RechartsTooltip, Cell } from 'recharts';
-import { BarChart3, TrendingUp, Info } from 'lucide-react';
+import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip as RechartsTooltip, Cell } from 'recharts';
+import { BarChart3, Info } from 'lucide-react';
 
 const benchmarkData = [
     { name: 'SprintFund', efficiency: 94, color: '#EA580C' },
