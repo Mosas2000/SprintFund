@@ -27,7 +27,7 @@ export const useGovernanceEventNotifications = ({
   const preferences = useRef(getGovernanceNotificationPreferences());
 
   const handleNewEvent = useCallback(
-    (event: any) => {
+    (event: { id: string; category: string; proposalId?: string; description?: string }) => {
       if (!enabled || seenEventIds.current.has(event.id)) {
         return;
       }
