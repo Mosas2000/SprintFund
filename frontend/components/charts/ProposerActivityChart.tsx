@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useGovernanceAnalytics } from '@/hooks/useGovernanceAnalytics';
 
 export default function ProposerActivityChart() {
