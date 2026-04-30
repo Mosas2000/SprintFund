@@ -142,6 +142,7 @@ function VotingHistoryBase({ votes }: VotingHistoryProps) {
 
   // Reset pagination on filter or search change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisibleCount(10);
   }, [filter, search]);
 
