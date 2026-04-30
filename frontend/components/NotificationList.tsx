@@ -17,9 +17,17 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   onDismiss,
   onDismissAll,
 }) => {
+  const [currentTime, setCurrentTime] = React.useState(Date.now());
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   const formatTime = (timestamp: number) => {
-    const now = Date.now();
-    const diff = now - timestamp;
+    const diff = currentTime - timestamp;
 
     if (diff < 60000) {
       return 'just now';
