@@ -107,6 +107,7 @@ describe('Error Handling', () => {
       expect(onRetry).toHaveBeenCalled();
     });
 
+    /* eslint-disable react-hooks/set-state-in-effect */
     it('applies exponential backoff', async () => {
       const timings: number[] = [];
       let lastTime = Date.now();
@@ -118,7 +119,6 @@ describe('Error Handling', () => {
         if (attempts > 1) {
           timings.push(now - lastTime);
         }
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         lastTime = now;
 
         if (attempts < 4) {
@@ -134,6 +134,7 @@ describe('Error Handling', () => {
       // Verify delays are non-zero (indicating backoff is happening)
       expect(timings.every(t => t > 0)).toBe(true);
     });
+    /* eslint-enable react-hooks/set-state-in-effect */
   });
 
   describe('API Error', () => {
