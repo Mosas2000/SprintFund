@@ -2,9 +2,6 @@
 
 import React, { useState, useCallback } from 'react';
 import { useNotifications } from '../src/hooks/useNotifications';
-import {
-  shouldNotifyGovernance,
-} from '../src/lib/governance-notifications';
 import { NotificationContainer } from './NotificationDisplay';
 import { NotificationPreferencesModal } from './NotificationPreferencesModal';
 import { Bell, Settings } from 'lucide-react';
