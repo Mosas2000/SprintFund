@@ -35,18 +35,18 @@ export default function SortDropdown({ onSortChange, sort }: SortDropdownProps) 
     const triggerRef = useRef<HTMLButtonElement>(null);
 
     const selectedSort = sort ?? internalSort;
+    const initialActiveIndex = SORT_OPTIONS.findIndex(o => o.value === selectedSort);
 
     const close = useCallback(() => {
         setIsOpen(false);
-        setActiveIndex(-1);
-    }, []);
+        setActiveIndex(initialActiveIndex >= 0 ? initialActiveIndex : 0);
+    }, [initialActiveIndex]);
 
     useEffect(() => {
         if (isOpen) {
-            const index = SORT_OPTIONS.findIndex(o => o.value === selectedSort);
-            setActiveIndex(index >= 0 ? index : 0);
+            setActiveIndex(initialActiveIndex >= 0 ? initialActiveIndex : 0);
         }
-    }, [isOpen, selectedSort]);
+    }, [isOpen, initialActiveIndex]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
