@@ -10,19 +10,23 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 
 **Status**: ✅ **Live on Stacks Mainnet**
 
-**Contract Address**: `SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3`
+**Contract Address**: `SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60.sprintfund-core-v4-minimal`
 
-**Explorer**: [View on Stacks Explorer](https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3?chain=mainnet)
+**Explorer**: [View on Stacks Explorer](https://explorer.hiro.so/txid/SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60.sprintfund-core-v4-minimal?chain=mainnet)
+
+**Version**: V4-Minimal (Optimized with Security Fixes)
 
 **Configuration**: See [CONFIGURATION.md](CONFIGURATION.md) for centralized config management
 
 ## Key Features
 
-- **⚡ Micro-Grants** - Fast funding for small projects ($50-200 STX range)
+- **⚡ Micro-Grants** - Fast funding for small projects (1-1000 STX range)
 - **🗳️ Quadratic Voting** - Fair voting mechanism that prevents whale dominance (cost = weight²)
-- **⭐ Reputation System** - Track contributor history and build trust
+- **🔒 Security Hardened** - 10 critical security fixes including vote cost deduction, double-vote prevention, and stake lockup
+- **⏱️ Time-Locked Execution** - High-value proposals (≥100 STX) require 1-day timelock after voting ends
+- **📊 Quorum Requirements** - 10% of total staked STX must participate for proposal execution
 - **🛡️ Anti-Spam Staking** - Require 10 STX stake to submit proposals
-- **📊 Analytics Dashboard** - Real-time stats and leaderboards
+- **📈 Analytics Dashboard** - Real-time stats and leaderboards
 - **👤 User Dashboard** - Track your proposals, votes, and stake balance
 - **⌨️ Keyboard Shortcuts** - Power user navigation with keyboard commands
 
@@ -31,7 +35,8 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 ### Smart Contracts
 - **Language**: Clarity
 - **Blockchain**: Stacks Mainnet
-- **Features**: Quadratic voting, staking, proposal execution
+- **Version**: V4-Minimal (Optimized)
+- **Features**: Quadratic voting, staking, proposal execution, timelock, quorum, vote cost deduction, stake lockup
 
 ### Frontend
 - **Framework**: Next.js 16 with TypeScript
@@ -92,7 +97,9 @@ See [frontend/README.md](frontend/README.md) for local development setup.
 ```
 sprintfund/
 ├── contracts/
-│   └── sprintfund-core-v3.clar  # Main DAO contract
+│   ├── sprintfund-core-v4-minimal.clar  # Main DAO contract (V4)
+│   ├── sprintfund-core-v3.clar          # Legacy V3 contract
+│   └── sprintfund-logger.clar           # Event logger
 ├── frontend/
 │   ├── app/
 │   │   └── page.tsx            # Landing page
@@ -104,6 +111,7 @@ sprintfund/
 │   │   └── Stats.tsx
 │   └── package.json
 ├── deployments/
+│   ├── v4-minimal.mainnet-plan.yaml
 │   └── default.mainnet-plan.yaml
 ├── DEPLOYMENT.md               # Deployment documentation
 └── README.md                   # This file
@@ -114,15 +122,21 @@ sprintfund/
 ### Read-Only
 - `get-proposal(proposal-id)` - Get proposal details
 - `get-proposal-count()` - Get total proposals
-- `get-stake(staker)` - Get user's stake
+- `get-stake(staker)` - Get user's stake and lock status
 - `get-min-stake-amount()` - Get minimum stake (10 STX)
+- `get-vote(proposal-id, voter)` - Get vote details for a voter
+- `get-required-quorum()` - Get required quorum (10% of total staked)
+- `get-available-stake(staker)` - Get available stake after vote costs
+- `get-total-staked()` - Get total STX staked in contract
+- `get-version()` - Get contract version (returns 4)
 
 ### Public
 - `stake(amount)` - Stake STX
-- `create-proposal(amount, title, description)` - Create proposal
-- `vote(proposal-id, support, vote-weight)` - Vote on proposal
-- `execute-proposal(proposal-id)` - Execute approved proposal
-- `withdraw-stake(amount)` - Withdraw staked STX
+- `create-proposal(amount, title, description)` - Create proposal (requires 10 STX stake)
+- `vote(proposal-id, support, vote-weight)` - Vote on proposal (cost = weight²)
+- `execute-proposal(proposal-id)` - Execute approved proposal (proposer only, after timelock)
+- `withdraw-stake(amount)` - Withdraw staked STX (after unlock period)
+- `reclaim-vote-cost(proposal-id)` - Reclaim vote cost after voting period ends
 
 ## Demo & Screenshots
 
@@ -149,9 +163,10 @@ Visit `http://localhost:3000` to see the app.
 
 ## Deployment Cost
 
-- **Contract Deployment**: 0.08058 STX
+- **Contract Deployment**: 0.76 STX (763,226 microSTX)
 - **Network**: Stacks Mainnet
-- **Date**: January 20, 2026
+- **Date**: May 14, 2026
+- **Version**: V4-Minimal (Optimized)
 
 ## Current Limitations
 
@@ -167,7 +182,15 @@ Visit `http://localhost:3000` to see the app.
 - **Mobile App**: Native mobile experience
 
 ### Security Considerations
-- Smart contracts are not formally audited
+- Smart contract includes 10 critical security fixes from V3
+- Vote costs are properly deducted (not just checked)
+- Double-voting prevention enforced
+- Stake lockup after voting (1 day)
+- Timelock for high-value proposals (≥100 STX)
+- Quorum requirements (10% of total staked)
+- Amount validation (1-1000 STX range)
+- Only proposers can execute their proposals
+- Voting period limits enforced (3 days)
 - Use at your own risk on mainnet
 - Start with small amounts to test functionality
 
@@ -202,4 +225,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ on Stacks Blockchain**
 
-🔗 [GitHub](https://github.com/Mosas2000/SprintFund) | 📊 [Contract Explorer](https://explorer.hiro.so/txid/SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T.sprintfund-core-v3?chain=mainnet)
+🔗 [GitHub](https://github.com/Mosas2000/SprintFund) | 📊 [Contract Explorer](https://explorer.hiro.so/txid/SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60.sprintfund-core-v4-minimal?chain=mainnet)
