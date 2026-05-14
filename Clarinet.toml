@@ -5,6 +5,14 @@ authors = []
 telemetry = false
 cache_dir = "./.cache"
 
+[contracts.sprintfund-core-v4-minimal]
+path = "contracts/sprintfund-core-v4-minimal.clar"
+epoch = "latest"
+
+[contracts.sprintfund-core-v4]
+path = "contracts/sprintfund-core-v4.clar"
+epoch = "latest"
+
 [contracts.sprintfund-core-v3]
 path = "contracts/sprintfund-core-v3.clar"
 epoch = "latest"
