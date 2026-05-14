@@ -9,16 +9,44 @@ plan:
     - id: 0
       transactions:
         - contract-publish:
+            contract-name: sprintfund-core
+            expected-sender: SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60
+            cost: 762945
+            path: contracts/sprintfund-core.clar
+            anchor-block-only: true
+            clarity-version: 3
+        - contract-publish:
+            contract-name: sprintfund-core-v2
+            expected-sender: SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60
+            cost: 764347
+            path: contracts/sprintfund-core-v2.clar
+            anchor-block-only: true
+            clarity-version: 3
+        - contract-publish:
             contract-name: sprintfund-core-v3
-            expected-sender: SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T
-            cost: 80580
+            expected-sender: SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60
+            cost: 762977
             path: contracts/sprintfund-core-v3.clar
             anchor-block-only: true
             clarity-version: 3
         - contract-publish:
+            contract-name: sprintfund-core-v4
+            expected-sender: SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60
+            cost: 765251
+            path: contracts/sprintfund-core-v4.clar
+            anchor-block-only: true
+            clarity-version: 3
+        - contract-publish:
+            contract-name: sprintfund-core-v4-minimal
+            expected-sender: SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60
+            cost: 763226
+            path: contracts/sprintfund-core-v4-minimal.clar
+            anchor-block-only: true
+            clarity-version: 3
+        - contract-publish:
             contract-name: sprintfund-logger
-            expected-sender: SP31PKQVQZVZCK3FM3NH67CGD6G1FMR17VQVS2W5T
-            cost: 6970
+            expected-sender: SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60
+            cost: 761793
             path: contracts/sprintfund-logger.clar
             anchor-block-only: true
             clarity-version: 3
