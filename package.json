@@ -1,7 +1,7 @@
 {
-  "name": "sprintfund-tests",
-  "version": "1.0.0",
-  "description": "Run unit tests on this project.",
+  "name": "sprintfund",
+  "version": "4.0.0",
+  "description": "Lightning-fast micro-grants DAO on Stacks blockchain with V4-minimal security enhancements",
   "type": "module",
   "private": true,
   "scripts": {
