@@ -5,33 +5,49 @@ authors = []
 telemetry = false
 cache_dir = "./.cache"
 
-[contracts.sprintfund-core-v4-minimal]
-path = "contracts/sprintfund-core-v4-minimal.clar"
+# ============================================
+# Production Contracts
+# ============================================
+
+[contracts.sprintfund-core-v5-ultra]
+path = "contracts/sprintfund-core-v5-ultra.clar"
 epoch = "latest"
 
-[contracts.sprintfund-core-v4]
-path = "contracts/sprintfund-core-v4.clar"
+[contracts.sprintfund-core-v5-minimal]
+path = "contracts/sprintfund-core-v5-minimal.clar"
+epoch = "latest"
+
+[contracts.sprintfund-core-v5-micro]
+path = "contracts/sprintfund-core-v5-micro.clar"
+epoch = "latest"
+
+# ============================================
+# Legacy Contracts (for reference/testing)
+# ============================================
+
+[contracts.sprintfund-core-v4-minimal]
+path = "contracts/sprintfund-core-v4-minimal.clar"
 epoch = "latest"
 
 [contracts.sprintfund-core-v3]
 path = "contracts/sprintfund-core-v3.clar"
 epoch = "latest"
 
-[contracts.sprintfund-core]
-path = "contracts/sprintfund-core.clar"
-epoch = "latest"
-
-[contracts.sprintfund-logger]
-path = "contracts/sprintfund-logger.clar"
-epoch = "latest"
-
 [contracts.sprintfund-core-v2]
 path = "contracts/sprintfund-core-v2.clar"
 epoch = "latest"
 
-# [contracts.counter]
-# path = "contracts/counter.clar"
-# epoch = "latest"
+[contracts.sprintfund-core]
+path = "contracts/sprintfund-core.clar"
+epoch = "latest"
+
+# ============================================
+# Supporting Contracts
+# ============================================
+
+[contracts.sprintfund-logger]
+path = "contracts/sprintfund-logger.clar"
+epoch = "latest"
 
 [repl.analysis]
 passes = ["check_checker"]
