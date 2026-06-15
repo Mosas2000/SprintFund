@@ -1,0 +1,17 @@
+---
+id: 1
+name: SprintFund v5-minimal Mainnet Deployment
+network: mainnet
+stacks-node: "https://api.hiro.so"
+bitcoin-node: "http://blockstream.info:3000"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - contract-publish:
+            contract-name: sprintfund-core-v5-minimal
+            expected-sender: SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60
+            cost: 800000
+            path: contracts/sprintfund-core-v5-minimal.clar
+            clarity-version: 3
+            anchor-block-only: false

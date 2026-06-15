@@ -58,7 +58,6 @@ genesis:
     - pox-4
     - signers
     - signers-voting
-    - costs-4
 plan:
   batches:
     - id: 0
@@ -77,6 +76,16 @@ plan:
             contract-name: sprintfund-core-v3
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/sprintfund-core-v3.clar
+            clarity-version: 3
+        - emulated-contract-publish:
+            contract-name: sprintfund-core-v4-minimal
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/sprintfund-core-v4-minimal.clar
+            clarity-version: 3
+        - emulated-contract-publish:
+            contract-name: sprintfund-core-v5-micro
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/sprintfund-core-v5-micro.clar
             clarity-version: 3
         - emulated-contract-publish:
             contract-name: sprintfund-logger
