@@ -5,6 +5,9 @@ export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || 'SP1
 export const CONTRACT_NAME = process.env.NEXT_PUBLIC_CONTRACT_NAME || 'sprintfund-core-v4-minimal';
 export const CONTRACT_PRINCIPAL = `${CONTRACT_ADDRESS}.${CONTRACT_NAME}`;
 
+// Contract version detection
+export const CONTRACT_VERSION = parseInt(CONTRACT_NAME.match(/v(\d+)/)?.[1] || '5', 10);
+
 /* ── API ──────────────────────────────────────── */
 
 const API_URLS = {
@@ -50,5 +53,6 @@ export const SITE = {
 
 /* ── Minimum stake ────────────────────────────── */
 
-export const MIN_STAKE_STX = 10;
-export const MIN_STAKE_MICRO = MIN_STAKE_STX * MICRO;
+// Default minimum stake for v4-minimal (10 STX fixed)
+export const MIN_STAKE_STX = 10; // 10 STX minimum for v4-minimal
+export const MIN_STAKE_MICRO = 10000000; // 10 STX in microSTX
