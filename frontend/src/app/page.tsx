@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import type { UserData } from '@stacks/connect';
-import { CONTRACT_PRINCIPAL } from '@/config';
+import { CONTRACT_PRINCIPAL, CONTRACT_VERSION } from '@/config';
+import { fetchMinStakeAmount } from '@/lib/contract-info';
 import SprintFundHero from '@/components/ui/SprintFundHero';
 import CreateProposalForm from '@/components/CreateProposalForm';
 import ProposalList from '@/components/ProposalList';
 import UserDashboard from '@/components/dashboard/UserDashboard';
+import AdminPanel from '@/components/admin/AdminPanel';
 import Stats from '@/components/Stats';
 import Header from '@/components/Header';
 import Link from 'next/link';
@@ -21,6 +23,12 @@ export default function Home() {
   const [userData, setUserData] = useState<StacksUserData | null>(null);
   const [copied, setCopied] = useState(false);
   const [walletLoading, setWalletLoading] = useState<LoadingState>(createLoadingState('loading'));
+  const [minStake, setMinStake] = useState<number>(100); // microSTX
+
+  useEffect(() => {
+    // Fetch minimum stake from contract
+    fetchMinStakeAmount().then(setMinStake).catch(console.error);
+  }, []);
 
   useEffect(() => {
     let timeout: number | undefined;
@@ -87,12 +95,18 @@ export default function Home() {
           {/* Contract Address Display */}
           <div className="text-center mb-12">
             <div className="inline-block bg-slate-800 rounded-lg px-6 py-3 border border-slate-700">
-              <p className="text-sm text-slate-300 mb-1">Contract Address</p>
+              <p className="text-sm text-slate-300 mb-1">Contract Address (v{CONTRACT_VERSION})</p>
               <code className="text-white font-mono text-sm break-all">
                 {CONTRACT_PRINCIPAL}
               </code>
+              <div className="mt-2 text-xs text-slate-400">
+                Min Stake: {(minStake / 1_000_000).toFixed(6)} STX ({minStake} microSTX)
+              </div>
             </div>
           </div>
+
+          {/* Admin Panel (only visible to contract owner) */}
+          <AdminPanel userAddress={userData?.profile?.stxAddress?.mainnet} />
 
           {/* User Dashboard */}
           <UserDashboard userAddress={userData?.profile?.stxAddress?.mainnet} />
@@ -116,7 +130,7 @@ export default function Home() {
               <div>
                 <div className="text-orange-400 font-bold text-lg mb-2">1. Stake</div>
                 <p className="text-slate-300 text-sm">
-                  Stake 10 STX to gain proposal creation rights and anti-spam protection.
+                  Stake as little as {(minStake / 1_000_000).toFixed(6)} STX to gain proposal creation rights (configurable by owner).
                 </p>
               </div>
               <div>
