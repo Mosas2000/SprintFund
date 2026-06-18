@@ -8,24 +8,25 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 
 ## 🚀 Live Deployment
 
-**Status**: ✅ **Live on Stacks Mainnet**
+**Status**: ✅ **Ready for Deployment - v5-micro**
 
-**Contract Address**: `SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60.sprintfund-core-v4-minimal`
+**Contract Version**: V5-Micro (Configurable Micro-Stake with Admin Controls)
 
-**Explorer**: [View on Stacks Explorer](https://explorer.hiro.so/txid/SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60.sprintfund-core-v4-minimal?chain=mainnet)
+**Next Contract Address**: TBD (Deploy v5-micro to mainnet)
 
-**Version**: V4-Minimal (Optimized with Security Fixes)
+**Current Production**: `SP1W6XQZ6XVYGTVW32SJW2ZG48ZJBW9BATRD19N60.sprintfund-core-v4-minimal`
 
-**Configuration**: See [CONFIGURATION.md](CONFIGURATION.md) for centralized config management
+**Configuration**: Fully configurable minimum stake (default: 100 microSTX = 0.0001 STX)
 
 ## Key Features
 
-- **⚡ Micro-Grants** - Fast funding for small projects (1-1000 STX range)
+- **⚡ Configurable Micro-Stakes** - Start with as little as 0.0001 STX (100 microSTX), adjustable by contract owner
 - **🗳️ Quadratic Voting** - Fair voting mechanism that prevents whale dominance (cost = weight²)
+- **👑 Admin Controls** - Contract owner can adjust minimum stake and transfer ownership
 - **🔒 Security Hardened** - 10 critical security fixes including vote cost deduction, double-vote prevention, and stake lockup
 - **⏱️ Time-Locked Execution** - High-value proposals (≥100 STX) require 1-day timelock after voting ends
 - **📊 Quorum Requirements** - 10% of total staked STX must participate for proposal execution
-- **🛡️ Anti-Spam Staking** - Require 10 STX stake to submit proposals
+- **🛡️ Anti-Spam Protection** - Configurable minimum stake to submit proposals
 - **📈 Analytics Dashboard** - Real-time stats and leaderboards
 - **👤 User Dashboard** - Track your proposals, votes, and stake balance
 - **⌨️ Keyboard Shortcuts** - Power user navigation with keyboard commands
@@ -35,8 +36,8 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
 ### Smart Contracts
 - **Language**: Clarity
 - **Blockchain**: Stacks Mainnet
-- **Version**: V4-Minimal (Optimized)
-- **Features**: Quadratic voting, staking, proposal execution, timelock, quorum, vote cost deduction, stake lockup
+- **Version**: V5-Micro (Configurable Stakes + Admin Controls)
+- **Features**: Quadratic voting, configurable staking, proposal execution, timelock, quorum, vote cost deduction, stake lockup, admin functions
 
 ### Frontend
 - **Framework**: Next.js 16 with TypeScript
@@ -55,7 +56,8 @@ SprintFund is a decentralized autonomous organization (DAO) designed to fund sma
    - Approve connection with Hiro/Leather wallet
 
 2. **Stake STX** (Required for creating proposals)
-   - Minimum stake: 10 STX
+   - Minimum stake: Configurable (default: 0.0001 STX)
+   - Owner can adjust minimum stake
    - Stake is refundable when withdrawn
 
 3. **Create a Proposal**
@@ -97,24 +99,30 @@ See [frontend/README.md](frontend/README.md) for local development setup.
 ```
 sprintfund/
 ├── contracts/
-│   ├── sprintfund-core-v4-minimal.clar  # Main DAO contract (V4)
+│   ├── sprintfund-core-v5-micro.clar    # Main DAO contract (V5) - PRODUCTION
+│   ├── sprintfund-core-v4-minimal.clar  # Legacy V4 contract
 │   ├── sprintfund-core-v3.clar          # Legacy V3 contract
 │   └── sprintfund-logger.clar           # Event logger
 ├── frontend/
-│   ├── app/
-│   │   └── page.tsx            # Landing page
-│   ├── components/
-│   │   ├── CreateProposalForm.tsx
-│   │   ├── ProposalList.tsx
-│   │   ├── ExecuteProposal.tsx
-│   │   ├── UserDashboard.tsx
-│   │   └── Stats.tsx
+│   ├── src/
+│   │   ├── app/
+│   │   │   └── page.tsx                 # Landing page with admin panel
+│   │   ├── components/
+│   │   │   ├── admin/
+│   │   │   │   └── AdminPanel.tsx       # Contract owner controls
+│   │   │   ├── CreateProposalForm.tsx
+│   │   │   ├── ProposalList.tsx
+│   │   │   └── ...
+│   │   └── lib/
+│   │       └── contract-info.ts         # Dynamic contract queries
 │   └── package.json
+├── tests/
+│   └── sprintfund-core-v5-micro.test.ts # Comprehensive tests (36 tests)
 ├── deployments/
-│   ├── v4-minimal.mainnet-plan.yaml
+│   ├── v5-micro.mainnet-plan.yaml
 │   └── default.mainnet-plan.yaml
-├── DEPLOYMENT.md               # Deployment documentation
-└── README.md                   # This file
+├── REFACTORING_PROGRESS.md             # Detailed progress tracking
+└── README.md                            # This file
 ```
 
 ## Smart Contract Functions
@@ -123,20 +131,25 @@ sprintfund/
 - `get-proposal(proposal-id)` - Get proposal details
 - `get-proposal-count()` - Get total proposals
 - `get-stake(staker)` - Get user's stake and lock status
-- `get-min-stake-amount()` - Get minimum stake (10 STX)
+- `get-min-stake-amount()` - Get current minimum stake (configurable)
 - `get-vote(proposal-id, voter)` - Get vote details for a voter
 - `get-required-quorum()` - Get required quorum (10% of total staked)
 - `get-available-stake(staker)` - Get available stake after vote costs
 - `get-total-staked()` - Get total STX staked in contract
-- `get-version()` - Get contract version (returns 4)
+- `get-contract-owner()` - Get contract owner address
+- `get-version()` - Get contract version (returns 5)
 
 ### Public
-- `stake(amount)` - Stake STX
-- `create-proposal(amount, title, description)` - Create proposal (requires 10 STX stake)
+- `stake(amount)` - Stake STX (minimum configurable by owner)
+- `create-proposal(amount, title, description)` - Create proposal (requires minimum stake)
 - `vote(proposal-id, support, vote-weight)` - Vote on proposal (cost = weight²)
 - `execute-proposal(proposal-id)` - Execute approved proposal (proposer only, after timelock)
 - `withdraw-stake(amount)` - Withdraw staked STX (after unlock period)
 - `reclaim-vote-cost(proposal-id)` - Reclaim vote cost after voting period ends
+
+### Admin (Owner Only)
+- `set-min-stake-amount(new-amount)` - Update minimum stake requirement
+- `transfer-ownership(new-owner)` - Transfer contract ownership
 
 ## Demo & Screenshots
 
